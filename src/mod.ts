@@ -1,4 +1,6 @@
 import { Application } from "./deps.ts";
+import admin from "./routes/admin/admin.ts";
+import api from "./routes/api/api.ts";
 
 const app = new Application();
 
@@ -9,8 +11,9 @@ app.use(async (ctx, next) => {
   ctx.response.headers.set("X-Response-Time", `${ms}ms`);
 });
 
-app.use((ctx) => {
-  ctx.response.body = "Hello world!";
-});
+app.use(admin.routes());
+app.use(api.routes());
 
-await app.listen({ port: 8080 });
+const PORT = 8080;
+console.log(`Flywire is running on port: ${PORT}`);
+await app.listen({ port: PORT });
