@@ -1,10 +1,10 @@
 import { Product } from "../../utils/types.ts";
 import IProductService from "../interfaces/productService.ts";
-import client from "./_client.ts";
-import { postgres } from "./_deps.ts";
+import client from "../dataClient/client.ts";
+import type postgresClient from "../dataClient/client.ts";
 
 export default class ProductService implements IProductService {
-  client: postgres.Client;
+  client: typeof postgresClient;
   constructor() {
     this.client = client;
   }
@@ -72,7 +72,7 @@ export default class ProductService implements IProductService {
   }
 
   Update(params: { data: Product }): Promise<Product> {
-    throw Error("Not implemented")
+    throw Error("Not implemented");
     /*try {
       await this.client.connect();
 

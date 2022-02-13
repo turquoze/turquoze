@@ -23,3 +23,4 @@ const client = new postgres.Client({
 });
 
 export default client;
+export const postgresClient = postgres.Client;
