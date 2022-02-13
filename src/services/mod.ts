@@ -1,3 +1,3 @@
-import PostgresDataService from "./dataService/mod.ts";
+import ProductService from "./productService/mod.ts";
 
-export const DataService: PostgresDataService = new PostgresDataService();
+export const DataService: ProductService = new ProductService();
