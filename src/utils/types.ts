@@ -4,3 +4,12 @@ export interface Product {
   name: string;
   description: string;
 }
+
+export interface Cart {
+  id: number;
+  created_at: number;
+  products: Array<{
+    pid: string;
+    quantity: number;
+  }>;
+}
