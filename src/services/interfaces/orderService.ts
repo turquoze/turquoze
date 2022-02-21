@@ -10,7 +10,4 @@ export default interface IOrderService {
     limit?: number;
   }): Promise<Array<Order>>;
 
-  Update(params: {
-    data: Order;
-  }): Promise<Order>;
 }

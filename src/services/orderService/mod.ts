@@ -51,24 +51,4 @@ export default class CartService implements IOrderService {
       await this.client.end();
     }
   }
-
-  Update(params: { data: Order }): Promise<Order> {
-    throw Error("Not implemented");
-    /*try {
-      await this.client.connect();
-
-      const result = await this.client.queryObject<Order>({
-        text: "UPDATE orders WHERE SET price.total = $1, description = $2 WHERE pid = $3",
-        args: [params.data.price.total, params.data.description, params.data.pid],
-      });
-
-      return result.rows[0];
-    } catch (error) {
-      throw new Error("DB error", {
-        cause: error,
-      });
-    } finally {
-      await this.client.end();
-    }*/
-  }
 }
