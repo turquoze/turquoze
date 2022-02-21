@@ -13,3 +13,20 @@ export interface Cart {
     quantity: number;
   }>;
 }
+
+export interface Order {
+  id: number;
+  created_at: number;
+  products: Array<{
+    product: Product;
+    quantity: number;
+    price: {
+      value: number;
+      currency: string;
+    };
+  }>;
+  price: {
+    total: number;
+    subtotal: number;
+  };
+}
