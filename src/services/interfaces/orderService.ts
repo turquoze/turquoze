@@ -9,5 +9,4 @@ export default interface IOrderService {
     offset?: string;
     limit?: number;
   }): Promise<Array<Order>>;
-
 }
