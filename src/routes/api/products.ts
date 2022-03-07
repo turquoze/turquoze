@@ -22,9 +22,12 @@ products.post("/", async (ctx) => {
   try {
     const data = await DataService.Create({
       data: {
-        id: 1,
-        created_at: new Date().getUTCDate(),
-        name: "Test",
+        id: crypto.randomUUID(),
+        created_at: new Date().toISOString(),
+        active: true,
+        images: [],
+        price: 203300,
+        title: "Test product",
         description: "test description",
       },
     });
@@ -32,6 +35,27 @@ products.post("/", async (ctx) => {
       products: data,
     });
   } catch (error) {
+    ctx.response.body = JSON.stringify(error);
+  }
+});
+
+products.put("/:id", async (ctx) => {
+  try {
+    const data = await DataService.Update({
+      data: {
+        id: ctx.params.id,
+        active: true,
+        images: ["https://test.com"],
+        price: 203300,
+        title: "Test product update",
+        description: "test description update",
+      }, 
+    });
+    ctx.response.body = stringifyJSON({
+      product: data,
+    });
+  } catch (error) {
+    console.log(error)
     ctx.response.body = JSON.stringify(error);
   }
 });

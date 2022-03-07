@@ -1,8 +1,12 @@
 export interface Product {
-  id: number;
-  created_at: number;
-  name: string;
+  id: string;
+  created_at?: string;
+  active: boolean;
+  parent?: string;
+  title: string;
   description: string;
+  images: Array<string>;
+  price: number;
 }
 
 export interface Cart {

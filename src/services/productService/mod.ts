@@ -14,8 +14,18 @@ export default class ProductService implements IProductService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Product>({
-        text: "INSERT INTO products (name, description) VALUES ($1, $2)",
-        args: [params.data.name, params.data.description],
+        text:
+          "INSERT INTO products (id, created_at, active, price, title, parent, description, images) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+        args: [
+          params.data.id,
+          params.data.created_at,
+          params.data.active,
+          params.data.price,
+          params.data.title,
+          params.data.parent,
+          params.data.description,
+          params.data.images,
+        ],
       });
 
       return result.rows[0];
@@ -77,8 +87,16 @@ export default class ProductService implements IProductService {
 
       const result = await this.client.queryObject<Product>({
         text:
-          "UPDATE products WHERE SET name = $1, description = $2 WHERE pid = $3",
-        args: [params.data.name, params.data.description, params.data.id],
+          "UPDATE products SET title = $1, description = $2, active = $3, parent = $4, price = $5, images = $6 WHERE id = $7",
+        args: [
+          params.data.title,
+          params.data.description,
+          params.data.active,
+          params.data.parent,
+          params.data.price,
+          params.data.images,
+          params.data.id,
+        ],
       });
 
       return result.rows[0];
