@@ -49,13 +49,12 @@ products.put("/:id", async (ctx) => {
         price: 203300,
         title: "Test product update",
         description: "test description update",
-      }, 
+      },
     });
     ctx.response.body = stringifyJSON({
       product: data,
     });
   } catch (error) {
-    console.log(error)
     ctx.response.body = JSON.stringify(error);
   }
 });

@@ -40,3 +40,8 @@ export interface Category {
   parent: string;
   name: string;
 }
+
+export interface CategoryLink {
+  category: string;
+  product: string;
+}
