@@ -1,6 +1,6 @@
 import { Router } from "../../deps.ts";
 
-import { CategoryService } from "../../services/mod.ts";
+import { CategoryLinkService, CategoryService } from "../../services/mod.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 
 const categories = new Router({
@@ -69,6 +69,36 @@ categories.delete("/:id", async (ctx) => {
     ctx.response.body = stringifyJSON({
       orders: data,
     });
+  } catch (error) {
+    ctx.response.body = JSON.stringify(error);
+  }
+});
+
+categories.post("/link", async (ctx) => {
+  try {
+    const data = await CategoryLinkService.Link({
+      data: {
+        category: "test-uuid",
+        product: "test-uuid",
+      },
+    });
+    ctx.response.body = stringifyJSON({
+      link: data,
+    });
+  } catch (error) {
+    ctx.response.body = JSON.stringify(error);
+  }
+});
+
+categories.delete("/link", async (ctx) => {
+  try {
+    await CategoryLinkService.Delete({
+      data: {
+        category: "test-uuid",
+        product: "test-uuid",
+      },
+    });
+    ctx.response.status = 201;
   } catch (error) {
     ctx.response.body = JSON.stringify(error);
   }
