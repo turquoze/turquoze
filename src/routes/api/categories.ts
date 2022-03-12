@@ -2,6 +2,7 @@ import { Router } from "../../deps.ts";
 
 import { CategoryLinkService, CategoryService } from "../../services/mod.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
+import { CategoryLinkSchema, CategorySchema } from "../../utils/validator.ts";
 
 const categories = new Router({
   prefix: "/categories",
@@ -11,7 +12,7 @@ categories.get("/", async (ctx) => {
   try {
     const data = await CategoryService.GetMany({});
     ctx.response.body = stringifyJSON({
-      orders: data,
+      categories: data,
     });
   } catch (error) {
     ctx.response.body = JSON.stringify(error);
@@ -20,15 +21,18 @@ categories.get("/", async (ctx) => {
 
 categories.post("/", async (ctx) => {
   try {
+    const posted = {
+      id: "",
+      name: "test",
+    };
+
+    await CategorySchema.validate(posted);
+
     const data = await CategoryService.Create({
-      data: {
-        id: 1,
-        name: "test",
-        parent: "",
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
-      orders: data,
+      categories: data,
     });
   } catch (error) {
     ctx.response.body = JSON.stringify(error);
@@ -39,7 +43,7 @@ categories.get("/:id", async (ctx) => {
   try {
     const data = await CategoryService.Get({ id: ctx.params.id });
     ctx.response.body = stringifyJSON({
-      orders: data,
+      categories: data,
     });
   } catch (error) {
     ctx.response.body = JSON.stringify(error);
@@ -48,15 +52,18 @@ categories.get("/:id", async (ctx) => {
 
 categories.put("/:id", async (ctx) => {
   try {
+    const posted = {
+      id: "",
+      name: "test update",
+    };
+
+    await CategorySchema.validate(posted);
+
     const data = await CategoryService.Update({
-      data: {
-        id: 1,
-        name: "test update",
-        parent: "test parent 1",
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
-      orders: data,
+      categories: data,
     });
   } catch (error) {
     ctx.response.body = JSON.stringify(error);
@@ -67,7 +74,7 @@ categories.delete("/:id", async (ctx) => {
   try {
     const data = await CategoryService.Delete({ id: ctx.params.id });
     ctx.response.body = stringifyJSON({
-      orders: data,
+      categories: data,
     });
   } catch (error) {
     ctx.response.body = JSON.stringify(error);
@@ -76,11 +83,15 @@ categories.delete("/:id", async (ctx) => {
 
 categories.post("/link", async (ctx) => {
   try {
+    const posted = {
+      category: "e6cd1629-9a7d-44b6-8816-daf8dbeb61a3",
+      product: "12c8eb72-c4b2-40eb-a30d-bafd436ea60e",
+    };
+
+    await CategoryLinkSchema.validate(posted);
+
     const data = await CategoryLinkService.Link({
-      data: {
-        category: "test-uuid",
-        product: "test-uuid",
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
       link: data,
@@ -92,11 +103,15 @@ categories.post("/link", async (ctx) => {
 
 categories.delete("/link", async (ctx) => {
   try {
+    const posted = {
+      category: "e6cd1629-9a7d-44b6-8816-daf8dbeb61a3",
+      product: "12c8eb72-c4b2-40eb-a30d-bafd436ea60e",
+    };
+
+    await CategoryLinkSchema.validate(posted);
+
     await CategoryLinkService.Delete({
-      data: {
-        category: "test-uuid",
-        product: "test-uuid",
-      },
+      data: posted,
     });
     ctx.response.status = 201;
   } catch (error) {
