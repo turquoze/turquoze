@@ -1,6 +1,6 @@
 import { Router } from "../../deps.ts";
 
-import { DataService } from "../../services/mod.ts";
+import { ProductService } from "../../services/mod.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 
 const products = new Router({
@@ -9,7 +9,7 @@ const products = new Router({
 
 products.get("/", async (ctx) => {
   try {
-    const data = await DataService.GetMany({});
+    const data = await ProductService.GetMany({});
     ctx.response.body = stringifyJSON({
       products: data,
     });
@@ -20,7 +20,7 @@ products.get("/", async (ctx) => {
 
 products.post("/", async (ctx) => {
   try {
-    const data = await DataService.Create({
+    const data = await ProductService.Create({
       data: {
         id: crypto.randomUUID(),
         created_at: new Date().toISOString(),
@@ -41,7 +41,7 @@ products.post("/", async (ctx) => {
 
 products.put("/:id", async (ctx) => {
   try {
-    const data = await DataService.Update({
+    const data = await ProductService.Update({
       data: {
         id: ctx.params.id,
         active: true,
@@ -61,7 +61,7 @@ products.put("/:id", async (ctx) => {
 
 products.get("/:id", async (ctx) => {
   try {
-    const data = await DataService.Get({ id: ctx.params.id });
+    const data = await ProductService.Get({ id: ctx.params.id });
     ctx.response.body = stringifyJSON({
       product: data,
     });
@@ -72,7 +72,7 @@ products.get("/:id", async (ctx) => {
 
 products.delete("/:id", async (ctx) => {
   try {
-    await DataService.Delete({ id: ctx.params.id });
+    await ProductService.Delete({ id: ctx.params.id });
     ctx.response.status = 201;
   } catch (error) {
     ctx.response.body = JSON.stringify(error);

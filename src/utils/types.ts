@@ -41,6 +41,13 @@ export interface Category {
   name: string;
 }
 
+export interface Region {
+  id: string;
+  regions: Array<string>;
+  currency: string;
+  name: string;
+}
+
 export interface CategoryLink {
   category: string;
   product: string;
