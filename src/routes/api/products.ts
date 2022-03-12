@@ -2,6 +2,7 @@ import { Router } from "../../deps.ts";
 
 import { ProductService } from "../../services/mod.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
+import { ProductSchema } from "../../utils/validator.ts";
 
 const products = new Router({
   prefix: "/products",
@@ -20,16 +21,20 @@ products.get("/", async (ctx) => {
 
 products.post("/", async (ctx) => {
   try {
+    const posted = {
+      id: crypto.randomUUID(),
+      created_at: new Date().toISOString(),
+      active: true,
+      images: [],
+      price: 203300,
+      title: "test product",
+      description: "test product",
+    };
+
+    await ProductSchema.validate(posted);
+
     const data = await ProductService.Create({
-      data: {
-        id: crypto.randomUUID(),
-        created_at: new Date().toISOString(),
-        active: true,
-        images: [],
-        price: 203300,
-        title: "Test product",
-        description: "test description",
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
       products: data,
@@ -41,15 +46,19 @@ products.post("/", async (ctx) => {
 
 products.put("/:id", async (ctx) => {
   try {
+    const posted = {
+      id: ctx.params.id,
+      active: true,
+      images: ["https://test.com"],
+      price: 203300,
+      title: "Test product update",
+      description: "test description update",
+    };
+
+    await ProductSchema.validate(posted);
+
     const data = await ProductService.Update({
-      data: {
-        id: ctx.params.id,
-        active: true,
-        images: ["https://test.com"],
-        price: 203300,
-        title: "Test product update",
-        description: "test description update",
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
       product: data,

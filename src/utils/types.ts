@@ -36,8 +36,8 @@ export interface Order {
 }
 
 export interface Category {
-  id: number;
-  parent: string;
+  id: string;
+  parent?: string;
   name: string;
 }
 

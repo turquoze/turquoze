@@ -2,6 +2,7 @@ import { Router } from "../../deps.ts";
 
 import { RegionService } from "../../services/mod.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
+import { RegionSchema } from "../../utils/validator.ts";
 
 const regions = new Router({
   prefix: "/regions",
@@ -9,13 +10,17 @@ const regions = new Router({
 
 regions.post("/", async (ctx) => {
   try {
+    const posted = {
+      id: "NULL",
+      currency: "EUR",
+      name: "TEST-REGION",
+      regions: ["EU"],
+    };
+
+    await RegionSchema.validate(posted);
+
     const data = await RegionService.Create({
-      data: {
-        id: "NULL",
-        currency: "EUR",
-        name: "TEST-REGION",
-        regions: ["EU"],
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
       regions: data,
@@ -38,13 +43,17 @@ regions.get("/:id", async (ctx) => {
 
 regions.put("/:id", async (ctx) => {
   try {
+    const posted = {
+      id: ctx.params.id,
+      name: "TEST-UPDATE",
+      currency: "USD",
+      regions: ["EU", "GB"],
+    };
+
+    await RegionSchema.validate(posted);
+
     const data = await RegionService.Update({
-      data: {
-        id: ctx.params.id,
-        name: "TEST-UPDATE",
-        currency: "USD",
-        regions: ["EU", "GB"],
-      },
+      data: posted,
     });
     ctx.response.body = stringifyJSON({
       regions: data,
