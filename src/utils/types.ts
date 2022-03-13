@@ -20,10 +20,11 @@ export interface Cart {
 }
 
 export interface Order {
-  id: number;
+  id: string;
+  region: string;
   created_at: number;
   products: Array<{
-    product: Product;
+    product: string;
     quantity: number;
     price: {
       value: number;
@@ -53,4 +54,8 @@ export interface Region {
 export interface CategoryLink {
   category: string;
   product: string;
+}
+
+export interface TurquozeState {
+  region: string;
 }
