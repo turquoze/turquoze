@@ -29,6 +29,7 @@ products.post("/", async (ctx) => {
       price: 203300,
       title: "test product",
       description: "test product",
+      region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1"
     };
 
     await ProductSchema.validate(posted);
@@ -53,6 +54,7 @@ products.put("/:id", async (ctx) => {
       price: 203300,
       title: "Test product update",
       description: "test description update",
+      region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1"
     };
 
     await ProductSchema.validate(posted);

@@ -7,6 +7,7 @@ export interface Product {
   description: string;
   images: Array<string>;
   price: number;
+  region: string;
 }
 
 export interface Cart {
@@ -39,6 +40,7 @@ export interface Category {
   id: string;
   parent?: string;
   name: string;
+  region: string;
 }
 
 export interface Region {

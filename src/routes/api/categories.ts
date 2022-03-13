@@ -24,6 +24,7 @@ categories.post("/", async (ctx) => {
     const posted = {
       id: "",
       name: "test",
+      region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1"
     };
 
     await CategorySchema.validate(posted);
@@ -55,6 +56,7 @@ categories.put("/:id", async (ctx) => {
     const posted = {
       id: "",
       name: "test update",
+      region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1"
     };
 
     await CategorySchema.validate(posted);
