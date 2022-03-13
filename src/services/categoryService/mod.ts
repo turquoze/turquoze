@@ -14,7 +14,8 @@ export default class CategoryService implements ICategoryService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Category>({
-        text: "INSERT INTO categories (name, parent, region) VALUES ($1, $2, $3)",
+        text:
+          "INSERT INTO categories (name, parent, region) VALUES ($1, $2, $3)",
         args: [params.data.name, params.data.parent, params.data.region],
       });
 
