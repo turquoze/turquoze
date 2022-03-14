@@ -12,10 +12,16 @@ import ICategoryService from "./interfaces/categoryService.ts";
 import ICategoryLinkService from "./interfaces/categoryLinkService.ts";
 import IRegionService from "./interfaces/regionService.ts";
 
-export const ProductService: IProductService = new DefaultProductService();
-export const CartService: ICartService = new DefaultCartService();
-export const OrderService: IOrderService = new DefaultOrderService();
-export const CategoryService: ICategoryService = new DefaultCategoryService();
+import client from "./dataClient/client.ts";
+
+export const ProductService: IProductService = new DefaultProductService(
+  client,
+);
+export const CartService: ICartService = new DefaultCartService(client);
+export const OrderService: IOrderService = new DefaultOrderService(client);
+export const CategoryService: ICategoryService = new DefaultCategoryService(
+  client,
+);
 export const CategoryLinkService: ICategoryLinkService =
-  new DefaultCategoryLinkService();
-export const RegionService: IRegionService = new DefaultRegionService();
+  new DefaultCategoryLinkService(client);
+export const RegionService: IRegionService = new DefaultRegionService(client);

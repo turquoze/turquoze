@@ -1,11 +1,10 @@
 import { Category } from "../../utils/types.ts";
 import ICategoryService from "../interfaces/categoryService.ts";
-import client from "../dataClient/client.ts";
 import type postgresClient from "../dataClient/client.ts";
 
 export default class CategoryService implements ICategoryService {
   client: typeof postgresClient;
-  constructor() {
+  constructor(client: typeof postgresClient) {
     this.client = client;
   }
 

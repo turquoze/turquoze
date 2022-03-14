@@ -1,11 +1,10 @@
 import { Product } from "../../utils/types.ts";
 import IProductService from "../interfaces/productService.ts";
-import client from "../dataClient/client.ts";
 import type postgresClient from "../dataClient/client.ts";
 
 export default class ProductService implements IProductService {
   client: typeof postgresClient;
-  constructor() {
+  constructor(client: typeof postgresClient) {
     this.client = client;
   }
 

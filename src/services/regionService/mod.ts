@@ -1,11 +1,10 @@
-import client from "../dataClient/client.ts";
 import type postgresClient from "../dataClient/client.ts";
 import IRegionService from "../interfaces/regionService.ts";
 import { Region } from "../../utils/types.ts";
 
 export default class RegionService implements IRegionService {
   client: typeof postgresClient;
-  constructor() {
+  constructor(client: typeof postgresClient) {
     this.client = client;
   }
 

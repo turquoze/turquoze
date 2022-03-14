@@ -6,7 +6,7 @@ import {
   DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
-} from "./_secrets.ts";
+} from "../../utils/secrets.ts";
 
 const client = new postgres.Client({
   hostname: DATABASE_HOSTNAME,
