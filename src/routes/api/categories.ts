@@ -26,6 +26,7 @@ export default class CategoriesRoutes {
           categories: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -33,7 +34,7 @@ export default class CategoriesRoutes {
     this.#categories.post("/", async (ctx) => {
       try {
         const posted = {
-          id: "",
+          id: "156e4529-8131-46bf-b0f7-03863a608214",
           name: "test",
           region: ctx.state.region,
         };
@@ -47,6 +48,7 @@ export default class CategoriesRoutes {
           categories: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -58,6 +60,7 @@ export default class CategoriesRoutes {
           categories: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -65,7 +68,7 @@ export default class CategoriesRoutes {
     this.#categories.put("/:id", async (ctx) => {
       try {
         const posted = {
-          id: "",
+          id: ctx.params.id,
           name: "test update",
           region: ctx.state.region,
         };
@@ -79,6 +82,7 @@ export default class CategoriesRoutes {
           categories: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -90,6 +94,7 @@ export default class CategoriesRoutes {
           categories: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -98,18 +103,21 @@ export default class CategoriesRoutes {
       try {
         const posted = {
           category: "e6cd1629-9a7d-44b6-8816-daf8dbeb61a3",
-          product: "12c8eb72-c4b2-40eb-a30d-bafd436ea60e",
+          product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
         };
 
         await CategoryLinkSchema.validate(posted);
 
-        const data = await this.#CategoryLinkService.Link({
+        ctx.response.status = 201;
+
+        /*const data = await this.#CategoryLinkService.Link({
           data: posted,
         });
         ctx.response.body = stringifyJSON({
           link: data,
-        });
+        });*/
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -118,16 +126,19 @@ export default class CategoriesRoutes {
       try {
         const posted = {
           category: "e6cd1629-9a7d-44b6-8816-daf8dbeb61a3",
-          product: "12c8eb72-c4b2-40eb-a30d-bafd436ea60e",
+          product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
         };
 
         await CategoryLinkSchema.validate(posted);
 
-        await this.#CategoryLinkService.Delete({
+        ctx.response.status = 201;
+
+        /*await this.#CategoryLinkService.Delete({
           data: posted,
         });
-        ctx.response.status = 201;
+        ctx.response.status = 201;*/
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
