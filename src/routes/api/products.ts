@@ -20,6 +20,7 @@ export default class ProductsRoutes {
           products: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -46,6 +47,7 @@ export default class ProductsRoutes {
           products: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -68,9 +70,10 @@ export default class ProductsRoutes {
           data: posted,
         });
         ctx.response.body = stringifyJSON({
-          product: data,
+          products: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -79,9 +82,10 @@ export default class ProductsRoutes {
       try {
         const data = await this.#ProductService.Get({ id: ctx.params.id });
         ctx.response.body = stringifyJSON({
-          product: data,
+          products: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -91,6 +95,7 @@ export default class ProductsRoutes {
         await this.#ProductService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
