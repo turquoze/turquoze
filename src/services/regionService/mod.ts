@@ -14,7 +14,7 @@ export default class RegionService implements IRegionService {
 
       const result = await this.client.queryObject<Region>({
         text:
-          "INSERT INTO regions (name, currency, regions) VALUES ($1, $2, $3)",
+          "INSERT INTO regions (name, currency, regions) VALUES ($1, $2, $3) RETURNING id",
         args: [params.data.name, params.data.currency, params.data.regions],
       });
 
@@ -53,7 +53,7 @@ export default class RegionService implements IRegionService {
 
       const result = await this.client.queryObject<Region>({
         text:
-          "UPDATE regions WHERE SET name = $1, currency = $2, regions = $3  WHERE id = $3",
+          "UPDATE regions SET name = $1, currency = $2, regions = $3 WHERE id = $4 RETURNING id",
         args: [
           params.data.name,
           params.data.currency,

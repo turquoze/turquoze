@@ -14,7 +14,7 @@ export default class CategoryService implements ICategoryService {
 
       const result = await this.client.queryObject<Category>({
         text:
-          "INSERT INTO categories (name, parent, region) VALUES ($1, $2, $3)",
+          "INSERT INTO categories (name, parent, region) VALUES ($1, $2, $3) RETURNING id",
         args: [params.data.name, params.data.parent, params.data.region],
       });
 
@@ -77,7 +77,7 @@ export default class CategoryService implements ICategoryService {
 
       const result = await this.client.queryObject<Category>({
         text:
-          "UPDATE categories WHERE SET name = $1, parent = $2 WHERE pid = $3",
+          "UPDATE categories SET name = $1, parent = $2 WHERE id = $3 RETURNING id",
         args: [params.data.name, params.data.parent, params.data.id],
       });
 

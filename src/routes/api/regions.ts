@@ -16,7 +16,7 @@ export default class RegionsRoutes {
     this.#regions.post("/", async (ctx) => {
       try {
         const posted = {
-          id: "NULL",
+          id: "156e4529-8131-46bf-b0f7-03863a608214",
           currency: "EUR",
           name: "TEST-REGION",
           regions: ["EU"],
@@ -27,10 +27,12 @@ export default class RegionsRoutes {
         const data = await this.#RegionService.Create({
           data: posted,
         });
+
         ctx.response.body = stringifyJSON({
           regions: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -42,6 +44,7 @@ export default class RegionsRoutes {
           regions: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -64,6 +67,7 @@ export default class RegionsRoutes {
           regions: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -73,6 +77,7 @@ export default class RegionsRoutes {
         await this.#RegionService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });

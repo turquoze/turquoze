@@ -14,7 +14,7 @@ export default class ProductService implements IProductService {
 
       const result = await this.client.queryObject<Product>({
         text:
-          "INSERT INTO products (id, created_at, active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+          "INSERT INTO products (id, created_at, active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
         args: [
           params.data.id,
           params.data.created_at,
@@ -87,7 +87,7 @@ export default class ProductService implements IProductService {
 
       const result = await this.client.queryObject<Product>({
         text:
-          "UPDATE products SET title = $1, description = $2, active = $3, parent = $4, price = $5, images = $6 WHERE id = $7",
+          "UPDATE products SET title = $1, description = $2, active = $3, parent = $4, price = $5, images = $6 WHERE id = $7 RETURNING id",
         args: [
           params.data.title,
           params.data.description,
