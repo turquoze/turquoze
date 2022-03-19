@@ -4,6 +4,7 @@ import carts from "./carts.ts";
 import orders from "./orders.ts";
 import categories from "./categories.ts";
 import regions from "./regions.ts";
+import webhook from "./webhook.ts";
 
 import {
   CartService,
@@ -23,6 +24,7 @@ api.use(new carts(CartService).routes());
 api.use(new orders(OrderService).routes());
 api.use(new categories(CategoryService, CategoryLinkService).routes());
 api.use(new regions(RegionService).routes());
+api.use(new webhook(OrderService).routes());
 api.allowedMethods();
 
 export default api;
