@@ -59,3 +59,22 @@ export interface CategoryLink {
 export interface TurquozeState {
   region: string;
 }
+
+export interface PaymentRequest {
+  id: string;
+  cartId: string;
+  customerId?: string;
+  info?: {
+    country: string;
+    type: "COMPANY" | "PERSONAL" | "UNKNOWN"
+  }
+}
+
+export interface PaymentValidation {
+  orderId: string;
+}
+
+export interface PaymentRequestResponse {
+  id: string;
+  data: unknown
+}
