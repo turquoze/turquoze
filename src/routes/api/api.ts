@@ -6,25 +6,20 @@ import categories from "./categories.ts";
 import regions from "./regions.ts";
 import webhook from "./webhook.ts";
 
-import {
-  CartService,
-  CategoryLinkService,
-  CategoryService,
-  OrderService,
-  ProductService,
-  RegionService,
-} from "../../services/mod.ts";
+import Container from "../../services/mod.ts";
 
 const api = new Router({
   prefix: "/api",
 });
 
-api.use(new products(ProductService).routes());
-api.use(new carts(CartService).routes());
-api.use(new orders(OrderService).routes());
-api.use(new categories(CategoryService, CategoryLinkService).routes());
-api.use(new regions(RegionService).routes());
-api.use(new webhook(OrderService).routes());
+const container = new Container();
+
+api.use(new products(container).routes());
+api.use(new carts(container).routes());
+api.use(new orders(container).routes());
+api.use(new categories(container).routes());
+api.use(new regions(container).routes());
+api.use(new webhook(container).routes());
 api.allowedMethods();
 
 export default api;

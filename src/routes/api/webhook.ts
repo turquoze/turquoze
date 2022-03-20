@@ -1,13 +1,13 @@
 import { Router } from "../../deps.ts";
-import IOrderService from "../../services/interfaces/orderService.ts";
+import Container from "../../services/mod.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class WebhookRoutes {
   #webhook: Router;
-  #OrderService: IOrderService;
-  constructor(orderService: IOrderService) {
-    this.#OrderService = orderService;
+  #Container: Container;
+  constructor(container: Container) {
+    this.#Container = container;
     this.#webhook = new Router({
       prefix: "/webhook",
     });

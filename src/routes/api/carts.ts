@@ -1,20 +1,20 @@
 import { Router } from "../../deps.ts";
-import ICartService from "../../services/interfaces/cartService.ts";
+import Container from "../../services/mod.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class CartRoutes {
   #carts: Router;
-  #CartService: ICartService;
-  constructor(cartService: ICartService) {
-    this.#CartService = cartService;
+  #Container: Container;
+  constructor(container: Container) {
+    this.#Container = container;
     this.#carts = new Router({
       prefix: "/carts",
     });
 
     this.#carts.post("/", async (ctx) => {
       try {
-        const data = await this.#CartService.Create({
+        const data = await this.#Container.CartService.Create({
           data: {
             id: 1,
             created_at: new Date().getUTCDate(),
@@ -34,7 +34,9 @@ export default class CartRoutes {
 
     this.#carts.get("/:id", async (ctx) => {
       try {
-        const data = await this.#CartService.Get({ id: ctx.params.id });
+        const data = await this.#Container.CartService.Get({
+          id: ctx.params.id,
+        });
         ctx.response.body = stringifyJSON({
           carts: data,
         });
@@ -45,7 +47,7 @@ export default class CartRoutes {
 
     this.#carts.put("/:id", async (ctx) => {
       try {
-        const data = await this.#CartService.Update({
+        const data = await this.#Container.CartService.Update({
           data: {
             id: parseInt(ctx.params.id),
             created_at: new Date().getUTCDate(),

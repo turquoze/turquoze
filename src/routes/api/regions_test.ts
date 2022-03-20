@@ -5,17 +5,18 @@ import {
 import { Application } from "../../deps.ts";
 
 import RegionsRoutes from "./regions.ts";
-import { RegionService } from "../../services/mod.ts";
+import Container from "../../services/mod.ts";
 import { Region } from "../../utils/types.ts";
 
 let ID = "";
+const container = new Container();
 
 Deno.test({
   name: "Regions - Create | ok",
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(RegionService).routes());
+    app.use(new RegionsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions`, {
@@ -35,7 +36,7 @@ Deno.test({
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(RegionService).routes());
+    app.use(new RegionsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions/${ID}`, {
@@ -55,7 +56,7 @@ Deno.test({
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(RegionService).routes());
+    app.use(new RegionsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions/${ID}`, {
@@ -75,7 +76,7 @@ Deno.test({
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(RegionService).routes());
+    app.use(new RegionsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions/${ID}`, {
