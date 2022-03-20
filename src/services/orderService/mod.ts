@@ -8,6 +8,31 @@ export default class CartService implements IOrderService {
     this.client = client;
   }
 
+  async Create(params: { data: Order }): Promise<Order> {
+    try {
+      await this.client.connect();
+
+      const result = await this.client.queryObject<Order>({
+        text:
+          "INSERT INTO orders (payment, price, products, region) VALUES ($1, $2, $3, $4) RETURNING id",
+        args: [
+          params.data.payment,
+          params.data.price,
+          params.data.products,
+          params.data.region,
+        ],
+      });
+
+      return result.rows[0];
+    } catch (error) {
+      throw new Error("DB error", {
+        cause: error,
+      });
+    } finally {
+      await this.client.end();
+    }
+  }
+
   async Get(params: { id: string }): Promise<Order> {
     try {
       await this.client.connect();
@@ -42,6 +67,31 @@ export default class CartService implements IOrderService {
       });
 
       return result.rows;
+    } catch (error) {
+      throw new Error("DB error", {
+        cause: error,
+      });
+    } finally {
+      await this.client.end();
+    }
+  }
+
+  async SetPaymentStatus(
+    params: { id: string; status: "PAYED" | "WAITING" | "FAILED" },
+  ): Promise<Order> {
+    try {
+      await this.client.connect();
+
+      const result = await this.client.queryObject<Order>({
+        text:
+          "UPDATE orders SET payment.status = $1 WHERE id = $7 RETURNING id",
+        args: [
+          params.status,
+          params.id,
+        ],
+      });
+
+      return result.rows[0];
     } catch (error) {
       throw new Error("DB error", {
         cause: error,

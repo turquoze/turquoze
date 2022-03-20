@@ -23,17 +23,22 @@ export interface Order {
   id: string;
   region: string;
   created_at: number;
-  products: Array<{
-    product: string;
-    quantity: number;
-    price: {
-      value: number;
-      currency: string;
-    };
-  }>;
+  products: Array<OrderProduct>;
+  payment: {
+    status: "PAYED" | "WAITING" | "FAILED";
+  };
   price: {
     total: number;
     subtotal: number;
+  };
+}
+
+export interface OrderProduct {
+  product: string;
+  quantity: number;
+  price: {
+    value: number;
+    currency: string;
   };
 }
 
@@ -66,15 +71,17 @@ export interface PaymentRequest {
   customerId?: string;
   info?: {
     country: string;
-    type: "COMPANY" | "PERSONAL" | "UNKNOWN"
-  }
+    type: "COMPANY" | "PERSONAL" | "UNKNOWN";
+    data: Record<string, string>;
+  };
 }
 
 export interface PaymentValidation {
   orderId: string;
+  status: "PAYED" | "WAITING" | "FAILED";
 }
 
 export interface PaymentRequestResponse {
   id: string;
-  data: unknown
+  data: unknown;
 }

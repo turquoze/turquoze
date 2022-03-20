@@ -1,4 +1,8 @@
-import { PaymentRequest, PaymentRequestResponse, PaymentValidation } from "../../utils/types.ts";
+import {
+  PaymentRequest,
+  PaymentRequestResponse,
+  PaymentValidation,
+} from "../../utils/types.ts";
 
 export default interface IPaymentService {
   Create(params: {
