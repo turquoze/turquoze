@@ -1,27 +1,21 @@
 import { Router } from "../../deps.ts";
-import ICategoryLinkService from "../../services/interfaces/categoryLinkService.ts";
-import ICategoryService from "../../services/interfaces/categoryService.ts";
+import Container from "../../services/mod.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import { CategoryLinkSchema, CategorySchema } from "../../utils/validator.ts";
 
 export default class CategoriesRoutes {
   #categories: Router;
-  #CategoryService: ICategoryService;
-  #CategoryLinkService: ICategoryLinkService;
-  constructor(
-    categoryService: ICategoryService,
-    categoryLinkService: ICategoryLinkService,
-  ) {
-    this.#CategoryService = categoryService;
-    this.#CategoryLinkService = categoryLinkService;
+  #Container: Container;
+  constructor(container: Container) {
+    this.#Container = container;
     this.#categories = new Router({
       prefix: "/categories",
     });
 
     this.#categories.get("/", async (ctx) => {
       try {
-        const data = await this.#CategoryService.GetMany({});
+        const data = await this.#Container.CategoryService.GetMany({});
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -41,7 +35,7 @@ export default class CategoriesRoutes {
 
         await CategorySchema.validate(posted);
 
-        const data = await this.#CategoryService.Create({
+        const data = await this.#Container.CategoryService.Create({
           data: posted,
         });
         ctx.response.body = stringifyJSON({
@@ -55,7 +49,9 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/:id", async (ctx) => {
       try {
-        const data = await this.#CategoryService.Get({ id: ctx.params.id });
+        const data = await this.#Container.CategoryService.Get({
+          id: ctx.params.id,
+        });
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -75,7 +71,7 @@ export default class CategoriesRoutes {
 
         await CategorySchema.validate(posted);
 
-        const data = await this.#CategoryService.Update({
+        const data = await this.#Container.CategoryService.Update({
           data: posted,
         });
         ctx.response.body = stringifyJSON({
@@ -89,7 +85,9 @@ export default class CategoriesRoutes {
 
     this.#categories.delete("/:id", async (ctx) => {
       try {
-        const data = await this.#CategoryService.Delete({ id: ctx.params.id });
+        const data = await this.#Container.CategoryService.Delete({
+          id: ctx.params.id,
+        });
         ctx.response.body = stringifyJSON({
           categories: data,
         });

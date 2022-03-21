@@ -1,20 +1,20 @@
 import { Router } from "../../deps.ts";
-import IOrderService from "../../services/interfaces/orderService.ts";
+import Container from "../../services/mod.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class OrdersRoutes {
   #orders: Router;
-  #OrderService: IOrderService;
-  constructor(orderService: IOrderService) {
-    this.#OrderService = orderService;
+  #Container: Container;
+  constructor(container: Container) {
+    this.#Container = container;
     this.#orders = new Router({
       prefix: "/orders",
     });
 
     this.#orders.get("/", async (ctx) => {
       try {
-        const data = await this.#OrderService.GetMany({});
+        const data = await this.#Container.OrderService.GetMany({});
         ctx.response.body = stringifyJSON({
           orders: data,
         });
@@ -25,7 +25,9 @@ export default class OrdersRoutes {
 
     this.#orders.get("/:id", async (ctx) => {
       try {
-        const data = await this.#OrderService.Get({ id: ctx.params.id });
+        const data = await this.#Container.OrderService.Get({
+          id: ctx.params.id,
+        });
         ctx.response.body = stringifyJSON({
           orders: data,
         });

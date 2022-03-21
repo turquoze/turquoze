@@ -1,14 +1,14 @@
 import { Router } from "../../deps.ts";
-import IRegionService from "../../services/interfaces/regionService.ts";
+import Container from "../../services/mod.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import { RegionSchema } from "../../utils/validator.ts";
 
 export default class RegionsRoutes {
   #regions: Router;
-  #RegionService: IRegionService;
-  constructor(regionService: IRegionService) {
-    this.#RegionService = regionService;
+  #Container: Container;
+  constructor(container: Container) {
+    this.#Container = container;
     this.#regions = new Router({
       prefix: "/regions",
     });
@@ -24,7 +24,7 @@ export default class RegionsRoutes {
 
         await RegionSchema.validate(posted);
 
-        const data = await this.#RegionService.Create({
+        const data = await this.#Container.RegionService.Create({
           data: posted,
         });
 
@@ -39,7 +39,9 @@ export default class RegionsRoutes {
 
     this.#regions.get("/:id", async (ctx) => {
       try {
-        const data = await this.#RegionService.Get({ id: ctx.params.id });
+        const data = await this.#Container.RegionService.Get({
+          id: ctx.params.id,
+        });
         ctx.response.body = stringifyJSON({
           regions: data,
         });
@@ -60,7 +62,7 @@ export default class RegionsRoutes {
 
         await RegionSchema.validate(posted);
 
-        const data = await this.#RegionService.Update({
+        const data = await this.#Container.RegionService.Update({
           data: posted,
         });
         ctx.response.body = stringifyJSON({
@@ -74,7 +76,7 @@ export default class RegionsRoutes {
 
     this.#regions.delete("/:id", async (ctx) => {
       try {
-        await this.#RegionService.Delete({ id: ctx.params.id });
+        await this.#Container.RegionService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
       } catch (error) {
         ctx.response.status = 400;

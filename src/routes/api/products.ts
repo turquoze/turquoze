@@ -1,21 +1,21 @@
 import { Router } from "../../deps.ts";
-import IProductService from "../../services/interfaces/productService.ts";
+import Container from "../../services/mod.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import { ProductSchema } from "../../utils/validator.ts";
 
 export default class ProductsRoutes {
   #products: Router;
-  #ProductService: IProductService;
-  constructor(productService: IProductService) {
-    this.#ProductService = productService;
+  #Container: Container;
+  constructor(container: Container) {
+    this.#Container = container;
     this.#products = new Router({
       prefix: "/products",
     });
 
     this.#products.get("/", async (ctx) => {
       try {
-        const data = await this.#ProductService.GetMany({});
+        const data = await this.#Container.ProductService.GetMany({});
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -40,7 +40,7 @@ export default class ProductsRoutes {
 
         await ProductSchema.validate(posted);
 
-        const data = await this.#ProductService.Create({
+        const data = await this.#Container.ProductService.Create({
           data: posted,
         });
         ctx.response.body = stringifyJSON({
@@ -66,7 +66,7 @@ export default class ProductsRoutes {
 
         await ProductSchema.validate(posted);
 
-        const data = await this.#ProductService.Update({
+        const data = await this.#Container.ProductService.Update({
           data: posted,
         });
         ctx.response.body = stringifyJSON({
@@ -80,7 +80,9 @@ export default class ProductsRoutes {
 
     this.#products.get("/:id", async (ctx) => {
       try {
-        const data = await this.#ProductService.Get({ id: ctx.params.id });
+        const data = await this.#Container.ProductService.Get({
+          id: ctx.params.id,
+        });
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -92,7 +94,7 @@ export default class ProductsRoutes {
 
     this.#products.delete("/:id", async (ctx) => {
       try {
-        await this.#ProductService.Delete({ id: ctx.params.id });
+        await this.#Container.ProductService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
       } catch (error) {
         ctx.response.status = 400;

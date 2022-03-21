@@ -5,10 +5,11 @@ import {
 import { Application } from "../../deps.ts";
 
 import CategoriesRoutes from "./categories.ts";
-import { CategoryLinkService, CategoryService } from "../../services/mod.ts";
 import { Category, CategoryLink } from "../../utils/types.ts";
+import Container from "../../services/mod.ts";
 
 let ID = "";
+const container = new Container();
 
 Deno.test({
   name: "Categories - Get | ok",
@@ -16,7 +17,7 @@ Deno.test({
     const app = new Application();
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(
@@ -40,7 +41,7 @@ Deno.test({
     });
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(
@@ -67,7 +68,7 @@ Deno.test({
     });
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(
@@ -94,7 +95,7 @@ Deno.test({
     });
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(
@@ -121,7 +122,7 @@ Deno.test({
     });
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(
@@ -145,7 +146,7 @@ Deno.test({
     });
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(
@@ -174,7 +175,7 @@ Deno.test({
     });
 
     app.use(
-      new CategoriesRoutes(CategoryService, CategoryLinkService).routes(),
+      new CategoriesRoutes(container).routes(),
     );
 
     const response = await app.handle(

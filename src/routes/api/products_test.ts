@@ -5,10 +5,11 @@ import {
 import { Application } from "../../deps.ts";
 
 import ProductsRoutes from "./products.ts";
-import { ProductService } from "../../services/mod.ts";
 import { Product } from "../../utils/types.ts";
+import Container from "../../services/mod.ts";
 
 let ID = "";
+const container = new Container();
 
 Deno.test({
   name: "Products - Create | ok",
@@ -20,7 +21,7 @@ Deno.test({
       await next();
     });
 
-    app.use(new ProductsRoutes(ProductService).routes());
+    app.use(new ProductsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products`, {
@@ -45,7 +46,7 @@ Deno.test({
       await next();
     });
 
-    app.use(new ProductsRoutes(ProductService).routes());
+    app.use(new ProductsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products`, {
@@ -67,7 +68,7 @@ Deno.test({
       await next();
     });
 
-    app.use(new ProductsRoutes(ProductService).routes());
+    app.use(new ProductsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
@@ -92,7 +93,7 @@ Deno.test({
       await next();
     });
 
-    app.use(new ProductsRoutes(ProductService).routes());
+    app.use(new ProductsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
@@ -117,7 +118,7 @@ Deno.test({
       await next();
     });
 
-    app.use(new ProductsRoutes(ProductService).routes());
+    app.use(new ProductsRoutes(container).routes());
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
