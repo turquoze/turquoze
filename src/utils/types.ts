@@ -11,8 +11,8 @@ export interface Product {
 }
 
 export interface Cart {
-  id: number;
-  created_at: number;
+  id: string;
+  created_at?: number;
   products: Array<{
     pid: string;
     quantity: number;

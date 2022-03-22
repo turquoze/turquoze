@@ -1,7 +1,7 @@
 import { Cart } from "../../utils/types.ts";
 
 export default interface ICartService {
-  Create(params: {
+  CreateOrUpdate(params: {
     data: Cart;
   }): Promise<Cart>;
 
@@ -9,7 +9,7 @@ export default interface ICartService {
     id: string;
   }): Promise<Cart>;
 
-  Update(params: {
-    data: Cart;
-  }): Promise<Cart>;
+  Delete(params: {
+    id: string;
+  }): Promise<void>;
 }

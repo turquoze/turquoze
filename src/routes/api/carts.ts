@@ -14,10 +14,9 @@ export default class CartRoutes {
 
     this.#carts.post("/", async (ctx) => {
       try {
-        const data = await this.#Container.CartService.Create({
+        const data = await this.#Container.CartService.CreateOrUpdate({
           data: {
-            id: 1,
-            created_at: new Date().getUTCDate(),
+            id: "",
             products: [{
               pid: "234",
               quantity: 3,
@@ -28,6 +27,7 @@ export default class CartRoutes {
           carts: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -41,26 +41,19 @@ export default class CartRoutes {
           carts: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
 
-    this.#carts.put("/:id", async (ctx) => {
+    this.#carts.delete("/:id", async (ctx) => {
       try {
-        const data = await this.#Container.CartService.Update({
-          data: {
-            id: parseInt(ctx.params.id),
-            created_at: new Date().getUTCDate(),
-            products: [{
-              pid: "234",
-              quantity: 3,
-            }],
-          },
+        await this.#Container.CartService.Delete({
+          id: ctx.params.id,
         });
-        ctx.response.body = stringifyJSON({
-          carts: data,
-        });
+        ctx.response.status = 201;
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });

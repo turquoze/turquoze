@@ -8,14 +8,25 @@ export default class CartService implements ICartService {
     this.client = client;
   }
 
-  async Create(params: { data: Cart }): Promise<Cart> {
+  async CreateOrUpdate(params: { data: Cart }): Promise<Cart> {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<Cart>({
-        text: "INSERT INTO carts (products) VALUES ($1)",
-        args: [params.data.products],
-      });
+      let result;
+      if (
+        params.data.id == "" || params.data.id == undefined ||
+        params.data.id == null
+      ) {
+        result = await this.client.queryObject<Cart>({
+          text: "INSERT INTO carts (products) VALUES ($1)",
+          args: [params.data.products],
+        });
+      } else {
+        result = await this.client.queryObject<Cart>({
+          text: "UPDATE carts WHERE SET products = $1 WHERE id = $2",
+          args: [params.data.products, params.data.id],
+        });
+      }
 
       return result.rows[0];
     } catch (error) {
@@ -46,16 +57,14 @@ export default class CartService implements ICartService {
     }
   }
 
-  async Update(params: { data: Cart }): Promise<Cart> {
+  async Delete(params: { id: string }): Promise<void> {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<Cart>({
-        text: "UPDATE carts WHERE SET products = $1 WHERE id = $3",
-        args: [params.data.products, params.data.id],
+      await this.client.queryObject<Cart>({
+        text: "DELETE FROM carts WHERE id = $1",
+        args: [params.id],
       });
-
-      return result.rows[0];
     } catch (error) {
       throw new Error("DB error", {
         cause: error,
