@@ -17,10 +17,12 @@ export default class CartRoutes {
         const data = await this.#Container.CartService.CreateOrUpdate({
           data: {
             id: "",
-            products: [{
-              pid: "234",
-              quantity: 3,
-            }],
+            products: {
+              cart: [{
+                pid: "234",
+                quantity: 3,
+              }],
+            },
           },
         });
         ctx.response.body = stringifyJSON({

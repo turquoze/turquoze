@@ -34,7 +34,7 @@ export default class PaymentService implements IPaymentService {
       let price = 0;
       const products: Array<OrderProduct> = [];
 
-      cart.products.forEach((product) => {
+      cart.products.cart.forEach((product) => {
         products.push({
           price: {
             currency: "EUR",

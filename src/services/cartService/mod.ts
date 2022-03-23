@@ -18,12 +18,13 @@ export default class CartService implements ICartService {
         params.data.id == null
       ) {
         result = await this.client.queryObject<Cart>({
-          text: "INSERT INTO carts (products) VALUES ($1)",
+          text: "INSERT INTO carts (products) VALUES ($1) RETURNING id",
           args: [params.data.products],
         });
       } else {
         result = await this.client.queryObject<Cart>({
-          text: "UPDATE carts WHERE SET products = $1 WHERE id = $2",
+          text:
+            "UPDATE carts WHERE SET products = $1 WHERE id = $2 RETURNING id",
           args: [params.data.products, params.data.id],
         });
       }
