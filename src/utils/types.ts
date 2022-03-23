@@ -11,12 +11,14 @@ export interface Product {
 }
 
 export interface Cart {
-  id: number;
-  created_at: number;
-  products: Array<{
-    pid: string;
-    quantity: number;
-  }>;
+  id: string;
+  created_at?: number;
+  products: {
+    cart: Array<{
+      pid: string;
+      quantity: number;
+    }>;
+  };
 }
 
 export interface Order {
