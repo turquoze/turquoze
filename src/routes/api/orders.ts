@@ -19,6 +19,7 @@ export default class OrdersRoutes {
           orders: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -32,6 +33,7 @@ export default class OrdersRoutes {
           orders: data,
         });
       } catch (error) {
+        ctx.response.status = 400;
         ctx.response.body = JSON.stringify(error);
       }
     });
