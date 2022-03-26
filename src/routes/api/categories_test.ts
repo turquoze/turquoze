@@ -1,8 +1,4 @@
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std@0.129.0/testing/asserts.ts";
-import { Application } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../../deps.ts";
 
 import CategoriesRoutes from "./categories.ts";
 import { Category, CategoryLink } from "../../utils/types.ts";

@@ -12,24 +12,41 @@ export default class ProductService implements IProductService {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<Product>({
-        text:
-          "INSERT INTO products (id, created_at, active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id",
-        args: [
-          params.data.id,
-          params.data.created_at,
-          params.data.active,
-          params.data.price,
-          params.data.title,
-          params.data.parent,
-          params.data.description,
-          params.data.images,
-          params.data.region,
-        ],
-      });
+      let result;
+
+      if (params.data.id == "") {
+        result = await this.client.queryObject<Product>({
+          text:
+            "INSERT INTO products (active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+          args: [
+            params.data.active,
+            params.data.price,
+            params.data.title,
+            params.data.parent,
+            params.data.description,
+            params.data.images,
+            params.data.region,
+          ],
+        });
+      } else {
+        result = await this.client.queryObject<Product>({
+          text:
+            "INSERT INTO products (active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+          args: [
+            params.data.active,
+            params.data.price,
+            params.data.title,
+            params.data.parent,
+            params.data.description,
+            params.data.images,
+            params.data.region,
+          ],
+        });
+      }
 
       return result.rows[0];
     } catch (error) {
+      console.log(error);
       throw new Error("DB error", {
         cause: error,
       });

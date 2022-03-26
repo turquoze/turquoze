@@ -29,7 +29,6 @@ export default class ProductsRoutes {
       try {
         const posted = {
           id: crypto.randomUUID(),
-          created_at: new Date().toISOString(),
           active: true,
           images: [],
           price: 203300,
@@ -39,6 +38,8 @@ export default class ProductsRoutes {
         };
 
         await ProductSchema.validate(posted);
+
+        posted.id = "";
 
         const data = await this.#Container.ProductService.Create({
           data: posted,
