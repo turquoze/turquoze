@@ -1,7 +1,4 @@
-import {
-  assert,
-  assertObjectMatch,
-} from "https://deno.land/std@0.129.0/testing/asserts.ts";
+import { assert, assertObjectMatch } from "../../deps.ts";
 import cacheService from "./mod.ts";
 
 const cache = new cacheService();

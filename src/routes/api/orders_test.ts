@@ -1,8 +1,4 @@
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std@0.129.0/testing/asserts.ts";
-import { Application } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../../deps.ts";
 
 import OrdersRoutes from "./orders.ts";
 import { Order } from "../../utils/types.ts";
