@@ -15,6 +15,7 @@ app.use(ApplicationState);
 app.use(admin.routes());
 app.use(api.routes());
 
-const PORT = 8080;
-console.log(`Flywire is running on port: ${PORT}`);
-await app.listen({ port: PORT });
+app.addEventListener("listen", ({ port }) => {
+  console.log(`Listening on: http://localhost:${port}`);
+});
+await app.listen({ port: 8080 });

@@ -28,14 +28,14 @@ Deno.test({
 
     const { orders }: { orders: Array<Order> } = await response?.json();
     if (orders.length > 0) {
-      ID = orders[0].id
+      ID = orders[0].id;
     }
   },
 });
 
 Deno.test({
   name: "Orders - Get | ok",
-  ignore: ID == "" || ID == undefined || ID == null ? true : false, 
+  ignore: ID == "" || ID == undefined || ID == null ? true : false,
   async fn() {
     const app = new Application();
 
