@@ -3,6 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
+import { UuidSchema } from "../../utils/validator.ts";
 
 export default class OrdersRoutes {
   #orders: Router;
@@ -32,6 +33,10 @@ export default class OrdersRoutes {
 
     this.#orders.get("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.OrderService.Get({
           id: ctx.params.id,
         });

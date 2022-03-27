@@ -27,3 +27,7 @@ export const CategoryLinkSchema = yup.object().shape({
   category: yup.string().uuid().required(),
   product: yup.string().uuid().required(),
 });
+
+export const UuidSchema = yup.object().shape({
+  id: yup.string().uuid().required(),
+});
