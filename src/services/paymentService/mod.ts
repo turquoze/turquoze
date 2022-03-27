@@ -8,6 +8,7 @@ import {
 } from "../../utils/types.ts";
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
+import { DatabaseError } from "../../utils/errors.ts";
 
 export default class PaymentService implements IPaymentService {
   client: typeof postgresClient;
@@ -69,7 +70,7 @@ export default class PaymentService implements IPaymentService {
         id: "123",
       };
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     }

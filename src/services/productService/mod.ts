@@ -1,6 +1,7 @@
 import { Product } from "../../utils/types.ts";
 import IProductService from "../interfaces/productService.ts";
 import type postgresClient from "../dataClient/client.ts";
+import { DatabaseError } from "../../utils/errors.ts";
 
 export default class ProductService implements IProductService {
   client: typeof postgresClient;
@@ -46,8 +47,7 @@ export default class ProductService implements IProductService {
 
       return result.rows[0];
     } catch (error) {
-      console.log(error);
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -66,7 +66,7 @@ export default class ProductService implements IProductService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -90,7 +90,7 @@ export default class ProductService implements IProductService {
 
       return result.rows;
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -118,7 +118,7 @@ export default class ProductService implements IProductService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -135,7 +135,7 @@ export default class ProductService implements IProductService {
         args: [params.id],
       });
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {

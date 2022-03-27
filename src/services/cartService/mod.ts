@@ -1,6 +1,7 @@
 import type postgresClient from "../dataClient/client.ts";
 import ICartService from "../interfaces/cartService.ts";
 import { Cart } from "../../utils/types.ts";
+import { DatabaseError } from "../../utils/errors.ts";
 
 export default class CartService implements ICartService {
   client: typeof postgresClient;
@@ -31,7 +32,7 @@ export default class CartService implements ICartService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -50,7 +51,7 @@ export default class CartService implements ICartService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -67,7 +68,7 @@ export default class CartService implements ICartService {
         args: [params.id],
       });
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {

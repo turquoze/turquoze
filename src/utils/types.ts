@@ -87,3 +87,8 @@ export interface PaymentRequestResponse {
   id: string;
   data: unknown;
 }
+
+export interface ErrorResponse {
+  code: number;
+  message: string;
+}

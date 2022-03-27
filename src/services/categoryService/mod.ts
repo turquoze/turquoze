@@ -1,6 +1,7 @@
 import { Category } from "../../utils/types.ts";
 import ICategoryService from "../interfaces/categoryService.ts";
 import type postgresClient from "../dataClient/client.ts";
+import { DatabaseError } from "../../utils/errors.ts";
 
 export default class CategoryService implements ICategoryService {
   client: typeof postgresClient;
@@ -20,7 +21,7 @@ export default class CategoryService implements ICategoryService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -39,7 +40,7 @@ export default class CategoryService implements ICategoryService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -63,7 +64,7 @@ export default class CategoryService implements ICategoryService {
 
       return result.rows;
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -83,7 +84,7 @@ export default class CategoryService implements ICategoryService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -100,7 +101,7 @@ export default class CategoryService implements ICategoryService {
         args: [params.id],
       });
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
