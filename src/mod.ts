@@ -1,14 +1,14 @@
 import { Application } from "./deps.ts";
-
 import admin from "./routes/admin/admin.ts";
 import api from "./routes/api/api.ts";
-
-import ResponseTimer from "./middleware/responseTimer.ts";
 import { TurquozeState } from "./utils/types.ts";
+import ResponseTimer from "./middleware/responseTimer.ts";
 import ApplicationState from "./middleware/applicationState.ts";
+import Logger from "./middleware/logger.ts";
 
 const app = new Application<TurquozeState>();
 
+app.use(Logger);
 app.use(ResponseTimer);
 app.use(ApplicationState);
 

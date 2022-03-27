@@ -18,8 +18,10 @@ export default class OrdersRoutes {
         ctx.response.body = stringifyJSON({
           orders: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -32,8 +34,10 @@ export default class OrdersRoutes {
         ctx.response.body = stringifyJSON({
           orders: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
