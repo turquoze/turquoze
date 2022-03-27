@@ -1,6 +1,7 @@
 import type postgresClient from "../dataClient/client.ts";
 import IRegionService from "../interfaces/regionService.ts";
 import { Region } from "../../utils/types.ts";
+import { DatabaseError } from "../../utils/errors.ts";
 
 export default class RegionService implements IRegionService {
   client: typeof postgresClient;
@@ -20,7 +21,7 @@ export default class RegionService implements IRegionService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -39,7 +40,7 @@ export default class RegionService implements IRegionService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -64,7 +65,7 @@ export default class RegionService implements IRegionService {
 
       return result.rows[0];
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {
@@ -81,7 +82,7 @@ export default class RegionService implements IRegionService {
         args: [params.id],
       });
     } catch (error) {
-      throw new Error("DB error", {
+      throw new DatabaseError("DB error", {
         cause: error,
       });
     } finally {

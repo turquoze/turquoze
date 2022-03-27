@@ -1,5 +1,6 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import { RegionSchema } from "../../utils/validator.ts";
@@ -33,9 +34,12 @@ export default class RegionsRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        ctx.response.status = 400;
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify(error);
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
       }
     });
 
@@ -49,9 +53,12 @@ export default class RegionsRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        ctx.response.status = 400;
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify(error);
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
       }
     });
 
@@ -74,9 +81,12 @@ export default class RegionsRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        ctx.response.status = 400;
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify(error);
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
       }
     });
 
@@ -86,9 +96,12 @@ export default class RegionsRoutes {
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        ctx.response.status = 400;
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify(error);
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
       }
     });
   }
