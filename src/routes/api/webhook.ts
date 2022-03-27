@@ -16,6 +16,7 @@ export default class WebhookRoutes {
       ctx.response.body = stringifyJSON({
         ok: "test",
       });
+      ctx.response.headers.set("content-type", "application/json");
     });
   }
 

@@ -31,8 +31,10 @@ export default class RegionsRoutes {
         ctx.response.body = stringifyJSON({
           regions: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -45,8 +47,10 @@ export default class RegionsRoutes {
         ctx.response.body = stringifyJSON({
           regions: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -68,8 +72,10 @@ export default class RegionsRoutes {
         ctx.response.body = stringifyJSON({
           regions: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -78,8 +84,10 @@ export default class RegionsRoutes {
       try {
         await this.#Container.RegionService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });

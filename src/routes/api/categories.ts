@@ -19,8 +19,10 @@ export default class CategoriesRoutes {
         ctx.response.body = stringifyJSON({
           categories: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -41,8 +43,10 @@ export default class CategoriesRoutes {
         ctx.response.body = stringifyJSON({
           categories: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -55,8 +59,10 @@ export default class CategoriesRoutes {
         ctx.response.body = stringifyJSON({
           categories: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -77,8 +83,10 @@ export default class CategoriesRoutes {
         ctx.response.body = stringifyJSON({
           categories: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -91,8 +99,10 @@ export default class CategoriesRoutes {
         ctx.response.body = stringifyJSON({
           categories: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -107,6 +117,7 @@ export default class CategoriesRoutes {
         await CategoryLinkSchema.validate(posted);
 
         ctx.response.status = 201;
+        ctx.response.headers.set("content-type", "application/json");
 
         /*const data = await this.#CategoryLinkService.Link({
           data: posted,
@@ -116,6 +127,7 @@ export default class CategoriesRoutes {
         });*/
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -130,6 +142,7 @@ export default class CategoriesRoutes {
         await CategoryLinkSchema.validate(posted);
 
         ctx.response.status = 201;
+        ctx.response.headers.set("content-type", "application/json");
 
         /*await this.#CategoryLinkService.Delete({
           data: posted,
@@ -137,6 +150,7 @@ export default class CategoriesRoutes {
         ctx.response.status = 201;*/
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });

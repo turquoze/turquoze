@@ -28,8 +28,10 @@ export default class CartRoutes {
         ctx.response.body = stringifyJSON({
           carts: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -42,8 +44,10 @@ export default class CartRoutes {
         ctx.response.body = stringifyJSON({
           carts: data,
         });
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
@@ -54,8 +58,10 @@ export default class CartRoutes {
           id: ctx.params.id,
         });
         ctx.response.status = 201;
+        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         ctx.response.status = 400;
+        ctx.response.headers.set("content-type", "application/json");
         ctx.response.body = JSON.stringify(error);
       }
     });
