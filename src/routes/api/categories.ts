@@ -3,7 +3,11 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
-import { CategoryLinkSchema, CategorySchema } from "../../utils/validator.ts";
+import {
+  CategoryLinkSchema,
+  CategorySchema,
+  UuidSchema,
+} from "../../utils/validator.ts";
 
 export default class CategoriesRoutes {
   #categories: Router;
@@ -60,6 +64,10 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.CategoryService.Get({
           id: ctx.params.id,
         });
@@ -106,6 +114,10 @@ export default class CategoriesRoutes {
 
     this.#categories.delete("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.CategoryService.Delete({
           id: ctx.params.id,
         });

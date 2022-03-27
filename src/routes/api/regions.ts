@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
-import { RegionSchema } from "../../utils/validator.ts";
+import { RegionSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class RegionsRoutes {
   #regions: Router;
@@ -45,6 +45,10 @@ export default class RegionsRoutes {
 
     this.#regions.get("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.RegionService.Get({
           id: ctx.params.id,
         });
@@ -92,6 +96,10 @@ export default class RegionsRoutes {
 
     this.#regions.delete("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         await this.#Container.RegionService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");

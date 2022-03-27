@@ -3,6 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
+import { UuidSchema } from "../../utils/validator.ts";
 
 export default class CartRoutes {
   #carts: Router;
@@ -42,6 +43,10 @@ export default class CartRoutes {
 
     this.#carts.get("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.CartService.Get({
           id: ctx.params.id,
         });
@@ -61,6 +66,10 @@ export default class CartRoutes {
 
     this.#carts.delete("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         await this.#Container.CartService.Delete({
           id: ctx.params.id,
         });

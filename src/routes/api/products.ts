@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
-import { ProductSchema } from "../../utils/validator.ts";
+import { ProductSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class ProductsRoutes {
   #products: Router;
@@ -97,6 +97,10 @@ export default class ProductsRoutes {
 
     this.#products.get("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.ProductService.Get({
           id: ctx.params.id,
         });
@@ -116,6 +120,10 @@ export default class ProductsRoutes {
 
     this.#products.delete("/:id", async (ctx) => {
       try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
         await this.#Container.ProductService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
