@@ -92,3 +92,12 @@ export interface ErrorResponse {
   code: number;
   message: string;
 }
+
+export interface Discount {
+  id: string;
+  type: "FIXED" | "PERCENT";
+  value: number;
+  valid_to: number | null;
+  valid_from: number | null;
+  region: string;
+}
