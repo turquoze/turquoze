@@ -6,6 +6,7 @@ import DefaultCategoryLinkService from "./categoryLinkService/mod.ts";
 import DefaultRegionService from "./regionService/mod.ts";
 import DefaultPaymentService from "./paymentService/mod.ts";
 import DefaultCacheService from "./cacheService/mod.ts";
+import DefaultDiscountService from "./discountService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -15,6 +16,7 @@ import ICategoryLinkService from "./interfaces/categoryLinkService.ts";
 import IRegionService from "./interfaces/regionService.ts";
 import IPaymentService from "./interfaces/paymentService.ts";
 import ICacheService from "./interfaces/cacheService.ts";
+import IDiscountService from "./interfaces/discountService.ts";
 
 import client from "./dataClient/client.ts";
 
@@ -33,4 +35,5 @@ export default class Container {
     this.OrderService,
   );
   CacheService: ICacheService = new DefaultCacheService();
+  DiscountService: IDiscountService = new DefaultDiscountService(client);
 }
