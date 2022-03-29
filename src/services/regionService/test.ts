@@ -28,6 +28,24 @@ Deno.test("RegionService", async (t) => {
   });
 
   await t.step({
+    name: "Create - Fail",
+    fn: async () => {
+      try {
+        await region.Create({
+          // @ts-expect-error want to test
+          data: {
+            id: "",
+          },
+        });
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Get",
     fn: async () => {
       const data = await region.Get({
@@ -39,6 +57,20 @@ Deno.test("RegionService", async (t) => {
         name: "TEST",
         regions: ["SE", "NO", "DK", "FI"],
       });
+    },
+  });
+
+  await t.step({
+    name: "Get - Fail",
+    fn: async () => {
+      try {
+        await region.Get({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
     },
   });
 
@@ -64,6 +96,26 @@ Deno.test("RegionService", async (t) => {
   });
 
   await t.step({
+    name: "Update - Fail",
+    fn: async () => {
+      try {
+        await region.Update({
+          data: {
+            id: "00000000-0000-0000-0000-000000000000",
+            currency: "EUR",
+            name: "TEST-Update",
+            regions: ["SE"],
+          },
+        });
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Delete",
     fn: async () => {
       try {
@@ -73,6 +125,20 @@ Deno.test("RegionService", async (t) => {
         assert(true);
       } catch {
         assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Delete - Fail",
+    fn: async () => {
+      try {
+        await region.Delete({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
       }
     },
   });

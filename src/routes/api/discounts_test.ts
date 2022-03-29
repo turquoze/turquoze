@@ -22,6 +22,12 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/discounts`, {
         method: "POST",
+        body: JSON.stringify({
+          type: "FIXED",
+          valid_from: null,
+          valid_to: null,
+          value: 20,
+        }),
       }),
     );
 

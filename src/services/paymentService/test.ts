@@ -39,6 +39,24 @@ Deno.test("PaymentService", async (t) => {
   });
 
   await t.step({
+    name: "Create - Fail",
+    fn: async () => {
+      try {
+        await payment.Create({
+          // @ts-expect-error want to test
+          data: {
+            id: "",
+          },
+        });
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Validate",
     ignore: true,
     fn: async () => {
@@ -53,6 +71,23 @@ Deno.test("PaymentService", async (t) => {
         assert(true);
       } catch {
         assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Validate - Fail",
+    fn: async () => {
+      try {
+        await payment.Validate({
+          data: {
+            orderId: "00000000-0000-0000-0000-000000000000",
+            status: "FAILED",
+          },
+        });
+        assert(false);
+      } catch {
+        assert(true);
       }
     },
   });

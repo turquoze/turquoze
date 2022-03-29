@@ -31,6 +31,24 @@ Deno.test("CartService", async (t) => {
   });
 
   await t.step({
+    name: "Create - Fail",
+    fn: async () => {
+      try {
+        await cart.CreateOrUpdate({
+          // @ts-expect-error want to test
+          data: {
+            id: "",
+          },
+        });
+
+        assert(true);
+      } catch {
+        assert(false);
+      }
+    },
+  });
+
+  await t.step({
     name: "Get",
     fn: async () => {
       const data = await cart.Get({
@@ -50,6 +68,43 @@ Deno.test("CartService", async (t) => {
   });
 
   await t.step({
+    name: "Update",
+    fn: async () => {
+      try {
+        await cart.CreateOrUpdate({
+          data: {
+            id: ID,
+            products: {
+              cart: [{
+                pid: "111",
+                quantity: 1,
+              }],
+            },
+          },
+        });
+
+        assert(true);
+      } catch {
+        assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Get - Fail",
+    fn: async () => {
+      try {
+        await cart.Get({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Delete",
     fn: async () => {
       try {
@@ -59,6 +114,20 @@ Deno.test("CartService", async (t) => {
         assert(true);
       } catch {
         assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Delete - Fail",
+    fn: async () => {
+      try {
+        await cart.Delete({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
       }
     },
   });

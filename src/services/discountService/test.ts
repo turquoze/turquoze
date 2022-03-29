@@ -30,6 +30,24 @@ Deno.test("DiscountService", async (t) => {
   });
 
   await t.step({
+    name: "Create - Fail",
+    fn: async () => {
+      try {
+        await discount.Create({
+          // @ts-expect-error want to test
+          data: {
+            id: "",
+          },
+        });
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Get",
     fn: async () => {
       const data = await discount.Get({
@@ -47,10 +65,38 @@ Deno.test("DiscountService", async (t) => {
   });
 
   await t.step({
+    name: "Get - Fail",
+    fn: async () => {
+      try {
+        await discount.Get({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "GetMany",
     fn: async () => {
       const data = await discount.GetMany({});
       assert(data.length > 0);
+    },
+  });
+
+  await t.step({
+    name: "GetMany - Fail",
+    fn: async () => {
+      try {
+        await discount.GetMany({
+          offset: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
     },
   });
 
@@ -64,6 +110,20 @@ Deno.test("DiscountService", async (t) => {
         assert(true);
       } catch {
         assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Delete - Fail",
+    fn: async () => {
+      try {
+        await discount.Delete({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
       }
     },
   });
