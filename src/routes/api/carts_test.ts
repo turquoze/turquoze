@@ -17,6 +17,14 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/carts`, {
         method: "POST",
+        body: JSON.stringify({
+          products: {
+            cart: [{
+              pid: "234",
+              quantity: 3,
+            }],
+          },
+        }),
       }),
     );
 

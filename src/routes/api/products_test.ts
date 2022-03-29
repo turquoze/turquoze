@@ -22,6 +22,13 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/products`, {
         method: "POST",
+        body: JSON.stringify({
+          active: true,
+          images: [],
+          price: 203300,
+          title: "test product",
+          description: "test product",
+        }),
       }),
     );
 
@@ -94,6 +101,14 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
         method: "PUT",
+        body: JSON.stringify({
+          id: ID,
+          active: true,
+          images: ["https://test.com"],
+          price: 203300,
+          title: "Test product update",
+          description: "test description update",
+        }),
       }),
     );
 

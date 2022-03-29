@@ -45,6 +45,24 @@ Deno.test("OrderService", async (t) => {
   });
 
   await t.step({
+    name: "Create - Fail",
+    fn: async () => {
+      try {
+        await order.Create({
+          // @ts-expect-error want to test
+          data: {
+            id: "",
+          },
+        });
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Get",
     ignore: true,
     fn: async () => {
@@ -77,11 +95,39 @@ Deno.test("OrderService", async (t) => {
   });
 
   await t.step({
+    name: "Get - Fail",
+    fn: async () => {
+      try {
+        await order.Get({
+          id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "GetMany",
     ignore: true,
     fn: async () => {
       const data = await order.GetMany({});
       assert(data.length > 0);
+    },
+  });
+
+  await t.step({
+    name: "GetMany - Fail",
+    fn: async () => {
+      try {
+        await order.GetMany({
+          offset: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
     },
   });
 

@@ -43,6 +43,10 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories`, {
         method: "POST",
+        body: JSON.stringify({
+          id: "156e4529-8131-46bf-b0f7-03863a608214",
+          name: "test",
+        }),
       }),
     );
 
@@ -97,6 +101,10 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories/${ID}`, {
         method: "PUT",
+        body: JSON.stringify({
+          id: ID,
+          name: "test update",
+        }),
       }),
     );
 

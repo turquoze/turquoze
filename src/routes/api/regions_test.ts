@@ -17,6 +17,11 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions`, {
         method: "POST",
+        body: JSON.stringify({
+          currency: "EUR",
+          name: "TEST-REGION",
+          regions: ["EU"],
+        }),
       }),
     );
 
@@ -57,6 +62,12 @@ Deno.test({
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions/${ID}`, {
         method: "PUT",
+        body: JSON.stringify({
+          id: ID,
+          name: "TEST-UPDATE",
+          currency: "USD",
+          regions: ["EU", "GB"],
+        }),
       }),
     );
 

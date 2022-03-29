@@ -24,8 +24,7 @@ export default class CartService implements ICartService {
         });
       } else {
         result = await this.client.queryObject<Cart>({
-          text:
-            "UPDATE carts WHERE SET products = $1 WHERE id = $2 RETURNING id",
+          text: "UPDATE carts SET products = $1 WHERE id = $2 RETURNING id",
           args: [params.data.products, params.data.id],
         });
       }
