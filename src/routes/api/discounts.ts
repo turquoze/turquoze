@@ -1,9 +1,10 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
-import { ErrorHandler } from "../../utils/errors.ts";
+import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { Discount } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
-import { UuidSchema } from "../../utils/validator.ts";
+import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class DiscountsRoutes {
   #discounts: Router;
@@ -16,21 +17,33 @@ export default class DiscountsRoutes {
 
     this.#discounts.post("/", async (ctx) => {
       try {
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
+
+        const body = ctx.request.body();
+        let discount: Discount;
+        if (body.type === "json") {
+          discount = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        discount.region = ctx.state.region;
+
+        await DiscountSchema.validate(discount);
+        const posted: Discount = await DiscountSchema.cast(discount);
+
         const data = await this.#Container.DiscountService.Create({
-          data: {
-            id: "",
-            type: "FIXED",
-            valid_from: null,
-            valid_to: null,
-            value: 20,
-            region: ctx.state.region,
-          },
+          data: posted,
         });
+
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
+        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");

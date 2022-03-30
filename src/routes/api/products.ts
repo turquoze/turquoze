@@ -1,6 +1,7 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
-import { ErrorHandler } from "../../utils/errors.ts";
+import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { Product } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import { ProductSchema, UuidSchema } from "../../utils/validator.ts";
@@ -33,19 +34,22 @@ export default class ProductsRoutes {
 
     this.#products.post("/", async (ctx) => {
       try {
-        const posted = {
-          id: crypto.randomUUID(),
-          active: true,
-          images: [],
-          price: 203300,
-          title: "test product",
-          description: "test product",
-          region: ctx.state.region,
-        };
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
 
-        await ProductSchema.validate(posted);
+        const body = ctx.request.body();
+        let product: Product;
+        if (body.type === "json") {
+          product = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
 
-        posted.id = "";
+        product.region = ctx.state.region;
+
+        await ProductSchema.validate(product);
+        const posted: Product = await ProductSchema.cast(product);
 
         const data = await this.#Container.ProductService.Create({
           data: posted,
@@ -66,17 +70,23 @@ export default class ProductsRoutes {
 
     this.#products.put("/:id", async (ctx) => {
       try {
-        const posted = {
-          id: ctx.params.id,
-          active: true,
-          images: ["https://test.com"],
-          price: 203300,
-          title: "Test product update",
-          description: "test description update",
-          region: ctx.state.region,
-        };
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
 
-        await ProductSchema.validate(posted);
+        const body = ctx.request.body();
+        let product: Product;
+        if (body.type === "json") {
+          product = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        product.id = ctx.params.id;
+        product.region = ctx.state.region;
+
+        await ProductSchema.validate(product);
+        const posted: Product = await ProductSchema.cast(product);
 
         const data = await this.#Container.ProductService.Update({
           data: posted,

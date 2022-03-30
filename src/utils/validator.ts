@@ -31,3 +31,27 @@ export const CategoryLinkSchema = yup.object().shape({
 export const UuidSchema = yup.object().shape({
   id: yup.string().uuid().required(),
 });
+
+export const DiscountSchema = yup.object().shape({
+  id: yup.string().uuid(),
+  type: yup.string().matches(/(FIXED|PERCENT)/).required(),
+  value: yup.number().required().positive().integer(),
+  valid_to: yup.date().nullable(true),
+  valid_from: yup.date().nullable(true),
+  region: yup.string().uuid().nullable(true),
+});
+
+export const CartSchema = yup.object().shape({
+  id: yup.string().uuid().nullable(true),
+  created_at: yup.date().nullable(true),
+  products: yup.object().shape({
+    cart: yup.array()
+      .of(
+        yup.object().shape({
+          pid: yup.string(),
+          quantity: yup.number().required().positive().integer(),
+        }),
+      )
+      .required(),
+  }),
+});

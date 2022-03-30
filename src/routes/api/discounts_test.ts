@@ -19,15 +19,21 @@ Deno.test({
 
     app.use(new DiscountsRoutes(container).routes());
 
+    const data = JSON.stringify({
+      type: "FIXED",
+      valid_from: null,
+      valid_to: null,
+      value: 20,
+    });
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/discounts`, {
-        method: "POST",
-        body: JSON.stringify({
-          type: "FIXED",
-          valid_from: null,
-          valid_to: null,
-          value: 20,
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
         }),
+        method: "POST",
+        body: data,
       }),
     );
 

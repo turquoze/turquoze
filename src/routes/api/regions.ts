@@ -1,6 +1,7 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
-import { ErrorHandler } from "../../utils/errors.ts";
+import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { Region } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import { RegionSchema, UuidSchema } from "../../utils/validator.ts";
@@ -16,14 +17,20 @@ export default class RegionsRoutes {
 
     this.#regions.post("/", async (ctx) => {
       try {
-        const posted = {
-          id: "156e4529-8131-46bf-b0f7-03863a608214",
-          currency: "EUR",
-          name: "TEST-REGION",
-          regions: ["EU"],
-        };
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
 
-        await RegionSchema.validate(posted);
+        const body = ctx.request.body();
+        let region: Region;
+        if (body.type === "json") {
+          region = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await RegionSchema.validate(region);
+        const posted: Region = await RegionSchema.cast(region);
 
         const data = await this.#Container.RegionService.Create({
           data: posted,
@@ -68,14 +75,22 @@ export default class RegionsRoutes {
 
     this.#regions.put("/:id", async (ctx) => {
       try {
-        const posted = {
-          id: ctx.params.id,
-          name: "TEST-UPDATE",
-          currency: "USD",
-          regions: ["EU", "GB"],
-        };
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
 
-        await RegionSchema.validate(posted);
+        const body = ctx.request.body();
+        let region: Region;
+        if (body.type === "json") {
+          region = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        region.id = ctx.params.id;
+
+        await RegionSchema.validate(region);
+        const posted: Region = await RegionSchema.cast(region);
 
         const data = await this.#Container.RegionService.Update({
           data: posted,
