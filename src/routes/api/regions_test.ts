@@ -14,14 +14,20 @@ Deno.test({
 
     app.use(new RegionsRoutes(container).routes());
 
+    const data = JSON.stringify({
+      currency: "EUR",
+      name: "TEST-REGION",
+      regions: ["EU"],
+    });
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions`, {
-        method: "POST",
-        body: JSON.stringify({
-          currency: "EUR",
-          name: "TEST-REGION",
-          regions: ["EU"],
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
         }),
+        method: "POST",
+        body: data,
       }),
     );
 
@@ -59,15 +65,21 @@ Deno.test({
 
     app.use(new RegionsRoutes(container).routes());
 
+    const data = JSON.stringify({
+      id: ID,
+      name: "TEST-UPDATE",
+      currency: "USD",
+      regions: ["EU", "GB"],
+    });
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/regions/${ID}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          id: ID,
-          name: "TEST-UPDATE",
-          currency: "USD",
-          regions: ["EU", "GB"],
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
         }),
+        method: "PUT",
+        body: data,
       }),
     );
 

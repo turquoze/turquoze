@@ -1,6 +1,7 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
-import { ErrorHandler } from "../../utils/errors.ts";
+import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { Category } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import {
@@ -37,13 +38,22 @@ export default class CategoriesRoutes {
 
     this.#categories.post("/", async (ctx) => {
       try {
-        const posted = {
-          id: "156e4529-8131-46bf-b0f7-03863a608214",
-          name: "test",
-          region: ctx.state.region,
-        };
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
 
-        await CategorySchema.validate(posted);
+        const body = ctx.request.body();
+        let category: Category;
+        if (body.type === "json") {
+          category = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        category.region = ctx.state.region;
+
+        await CategorySchema.validate(category);
+        const posted: Category = await CategorySchema.cast(category);
 
         const data = await this.#Container.CategoryService.Create({
           data: posted,
@@ -87,13 +97,23 @@ export default class CategoriesRoutes {
 
     this.#categories.put("/:id", async (ctx) => {
       try {
-        const posted = {
-          id: ctx.params.id,
-          name: "test update",
-          region: ctx.state.region,
-        };
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
 
-        await CategorySchema.validate(posted);
+        const body = ctx.request.body();
+        let category: Category;
+        if (body.type === "json") {
+          category = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        category.id = ctx.params.id;
+        category.region = ctx.state.region;
+
+        await CategorySchema.validate(category);
+        const posted: Category = await CategorySchema.cast(category);
 
         const data = await this.#Container.CategoryService.Update({
           data: posted,

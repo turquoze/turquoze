@@ -14,17 +14,23 @@ Deno.test({
 
     app.use(new CartsRoutes(container).routes());
 
+    const data = JSON.stringify({
+      products: {
+        cart: [{
+          pid: "234",
+          quantity: 3,
+        }],
+      },
+    });
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/carts`, {
-        method: "POST",
-        body: JSON.stringify({
-          products: {
-            cart: [{
-              pid: "234",
-              quantity: 3,
-            }],
-          },
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
         }),
+        method: "POST",
+        body: data,
       }),
     );
 

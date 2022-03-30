@@ -1,9 +1,10 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
-import { ErrorHandler } from "../../utils/errors.ts";
+import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { Cart } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
-import { UuidSchema } from "../../utils/validator.ts";
+import { CartSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class CartRoutes {
   #carts: Router;
@@ -16,17 +17,25 @@ export default class CartRoutes {
 
     this.#carts.post("/", async (ctx) => {
       try {
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
+
+        const body = ctx.request.body();
+        let cart: Cart;
+        if (body.type === "json") {
+          cart = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await CartSchema.validate(cart);
+        const posted: Cart = await CartSchema.cast(cart);
+
         const data = await this.#Container.CartService.CreateOrUpdate({
-          data: {
-            id: "",
-            products: {
-              cart: [{
-                pid: "234",
-                quantity: 3,
-              }],
-            },
-          },
+          data: posted,
         });
+
         ctx.response.body = stringifyJSON({
           carts: data,
         });
