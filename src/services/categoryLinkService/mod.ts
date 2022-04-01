@@ -14,7 +14,7 @@ export default class CategoryLinkService implements ICategoryLinkService {
       await this.client.connect();
 
       const result = await this.client.queryObject<CategoryLink>({
-        text: "INSERT INTO categoriesLink (category, product) VALUES ($1, $2)",
+        text: "INSERT INTO categorieslink (category, product) VALUES ($1, $2)",
         args: [params.data.category, params.data.product],
       });
 
@@ -33,10 +33,11 @@ export default class CategoryLinkService implements ICategoryLinkService {
       await this.client.connect();
 
       await this.client.queryObject<CategoryLink>({
-        text: "DELETE FROM categoriesLink WHERE category = $1 AND product = $2",
+        text: "DELETE FROM categorieslink WHERE (category = $1 AND product = $2)",
         args: [params.data.category, params.data.product],
       });
     } catch (error) {
+      console.log(error)
       throw new DatabaseError("DB error", {
         cause: error,
       });
