@@ -12,6 +12,7 @@ export default class CacheService implements ICacheService {
       const data = cache.get(id);
       if (data?.expire != undefined) {
         if (data.expire < Date.now()) {
+          cache.delete(id);
           return {};
         }
         return data.data;

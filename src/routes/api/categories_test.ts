@@ -1,7 +1,7 @@
 import { Application, assert, assertEquals } from "../../deps.ts";
 
 import CategoriesRoutes from "./categories.ts";
-import { Category, CategoryLink } from "../../utils/types.ts";
+import { Category } from "../../utils/types.ts";
 import Container from "../../services/mod.ts";
 
 let ID = "";
@@ -165,23 +165,28 @@ Deno.test({
       new CategoriesRoutes(container).routes(),
     );
 
+    const data = JSON.stringify({
+      category: "1c38d54e-4dad-46df-bf12-3a3743af5104",
+      product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+    });
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories/link`, {
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
+        }),
         method: "POST",
+        body: data,
       }),
     );
 
     assert(response?.ok);
-
-    /*const { link }: { link: CategoryLink } = await response?.json();
-    assertEquals(link.category, link.category); // TODO: add body
-    assertEquals(link.product, link.product); // TODO: add body*/
   },
 });
 
 Deno.test({
   name: "Categories Link - Delete | ok",
-  ignore: true, // TODO: make work
   async fn() {
     const app = new Application();
 
@@ -194,9 +199,19 @@ Deno.test({
       new CategoriesRoutes(container).routes(),
     );
 
+    const data = JSON.stringify({
+      category: "1c38d54e-4dad-46df-bf12-3a3743af5104",
+      product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+    });
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories/link`, {
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
+        }),
         method: "DELETE",
+        body: data,
       }),
     );
 
