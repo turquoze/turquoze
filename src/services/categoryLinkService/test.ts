@@ -24,6 +24,21 @@ Deno.test("CategoryLinkService", async (t) => {
   });
 
   await t.step({
+    name: "Get Products",
+    fn: async () => {
+      try {
+        const data = await categoryLink.GetProducts({
+          id: "1c38d54e-4dad-46df-bf12-3a3743af5104",
+        });
+
+        assert(data.length > 0);
+      } catch {
+        assert(false);
+      }
+    },
+  });
+
+  await t.step({
     name: "Delete",
     fn: async () => {
       try {

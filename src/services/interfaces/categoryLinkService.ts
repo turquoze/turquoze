@@ -1,4 +1,4 @@
-import { CategoryLink } from "../../utils/types.ts";
+import { CategoryLink, Product } from "../../utils/types.ts";
 
 export default interface ICategoryLinkService {
   Link(params: {
@@ -8,4 +8,10 @@ export default interface ICategoryLinkService {
   Delete(params: {
     data: CategoryLink;
   }): Promise<void>;
+
+  GetProducts(params: {
+    id: string;
+    offset?: string;
+    limit?: number;
+  }): Promise<Array<Product>>;
 }

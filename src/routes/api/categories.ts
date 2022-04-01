@@ -72,6 +72,29 @@ export default class CategoriesRoutes {
       }
     });
 
+    this.#categories.get("/:id/products", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        const data = await this.#Container.CategoryLinkService.GetProducts({
+          id: ctx.params.id,
+        });
+        ctx.response.body = stringifyJSON({
+          products: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#categories.get("/:id", async (ctx) => {
       try {
         await UuidSchema.validate({
@@ -182,7 +205,9 @@ export default class CategoriesRoutes {
         }
 
         await CategoryLinkSchema.validate(categoryLink);
-        const posted: CategoryLink = await CategoryLinkSchema.cast(categoryLink);
+        const posted: CategoryLink = await CategoryLinkSchema.cast(
+          categoryLink,
+        );
 
         await this.#Container.CategoryLinkService.Delete({
           data: posted,
