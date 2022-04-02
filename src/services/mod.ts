@@ -7,6 +7,7 @@ import DefaultRegionService from "./regionService/mod.ts";
 import DefaultPaymentService from "./paymentService/mod.ts";
 import DefaultCacheService from "./cacheService/mod.ts";
 import DefaultDiscountService from "./discountService/mod.ts";
+import DefaultSearchService from "./searchService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -17,6 +18,7 @@ import IRegionService from "./interfaces/regionService.ts";
 import IPaymentService from "./interfaces/paymentService.ts";
 import ICacheService from "./interfaces/cacheService.ts";
 import IDiscountService from "./interfaces/discountService.ts";
+import ISearchService from "./interfaces/searchService.ts";
 
 import client from "./dataClient/client.ts";
 
@@ -36,4 +38,5 @@ export default class Container {
   );
   CacheService: ICacheService = new DefaultCacheService();
   DiscountService: IDiscountService = new DefaultDiscountService(client);
+  SearchService: ISearchService = new DefaultSearchService(client);
 }
