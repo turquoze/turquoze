@@ -1,7 +1,7 @@
 import type postgresClient from "../dataClient/client.ts";
 import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Product } from "../../utils/types.ts";
+import { Product, Search } from "../../utils/types.ts";
 
 export default class SearchService implements ISearchService {
   client: typeof postgresClient;
@@ -11,21 +11,24 @@ export default class SearchService implements ISearchService {
 
   async ProductSearch(
     params: {
-      query: string;
-      limit?: number | undefined;
-      after?: string | undefined;
+      data: Search;
     },
   ): Promise<Product[]> {
     try {
       await this.client.connect();
 
-      if (params.limit == null) {
-        params.limit = 10;
+      if (params.data.limit == null) {
+        params.data.limit = 10;
       }
       const result = await this.client.queryObject<Product>({
         text:
-          "SELECT * FROM products WHERE to_tsvector(description || ' ' || title) @@ to_tsquery($1) LIMIT $2 OFFSET $3",
-        args: [params.query, params.limit, params.after],
+          "SELECT * FROM products WHERE to_tsvector(description || ' ' || title) @@ to_tsquery($1) AND region = $2 LIMIT $3 OFFSET $4",
+        args: [
+          params.data.query,
+          params.data.region,
+          params.data.limit,
+          params.data.after,
+        ],
       });
 
       return result.rows;

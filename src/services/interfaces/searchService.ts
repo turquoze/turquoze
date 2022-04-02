@@ -1,9 +1,7 @@
-import { Product } from "../../utils/types.ts";
+import { Product, Search } from "../../utils/types.ts";
 
 export default interface ISearchService {
   ProductSearch(params: {
-    query: string;
-    limit?: number;
-    after?: string;
+    data: Search;
   }): Promise<Array<Product>>;
 }

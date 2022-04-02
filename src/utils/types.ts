@@ -101,3 +101,10 @@ export interface Discount {
   valid_from: number | null;
   region: string;
 }
+
+export interface Search {
+  query: string;
+  limit?: number;
+  after?: string;
+  region: string;
+}

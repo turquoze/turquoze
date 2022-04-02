@@ -55,3 +55,10 @@ export const CartSchema = yup.object().shape({
       .required(),
   }),
 });
+
+export const SearchSchema = yup.object().shape({
+  query: yup.string().required(),
+  limit: yup.number().positive().integer().nullable(true),
+  after: yup.string().uuid().nullable(true),
+  region: yup.string().uuid().required(),
+});

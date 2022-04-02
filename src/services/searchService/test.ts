@@ -10,7 +10,10 @@ Deno.test("SearchService", async (t) => {
     fn: async () => {
       try {
         const data = await search.ProductSearch({
-          query: "test",
+          data: {
+            query: "test",
+            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+          },
         });
 
         assert(data.length > 0);
@@ -25,7 +28,10 @@ Deno.test("SearchService", async (t) => {
     fn: async () => {
       try {
         const data = await search.ProductSearch({
-          query: "NOTHING",
+          data: {
+            query: "NOTHING",
+            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+          },
         });
 
         assert(data.length <= 0);
