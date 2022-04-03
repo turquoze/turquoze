@@ -62,3 +62,12 @@ export const SearchSchema = yup.object().shape({
   after: yup.string().uuid().nullable(true),
   region: yup.string().uuid().required(),
 });
+
+export const WarehouseSchema = yup.object().shape({
+  id: yup.string().uuid().nullable(true),
+  created_at: yup.date().nullable(true),
+  region: yup.string().uuid().required(),
+  name: yup.string().min(3).required(),
+  country: yup.string().min(2).required(),
+  address: yup.string().min(5).required(),
+});

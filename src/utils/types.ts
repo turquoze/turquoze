@@ -108,3 +108,12 @@ export interface Search {
   after?: string;
   region: string;
 }
+
+export interface Warehouse {
+  id: string;
+  region: string;
+  created_at?: number;
+  country: string;
+  address: string;
+  name: string;
+}
