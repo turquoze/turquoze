@@ -6,6 +6,7 @@ import categories from "./categories.ts";
 import regions from "./regions.ts";
 import webhook from "./webhook.ts";
 import discounts from "./discounts.ts";
+import warehouses from "./warehouses.ts";
 
 import Container from "../../services/mod.ts";
 
@@ -22,6 +23,7 @@ api.use(new categories(container).routes());
 api.use(new regions(container).routes());
 api.use(new webhook(container).routes());
 api.use(new discounts(container).routes());
+api.use(new warehouses(container).routes());
 api.allowedMethods();
 
 export default api;
