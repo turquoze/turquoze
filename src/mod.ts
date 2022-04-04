@@ -18,4 +18,9 @@ app.use(api.routes());
 app.addEventListener("listen", ({ port }) => {
   console.log(`Listening on: http://localhost:${port}`);
 });
+
+app.addEventListener("error", (error) => {
+  console.log(`error: ${error}`);
+});
+
 await app.listen({ port: 8080 });

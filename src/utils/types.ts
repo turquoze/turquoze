@@ -117,3 +117,11 @@ export interface Warehouse {
   address: string;
   name: string;
 }
+
+export interface Inventory {
+  id: string;
+  created_at?: number;
+  warehouse: string;
+  product: string;
+  quantity: number;
+}
