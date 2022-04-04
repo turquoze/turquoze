@@ -71,3 +71,11 @@ export const WarehouseSchema = yup.object().shape({
   country: yup.string().min(2).required(),
   address: yup.string().min(5).required(),
 });
+
+export const InventorySchema = yup.object().shape({
+  id: yup.string().uuid().nullable(true),
+  created_at: yup.date().nullable(true),
+  warehouse: yup.string().uuid().required(),
+  product: yup.string().uuid().required(),
+  quantity: yup.number().positive().integer().required(),
+});
