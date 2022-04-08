@@ -50,6 +50,38 @@ export default class CartRoutes {
       }
     });
 
+    this.#carts.post("/:id/session", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        const data = await this.#Container.PaymentService.Create({
+          data: {
+            cartId: ctx.params.id,
+            id: "",
+            // @ts-expect-error unknown
+            info: {
+              data: {
+                region: ctx.state.region
+              }
+            }
+          }
+        })
+        ctx.response.body = stringifyJSON({
+          session: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    })
+
     this.#carts.get("/:id", async (ctx) => {
       try {
         await UuidSchema.validate({
