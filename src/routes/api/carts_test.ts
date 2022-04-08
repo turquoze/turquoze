@@ -42,6 +42,31 @@ Deno.test({
 });
 
 Deno.test({
+  name: "Carts - Session | ok",
+  async fn() {
+    const app = new Application();
+
+    app.use(async (ctx, next) => {
+      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      await next();
+    });
+
+    app.use(new CartsRoutes(container).routes());
+
+    const response = await app.handle(
+      new Request(`http://127.0.0.1/carts/${ID}/session`, {
+        headers: new Headers({
+          "Content-Type": "application/json",
+        }),
+        method: "POST",
+      }),
+    );
+
+    assert(response?.ok);
+  },
+});
+
+Deno.test({
   name: "Carts - Get | ok",
   async fn() {
     const app = new Application();

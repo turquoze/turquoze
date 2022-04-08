@@ -47,27 +47,28 @@ export default class PaymentService implements IPaymentService {
         price += 1050 * product.quantity;
       });
 
-      this.#OrderService.Create({
+      const order = await this.#OrderService.Create({
         data: {
           id: "",
-          payment: {
-            status: "WAITING",
-          },
-          price: {
-            total: price,
-            subtotal: price,
-          },
+          // @ts-expect-error payment
+          payment: {},
+          // @ts-expect-error price
+          price: {},
           created_at: 0,
           region: params.data.info?.data.region ?? "",
-          products: products,
+          // @ts-expect-error products
+          products: {},
         },
       });
 
       return {
         data: {
           price: price,
+          order: {
+            ...order
+          }
         },
-        id: "123",
+        id: order.id,
       };
     } catch (error) {
       throw new DatabaseError("DB error", {
