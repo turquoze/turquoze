@@ -39,6 +39,7 @@ export default class Container {
     client,
     this.CartService,
     this.OrderService,
+    this.ProductService,
   );
   CacheService: ICacheService = new DefaultCacheService();
   DiscountService: IDiscountService = new DefaultDiscountService(client);

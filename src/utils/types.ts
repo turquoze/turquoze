@@ -125,3 +125,9 @@ export interface Inventory {
   product: string;
   quantity: number;
 }
+
+export interface PriceCalculation {
+  vat: number;
+  price: number;
+  subtotal: number;
+}

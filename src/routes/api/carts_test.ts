@@ -17,7 +17,7 @@ Deno.test({
     const data = JSON.stringify({
       products: {
         cart: [{
-          pid: "234",
+          pid: "f1d7548e-8d6d-4287-b446-29627e8a3442",
           quantity: 3,
         }],
       },

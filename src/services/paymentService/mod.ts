@@ -1,27 +1,32 @@
 import type postgresClient from "../dataClient/client.ts";
 import IPaymentService from "../interfaces/paymentService.ts";
 import {
-  OrderProduct,
   PaymentRequest,
   PaymentRequestResponse,
   PaymentValidation,
+  PriceCalculation,
 } from "../../utils/types.ts";
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import { add, currency, Din, dinero } from "../../deps.ts";
+import IProductService from "../interfaces/productService.ts";
 
 export default class PaymentService implements IPaymentService {
   client: typeof postgresClient;
   #CartService: ICartService;
   #OrderService: IOrderService;
+  #ProductService: IProductService;
   constructor(
     client: typeof postgresClient,
     cartService: ICartService,
     orderService: IOrderService,
+    productService: IProductService,
   ) {
     this.client = client;
     this.#CartService = cartService;
     this.#OrderService = orderService;
+    this.#ProductService = productService;
   }
 
   async Create(
@@ -32,20 +37,7 @@ export default class PaymentService implements IPaymentService {
         id: params.data.cartId,
       });
 
-      let price = 0;
-      const products: Array<OrderProduct> = [];
-
-      cart.products.cart.forEach((product) => {
-        products.push({
-          price: {
-            currency: "EUR",
-            value: 1050,
-          },
-          product: product.pid,
-          quantity: product.quantity,
-        });
-        price += 1050 * product.quantity;
-      });
+      const price = await this.Price({ cartId: cart.id });
 
       const order = await this.#OrderService.Create({
         data: {
@@ -65,10 +57,46 @@ export default class PaymentService implements IPaymentService {
         data: {
           price: price,
           order: {
-            ...order
-          }
+            ...order,
+          },
         },
         id: order.id,
+      };
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async Price(params: { cartId: string }): Promise<PriceCalculation> {
+    try {
+      const cart = await this.#CartService.Get({
+        id: params.cartId,
+      });
+
+      const dollars = (amount: number) =>
+        dinero({ amount, currency: currency.USD });
+      const addMany = (addends: Array<Din.Dinero<number>>) =>
+        addends.reduce(add);
+      const arr: Array<Din.Dinero<number>> = [];
+
+      await Promise.all(cart.products.cart.map(async (product) => {
+        const dbProduct = await this.#ProductService.Get({ id: product.pid });
+        // @ts-expect-error fake int
+        const productPrice = parseInt(dbProduct.price);
+
+        const dineroObj = dollars(productPrice);
+        arr.push(dineroObj);
+      }));
+
+      const price = addMany(arr);
+      const total = price.toJSON();
+
+      return {
+        price: total.amount,
+        subtotal: 0,
+        vat: 0,
       };
     } catch (error) {
       throw new DatabaseError("DB error", {

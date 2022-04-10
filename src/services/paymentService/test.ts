@@ -3,11 +3,13 @@ import paymentService from "./mod.ts";
 import client from "../dataClient/client.ts";
 import DefaultOrderService from "../orderService/mod.ts";
 import DefaultCartService from "../cartService/mod.ts";
+import DefaultProductService from "../productService/mod.ts";
 
 const payment = new paymentService(
   client,
   new DefaultCartService(client),
   new DefaultOrderService(client),
+  new DefaultProductService(client),
 );
 let ID = "";
 

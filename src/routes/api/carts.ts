@@ -63,16 +63,17 @@ export default class CartRoutes {
             // @ts-expect-error unknown
             info: {
               data: {
-                region: ctx.state.region
-              }
-            }
-          }
-        })
+                region: ctx.state.region,
+              },
+            },
+          },
+        });
         ctx.response.body = stringifyJSON({
           session: data,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
+        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -80,7 +81,7 @@ export default class CartRoutes {
           message: data.message,
         });
       }
-    })
+    });
 
     this.#carts.get("/:id", async (ctx) => {
       try {
