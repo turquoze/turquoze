@@ -131,3 +131,10 @@ export interface PriceCalculation {
   price: number;
   subtotal: number;
 }
+
+export interface Price {
+  id: string;
+  created_at?: number;
+  amount: number;
+  region: string;
+}

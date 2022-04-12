@@ -10,6 +10,7 @@ import DefaultDiscountService from "./discountService/mod.ts";
 import DefaultSearchService from "./searchService/mod.ts";
 import DefaultWarehouseService from "./warehouseService/mod.ts";
 import DefaultInventoryService from "./inventoryService/mod.ts";
+import DefaultPriceService from "./priceService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -23,6 +24,7 @@ import IDiscountService from "./interfaces/discountService.ts";
 import ISearchService from "./interfaces/searchService.ts";
 import IWarehouseService from "./interfaces/warehouseService.ts";
 import IInventoryService from "./interfaces/inventoryService.ts";
+import IPriceService from "./interfaces/priceService.ts";
 
 import client from "./dataClient/client.ts";
 
@@ -46,4 +48,5 @@ export default class Container {
   SearchService: ISearchService = new DefaultSearchService(client);
   WarehouseService: IWarehouseService = new DefaultWarehouseService(client);
   InventoryService: IInventoryService = new DefaultInventoryService(client);
+  PriceService: IPriceService = new DefaultPriceService(client);
 }
