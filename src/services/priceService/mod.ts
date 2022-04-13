@@ -15,10 +15,11 @@ export default class PriceService implements IPriceService {
 
       const result = await this.client.queryObject<Price>({
         text:
-          "INSERT INTO prices (amount, region) VALUES ($1, $2) RETURNING id",
+          "INSERT INTO prices (amount, region, product) VALUES ($1, $2, $3) RETURNING id",
         args: [
           params.data.amount,
           params.data.region,
+          params.data.product,
         ],
       });
 

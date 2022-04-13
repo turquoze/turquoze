@@ -137,4 +137,5 @@ export interface Price {
   created_at?: number;
   amount: number;
   region: string;
+  product: string;
 }
