@@ -79,3 +79,11 @@ export const InventorySchema = yup.object().shape({
   product: yup.string().uuid().required(),
   quantity: yup.number().positive().integer().required(),
 });
+
+export const PriceSchema = yup.object().shape({
+  id: yup.string().uuid(),
+  created_at: yup.date().nullable(true),
+  amount: yup.number().required().positive().integer(),
+  region: yup.string().uuid().required(),
+  product: yup.string().uuid().required(),
+});
