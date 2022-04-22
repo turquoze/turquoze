@@ -24,6 +24,7 @@ Deno.test({
       valid_from: null,
       valid_to: null,
       value: 20,
+      code: "TEST",
     });
 
     const response = await app.handle(

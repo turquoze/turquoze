@@ -17,4 +17,8 @@ export default interface IDiscountService {
   Delete(params: {
     id: string;
   }): Promise<void>;
+
+  Validate(params: {
+    code: string;
+  }): Promise<Discount | undefined>;
 }

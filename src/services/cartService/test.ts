@@ -19,6 +19,9 @@ Deno.test("CartService", async (t) => {
                 quantity: 3,
               }],
             },
+            discounts: {
+              cart: [],
+            },
           },
         });
 
@@ -63,6 +66,9 @@ Deno.test("CartService", async (t) => {
           }],
         },
         created_at: data.created_at,
+        discounts: {
+          cart: [],
+        },
       });
     },
   });
@@ -79,6 +85,9 @@ Deno.test("CartService", async (t) => {
                 pid: "111",
                 quantity: 1,
               }],
+            },
+            discounts: {
+              cart: [],
             },
           },
         });

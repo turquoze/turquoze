@@ -19,6 +19,11 @@ export interface Cart {
       quantity: number;
     }>;
   };
+  discounts: {
+    cart: Array<{
+      did: string;
+    }>;
+  };
 }
 
 export interface Order {
@@ -100,6 +105,7 @@ export interface Discount {
   valid_to: number | null;
   valid_from: number | null;
   region: string;
+  code: string;
 }
 
 export interface Search {

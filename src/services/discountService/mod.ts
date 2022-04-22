@@ -15,13 +15,14 @@ export default class DiscountService implements IDiscountService {
 
       const result = await this.client.queryObject<Discount>({
         text:
-          "INSERT INTO discounts (type, value, region, valid_from, valid_to) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+          "INSERT INTO discounts (type, value, region, valid_from, valid_to, code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
         args: [
           params.data.type,
           params.data.value,
           params.data.region,
           params.data.valid_from,
           params.data.valid_to,
+          params.data.code,
         ],
       });
 
@@ -86,6 +87,27 @@ export default class DiscountService implements IDiscountService {
         text: "DELETE FROM discounts WHERE id = $1",
         args: [params.id],
       });
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    } finally {
+      await this.client.end();
+    }
+  }
+
+  async Validate(params: { code: string }): Promise<Discount | undefined> {
+    try {
+      await this.client.connect();
+
+      const data = await this.client.queryObject<Discount>({
+        text: "SELECT * FROM discounts WHERE code = $1",
+        args: [params.code],
+      });
+
+      if (data.rows.length > 0) {
+        return data.rows[0];
+      }
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

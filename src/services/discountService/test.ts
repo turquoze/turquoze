@@ -18,6 +18,7 @@ Deno.test("DiscountService", async (t) => {
             valid_to: null,
             value: 20,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            code: "TEST",
           },
         });
 
@@ -60,6 +61,7 @@ Deno.test("DiscountService", async (t) => {
         valid_to: null,
         value: 20,
         region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        code: "TEST",
       });
     },
   });
