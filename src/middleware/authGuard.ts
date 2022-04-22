@@ -1,32 +1,22 @@
 import type { Context } from "../deps.ts";
+import { TOKEN } from "../utils/secrets.ts";
 
 export const AuthGuard = async (ctx: Context, next: () => Promise<unknown>) => {
-  await new Promise((res, _rej) => {
-    // validated
-    res(true);
-  });
-  ctx.state = {
-    user: {
-      name: "test",
-    },
-    authd: true,
-  };
-  next();
-  /*const key = ctx.request.headers.get("X-Turquoze-Auth-Key")
-  if (key != null) {
-    // validate jwt or check to DB
-    await new Promise((res, _rej) => {
-      // validated
-      res(true)
-    })
-    next();
-  } else {
-    ctx.response.status = 403
+  try {
+    const key = ctx.request.headers.get("x-turquoze-key");
+    if (key != null && key == TOKEN) {
+      await next();
+    } else {
+      throw new Error("Not allowed");
+    }
+  } catch (_error) {
+    ctx.response.status = 401;
+    ctx.response.headers.set("content-type", "application/json");
     ctx.response.body = JSON.stringify({
-      msg: "Not allowed, sign in",
-      error: "NO_JWT"
-    })
-  }*/
+      msg: "Not allowed",
+      error: "NO_TOKEN",
+    });
+  }
 };
 
 export default AuthGuard;

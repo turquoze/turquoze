@@ -7,6 +7,7 @@ let DATABASE_PASSWORD: string | undefined;
 let DATABASE_USER: string | undefined;
 let DATABASE: string | undefined;
 let DATABASE_PORT: string | undefined;
+let TOKEN: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
 if (!DATABASE_CERT) {
@@ -38,6 +39,11 @@ if (!DATABASE_PORT) {
   throw new Error("environment variable DATABASE_PORT not set");
 }
 
+TOKEN = Deno.env.get("TOKEN");
+if (!TOKEN) {
+  throw new Error("environment variable TOKEN not set");
+}
+
 export {
   DATABASE,
   DATABASE_CERT,
@@ -45,4 +51,5 @@ export {
   DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
+  TOKEN,
 };

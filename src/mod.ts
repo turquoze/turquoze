@@ -5,9 +5,11 @@ import { TurquozeState } from "./utils/types.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import ApplicationState from "./middleware/applicationState.ts";
 import Logger from "./middleware/logger.ts";
+import AuthGuard from "./middleware/authGuard.ts";
 
 const app = new Application<TurquozeState>();
 
+app.use(AuthGuard);
 app.use(Logger);
 app.use(ResponseTimer);
 app.use(ApplicationState);
