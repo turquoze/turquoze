@@ -87,3 +87,7 @@ export const PriceSchema = yup.object().shape({
   region: yup.string().uuid().required(),
   product: yup.string().uuid().required(),
 });
+
+export const DiscountCheckSchema = yup.object().shape({
+  code: yup.string().min(3).required(),
+});
