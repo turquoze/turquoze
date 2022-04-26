@@ -57,21 +57,20 @@ export default class CartRoutes {
 
     this.#carts.post("/discount", async (ctx) => {
       try {
-
-        const token = ctx.request.headers.get('x-cart-token')
+        const token = ctx.request.headers.get("x-cart-token");
         if (token == undefined) {
-          throw new Error("No token")
+          throw new Error("No token");
         }
 
         if (!await jwt.default.verify(token, JWTKEY)) {
-          throw new Error("No valid token")
+          throw new Error("No valid token");
         }
 
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
         }
 
-        const { cartId } = jwt.default.decode(token)
+        const { cartId } = jwt.default.decode(token);
 
         const body = ctx.request.body();
         let discountCheck: DiscountCheck;
@@ -99,12 +98,15 @@ export default class CartRoutes {
             (discount.valid_from ?? 1) <= Date.now() &&
             Date.now() <= (discount.valid_to ?? Number.MAX_SAFE_INTEGER)
           ) {
-            const hasDiscount = cart.discounts.cart.find((d) =>
-              d.did == discount.id
-            );
+            let hasDiscount = undefined;
+            if (cart.discounts != null && cart.discounts != undefined) {
+              hasDiscount = cart.discounts?.cart.find((d) =>
+                d.did == discount.id
+              );
+            }
 
             if (hasDiscount == undefined) {
-              cart.discounts.cart.push({ did: discount.id });
+              cart.discounts = { cart: [{ did: discount.id }] };
             } else {
               const newDiscountArr = cart.discounts.cart.filter((item) => {
                 if (item.did != discount.id) {
@@ -124,6 +126,7 @@ export default class CartRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
+        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -140,15 +143,15 @@ export default class CartRoutes {
         });
 
         const cart = await this.#Container.CartService.Get({
-          id: ctx.params.id
-        })
+          id: ctx.params.id,
+        });
 
         const token = await jwt.default.sign({
           cartId: cart.id,
           nbf: Math.floor(Date.now() / 1000),
-          exp: Math.floor(Date.now() / 1000) + (1 * (60 * 60))
-        }, JWTKEY)
-        
+          exp: Math.floor(Date.now() / 1000) + (1 * (60 * 60)),
+        }, JWTKEY);
+
         ctx.response.body = stringifyJSON({
           token: token,
         });

@@ -66,7 +66,39 @@ Deno.test({
     assert(response?.ok);
 
     const body = await response?.json();
-    TOKEN = body.token
+    TOKEN = body.token;
+  },
+});
+
+Deno.test({
+  name: "Carts - Session Discount | ok",
+  async fn() {
+    const app = new Application();
+
+    app.use(async (ctx, next) => {
+      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      await next();
+    });
+
+    const data = JSON.stringify({
+      code: "test",
+    });
+
+    app.use(new CartsRoutes(container).routes());
+
+    const response = await app.handle(
+      new Request(`http://127.0.0.1/carts/discount`, {
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(data).length}`,
+          "x-cart-token": TOKEN,
+        }),
+        method: "POST",
+        body: data,
+      }),
+    );
+
+    assert(response?.ok);
   },
 });
 
