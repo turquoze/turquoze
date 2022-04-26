@@ -1,6 +1,7 @@
-import { Router } from "../../deps.ts";
+import { jwt, Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { JWTKEY } from "../../utils/secrets.ts";
 import { Cart, DiscountCheck } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
@@ -54,15 +55,23 @@ export default class CartRoutes {
       }
     });
 
-    this.#carts.post("/:id/discount", async (ctx) => {
+    this.#carts.post("/discount", async (ctx) => {
       try {
-        await UuidSchema.validate({
-          id: ctx.params.id,
-        });
+
+        const token = ctx.request.headers.get('x-cart-token')
+        if (token == undefined) {
+          throw new Error("No token")
+        }
+
+        if (!await jwt.default.verify(token, JWTKEY)) {
+          throw new Error("No valid token")
+        }
 
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
         }
+
+        const { cartId } = jwt.default.decode(token)
 
         const body = ctx.request.body();
         let discountCheck: DiscountCheck;
@@ -82,7 +91,7 @@ export default class CartRoutes {
         });
 
         const cart = await this.#Container.CartService.Get({
-          id: ctx.params.id,
+          id: cartId,
         });
 
         if (discount != undefined) {
@@ -124,26 +133,24 @@ export default class CartRoutes {
       }
     });
 
-    this.#carts.post("/:id/session", async (ctx) => {
+    this.#carts.post("/:id/init", async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.PaymentService.Create({
-          data: {
-            cartId: ctx.params.id,
-            id: "",
-            // @ts-expect-error unknown
-            info: {
-              data: {
-                region: ctx.state.region,
-              },
-            },
-          },
-        });
+        const cart = await this.#Container.CartService.Get({
+          id: ctx.params.id
+        })
+
+        const token = await jwt.default.sign({
+          cartId: cart.id,
+          nbf: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + (1 * (60 * 60))
+        }, JWTKEY)
+        
         ctx.response.body = stringifyJSON({
-          session: data,
+          token: token,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

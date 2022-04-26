@@ -5,6 +5,7 @@ import { Cart } from "../../utils/types.ts";
 import Container from "../../services/mod.ts";
 
 let ID = "";
+let TOKEN = "";
 const container = new Container();
 
 Deno.test({
@@ -54,7 +55,7 @@ Deno.test({
     app.use(new CartsRoutes(container).routes());
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/carts/${ID}/session`, {
+      new Request(`http://127.0.0.1/carts/${ID}/init`, {
         headers: new Headers({
           "Content-Type": "application/json",
         }),
@@ -63,6 +64,9 @@ Deno.test({
     );
 
     assert(response?.ok);
+
+    const body = await response?.json();
+    TOKEN = body.token
   },
 });
 
