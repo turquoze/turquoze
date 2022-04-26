@@ -1,10 +1,15 @@
-import { Router } from "../../deps.ts";
+import { jwt, Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Cart } from "../../utils/types.ts";
+import { JWTKEY } from "../../utils/secrets.ts";
+import { Cart, DiscountCheck } from "../../utils/types.ts";
 
 import { stringifyJSON } from "../../utils/utils.ts";
-import { CartSchema, UuidSchema } from "../../utils/validator.ts";
+import {
+  CartSchema,
+  DiscountCheckSchema,
+  UuidSchema,
+} from "../../utils/validator.ts";
 
 export default class CartRoutes {
   #carts: Router;
@@ -50,30 +55,108 @@ export default class CartRoutes {
       }
     });
 
-    this.#carts.post("/:id/session", async (ctx) => {
+    this.#carts.post("/discount", async (ctx) => {
+      try {
+        const token = ctx.request.headers.get("x-cart-token");
+        if (token == undefined) {
+          throw new Error("No token");
+        }
+
+        if (!await jwt.default.verify(token, JWTKEY)) {
+          throw new Error("No valid token");
+        }
+
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
+
+        const { cartId } = jwt.default.decode(token);
+
+        const body = ctx.request.body();
+        let discountCheck: DiscountCheck;
+        if (body.type === "json") {
+          discountCheck = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await DiscountCheckSchema.validate(discountCheck);
+        const posted: DiscountCheck = await DiscountCheckSchema.cast(
+          discountCheck,
+        );
+
+        const discount = await this.#Container.DiscountService.GetByCode({
+          code: posted.code,
+        });
+
+        const cart = await this.#Container.CartService.Get({
+          id: cartId,
+        });
+
+        if (discount != undefined) {
+          if (
+            (discount.valid_from ?? 1) <= Date.now() &&
+            Date.now() <= (discount.valid_to ?? Number.MAX_SAFE_INTEGER)
+          ) {
+            let hasDiscount = undefined;
+            if (cart.discounts != null && cart.discounts != undefined) {
+              hasDiscount = cart.discounts?.cart.find((d) =>
+                d.did == discount.id
+              );
+            }
+
+            if (hasDiscount == undefined) {
+              cart.discounts = { cart: [{ did: discount.id }] };
+            } else {
+              const newDiscountArr = cart.discounts.cart.filter((item) => {
+                if (item.did != discount.id) {
+                  return item;
+                }
+              });
+              cart.discounts.cart = newDiscountArr;
+            }
+            await this.#Container.CartService.CreateOrUpdate({
+              data: cart,
+            });
+          }
+        }
+
+        ctx.response.body = stringifyJSON({
+          carts: cart,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        console.log(error);
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.post("/:id/init", async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.PaymentService.Create({
-          data: {
-            cartId: ctx.params.id,
-            id: "",
-            // @ts-expect-error unknown
-            info: {
-              data: {
-                region: ctx.state.region,
-              },
-            },
-          },
+        const cart = await this.#Container.CartService.Get({
+          id: ctx.params.id,
         });
+
+        const token = await jwt.default.sign({
+          cartId: cart.id,
+          nbf: Math.floor(Date.now() / 1000),
+          exp: Math.floor(Date.now() / 1000) + (1 * (60 * 60)),
+        }, JWTKEY);
+
         ctx.response.body = stringifyJSON({
-          session: data,
+          token: token,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");

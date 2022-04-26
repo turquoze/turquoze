@@ -8,6 +8,7 @@ let DATABASE_USER: string | undefined;
 let DATABASE: string | undefined;
 let DATABASE_PORT: string | undefined;
 let TOKEN: string | undefined;
+let JWTKEY: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
 if (!DATABASE_CERT) {
@@ -44,6 +45,11 @@ if (!TOKEN) {
   throw new Error("environment variable TOKEN not set");
 }
 
+JWTKEY = Deno.env.get("JWTKEY");
+if (!JWTKEY) {
+  throw new Error("environment variable JWTKEY not set");
+}
+
 export {
   DATABASE,
   DATABASE_CERT,
@@ -51,5 +57,6 @@ export {
   DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
+  JWTKEY,
   TOKEN,
 };

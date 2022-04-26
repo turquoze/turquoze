@@ -55,6 +55,25 @@ export default class DiscountService implements IDiscountService {
     }
   }
 
+  async GetByCode(params: { code: string }): Promise<Discount> {
+    try {
+      await this.client.connect();
+
+      const result = await this.client.queryObject<Discount>({
+        text: "SELECT * FROM discounts WHERE code = $1 LIMIT 1",
+        args: [params.code],
+      });
+
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    } finally {
+      await this.client.end();
+    }
+  }
+
   async GetMany(
     params: { offset?: string | undefined; limit?: number | undefined },
   ): Promise<Discount[]> {

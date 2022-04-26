@@ -9,6 +9,10 @@ export default interface IDiscountService {
     id: string;
   }): Promise<Discount>;
 
+  GetByCode(params: {
+    code: string;
+  }): Promise<Discount>;
+
   GetMany(params: {
     offset?: string;
     limit?: number;

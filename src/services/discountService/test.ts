@@ -81,6 +81,38 @@ Deno.test("DiscountService", async (t) => {
   });
 
   await t.step({
+    name: "GetByCode",
+    fn: async () => {
+      const data = await discount.GetByCode({
+        code: "TEST",
+      });
+      assertObjectMatch(data, {
+        id: ID,
+        type: "FIXED",
+        valid_from: null,
+        valid_to: null,
+        value: 20,
+        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        code: "TEST",
+      });
+    },
+  });
+
+  await t.step({
+    name: "GetByCode - Fail",
+    fn: async () => {
+      try {
+        await discount.GetByCode({
+          code: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "GetMany",
     fn: async () => {
       const data = await discount.GetMany({});

@@ -145,3 +145,7 @@ export interface Price {
   region: string;
   product: string;
 }
+
+export interface DiscountCheck {
+  code: string;
+}
