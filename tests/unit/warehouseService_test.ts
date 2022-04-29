@@ -1,21 +1,22 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import regionService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import warehouseService from "../../src/services/warehouseService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
-const region = new regionService(client);
+const warehouse = new warehouseService(client);
 let ID = "";
 
-Deno.test("RegionService", async (t) => {
+Deno.test("WarehouseService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
       try {
-        const data = await region.Create({
+        const data = await warehouse.Create({
           data: {
             id: "",
-            currency: "EUR",
-            name: "TEST",
-            regions: ["SE", "NO", "DK", "FI"],
+            address: "Test 1B",
+            country: "Sweden",
+            name: "Sweden A",
+            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
@@ -31,7 +32,7 @@ Deno.test("RegionService", async (t) => {
     name: "Create - Fail",
     fn: async () => {
       try {
-        await region.Create({
+        await warehouse.Create({
           // @ts-expect-error want to test
           data: {
             id: "",
@@ -48,14 +49,16 @@ Deno.test("RegionService", async (t) => {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data = await region.Get({
+      const data = await warehouse.Get({
         id: ID,
       });
       assertObjectMatch(data, {
         id: ID,
-        currency: "EUR",
-        name: "TEST",
-        regions: ["SE", "NO", "DK", "FI"],
+        created_at: data.created_at,
+        address: "Test 1B",
+        country: "Sweden",
+        name: "Sweden A",
+        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
   });
@@ -64,7 +67,7 @@ Deno.test("RegionService", async (t) => {
     name: "Get - Fail",
     fn: async () => {
       try {
-        await region.Get({
+        await warehouse.Get({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -78,12 +81,13 @@ Deno.test("RegionService", async (t) => {
     name: "Update",
     fn: async () => {
       try {
-        const data = await region.Update({
+        const data = await warehouse.Update({
           data: {
             id: ID,
-            currency: "EUR",
-            name: "TEST-Update",
-            regions: ["SE"],
+            address: "Test 1B - Update",
+            country: "Sweden - Update",
+            name: "Sweden A - Update",
+            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
@@ -99,12 +103,13 @@ Deno.test("RegionService", async (t) => {
     name: "Update - Fail",
     fn: async () => {
       try {
-        await region.Update({
+        await warehouse.Update({
           data: {
             id: "00000000-0000-0000-0000-000000000000",
-            currency: "EUR",
-            name: "TEST-Update",
-            regions: ["SE"],
+            address: "Test 1B - Update",
+            country: "Sweden - Update",
+            name: "Sweden A - Update",
+            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
@@ -116,10 +121,32 @@ Deno.test("RegionService", async (t) => {
   });
 
   await t.step({
+    name: "GetMany",
+    fn: async () => {
+      const data = await warehouse.GetMany({});
+      assert(data.length > 0);
+    },
+  });
+
+  await t.step({
+    name: "GetMany - Fail",
+    fn: async () => {
+      try {
+        await warehouse.GetMany({
+          offset: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Delete",
     fn: async () => {
       try {
-        await region.Delete({
+        await warehouse.Delete({
           id: ID,
         });
         assert(true);
@@ -133,7 +160,7 @@ Deno.test("RegionService", async (t) => {
     name: "Delete - Fail",
     fn: async () => {
       try {
-        await region.Delete({
+        await warehouse.Delete({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

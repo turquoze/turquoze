@@ -1,6 +1,6 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import categoryService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import categoryService from "../../src/services/categoryService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
 const category = new categoryService(client);
 let ID = "";

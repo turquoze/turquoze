@@ -1,6 +1,6 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import cartService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import cartService from "../../src/services/cartService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
 const cart = new cartService(client);
 let ID = "";

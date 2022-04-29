@@ -1,27 +1,25 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import userService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import priceService from "../../src/services/priceService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
-const user = new userService(client);
+const price = new priceService(client);
 let ID = "";
 
-Deno.test("UserService", async (t) => {
+Deno.test("PriceService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
       try {
-        const data = await user.Create({
+        const data = await price.Create({
           data: {
             id: "",
-            system_id: "",
-            email: "test@example.com",
-            name: "test",
-            not_active: false,
+            amount: 100,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
           },
         });
 
-        ID = data.system_id;
+        ID = data.id;
         assert(true);
       } catch {
         assert(false);
@@ -33,7 +31,7 @@ Deno.test("UserService", async (t) => {
     name: "Create - Fail",
     fn: async () => {
       try {
-        await user.Create({
+        await price.Create({
           // @ts-expect-error want to test
           data: {
             id: "",
@@ -50,17 +48,15 @@ Deno.test("UserService", async (t) => {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data = await user.Get({
+      const data = await price.Get({
         id: ID,
       });
       assertObjectMatch(data, {
-        id: data.id,
-        system_id: ID,
+        id: ID,
         created_at: data.created_at,
-        email: "test@example.com",
-        name: "test",
-        not_active: false,
+        amount: 100,
         region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
       });
     },
   });
@@ -69,7 +65,7 @@ Deno.test("UserService", async (t) => {
     name: "Get - Fail",
     fn: async () => {
       try {
-        await user.Get({
+        await price.Get({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -83,18 +79,16 @@ Deno.test("UserService", async (t) => {
     name: "Update",
     fn: async () => {
       try {
-        const data = await user.Update({
+        const data = await price.Update({
           data: {
-            id: "",
-            system_id: ID,
-            email: "test+test123@example.com",
-            name: "test update",
-            not_active: true,
+            id: ID,
+            amount: 200,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
           },
         });
 
-        ID = data.system_id;
+        ID = data.id;
         assert(true);
       } catch {
         assert(false);
@@ -106,14 +100,12 @@ Deno.test("UserService", async (t) => {
     name: "Update - Fail",
     fn: async () => {
       try {
-        await user.Update({
+        await price.Update({
           data: {
             id: "00000000-0000-0000-0000-000000000000",
-            system_id: "00000000-0000-0000-0000-000000000000",
-            email: "test+fail@example.com",
-            name: "test fail",
-            not_active: true,
+            amount: 200,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "00000000-0000-0000-0000-000000000000",
           },
         });
 
@@ -127,7 +119,7 @@ Deno.test("UserService", async (t) => {
   await t.step({
     name: "GetMany",
     fn: async () => {
-      const data = await user.GetMany({});
+      const data = await price.GetMany({});
       assert(data.length > 0);
     },
   });
@@ -136,7 +128,7 @@ Deno.test("UserService", async (t) => {
     name: "GetMany - Fail",
     fn: async () => {
       try {
-        await user.GetMany({
+        await price.GetMany({
           offset: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -150,7 +142,7 @@ Deno.test("UserService", async (t) => {
     name: "Delete",
     fn: async () => {
       try {
-        await user.Delete({
+        await price.Delete({
           id: ID,
         });
         assert(true);
@@ -164,7 +156,7 @@ Deno.test("UserService", async (t) => {
     name: "Delete - Fail",
     fn: async () => {
       try {
-        await user.Delete({
+        await price.Delete({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

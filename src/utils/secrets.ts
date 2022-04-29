@@ -1,5 +1,5 @@
-// deno-lint-ignore-file
-import "https://deno.land/x/dotenv@v3.2.0/load.ts";
+// deno-lint-ignore-file prefer-const
+import "https://deno.land/std@0.137.0/dotenv/load.ts";
 
 let DATABASE_CERT: string | undefined;
 let DATABASE_HOSTNAME: string | undefined;

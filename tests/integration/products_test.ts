@@ -1,8 +1,8 @@
-import { Application, assert, assertEquals } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import ProductsRoutes from "./products.ts";
-import { Product } from "../../utils/types.ts";
-import Container from "../../services/mod.ts";
+import ProductsRoutes from "../../src/routes/api/products.ts";
+import { Product } from "../../src/utils/types.ts";
+import Container from "../../src/services/mod.ts";
 
 let ID = "";
 const container = new Container();

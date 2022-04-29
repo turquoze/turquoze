@@ -1,21 +1,24 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import priceService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import discountService from "../../src/services/discountService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
-const price = new priceService(client);
+const discount = new discountService(client);
 let ID = "";
 
-Deno.test("PriceService", async (t) => {
+Deno.test("DiscountService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
       try {
-        const data = await price.Create({
+        const data = await discount.Create({
           data: {
             id: "",
-            amount: 100,
+            type: "FIXED",
+            valid_from: null,
+            valid_to: null,
+            value: 20,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+            code: "TEST",
           },
         });
 
@@ -31,7 +34,7 @@ Deno.test("PriceService", async (t) => {
     name: "Create - Fail",
     fn: async () => {
       try {
-        await price.Create({
+        await discount.Create({
           // @ts-expect-error want to test
           data: {
             id: "",
@@ -48,15 +51,17 @@ Deno.test("PriceService", async (t) => {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data = await price.Get({
+      const data = await discount.Get({
         id: ID,
       });
       assertObjectMatch(data, {
         id: ID,
-        created_at: data.created_at,
-        amount: 100,
+        type: "FIXED",
+        valid_from: null,
+        valid_to: null,
+        value: 20,
         region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-        product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+        code: "TEST",
       });
     },
   });
@@ -65,7 +70,7 @@ Deno.test("PriceService", async (t) => {
     name: "Get - Fail",
     fn: async () => {
       try {
-        await price.Get({
+        await discount.Get({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -76,39 +81,30 @@ Deno.test("PriceService", async (t) => {
   });
 
   await t.step({
-    name: "Update",
+    name: "GetByCode",
     fn: async () => {
-      try {
-        const data = await price.Update({
-          data: {
-            id: ID,
-            amount: 200,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
-          },
-        });
-
-        ID = data.id;
-        assert(true);
-      } catch {
-        assert(false);
-      }
+      const data = await discount.GetByCode({
+        code: "TEST",
+      });
+      assertObjectMatch(data, {
+        id: ID,
+        type: "FIXED",
+        valid_from: null,
+        valid_to: null,
+        value: 20,
+        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        code: "TEST",
+      });
     },
   });
 
   await t.step({
-    name: "Update - Fail",
+    name: "GetByCode - Fail",
     fn: async () => {
       try {
-        await price.Update({
-          data: {
-            id: "00000000-0000-0000-0000-000000000000",
-            amount: 200,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "00000000-0000-0000-0000-000000000000",
-          },
+        await discount.GetByCode({
+          code: "00000000-0000-0000-0000-000000000000",
         });
-
         assert(false);
       } catch {
         assert(true);
@@ -119,7 +115,7 @@ Deno.test("PriceService", async (t) => {
   await t.step({
     name: "GetMany",
     fn: async () => {
-      const data = await price.GetMany({});
+      const data = await discount.GetMany({});
       assert(data.length > 0);
     },
   });
@@ -128,7 +124,7 @@ Deno.test("PriceService", async (t) => {
     name: "GetMany - Fail",
     fn: async () => {
       try {
-        await price.GetMany({
+        await discount.GetMany({
           offset: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -142,7 +138,7 @@ Deno.test("PriceService", async (t) => {
     name: "Delete",
     fn: async () => {
       try {
-        await price.Delete({
+        await discount.Delete({
           id: ID,
         });
         assert(true);
@@ -156,7 +152,7 @@ Deno.test("PriceService", async (t) => {
     name: "Delete - Fail",
     fn: async () => {
       try {
-        await price.Delete({
+        await discount.Delete({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

@@ -1,9 +1,10 @@
-import { assert } from "../../deps.ts";
-import paymentService from "./mod.ts";
-import client from "../dataClient/client.ts";
-import DefaultOrderService from "../orderService/mod.ts";
-import DefaultCartService from "../cartService/mod.ts";
-import DefaultProductService from "../productService/mod.ts";
+import DefaultOrderService from "../../src/services/orderService/mod.ts";
+import DefaultCartService from "../../src/services/cartService/mod.ts";
+import DefaultProductService from "../../src/services/productService/mod.ts";
+
+import { assert } from "../test_deps.ts";
+import paymentService from "../../src/services/paymentService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
 const payment = new paymentService(
   client,

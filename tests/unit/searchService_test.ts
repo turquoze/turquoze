@@ -1,6 +1,6 @@
-import { assert } from "../../deps.ts";
-import searchService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert } from "../test_deps.ts";
+import searchService from "../../src/services/searchService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
 const search = new searchService(client);
 

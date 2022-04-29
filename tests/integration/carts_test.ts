@@ -1,8 +1,8 @@
-import { Application, assert, assertEquals } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import CartsRoutes from "./carts.ts";
-import { Cart } from "../../utils/types.ts";
-import Container from "../../services/mod.ts";
+import CartsRoutes from "../../src/routes/api/carts.ts";
+import { Cart } from "../../src/utils/types.ts";
+import Container from "../../src/services/mod.ts";
 
 let ID = "";
 let TOKEN = "";

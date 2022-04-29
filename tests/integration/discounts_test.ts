@@ -1,8 +1,8 @@
-import { Application, assert, assertEquals } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import DiscountsRoutes from "./discounts.ts";
-import { Discount } from "../../utils/types.ts";
-import Container from "../../services/mod.ts";
+import DiscountsRoutes from "../../src/routes/api/discounts.ts";
+import { Discount } from "../../src/utils/types.ts";
+import Container from "../../src/services/mod.ts";
 
 let ID = "";
 const container = new Container();

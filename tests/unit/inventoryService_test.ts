@@ -1,24 +1,21 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import productService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import inventoryService from "../../src/services/inventoryService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
-const product = new productService(client);
+const inventory = new inventoryService(client);
 let ID = "";
 
-Deno.test("ProductService", async (t) => {
+Deno.test("InventoryService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
       try {
-        const data = await product.Create({
+        const data = await inventory.Create({
           data: {
             id: "",
-            active: true,
-            images: [],
-            price: 203300,
-            title: "test product",
-            description: "test product",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+            quantity: 2,
+            warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
           },
         });
 
@@ -34,10 +31,12 @@ Deno.test("ProductService", async (t) => {
     name: "Create - Fail",
     fn: async () => {
       try {
-        await product.Create({
+        await inventory.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            product: "00000000-0000-0000-0000-000000000000",
+            quantity: 0,
+            warehouse: "00000000-0000-0000-0000-000000000000",
           },
         });
 
@@ -51,18 +50,15 @@ Deno.test("ProductService", async (t) => {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data = await product.Get({
+      const data = await inventory.Get({
         id: ID,
       });
       assertObjectMatch(data, {
         id: ID,
         created_at: data.created_at,
-        active: true,
-        images: [],
-        price: "203300",
-        title: "test product",
-        description: "test product",
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+        quantity: 2,
+        warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
       });
     },
   });
@@ -71,7 +67,7 @@ Deno.test("ProductService", async (t) => {
     name: "Get - Fail",
     fn: async () => {
       try {
-        await product.Get({
+        await inventory.Get({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -85,15 +81,12 @@ Deno.test("ProductService", async (t) => {
     name: "Update",
     fn: async () => {
       try {
-        const data = await product.Update({
+        const data = await inventory.Update({
           data: {
             id: ID,
-            active: true,
-            images: [],
-            price: 203300,
-            title: "test product update",
-            description: "test product update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+            quantity: 10,
+            warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
           },
         });
 
@@ -109,15 +102,12 @@ Deno.test("ProductService", async (t) => {
     name: "Update - Fail",
     fn: async () => {
       try {
-        await product.Update({
+        await inventory.Update({
           data: {
             id: "00000000-0000-0000-0000-000000000000",
-            active: true,
-            images: [],
-            price: 203300,
-            title: "test product update",
-            description: "test product update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "00000000-0000-0000-0000-000000000000",
+            quantity: 0,
+            warehouse: "00000000-0000-0000-0000-000000000000",
           },
         });
 
@@ -129,32 +119,10 @@ Deno.test("ProductService", async (t) => {
   });
 
   await t.step({
-    name: "GetMany",
-    fn: async () => {
-      const data = await product.GetMany({});
-      assert(data.length > 0);
-    },
-  });
-
-  await t.step({
-    name: "GetMany - Fail",
-    fn: async () => {
-      try {
-        await product.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
-        });
-        assert(false);
-      } catch {
-        assert(true);
-      }
-    },
-  });
-
-  await t.step({
     name: "Delete",
     fn: async () => {
       try {
-        await product.Delete({
+        await inventory.Delete({
           id: ID,
         });
         assert(true);
@@ -168,7 +136,7 @@ Deno.test("ProductService", async (t) => {
     name: "Delete - Fail",
     fn: async () => {
       try {
-        await product.Delete({
+        await inventory.Delete({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
