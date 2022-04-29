@@ -1,6 +1,6 @@
-import { assert } from "../../deps.ts";
-import categoryLinkService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert } from "../test_deps.ts";
+import categoryLinkService from "../../src/services/categoryLinkService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
 const categoryLink = new categoryLinkService(client);
 

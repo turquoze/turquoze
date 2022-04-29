@@ -1,5 +1,5 @@
-import { assertObjectMatch, yup } from "../deps.ts";
-import { DatabaseError, ErrorHandler } from "./errors.ts";
+import { assertObjectMatch, yup } from "../test_deps.ts";
+import { DatabaseError, ErrorHandler } from "../../src/utils/errors.ts";
 
 Deno.test("ErrorHandler", async (t) => {
   await t.step({

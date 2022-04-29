@@ -1,5 +1,5 @@
-import { assert } from "../deps.ts";
-import { stringifyJSON } from "./utils.ts";
+import { assert } from "../test_deps.ts";
+import { stringifyJSON } from "../../src/utils/utils.ts";
 
 Deno.test("stringifyJSON", async (t) => {
   await t.step({

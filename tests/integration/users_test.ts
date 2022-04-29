@@ -1,8 +1,8 @@
-import { Application, assert, assertEquals } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import UsersRoutes from "./users.ts";
-import Container from "../../services/mod.ts";
-import { User } from "../../utils/types.ts";
+import UsersRoutes from "../../src/routes/api/users.ts";
+import Container from "../../src/services/mod.ts";
+import { User } from "../../src/utils/types.ts";
 
 let ID = "";
 const container = new Container();
@@ -18,7 +18,7 @@ Deno.test({
     });
 
     app.use(new UsersRoutes(container).routes());
-    
+
     const data = JSON.stringify({
       system_id: "00000000-0000-0000-0000-000000000000",
       email: "test@example.com",

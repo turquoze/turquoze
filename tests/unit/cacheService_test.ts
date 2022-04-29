@@ -1,5 +1,5 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import cacheService from "./mod.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import cacheService from "../../src/services/cacheService/mod.ts";
 
 const cache = new cacheService();
 

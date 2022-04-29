@@ -1,26 +1,27 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import warehouseService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import userService from "../../src/services/userService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
-const warehouse = new warehouseService(client);
+const user = new userService(client);
 let ID = "";
 
-Deno.test("WarehouseService", async (t) => {
+Deno.test("UserService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
       try {
-        const data = await warehouse.Create({
+        const data = await user.Create({
           data: {
             id: "",
-            address: "Test 1B",
-            country: "Sweden",
-            name: "Sweden A",
+            system_id: "",
+            email: "test@example.com",
+            name: "test",
+            not_active: false,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.system_id;
         assert(true);
       } catch {
         assert(false);
@@ -32,7 +33,7 @@ Deno.test("WarehouseService", async (t) => {
     name: "Create - Fail",
     fn: async () => {
       try {
-        await warehouse.Create({
+        await user.Create({
           // @ts-expect-error want to test
           data: {
             id: "",
@@ -49,15 +50,16 @@ Deno.test("WarehouseService", async (t) => {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data = await warehouse.Get({
+      const data = await user.Get({
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        system_id: ID,
         created_at: data.created_at,
-        address: "Test 1B",
-        country: "Sweden",
-        name: "Sweden A",
+        email: "test@example.com",
+        name: "test",
+        not_active: false,
         region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
@@ -67,7 +69,7 @@ Deno.test("WarehouseService", async (t) => {
     name: "Get - Fail",
     fn: async () => {
       try {
-        await warehouse.Get({
+        await user.Get({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -81,17 +83,18 @@ Deno.test("WarehouseService", async (t) => {
     name: "Update",
     fn: async () => {
       try {
-        const data = await warehouse.Update({
+        const data = await user.Update({
           data: {
-            id: ID,
-            address: "Test 1B - Update",
-            country: "Sweden - Update",
-            name: "Sweden A - Update",
+            id: "",
+            system_id: ID,
+            email: "test+test123@example.com",
+            name: "test update",
+            not_active: true,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.system_id;
         assert(true);
       } catch {
         assert(false);
@@ -103,12 +106,13 @@ Deno.test("WarehouseService", async (t) => {
     name: "Update - Fail",
     fn: async () => {
       try {
-        await warehouse.Update({
+        await user.Update({
           data: {
             id: "00000000-0000-0000-0000-000000000000",
-            address: "Test 1B - Update",
-            country: "Sweden - Update",
-            name: "Sweden A - Update",
+            system_id: "00000000-0000-0000-0000-000000000000",
+            email: "test+fail@example.com",
+            name: "test fail",
+            not_active: true,
             region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
@@ -123,7 +127,7 @@ Deno.test("WarehouseService", async (t) => {
   await t.step({
     name: "GetMany",
     fn: async () => {
-      const data = await warehouse.GetMany({});
+      const data = await user.GetMany({});
       assert(data.length > 0);
     },
   });
@@ -132,7 +136,7 @@ Deno.test("WarehouseService", async (t) => {
     name: "GetMany - Fail",
     fn: async () => {
       try {
-        await warehouse.GetMany({
+        await user.GetMany({
           offset: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -146,7 +150,7 @@ Deno.test("WarehouseService", async (t) => {
     name: "Delete",
     fn: async () => {
       try {
-        await warehouse.Delete({
+        await user.Delete({
           id: ID,
         });
         assert(true);
@@ -160,7 +164,7 @@ Deno.test("WarehouseService", async (t) => {
     name: "Delete - Fail",
     fn: async () => {
       try {
-        await warehouse.Delete({
+        await user.Delete({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

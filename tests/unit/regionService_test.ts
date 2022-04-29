@@ -1,21 +1,21 @@
-import { assert, assertObjectMatch } from "../../deps.ts";
-import inventoryService from "./mod.ts";
-import client from "../dataClient/client.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
+import regionService from "../../src/services/regionService/mod.ts";
+import client from "../../src/services/dataClient/client.ts";
 
-const inventory = new inventoryService(client);
+const region = new regionService(client);
 let ID = "";
 
-Deno.test("InventoryService", async (t) => {
+Deno.test("RegionService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
       try {
-        const data = await inventory.Create({
+        const data = await region.Create({
           data: {
             id: "",
-            product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
-            quantity: 2,
-            warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+            currency: "EUR",
+            name: "TEST",
+            regions: ["SE", "NO", "DK", "FI"],
           },
         });
 
@@ -31,12 +31,10 @@ Deno.test("InventoryService", async (t) => {
     name: "Create - Fail",
     fn: async () => {
       try {
-        await inventory.Create({
+        await region.Create({
           // @ts-expect-error want to test
           data: {
-            product: "00000000-0000-0000-0000-000000000000",
-            quantity: 0,
-            warehouse: "00000000-0000-0000-0000-000000000000",
+            id: "",
           },
         });
 
@@ -50,15 +48,14 @@ Deno.test("InventoryService", async (t) => {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data = await inventory.Get({
+      const data = await region.Get({
         id: ID,
       });
       assertObjectMatch(data, {
         id: ID,
-        created_at: data.created_at,
-        product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
-        quantity: 2,
-        warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+        currency: "EUR",
+        name: "TEST",
+        regions: ["SE", "NO", "DK", "FI"],
       });
     },
   });
@@ -67,7 +64,7 @@ Deno.test("InventoryService", async (t) => {
     name: "Get - Fail",
     fn: async () => {
       try {
-        await inventory.Get({
+        await region.Get({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
@@ -81,12 +78,12 @@ Deno.test("InventoryService", async (t) => {
     name: "Update",
     fn: async () => {
       try {
-        const data = await inventory.Update({
+        const data = await region.Update({
           data: {
             id: ID,
-            product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
-            quantity: 10,
-            warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+            currency: "EUR",
+            name: "TEST-Update",
+            regions: ["SE"],
           },
         });
 
@@ -102,12 +99,12 @@ Deno.test("InventoryService", async (t) => {
     name: "Update - Fail",
     fn: async () => {
       try {
-        await inventory.Update({
+        await region.Update({
           data: {
             id: "00000000-0000-0000-0000-000000000000",
-            product: "00000000-0000-0000-0000-000000000000",
-            quantity: 0,
-            warehouse: "00000000-0000-0000-0000-000000000000",
+            currency: "EUR",
+            name: "TEST-Update",
+            regions: ["SE"],
           },
         });
 
@@ -122,7 +119,7 @@ Deno.test("InventoryService", async (t) => {
     name: "Delete",
     fn: async () => {
       try {
-        await inventory.Delete({
+        await region.Delete({
           id: ID,
         });
         assert(true);
@@ -136,7 +133,7 @@ Deno.test("InventoryService", async (t) => {
     name: "Delete - Fail",
     fn: async () => {
       try {
-        await inventory.Delete({
+        await region.Delete({
           id: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

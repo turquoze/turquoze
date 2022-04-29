@@ -59,7 +59,7 @@ export default class UsersRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error)
+        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");

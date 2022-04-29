@@ -1,14 +1,14 @@
-import { Application, assert, assertEquals } from "../../deps.ts";
+import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import WarehousesRoutes from "./warehouses.ts";
-import { Warehouse } from "../../utils/types.ts";
-import Container from "../../services/mod.ts";
+import PricesRoutes from "../../src/routes/api/prices.ts";
+import { Price } from "../../src/utils/types.ts";
+import Container from "../../src/services/mod.ts";
 
 let ID = "";
 const container = new Container();
 
 Deno.test({
-  name: "Warehouses - Create | ok",
+  name: "Prices - Create | ok",
   async fn() {
     const app = new Application();
 
@@ -17,16 +17,15 @@ Deno.test({
       await next();
     });
 
-    app.use(new WarehousesRoutes(container).routes());
+    app.use(new PricesRoutes(container).routes());
 
     const data = JSON.stringify({
-      address: "Test 1B",
-      country: "Sweden",
-      name: "Sweden A",
+      amount: 100,
+      product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
     });
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/warehouses`, {
+      new Request(`http://127.0.0.1/prices`, {
         headers: new Headers({
           "Content-Type": "application/json",
           "Content-Length": `${JSON.stringify(data).length}`,
@@ -38,13 +37,13 @@ Deno.test({
 
     assert(response?.ok);
 
-    const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    ID = warehouses.id;
+    const { prices }: { prices: Price } = await response?.json();
+    ID = prices.id;
   },
 });
 
 Deno.test({
-  name: "Warehouses - Get | ok",
+  name: "Prices - Get | ok",
   async fn() {
     const app = new Application();
 
@@ -53,10 +52,10 @@ Deno.test({
       await next();
     });
 
-    app.use(new WarehousesRoutes(container).routes());
+    app.use(new PricesRoutes(container).routes());
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/warehouses`, {
+      new Request(`http://127.0.0.1/prices`, {
         method: "GET",
       }),
     );
@@ -66,7 +65,7 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Warehouses - Get | ok",
+  name: "Prices - Get | ok",
   async fn() {
     const app = new Application();
 
@@ -75,23 +74,23 @@ Deno.test({
       await next();
     });
 
-    app.use(new WarehousesRoutes(container).routes());
+    app.use(new PricesRoutes(container).routes());
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/warehouses/${ID}`, {
+      new Request(`http://127.0.0.1/prices/${ID}`, {
         method: "GET",
       }),
     );
 
     assert(response?.ok);
 
-    const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    assertEquals(warehouses.id, ID);
+    const { prices }: { prices: Price } = await response?.json();
+    assertEquals(prices.id, ID);
   },
 });
 
 Deno.test({
-  name: "Warehouses - Put | ok",
+  name: "Prices - Put | ok",
   async fn() {
     const app = new Application();
 
@@ -100,16 +99,15 @@ Deno.test({
       await next();
     });
 
-    app.use(new WarehousesRoutes(container).routes());
+    app.use(new PricesRoutes(container).routes());
 
     const data = JSON.stringify({
-      address: "Test 1B - Update",
-      country: "Sweden - Update",
-      name: "Sweden A - Update",
+      amount: 200,
+      product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
     });
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/warehouses/${ID}`, {
+      new Request(`http://127.0.0.1/prices/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
           "Content-Length": `${JSON.stringify(data).length}`,
@@ -121,13 +119,13 @@ Deno.test({
 
     assert(response?.ok);
 
-    const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    assertEquals(warehouses.id, ID);
+    const { prices }: { prices: Price } = await response?.json();
+    assertEquals(prices.id, ID);
   },
 });
 
 Deno.test({
-  name: "Warehouses - Delete | ok",
+  name: "Prices - Delete | ok",
   async fn() {
     const app = new Application();
 
@@ -136,10 +134,10 @@ Deno.test({
       await next();
     });
 
-    app.use(new WarehousesRoutes(container).routes());
+    app.use(new PricesRoutes(container).routes());
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/warehouses/${ID}`, {
+      new Request(`http://127.0.0.1/prices/${ID}`, {
         method: "DELETE",
       }),
     );
