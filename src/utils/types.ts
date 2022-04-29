@@ -149,3 +149,13 @@ export interface Price {
 export interface DiscountCheck {
   code: string;
 }
+
+export interface User {
+  id: string;
+  system_id: string;
+  created_at?: number;
+  name: string;
+  email: string;
+  not_active: boolean;
+  region: string;
+}
