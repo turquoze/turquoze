@@ -93,8 +93,8 @@ export const DiscountCheckSchema = yup.object().shape({
 });
 
 export const UserSchema = yup.object().shape({
-  id: yup.number().positive().integer(),
-  system_id: yup.string().nullable().uuid(),
+  id: yup.number().positive().integer().nullable(true),
+  system_id: yup.string().nullable(true).uuid(),
   created_at: yup.date().nullable(true),
   name: yup.string().required().min(3),
   email: yup.string().email(),

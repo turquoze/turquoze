@@ -15,7 +15,7 @@ export default class UserService implements IUserService {
 
       const result = await this.client.queryObject<User>({
         text:
-          "INSERT INTO users (email, name, not_active, region) VALUES ($1, $2, $3, $4) RETURNING id",
+          "INSERT INTO users (email, name, not_active, region) VALUES ($1, $2, $3, $4) RETURNING system_id",
         args: [
           params.data.email,
           params.data.name,
@@ -39,7 +39,7 @@ export default class UserService implements IUserService {
       await this.client.connect();
 
       const result = await this.client.queryObject<User>({
-        text: "SELECT * FROM users WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM users WHERE system_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -83,12 +83,12 @@ export default class UserService implements IUserService {
 
       const result = await this.client.queryObject<User>({
         text:
-          "UPDATE users SET email = $1, name = $2, not_active = $3 WHERE id = $4 RETURNING id",
+          "UPDATE users SET email = $1, name = $2, not_active = $3 WHERE system_id = $4 RETURNING system_id",
         args: [
           params.data.email,
           params.data.name,
           params.data.not_active,
-          params.data.id,
+          params.data.system_id,
         ],
       });
 
@@ -107,7 +107,7 @@ export default class UserService implements IUserService {
       await this.client.connect();
 
       await this.client.queryObject<User>({
-        text: "DELETE FROM users WHERE id = $1",
+        text: "DELETE FROM users WHERE system_id = $1",
         args: [params.id],
       });
     } catch (error) {

@@ -21,7 +21,7 @@ Deno.test("UserService", async (t) => {
           },
         });
 
-        ID = data.id;
+        ID = data.system_id;
         assert(true);
       } catch {
         assert(false);
@@ -54,7 +54,8 @@ Deno.test("UserService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        system_id: ID,
         created_at: data.created_at,
         email: "test@example.com",
         name: "test",
@@ -84,8 +85,8 @@ Deno.test("UserService", async (t) => {
       try {
         const data = await user.Update({
           data: {
-            id: ID,
-            system_id: "",
+            id: "",
+            system_id: ID,
             email: "test+test123@example.com",
             name: "test update",
             not_active: true,
@@ -93,7 +94,7 @@ Deno.test("UserService", async (t) => {
           },
         });
 
-        ID = data.id;
+        ID = data.system_id;
         assert(true);
       } catch {
         assert(false);
@@ -108,7 +109,7 @@ Deno.test("UserService", async (t) => {
         await user.Update({
           data: {
             id: "00000000-0000-0000-0000-000000000000",
-            system_id: "",
+            system_id: "00000000-0000-0000-0000-000000000000",
             email: "test+fail@example.com",
             name: "test fail",
             not_active: true,
