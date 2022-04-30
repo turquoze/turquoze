@@ -2,11 +2,14 @@ import { Product } from "../../utils/types.ts";
 import IProductService from "../interfaces/productService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import ICacheService from "../interfaces/cacheService.ts";
 
 export default class ProductService implements IProductService {
   client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
+  cache: ICacheService;
+  constructor(client: typeof postgresClient, cache: ICacheService) {
     this.client = client;
+    this.cache = cache;
   }
 
   async Create(params: { data: Product }): Promise<Product> {
@@ -45,6 +48,12 @@ export default class ProductService implements IProductService {
         });
       }
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { price: params.data },
+        expire: Date.now() + (60000 * 60),
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -57,11 +66,24 @@ export default class ProductService implements IProductService {
 
   async Get(params: { id: string }): Promise<Product> {
     try {
+      const cacheResult = await this.cache.get(params.id);
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.product;
+      }
+
       await this.client.connect();
 
       const result = await this.client.queryObject<Product>({
         text: "SELECT * FROM products WHERE id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      await this.cache.set({
+        id: params.id,
+        data: { product: result.rows[0] },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -78,14 +100,30 @@ export default class ProductService implements IProductService {
     params: { offset?: string; limit?: number },
   ): Promise<Array<Product>> {
     try {
-      await this.client.connect();
-
       if (params.limit == null) {
         params.limit = 10;
       }
+
+      const cacheResult = await this.cache.get(
+        `productsGetMany-${params.limit}-${params.offset}`,
+      );
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.products;
+      }
+
+      await this.client.connect();
+
       const result = await this.client.queryObject<Product>({
         text: "SELECT * FROM products LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
+      });
+
+      await this.cache.set({
+        id: `productsGetMany-${params.limit}-${params.offset}`,
+        data: { products: result.rows },
+        expire: Date.now() + (60000 * 10),
       });
 
       return result.rows;
@@ -116,6 +154,12 @@ export default class ProductService implements IProductService {
         ],
       });
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { product: params.data },
+        expire: Date.now() + (60000 * 60),
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -134,6 +178,8 @@ export default class ProductService implements IProductService {
         text: "DELETE FROM products WHERE id = $1",
         args: [params.id],
       });
+
+      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

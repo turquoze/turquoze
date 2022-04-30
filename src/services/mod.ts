@@ -31,25 +31,53 @@ import IUserService from "./interfaces/userService.ts";
 import client from "./dataClient/client.ts";
 
 export default class Container {
-  ProductService: IProductService = new DefaultProductService(client);
-  CartService: ICartService = new DefaultCartService(client);
-  OrderService: IOrderService = new DefaultOrderService(client);
-  CategoryService: ICategoryService = new DefaultCategoryService(client);
+  CacheService: ICacheService = new DefaultCacheService();
+  ProductService: IProductService = new DefaultProductService(
+    client,
+    this.CacheService,
+  );
+  CartService: ICartService = new DefaultCartService(client, this.CacheService);
+  OrderService: IOrderService = new DefaultOrderService(
+    client,
+    this.CacheService,
+  );
+  CategoryService: ICategoryService = new DefaultCategoryService(
+    client,
+    this.CacheService,
+  );
   CategoryLinkService: ICategoryLinkService = new DefaultCategoryLinkService(
     client,
+    this.CacheService,
   );
-  RegionService: IRegionService = new DefaultRegionService(client);
+  RegionService: IRegionService = new DefaultRegionService(
+    client,
+    this.CacheService,
+  );
   PaymentService: IPaymentService = new DefaultPaymentService(
     client,
     this.CartService,
     this.OrderService,
     this.ProductService,
   );
-  CacheService: ICacheService = new DefaultCacheService();
-  DiscountService: IDiscountService = new DefaultDiscountService(client);
-  SearchService: ISearchService = new DefaultSearchService(client);
-  WarehouseService: IWarehouseService = new DefaultWarehouseService(client);
-  InventoryService: IInventoryService = new DefaultInventoryService(client);
-  PriceService: IPriceService = new DefaultPriceService(client);
-  UserService: IUserService = new DefaultUserService(client);
+  DiscountService: IDiscountService = new DefaultDiscountService(
+    client,
+    this.CacheService,
+  );
+  SearchService: ISearchService = new DefaultSearchService(
+    client,
+    this.CacheService,
+  );
+  WarehouseService: IWarehouseService = new DefaultWarehouseService(
+    client,
+    this.CacheService,
+  );
+  InventoryService: IInventoryService = new DefaultInventoryService(
+    client,
+    this.CacheService,
+  );
+  PriceService: IPriceService = new DefaultPriceService(
+    client,
+    this.CacheService,
+  );
+  UserService: IUserService = new DefaultUserService(client, this.CacheService);
 }
