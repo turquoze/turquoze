@@ -2,11 +2,14 @@ import { User } from "../../utils/types.ts";
 import IUserService from "../interfaces/userService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import ICacheService from "../interfaces/cacheService.ts";
 
 export default class UserService implements IUserService {
   client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
+  cache: ICacheService;
+  constructor(client: typeof postgresClient, cache: ICacheService) {
     this.client = client;
+    this.cache = cache;
   }
 
   async Create(params: { data: User }): Promise<User> {
@@ -24,6 +27,12 @@ export default class UserService implements IUserService {
         ],
       });
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { user: params.data },
+        expire: Date.now() + (60000 * 60),
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -36,11 +45,24 @@ export default class UserService implements IUserService {
 
   async Get(params: { id: string }): Promise<User> {
     try {
+      const cacheResult = await this.cache.get(params.id);
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.user;
+      }
+
       await this.client.connect();
 
       const result = await this.client.queryObject<User>({
         text: "SELECT * FROM users WHERE system_id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      await this.cache.set({
+        id: params.id,
+        data: { user: result.rows[0] },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -57,14 +79,30 @@ export default class UserService implements IUserService {
     params: { offset?: string; limit?: number },
   ): Promise<Array<User>> {
     try {
-      await this.client.connect();
-
       if (params.limit == null) {
         params.limit = 10;
       }
+
+      const cacheResult = await this.cache.get(
+        `usersGetMany-${params.limit}-${params.offset}`,
+      );
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.users;
+      }
+
+      await this.client.connect();
+
       const result = await this.client.queryObject<User>({
         text: "SELECT * FROM users LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
+      });
+
+      await this.cache.set({
+        id: `usersGetMany-${params.limit}-${params.offset}`,
+        data: { users: result.rows },
+        expire: Date.now() + (60000 * 10),
       });
 
       return result.rows;
@@ -92,6 +130,12 @@ export default class UserService implements IUserService {
         ],
       });
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { user: params.data },
+        expire: Date.now() + (60000 * 60),
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -110,6 +154,8 @@ export default class UserService implements IUserService {
         text: "DELETE FROM users WHERE system_id = $1",
         args: [params.id],
       });
+
+      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

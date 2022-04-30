@@ -1,8 +1,11 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import priceService from "../../src/services/priceService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
+import cacheService from "../../src/services/cacheService/mod.ts";
 
-const price = new priceService(client);
+const cache = new cacheService();
+
+const price = new priceService(client, cache);
 let ID = "";
 
 Deno.test("PriceService", async (t) => {

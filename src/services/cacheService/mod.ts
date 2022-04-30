@@ -6,20 +6,20 @@ const cache = new Map<string, {
 }>();
 
 export default class CacheService implements ICacheService {
-  async get(id: string): Promise<Record<string, unknown>> {
+  async get(id: string): Promise<Record<string, unknown> | null> {
     await new Promise((resolve) => setTimeout(resolve, 0));
     if (cache.has(id)) {
       const data = cache.get(id);
       if (data?.expire != undefined) {
-        if (data.expire < Date.now()) {
+        if (data.expire <= Date.now()) {
           cache.delete(id);
-          return {};
+          return null;
         }
         return data.data;
       }
-      return data?.data ?? {};
+      return data?.data ?? null;
     }
-    return {};
+    return null;
   }
 
   async set(

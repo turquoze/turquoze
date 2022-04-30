@@ -2,11 +2,14 @@ import { Category } from "../../utils/types.ts";
 import ICategoryService from "../interfaces/categoryService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import ICacheService from "../interfaces/cacheService.ts";
 
 export default class CategoryService implements ICategoryService {
   client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
+  cache: ICacheService;
+  constructor(client: typeof postgresClient, cache: ICacheService) {
     this.client = client;
+    this.cache = cache;
   }
 
   async Create(params: { data: Category }): Promise<Category> {
@@ -17,6 +20,12 @@ export default class CategoryService implements ICategoryService {
         text:
           "INSERT INTO categories (name, parent, region) VALUES ($1, $2, $3) RETURNING id",
         args: [params.data.name, params.data.parent, params.data.region],
+      });
+
+      await this.cache.set({
+        id: params.data.id,
+        data: { category: params.data },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -31,11 +40,24 @@ export default class CategoryService implements ICategoryService {
 
   async Get(params: { id: string }): Promise<Category> {
     try {
+      const cacheResult = await this.cache.get(params.id);
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.category;
+      }
+
       await this.client.connect();
 
       const result = await this.client.queryObject<Category>({
         text: "SELECT * FROM categories WHERE id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      await this.cache.set({
+        id: params.id,
+        data: { category: result.rows[0] },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -52,14 +74,30 @@ export default class CategoryService implements ICategoryService {
     params: { offset?: string; limit?: number },
   ): Promise<Array<Category>> {
     try {
-      await this.client.connect();
-
       if (params.limit == null) {
         params.limit = 10;
       }
+
+      const cacheResult = await this.cache.get(
+        `categoryGetMany-${params.limit}-${params.offset}`,
+      );
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.categories;
+      }
+
+      await this.client.connect();
+
       const result = await this.client.queryObject<Category>({
         text: "SELECT * FROM categories LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
+      });
+
+      await this.cache.set({
+        id: `categoryGetMany-${params.limit}-${params.offset}`,
+        data: { categories: result.rows },
+        expire: (Date.now() + (60 * 30)),
       });
 
       return result.rows;
@@ -82,6 +120,12 @@ export default class CategoryService implements ICategoryService {
         args: [params.data.name, params.data.parent, params.data.id],
       });
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { category: params.data },
+        expire: null,
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -100,6 +144,8 @@ export default class CategoryService implements ICategoryService {
         text: "DELETE FROM categories WHERE id = $1",
         args: [params.id],
       });
+
+      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

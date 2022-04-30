@@ -1,8 +1,11 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import cartService from "../../src/services/cartService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
+import cacheService from "../../src/services/cacheService/mod.ts";
 
-const cart = new cartService(client);
+const cache = new cacheService();
+
+const cart = new cartService(client, cache);
 let ID = "";
 
 Deno.test("CartService", async (t) => {

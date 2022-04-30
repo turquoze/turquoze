@@ -2,11 +2,14 @@ import type postgresClient from "../dataClient/client.ts";
 import IWarehouseService from "../interfaces/warehouseService.ts";
 import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import ICacheService from "../interfaces/cacheService.ts";
 
 export default class CartService implements IWarehouseService {
   client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
+  cache: ICacheService;
+  constructor(client: typeof postgresClient, cache: ICacheService) {
     this.client = client;
+    this.cache = cache;
   }
 
   async Create(params: { data: Warehouse }): Promise<Warehouse> {
@@ -22,6 +25,12 @@ export default class CartService implements IWarehouseService {
           params.data.name,
           params.data.region,
         ],
+      });
+
+      await this.cache.set({
+        id: params.data.id,
+        data: { warehouse: params.data },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -49,6 +58,12 @@ export default class CartService implements IWarehouseService {
         ],
       });
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { warehouse: params.data },
+        expire: Date.now() + (60000 * 60),
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -61,11 +76,24 @@ export default class CartService implements IWarehouseService {
 
   async Get(params: { id: string }): Promise<Warehouse> {
     try {
+      const cacheResult = await this.cache.get(params.id);
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.warehouse;
+      }
+
       await this.client.connect();
 
       const result = await this.client.queryObject<Warehouse>({
         text: "SELECT * FROM warehouses WHERE id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      await this.cache.set({
+        id: params.id,
+        data: { warehouse: result.rows[0] },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -82,14 +110,30 @@ export default class CartService implements IWarehouseService {
     params: { offset?: string | undefined; limit?: number | undefined },
   ): Promise<Warehouse[]> {
     try {
-      await this.client.connect();
-
       if (params.limit == null) {
         params.limit = 10;
       }
+
+      const cacheResult = await this.cache.get(
+        `warehouseGetMany-${params.limit}-${params.offset}`,
+      );
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.warehouses;
+      }
+
+      await this.client.connect();
+
       const result = await this.client.queryObject<Warehouse>({
         text: "SELECT * FROM warehouses LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
+      });
+
+      await this.cache.set({
+        id: `warehouseGetMany-${params.limit}-${params.offset}`,
+        data: { warehouses: result.rows },
+        expire: Date.now() + (60000 * 10),
       });
 
       return result.rows;
@@ -110,6 +154,8 @@ export default class CartService implements IWarehouseService {
         text: "DELETE FROM warehouses WHERE id = $1",
         args: [params.id],
       });
+
+      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

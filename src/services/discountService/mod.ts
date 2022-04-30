@@ -2,11 +2,14 @@ import type postgresClient from "../dataClient/client.ts";
 import IDiscountService from "../interfaces/discountService.ts";
 import { Discount } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import ICacheService from "../interfaces/cacheService.ts";
 
 export default class DiscountService implements IDiscountService {
   client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
+  cache: ICacheService;
+  constructor(client: typeof postgresClient, cache: ICacheService) {
     this.client = client;
+    this.cache = cache;
   }
 
   async Create(params: { data: Discount }): Promise<Discount> {
@@ -26,6 +29,12 @@ export default class DiscountService implements IDiscountService {
         ],
       });
 
+      await this.cache.set({
+        id: params.data.id,
+        data: { discount: params.data },
+        expire: Date.now() + (60000 * 60),
+      });
+
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -38,11 +47,24 @@ export default class DiscountService implements IDiscountService {
 
   async Get(params: { id: string }): Promise<Discount> {
     try {
+      const cacheResult = await this.cache.get(params.id);
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.discount;
+      }
+
       await this.client.connect();
 
       const result = await this.client.queryObject<Discount>({
         text: "SELECT * FROM discounts WHERE id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      await this.cache.set({
+        id: params.id,
+        data: { discount: result.rows[0] },
+        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -78,14 +100,30 @@ export default class DiscountService implements IDiscountService {
     params: { offset?: string | undefined; limit?: number | undefined },
   ): Promise<Discount[]> {
     try {
-      await this.client.connect();
-
       if (params.limit == null) {
         params.limit = 10;
       }
+
+      const cacheResult = await this.cache.get(
+        `discountGetMany-${params.limit}-${params.offset}`,
+      );
+
+      if (cacheResult != null) {
+        // @ts-expect-error wrong type
+        return cacheResult.discounts;
+      }
+
+      await this.client.connect();
+
       const result = await this.client.queryObject<Discount>({
         text: "SELECT * FROM discounts LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
+      });
+
+      await this.cache.set({
+        id: `discountGetMany-${params.limit}-${params.offset}`,
+        data: { discounts: result.rows },
+        expire: Date.now() + (60000 * 10),
       });
 
       return result.rows;
@@ -106,6 +144,8 @@ export default class DiscountService implements IDiscountService {
         text: "DELETE FROM discounts WHERE id = $1",
         args: [params.id],
       });
+
+      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
