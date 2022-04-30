@@ -7,8 +7,8 @@ import { UuidSchema } from "../../utils/validator.ts";
 
 export default class OrdersRoutes {
   #orders: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#orders = new Router({
       prefix: "/orders",

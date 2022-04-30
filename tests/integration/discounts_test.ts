@@ -2,10 +2,9 @@ import { Application, assert, assertEquals } from "../test_deps.ts";
 
 import DiscountsRoutes from "../../src/routes/api/discounts.ts";
 import { Discount } from "../../src/utils/types.ts";
-import Container from "../../src/services/mod.ts";
+import container from "../../src/services/mod.ts";
 
 let ID = "";
-const container = new Container();
 
 Deno.test({
   name: "Discounts - Create | ok",

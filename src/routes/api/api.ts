@@ -9,13 +9,11 @@ import discounts from "./discounts.ts";
 import warehouses from "./warehouses.ts";
 import inventories from "./inventories.ts";
 
-import Container from "../../services/mod.ts";
+import container from "../../services/mod.ts";
 
 const api = new Router({
   prefix: "/api",
 });
-
-const container = new Container();
 
 api.use(new products(container).routes());
 api.use(new carts(container).routes());

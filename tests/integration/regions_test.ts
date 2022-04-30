@@ -1,11 +1,10 @@
 import { Application, assert, assertEquals } from "../test_deps.ts";
 
 import RegionsRoutes from "../../src/routes/api/regions.ts";
-import Container from "../../src/services/mod.ts";
+import container from "../../src/services/mod.ts";
 import { Region } from "../../src/utils/types.ts";
 
 let ID = "";
-const container = new Container();
 
 Deno.test({
   name: "Regions - Create | ok",

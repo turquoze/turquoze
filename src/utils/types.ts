@@ -159,3 +159,10 @@ export interface User {
   not_active: boolean;
   region: string;
 }
+
+export interface Token {
+  token: string;
+  name: string;
+  expire: number | null;
+  region: string;
+}

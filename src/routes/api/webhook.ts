@@ -5,8 +5,8 @@ import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class WebhookRoutes {
   #webhook: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#webhook = new Router({
       prefix: "/webhook",

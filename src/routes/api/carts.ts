@@ -13,8 +13,8 @@ import {
 
 export default class CartRoutes {
   #carts: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#carts = new Router({
       prefix: "/carts",

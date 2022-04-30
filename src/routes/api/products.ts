@@ -12,8 +12,8 @@ import {
 
 export default class ProductsRoutes {
   #products: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#products = new Router({
       prefix: "/products",

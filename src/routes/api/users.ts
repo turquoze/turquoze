@@ -8,8 +8,8 @@ import { UserSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
   #users: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#users = new Router({
       prefix: "/users",

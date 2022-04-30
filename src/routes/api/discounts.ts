@@ -8,8 +8,8 @@ import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class DiscountsRoutes {
   #discounts: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#discounts = new Router({
       prefix: "/discounts",

@@ -2,10 +2,9 @@ import { Application, assert, assertEquals } from "../test_deps.ts";
 
 import OrdersRoutes from "../../src/routes/api/orders.ts";
 import { Order } from "../../src/utils/types.ts";
-import Container from "../../src/services/mod.ts";
+import container from "../../src/services/mod.ts";
 
 let ID = "";
-const container = new Container();
 
 Deno.test({
   name: "Orders - Get Many | ok",
