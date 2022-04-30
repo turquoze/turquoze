@@ -2,6 +2,7 @@ import { yup } from "../deps.ts";
 import { ErrorResponse } from "./types.ts";
 
 export class DatabaseError extends Error {
+  // deno-lint-ignore no-explicit-any
   constructor(message: string, ...args: any) {
     super(message, ...args);
     this.message = message;
@@ -9,6 +10,7 @@ export class DatabaseError extends Error {
 }
 
 export class NoBodyError extends Error {
+  // deno-lint-ignore no-explicit-any
   constructor(message: string, ...args: any) {
     super(message, ...args);
     this.message = message;

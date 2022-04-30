@@ -8,8 +8,8 @@ import { PriceSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class PricesRoutes {
   #prices: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#prices = new Router({
       prefix: "/prices",

@@ -6,13 +6,14 @@ import ResponseTimer from "./middleware/responseTimer.ts";
 import ApplicationState from "./middleware/applicationState.ts";
 import Logger from "./middleware/logger.ts";
 import AuthGuard from "./middleware/authGuard.ts";
+import container from "./services/mod.ts";
 
 const app = new Application<TurquozeState>();
 
-app.use(AuthGuard);
 app.use(Logger);
 app.use(ResponseTimer);
-app.use(ApplicationState);
+app.use(AuthGuard(container.TokenService));
+app.use(ApplicationState(container.RegionService));
 
 app.use(admin.routes());
 app.use(api.routes());

@@ -8,8 +8,8 @@ import { RegionSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class RegionsRoutes {
   #regions: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#regions = new Router({
       prefix: "/regions",

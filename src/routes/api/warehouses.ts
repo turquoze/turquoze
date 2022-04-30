@@ -8,8 +8,8 @@ import { UuidSchema, WarehouseSchema } from "../../utils/validator.ts";
 
 export default class WarehousesRoutes {
   #warehouses: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#warehouses = new Router({
       prefix: "/warehouses",

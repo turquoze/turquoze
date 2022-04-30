@@ -2,11 +2,10 @@ import { Application, assert, assertEquals } from "../test_deps.ts";
 
 import CartsRoutes from "../../src/routes/api/carts.ts";
 import { Cart } from "../../src/utils/types.ts";
-import Container from "../../src/services/mod.ts";
+import container from "../../src/services/mod.ts";
 
 let ID = "";
 let TOKEN = "";
-const container = new Container();
 
 Deno.test({
   name: "Carts - Create | ok",

@@ -12,8 +12,8 @@ import {
 
 export default class CategoriesRoutes {
   #categories: Router;
-  #Container: Container;
-  constructor(container: Container) {
+  #Container: typeof Container;
+  constructor(container: typeof Container) {
     this.#Container = container;
     this.#categories = new Router({
       prefix: "/categories",

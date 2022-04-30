@@ -2,10 +2,9 @@ import { Application, assert, assertEquals } from "../test_deps.ts";
 
 import InventoriesRoutes from "../../src/routes/api/inventories.ts";
 import { Inventory } from "../../src/utils/types.ts";
-import Container from "../../src/services/mod.ts";
+import container from "../../src/services/mod.ts";
 
 let ID = "";
-const container = new Container();
 
 Deno.test({
   name: "Inventories - Create | ok",

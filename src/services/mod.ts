@@ -12,6 +12,7 @@ import DefaultWarehouseService from "./warehouseService/mod.ts";
 import DefaultInventoryService from "./inventoryService/mod.ts";
 import DefaultPriceService from "./priceService/mod.ts";
 import DefaultUserService from "./userService/mod.ts";
+import DefaultTokenService from "./tokenService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -27,10 +28,11 @@ import IWarehouseService from "./interfaces/warehouseService.ts";
 import IInventoryService from "./interfaces/inventoryService.ts";
 import IPriceService from "./interfaces/priceService.ts";
 import IUserService from "./interfaces/userService.ts";
+import ITokenService from "./interfaces/tokenService.ts";
 
 import client from "./dataClient/client.ts";
 
-export default class Container {
+export class Container {
   CacheService: ICacheService = new DefaultCacheService();
   ProductService: IProductService = new DefaultProductService(
     client,
@@ -80,4 +82,11 @@ export default class Container {
     this.CacheService,
   );
   UserService: IUserService = new DefaultUserService(client, this.CacheService);
+  TokenService: ITokenService = new DefaultTokenService(
+    client,
+    this.CacheService,
+  );
 }
+
+const container = new Container();
+export default container;
