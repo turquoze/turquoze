@@ -9,6 +9,8 @@ let DATABASE: string | undefined;
 let DATABASE_PORT: string | undefined;
 let TOKEN: string | undefined;
 let JWTKEY: string | undefined;
+let UPSTASH_REDIS_REST_URL: string | undefined;
+let UPSTASH_REDIS_REST_TOKEN: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
 if (!DATABASE_CERT) {
@@ -50,6 +52,16 @@ if (!JWTKEY) {
   throw new Error("environment variable JWTKEY not set");
 }
 
+UPSTASH_REDIS_REST_URL = Deno.env.get("UPSTASH_REDIS_REST_URL");
+if (!UPSTASH_REDIS_REST_URL) {
+  throw new Error("environment variable UPSTASH_REDIS_REST_URL not set");
+}
+
+UPSTASH_REDIS_REST_TOKEN = Deno.env.get("UPSTASH_REDIS_REST_TOKEN");
+if (!UPSTASH_REDIS_REST_TOKEN) {
+  throw new Error("environment variable UPSTASH_REDIS_REST_TOKEN not set");
+}
+
 export {
   DATABASE,
   DATABASE_CERT,
@@ -59,4 +71,6 @@ export {
   DATABASE_USER,
   JWTKEY,
   TOKEN,
+  UPSTASH_REDIS_REST_TOKEN,
+  UPSTASH_REDIS_REST_URL,
 };

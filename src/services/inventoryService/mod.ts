@@ -3,6 +3,7 @@ import IInventoryService from "../interfaces/inventoryService.ts";
 import { Inventory } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class CartService implements IInventoryService {
   client: typeof postgresClient;
@@ -26,12 +27,6 @@ export default class CartService implements IInventoryService {
         ],
       });
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { inventory: params.data },
-        expire: Date.now() + (60000 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -53,8 +48,8 @@ export default class CartService implements IInventoryService {
 
       await this.cache.set({
         id: params.data.id,
-        data: { inventory: params.data },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(params.data),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -69,11 +64,10 @@ export default class CartService implements IInventoryService {
 
   async Get(params: { id: string }): Promise<Inventory> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Inventory>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.inventory;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -85,8 +79,8 @@ export default class CartService implements IInventoryService {
 
       await this.cache.set({
         id: params.id,
-        data: { inventory: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];

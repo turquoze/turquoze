@@ -1,43 +1,46 @@
 import ICacheService from "../interfaces/cacheService.ts";
+import { Redis } from "../../deps.ts";
+import {
+  UPSTASH_REDIS_REST_TOKEN,
+  UPSTASH_REDIS_REST_URL,
+} from "../../utils/secrets.ts";
 
-const cache = new Map<string, {
-  data: Record<string, unknown>;
-  expire: number | null;
-}>();
+const redis = new Redis({
+  url: UPSTASH_REDIS_REST_URL!,
+  token: UPSTASH_REDIS_REST_TOKEN!,
+});
 
 export default class CacheService implements ICacheService {
-  async get(id: string): Promise<Record<string, unknown> | null> {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    if (cache.has(id)) {
-      const data = cache.get(id);
-      if (data?.expire != undefined) {
-        if (data.expire <= Date.now()) {
-          cache.delete(id);
-          return null;
-        }
-        return data.data;
-      }
-      return data?.data ?? null;
+  async get<T>(id: string): Promise<T | null> {
+    try {
+      const data = await redis.get<T>(id);
+      return data;
+    } catch (_error) {
+      return null;
     }
-    return null;
   }
 
   async set(
     params: {
       id: string;
-      data: Record<string, unknown>;
-      expire: number | null;
+      data: string;
+      expire: number;
     },
   ): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    cache.set(params.id, {
-      data: params.data,
-      expire: params.expire,
-    });
+    try {
+      await redis.set(params.id, params.data, {
+        ex: params.expire,
+      });
+    } catch (_error) {
+      return;
+    }
   }
 
   async delete(id: string): Promise<void> {
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    cache.delete(id);
+    try {
+      await redis.del(id);
+    } catch (_error) {
+      return;
+    }
   }
 }

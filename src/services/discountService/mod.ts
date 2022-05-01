@@ -3,6 +3,7 @@ import IDiscountService from "../interfaces/discountService.ts";
 import { Discount } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class DiscountService implements IDiscountService {
   client: typeof postgresClient;
@@ -29,12 +30,6 @@ export default class DiscountService implements IDiscountService {
         ],
       });
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { discount: params.data },
-        expire: Date.now() + (60000 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -47,11 +42,10 @@ export default class DiscountService implements IDiscountService {
 
   async Get(params: { id: string }): Promise<Discount> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Discount>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.discount;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -63,8 +57,8 @@ export default class DiscountService implements IDiscountService {
 
       await this.cache.set({
         id: params.id,
-        data: { discount: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -104,13 +98,12 @@ export default class DiscountService implements IDiscountService {
         params.limit = 10;
       }
 
-      const cacheResult = await this.cache.get(
+      const cacheResult = await this.cache.get<Array<Discount>>(
         `discountGetMany-${params.limit}-${params.offset}`,
       );
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.discounts;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -122,8 +115,8 @@ export default class DiscountService implements IDiscountService {
 
       await this.cache.set({
         id: `discountGetMany-${params.limit}-${params.offset}`,
-        data: { discounts: result.rows },
-        expire: Date.now() + (60000 * 10),
+        data: stringifyJSON(result.rows),
+        expire: (60 * 10),
       });
 
       return result.rows;

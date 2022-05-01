@@ -1,10 +1,10 @@
 export default interface ICacheService {
-  get(id: string): Promise<Record<string, unknown> | null>;
+  get<T>(id: string): Promise<T | null>;
 
   set(params: {
     id: string;
-    data: Record<string, unknown>;
-    expire: number | null;
+    data: string;
+    expire: number;
   }): Promise<void>;
 
   delete(id: string): Promise<void>;

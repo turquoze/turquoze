@@ -3,6 +3,7 @@ import IPriceService from "../interfaces/priceService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class PriceService implements IPriceService {
   client: typeof postgresClient;
@@ -26,12 +27,6 @@ export default class PriceService implements IPriceService {
         ],
       });
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { price: params.data },
-        expire: Date.now() + (60000 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -44,11 +39,10 @@ export default class PriceService implements IPriceService {
 
   async Get(params: { id: string }): Promise<Price> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Price>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.price;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -60,8 +54,8 @@ export default class PriceService implements IPriceService {
 
       await this.cache.set({
         id: params.id,
-        data: { price: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -82,13 +76,12 @@ export default class PriceService implements IPriceService {
         params.limit = 10;
       }
 
-      const cacheResult = await this.cache.get(
+      const cacheResult = await this.cache.get<Array<Price>>(
         `priceGetMany-${params.limit}-${params.offset}`,
       );
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.prices;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -100,8 +93,8 @@ export default class PriceService implements IPriceService {
 
       await this.cache.set({
         id: `priceGetMany-${params.limit}-${params.offset}`,
-        data: { prices: result.rows },
-        expire: Date.now() + (60000 * 10),
+        data: stringifyJSON(result.rows),
+        expire: (60 * 10),
       });
 
       return result.rows;
@@ -128,8 +121,8 @@ export default class PriceService implements IPriceService {
 
       await this.cache.set({
         id: params.data.id,
-        data: { price: params.data },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(params.data),
+        expire: (60 * 60),
       });
 
       return result.rows[0];

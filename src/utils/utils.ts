@@ -4,7 +4,8 @@
  * @returns {String} Returns a string.
  */
 export function stringifyJSON(
-  data: Record<string, unknown>,
+  // deno-lint-ignore no-explicit-any
+  data: any,
 ): string {
   return JSON.stringify(
     data,

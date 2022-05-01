@@ -3,6 +3,7 @@ import ITokenService from "../interfaces/tokenService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class TokenService implements ITokenService {
   client: typeof postgresClient;
@@ -39,11 +40,10 @@ export default class TokenService implements ITokenService {
 
   async Get(params: { token: string }): Promise<Token> {
     try {
-      const cacheResult = await this.cache.get(params.token);
+      const cacheResult = await this.cache.get<Token>(params.token);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.token;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -55,8 +55,8 @@ export default class TokenService implements ITokenService {
 
       await this.cache.set({
         id: `token-${params.token}`,
-        data: { token: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
