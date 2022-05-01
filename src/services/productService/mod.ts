@@ -3,6 +3,7 @@ import IProductService from "../interfaces/productService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class ProductService implements IProductService {
   client: typeof postgresClient;
@@ -48,12 +49,6 @@ export default class ProductService implements IProductService {
         });
       }
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { price: params.data },
-        expire: Date.now() + (60000 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -66,11 +61,10 @@ export default class ProductService implements IProductService {
 
   async Get(params: { id: string }): Promise<Product> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Product>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.product;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -82,8 +76,8 @@ export default class ProductService implements IProductService {
 
       await this.cache.set({
         id: params.id,
-        data: { product: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -104,13 +98,12 @@ export default class ProductService implements IProductService {
         params.limit = 10;
       }
 
-      const cacheResult = await this.cache.get(
+      const cacheResult = await this.cache.get<Array<Product>>(
         `productsGetMany-${params.limit}-${params.offset}`,
       );
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.products;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -122,8 +115,8 @@ export default class ProductService implements IProductService {
 
       await this.cache.set({
         id: `productsGetMany-${params.limit}-${params.offset}`,
-        data: { products: result.rows },
-        expire: Date.now() + (60000 * 10),
+        data: stringifyJSON(result.rows),
+        expire: (60 * 10),
       });
 
       return result.rows;
@@ -156,8 +149,8 @@ export default class ProductService implements IProductService {
 
       await this.cache.set({
         id: params.data.id,
-        data: { product: params.data },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(params.data),
+        expire: (60 * 60),
       });
 
       return result.rows[0];

@@ -3,6 +3,7 @@ import ICartService from "../interfaces/cartService.ts";
 import ICacheService from "../interfaces/cacheService.ts";
 import { Cart } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class CartService implements ICartService {
   client: typeof postgresClient;
@@ -34,12 +35,6 @@ export default class CartService implements ICartService {
         });
       }
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { cart: params.data },
-        expire: Date.now() + (60000 * 10),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -52,11 +47,10 @@ export default class CartService implements ICartService {
 
   async Get(params: { id: string }): Promise<Cart> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Cart>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.cart;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -68,8 +62,8 @@ export default class CartService implements ICartService {
 
       await this.cache.set({
         id: params.id,
-        data: { cart: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];

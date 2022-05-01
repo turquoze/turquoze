@@ -3,6 +3,7 @@ import IRegionService from "../interfaces/regionService.ts";
 import { Region } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class RegionService implements IRegionService {
   client: typeof postgresClient;
@@ -22,12 +23,6 @@ export default class RegionService implements IRegionService {
         args: [params.data.name, params.data.currency, params.data.regions],
       });
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { region: params.data },
-        expire: Date.now() + (60000 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -40,11 +35,10 @@ export default class RegionService implements IRegionService {
 
   async Get(params: { id: string }): Promise<Region> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Region>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.region;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -56,8 +50,8 @@ export default class RegionService implements IRegionService {
 
       await this.cache.set({
         id: params.id,
-        data: { region: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -87,8 +81,8 @@ export default class RegionService implements IRegionService {
 
       await this.cache.set({
         id: params.data.id,
-        data: { region: params.data },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(params.data),
+        expire: (60 * 60),
       });
 
       return result.rows[0];

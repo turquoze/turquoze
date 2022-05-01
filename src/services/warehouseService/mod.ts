@@ -3,6 +3,7 @@ import IWarehouseService from "../interfaces/warehouseService.ts";
 import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class CartService implements IWarehouseService {
   client: typeof postgresClient;
@@ -25,12 +26,6 @@ export default class CartService implements IWarehouseService {
           params.data.name,
           params.data.region,
         ],
-      });
-
-      await this.cache.set({
-        id: params.data.id,
-        data: { warehouse: params.data },
-        expire: Date.now() + (60000 * 60),
       });
 
       return result.rows[0];
@@ -60,8 +55,8 @@ export default class CartService implements IWarehouseService {
 
       await this.cache.set({
         id: params.data.id,
-        data: { warehouse: params.data },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(params.data),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -76,11 +71,10 @@ export default class CartService implements IWarehouseService {
 
   async Get(params: { id: string }): Promise<Warehouse> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Warehouse>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.warehouse;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -92,8 +86,8 @@ export default class CartService implements IWarehouseService {
 
       await this.cache.set({
         id: params.id,
-        data: { warehouse: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -114,13 +108,12 @@ export default class CartService implements IWarehouseService {
         params.limit = 10;
       }
 
-      const cacheResult = await this.cache.get(
+      const cacheResult = await this.cache.get<Array<Warehouse>>(
         `warehouseGetMany-${params.limit}-${params.offset}`,
       );
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.warehouses;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -132,8 +125,8 @@ export default class CartService implements IWarehouseService {
 
       await this.cache.set({
         id: `warehouseGetMany-${params.limit}-${params.offset}`,
-        data: { warehouses: result.rows },
-        expire: Date.now() + (60000 * 10),
+        data: stringifyJSON(result.rows),
+        expire: (60 * 10),
       });
 
       return result.rows;

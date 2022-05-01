@@ -1,5 +1,6 @@
 import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
 import cacheService from "../../src/services/cacheService/mod.ts";
+import { stringifyJSON } from "../../src/utils/utils.ts";
 
 const cache = new cacheService();
 
@@ -9,11 +10,11 @@ Deno.test("CacheService", async (t) => {
     fn: async () => {
       try {
         await cache.set({
-          data: {
+          data: stringifyJSON({
             test: "1",
-          },
+          }),
           id: "test",
-          expire: null,
+          expire: 60,
         });
         assert(true);
       } catch {
@@ -27,9 +28,9 @@ Deno.test("CacheService", async (t) => {
     fn: async () => {
       try {
         await cache.set({
-          data: {
+          data: stringifyJSON({
             test: "1",
-          },
+          }),
           id: "test-expire",
           expire: Date.now(),
         });

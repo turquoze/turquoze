@@ -39,11 +39,10 @@ export default class CategoryLinkService implements ICategoryLinkService {
     },
   ): Promise<Product[]> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Array<Product>>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.products;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -60,8 +59,8 @@ export default class CategoryLinkService implements ICategoryLinkService {
 
       await this.cache.set({
         id: params.id,
-        data: { products: result.rows },
-        expire: Date.now() + (60000 * 10),
+        data: JSON.stringify(result.rows),
+        expire: (60 * 10),
       });
 
       return result.rows;

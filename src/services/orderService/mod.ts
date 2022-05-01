@@ -3,6 +3,7 @@ import IOrderService from "../interfaces/orderService.ts";
 import { Order } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import ICacheService from "../interfaces/cacheService.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class CartService implements IOrderService {
   client: typeof postgresClient;
@@ -27,12 +28,6 @@ export default class CartService implements IOrderService {
         ],
       });
 
-      await this.cache.set({
-        id: params.data.id,
-        data: { order: params.data },
-        expire: Date.now() + (60000 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -45,11 +40,10 @@ export default class CartService implements IOrderService {
 
   async Get(params: { id: string }): Promise<Order> {
     try {
-      const cacheResult = await this.cache.get(params.id);
+      const cacheResult = await this.cache.get<Order>(params.id);
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.order;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -61,8 +55,8 @@ export default class CartService implements IOrderService {
 
       await this.cache.set({
         id: params.id,
-        data: { order: result.rows[0] },
-        expire: Date.now() + (60000 * 60),
+        data: stringifyJSON(result.rows[0]),
+        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -83,13 +77,12 @@ export default class CartService implements IOrderService {
         params.limit = 10;
       }
 
-      const cacheResult = await this.cache.get(
+      const cacheResult = await this.cache.get<Array<Order>>(
         `ordersGetMany-${params.limit}-${params.offset}`,
       );
 
       if (cacheResult != null) {
-        // @ts-expect-error wrong type
-        return cacheResult.orders;
+        return cacheResult;
       }
 
       await this.client.connect();
@@ -101,8 +94,8 @@ export default class CartService implements IOrderService {
 
       await this.cache.set({
         id: `ordersGetMany-${params.limit}-${params.offset}`,
-        data: { orders: result.rows },
-        expire: Date.now() + (60000 * 10),
+        data: stringifyJSON(result.rows),
+        expire: (60 * 10),
       });
 
       return result.rows;
