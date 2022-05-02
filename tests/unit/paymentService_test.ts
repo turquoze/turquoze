@@ -1,19 +1,16 @@
 import DefaultOrderService from "../../src/services/orderService/mod.ts";
 import DefaultCartService from "../../src/services/cartService/mod.ts";
 import DefaultProductService from "../../src/services/productService/mod.ts";
-import cacheService from "../../src/services/cacheService/mod.ts";
 
 import { assert } from "../test_deps.ts";
 import paymentService from "../../src/services/paymentService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
 
-const cache = new cacheService();
-
 const payment = new paymentService(
   client,
-  new DefaultCartService(client, cache),
-  new DefaultOrderService(client, cache),
-  new DefaultProductService(client, cache),
+  new DefaultCartService(client),
+  new DefaultOrderService(client),
+  new DefaultProductService(client),
 );
 let ID = "";
 

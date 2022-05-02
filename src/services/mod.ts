@@ -36,20 +36,16 @@ export class Container {
   CacheService: ICacheService = new DefaultCacheService();
   ProductService: IProductService = new DefaultProductService(
     client,
-    this.CacheService,
   );
-  CartService: ICartService = new DefaultCartService(client, this.CacheService);
+  CartService: ICartService = new DefaultCartService(client);
   OrderService: IOrderService = new DefaultOrderService(
     client,
-    this.CacheService,
   );
   CategoryService: ICategoryService = new DefaultCategoryService(
     client,
-    this.CacheService,
   );
   CategoryLinkService: ICategoryLinkService = new DefaultCategoryLinkService(
     client,
-    this.CacheService,
   );
   RegionService: IRegionService = new DefaultRegionService(
     client,
@@ -63,28 +59,22 @@ export class Container {
   );
   DiscountService: IDiscountService = new DefaultDiscountService(
     client,
-    this.CacheService,
   );
   SearchService: ISearchService = new DefaultSearchService(
     client,
-    this.CacheService,
   );
   WarehouseService: IWarehouseService = new DefaultWarehouseService(
     client,
-    this.CacheService,
   );
   InventoryService: IInventoryService = new DefaultInventoryService(
     client,
-    this.CacheService,
   );
   PriceService: IPriceService = new DefaultPriceService(
     client,
-    this.CacheService,
   );
-  UserService: IUserService = new DefaultUserService(client, this.CacheService);
+  UserService: IUserService = new DefaultUserService(client);
   TokenService: ITokenService = new DefaultTokenService(
     client,
-    this.CacheService,
   );
 }
 

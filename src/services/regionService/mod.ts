@@ -35,11 +35,10 @@ export default class RegionService implements IRegionService {
 
   async Get(params: { id: string }): Promise<Region> {
     try {
-      const cacheResult = await this.cache.get<Region>(params.id);
-
-      if (cacheResult != null) {
-        return cacheResult;
-      }
+      try {
+        return await this.cache.get<Region>(params.id);
+        // deno-lint-ignore no-empty
+      } catch {}
 
       await this.client.connect();
 

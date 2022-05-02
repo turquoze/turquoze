@@ -6,6 +6,8 @@ import { Discount } from "../../utils/types.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
 
+import { Delete, Get } from "../../dataAccessLayer/cacheOrDb.ts";
+
 export default class DiscountsRoutes {
   #discounts: Router;
   #Container: typeof Container;
@@ -55,7 +57,12 @@ export default class DiscountsRoutes {
 
     this.#discounts.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.DiscountService.GetMany({});
+        const data = await Get<Array<Discount>>({
+          id: `discountsGetMany-${10}-${undefined}`,
+          promise: this.#Container.DiscountService.GetMany({}),
+        });
+
+        //const data = await this.#Container.DiscountService.GetMany({});
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
@@ -76,9 +83,16 @@ export default class DiscountsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.DiscountService.Get({
-          id: ctx.params.id,
+        const data = await Get<Discount>({
+          id: `discount_${ctx.params.id}`,
+          promise: this.#Container.DiscountService.Get({
+            id: ctx.params.id,
+          }),
         });
+
+        /*const data = await this.#Container.DiscountService.Get({
+          id: ctx.params.id,
+        });*/
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
@@ -99,9 +113,16 @@ export default class DiscountsRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.DiscountService.Delete({
-          id: ctx.params.id,
+        await Delete({
+          id: `discount_${ctx.params.id}`,
+          promise: this.#Container.DiscountService.Delete({
+            id: ctx.params.id,
+          }),
         });
+
+        /*await this.#Container.DiscountService.Delete({
+          id: ctx.params.id,
+        });*/
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

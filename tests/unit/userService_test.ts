@@ -1,11 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import userService from "../../src/services/userService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
-import cacheService from "../../src/services/cacheService/mod.ts";
 
-const cache = new cacheService();
-
-const user = new userService(client, cache);
+const user = new userService(client);
 let ID = "";
 
 Deno.test("UserService", async (t) => {

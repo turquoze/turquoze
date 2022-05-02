@@ -1,11 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import inventoryService from "../../src/services/inventoryService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
-import cacheService from "../../src/services/cacheService/mod.ts";
 
-const cache = new cacheService();
-
-const inventory = new inventoryService(client, cache);
+const inventory = new inventoryService(client);
 let ID = "";
 
 Deno.test("InventoryService", async (t) => {

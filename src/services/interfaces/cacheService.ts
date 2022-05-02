@@ -1,5 +1,5 @@
 export default interface ICacheService {
-  get<T>(id: string): Promise<T | null>;
+  get<T>(id: string): Promise<T>;
 
   set(params: {
     id: string;

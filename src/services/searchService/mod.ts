@@ -2,15 +2,11 @@ import type postgresClient from "../dataClient/client.ts";
 import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { Product, Search } from "../../utils/types.ts";
-import ICacheService from "../interfaces/cacheService.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class SearchService implements ISearchService {
   client: typeof postgresClient;
-  cache: ICacheService;
-  constructor(client: typeof postgresClient, cache: ICacheService) {
+  constructor(client: typeof postgresClient) {
     this.client = client;
-    this.cache = cache;
   }
 
   async ProductSearch(
@@ -21,14 +17,6 @@ export default class SearchService implements ISearchService {
     try {
       if (params.data.limit == null) {
         params.data.limit = 10;
-      }
-
-      const cacheResult = await this.cache.get<Array<Product>>(
-        `productSearch-${params.data.query}-${params.data.region}-${params.data.limit}-${params.data.after}`,
-      );
-
-      if (cacheResult != null) {
-        return cacheResult;
       }
 
       await this.client.connect();
@@ -42,13 +30,6 @@ export default class SearchService implements ISearchService {
           params.data.limit,
           params.data.after,
         ],
-      });
-
-      await this.cache.set({
-        id:
-          `productSearch-${params.data.query}-${params.data.region}-${params.data.limit}-${params.data.after}`,
-        data: stringifyJSON(result.rows),
-        expire: (60 * 10),
       });
 
       return result.rows;

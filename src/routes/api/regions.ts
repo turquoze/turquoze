@@ -1,3 +1,4 @@
+import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
@@ -56,9 +57,16 @@ export default class RegionsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.RegionService.Get({
-          id: ctx.params.id,
+        const data = await Get<Region>({
+          id: `region_${ctx.params.id}`,
+          promise: this.#Container.RegionService.Get({
+            id: ctx.params.id,
+          }),
         });
+
+        /*const data = await this.#Container.RegionService.Get({
+          id: ctx.params.id,
+        });*/
         ctx.response.body = stringifyJSON({
           regions: data,
         });
@@ -92,9 +100,16 @@ export default class RegionsRoutes {
         await RegionSchema.validate(region);
         const posted: Region = await RegionSchema.cast(region);
 
-        const data = await this.#Container.RegionService.Update({
-          data: posted,
+        const data = await Update<Region>({
+          id: `region_${ctx.params.id}`,
+          promise: this.#Container.RegionService.Update({
+            data: posted,
+          }),
         });
+
+        /*const data = await this.#Container.RegionService.Update({
+          data: posted,
+        });*/
         ctx.response.body = stringifyJSON({
           regions: data,
         });
@@ -115,7 +130,12 @@ export default class RegionsRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.RegionService.Delete({ id: ctx.params.id });
+        await Delete({
+          id: `region_${ctx.params.id}`,
+          promise: this.#Container.RegionService.Delete({ id: ctx.params.id }),
+        });
+
+        //await this.#Container.RegionService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
