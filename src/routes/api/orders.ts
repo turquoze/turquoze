@@ -1,9 +1,8 @@
-import { Get } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 
 export default class OrdersRoutes {
@@ -22,7 +21,6 @@ export default class OrdersRoutes {
           promise: this.#Container.OrderService.GetMany({}),
         });
 
-        //const data = await this.#Container.OrderService.GetMany({});
         ctx.response.body = stringifyJSON({
           orders: data,
         });
@@ -50,9 +48,6 @@ export default class OrdersRoutes {
           }),
         });
 
-        /*const data = await this.#Container.OrderService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           orders: data,
         });

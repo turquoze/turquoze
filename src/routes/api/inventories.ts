@@ -1,10 +1,9 @@
-import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Inventory } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { InventorySchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class InventoriesRoutes {
@@ -76,9 +75,6 @@ export default class InventoriesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.InventoryService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           inventories: data,
         });
@@ -106,9 +102,6 @@ export default class InventoriesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.InventoryService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           inventories: data,
         });
@@ -136,7 +129,6 @@ export default class InventoriesRoutes {
           }),
         });
 
-        //await this.#Container.InventoryService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

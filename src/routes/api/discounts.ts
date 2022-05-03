@@ -3,10 +3,8 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Discount } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
 import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
-
-import { Delete, Get } from "../../dataAccessLayer/cacheOrDb.ts";
 
 export default class DiscountsRoutes {
   #discounts: Router;
@@ -45,7 +43,6 @@ export default class DiscountsRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -62,7 +59,6 @@ export default class DiscountsRoutes {
           promise: this.#Container.DiscountService.GetMany({}),
         });
 
-        //const data = await this.#Container.DiscountService.GetMany({});
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
@@ -90,9 +86,6 @@ export default class DiscountsRoutes {
           }),
         });
 
-        /*const data = await this.#Container.DiscountService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
@@ -120,9 +113,6 @@ export default class DiscountsRoutes {
           }),
         });
 
-        /*await this.#Container.DiscountService.Delete({
-          id: ctx.params.id,
-        });*/
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

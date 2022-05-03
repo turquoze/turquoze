@@ -1,10 +1,9 @@
-import { Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { User } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UserSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
@@ -22,7 +21,7 @@ export default class UsersRoutes {
           id: `usersGetMany-${10}-${undefined}`,
           promise: this.#Container.UserService.GetMany({}),
         });
-        //const data = await this.#Container.UserService.GetMany({});
+
         ctx.response.body = stringifyJSON({
           users: data,
         });
@@ -64,7 +63,6 @@ export default class UsersRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -87,9 +85,6 @@ export default class UsersRoutes {
           }),
         });
 
-        /*const data = await this.#Container.UserService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           users: data,
         });
@@ -131,9 +126,6 @@ export default class UsersRoutes {
           }),
         });
 
-        /*const data = await this.#Container.UserService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           users: data,
         });

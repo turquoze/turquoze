@@ -3,14 +3,12 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, Search } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import {
   ProductSchema,
   SearchSchema,
   UuidSchema,
 } from "../../utils/validator.ts";
-
-import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 
 export default class ProductsRoutes {
   #products: Router;
@@ -28,7 +26,6 @@ export default class ProductsRoutes {
           promise: this.#Container.ProductService.GetMany({}),
         });
 
-        //const data = await this.#Container.ProductService.GetMany({});
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -142,9 +139,6 @@ export default class ProductsRoutes {
           }),
         });
 
-        /*const data = await this.#Container.ProductService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -172,9 +166,6 @@ export default class ProductsRoutes {
           }),
         });
 
-        /*const data = await this.#Container.ProductService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -200,7 +191,6 @@ export default class ProductsRoutes {
           promise: this.#Container.ProductService.Delete({ id: ctx.params.id }),
         });
 
-        //await this.#Container.ProductService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

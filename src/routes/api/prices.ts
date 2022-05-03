@@ -1,10 +1,9 @@
-import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Price } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { PriceSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class PricesRoutes {
@@ -23,7 +22,6 @@ export default class PricesRoutes {
           promise: this.#Container.PriceService.GetMany({}),
         });
 
-        //const data = await this.#Container.PriceService.GetMany({});
         ctx.response.body = stringifyJSON({
           prices: data,
         });
@@ -101,9 +99,6 @@ export default class PricesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.PriceService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           prices: data,
         });
@@ -131,9 +126,6 @@ export default class PricesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.PriceService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           prices: data,
         });
@@ -159,7 +151,6 @@ export default class PricesRoutes {
           promise: this.#Container.PriceService.Delete({ id: ctx.params.id }),
         });
 
-        //await this.#Container.PriceService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

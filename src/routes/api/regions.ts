@@ -1,10 +1,9 @@
-import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Region } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { RegionSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class RegionsRoutes {
@@ -64,9 +63,6 @@ export default class RegionsRoutes {
           }),
         });
 
-        /*const data = await this.#Container.RegionService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           regions: data,
         });
@@ -107,9 +103,6 @@ export default class RegionsRoutes {
           }),
         });
 
-        /*const data = await this.#Container.RegionService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           regions: data,
         });
@@ -135,7 +128,6 @@ export default class RegionsRoutes {
           promise: this.#Container.RegionService.Delete({ id: ctx.params.id }),
         });
 
-        //await this.#Container.RegionService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

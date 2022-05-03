@@ -3,14 +3,12 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Category, CategoryLink, Product } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import {
   CategoryLinkSchema,
   CategorySchema,
   UuidSchema,
 } from "../../utils/validator.ts";
-
-import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 
 export default class CategoriesRoutes {
   #categories: Router;
@@ -27,7 +25,7 @@ export default class CategoriesRoutes {
           id: `categoryGetMany-${10}-${10}`,
           promise: this.#Container.CategoryService.GetMany({}),
         });
-        //const data = await this.#Container.CategoryService.GetMany({});
+
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -91,9 +89,6 @@ export default class CategoriesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.CategoryLinkService.GetProducts({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -121,9 +116,6 @@ export default class CategoriesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.CategoryService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -165,9 +157,6 @@ export default class CategoriesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.CategoryService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -265,9 +254,6 @@ export default class CategoriesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.CategoryService.Delete({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           categories: data,
         });

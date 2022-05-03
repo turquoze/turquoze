@@ -28,7 +28,6 @@ Deno.test("ErrorHandler", async (t) => {
     name: "ValidationError",
     fn: () => {
       const data = ErrorHandler(new yup.ValidationError());
-      console.log(data.message);
       assertObjectMatch(data, {
         code: 400,
         message: "Validation error",

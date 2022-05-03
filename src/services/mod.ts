@@ -49,7 +49,6 @@ export class Container {
   );
   RegionService: IRegionService = new DefaultRegionService(
     client,
-    this.CacheService,
   );
   PaymentService: IPaymentService = new DefaultPaymentService(
     client,

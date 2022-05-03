@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
 import cacheService from "../../src/services/cacheService/mod.ts";
 import { stringifyJSON } from "../../src/utils/utils.ts";
 
@@ -32,7 +32,7 @@ Deno.test("CacheService", async (t) => {
             test: "1",
           }),
           id: "test-expire",
-          expire: Date.now(),
+          expire: 1,
         });
         assert(true);
       } catch {

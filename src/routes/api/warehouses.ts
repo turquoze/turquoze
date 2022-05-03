@@ -1,10 +1,9 @@
-import { Delete, Get, Update } from "../../dataAccessLayer/cacheOrDb.ts";
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Warehouse } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UuidSchema, WarehouseSchema } from "../../utils/validator.ts";
 
 export default class WarehousesRoutes {
@@ -23,7 +22,6 @@ export default class WarehousesRoutes {
           promise: this.#Container.WarehouseService.GetMany({}),
         });
 
-        //const data = await this.#Container.WarehouseService.GetMany({});
         ctx.response.body = stringifyJSON({
           warehouses: data,
         });
@@ -101,9 +99,6 @@ export default class WarehousesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.WarehouseService.Update({
-          data: posted,
-        });*/
         ctx.response.body = stringifyJSON({
           warehouses: data,
         });
@@ -131,9 +126,6 @@ export default class WarehousesRoutes {
           }),
         });
 
-        /*const data = await this.#Container.WarehouseService.Get({
-          id: ctx.params.id,
-        });*/
         ctx.response.body = stringifyJSON({
           warehouses: data,
         });
@@ -161,7 +153,6 @@ export default class WarehousesRoutes {
           }),
         });
 
-        //await this.#Container.WarehouseService.Delete({ id: ctx.params.id });
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
