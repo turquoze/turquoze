@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, Search } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import {
   ProductSchema,
   SearchSchema,
@@ -21,7 +21,11 @@ export default class ProductsRoutes {
 
     this.#products.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.ProductService.GetMany({});
+        const data = await Get<Array<Product>>({
+          id: `productsGetMany-${10}-${undefined}`,
+          promise: this.#Container.ProductService.GetMany({}),
+        });
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -128,9 +132,13 @@ export default class ProductsRoutes {
         await ProductSchema.validate(product);
         const posted: Product = await ProductSchema.cast(product);
 
-        const data = await this.#Container.ProductService.Update({
-          data: posted,
+        const data = await Update<Product>({
+          id: `product_${product.id}`,
+          promise: this.#Container.ProductService.Update({
+            data: posted,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -151,9 +159,13 @@ export default class ProductsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.ProductService.Get({
-          id: ctx.params.id,
+        const data = await Get<Product>({
+          id: `product_${ctx.params.id}`,
+          promise: this.#Container.ProductService.Get({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -174,7 +186,11 @@ export default class ProductsRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.ProductService.Delete({ id: ctx.params.id });
+        await Delete({
+          id: `product_${ctx.params.id}`,
+          promise: this.#Container.ProductService.Delete({ id: ctx.params.id }),
+        });
+
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

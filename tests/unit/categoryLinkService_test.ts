@@ -1,11 +1,8 @@
 import { assert } from "../test_deps.ts";
 import categoryLinkService from "../../src/services/categoryLinkService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
-import cacheService from "../../src/services/cacheService/mod.ts";
 
-const cache = new cacheService();
-
-const categoryLink = new categoryLinkService(client, cache);
+const categoryLink = new categoryLinkService(client);
 
 Deno.test("CategoryLinkService", async (t) => {
   await t.step({

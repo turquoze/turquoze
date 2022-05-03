@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Inventory } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { InventorySchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class InventoriesRoutes {
@@ -68,9 +68,13 @@ export default class InventoriesRoutes {
         await InventorySchema.validate(inventory);
         const posted: Inventory = await InventorySchema.cast(inventory);
 
-        const data = await this.#Container.InventoryService.Update({
-          data: posted,
+        const data = await Update<Inventory>({
+          id: `inventory_${ctx.params.id}`,
+          promise: this.#Container.InventoryService.Update({
+            data: posted,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           inventories: data,
         });
@@ -91,9 +95,13 @@ export default class InventoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.InventoryService.Get({
-          id: ctx.params.id,
+        const data = await Get<Inventory>({
+          id: `inventory_${ctx.params.id}`,
+          promise: this.#Container.InventoryService.Get({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           inventories: data,
         });
@@ -114,7 +122,13 @@ export default class InventoriesRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.InventoryService.Delete({ id: ctx.params.id });
+        await Delete({
+          id: `inventory_${ctx.params.id}`,
+          promise: this.#Container.InventoryService.Delete({
+            id: ctx.params.id,
+          }),
+        });
+
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Price } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { PriceSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class PricesRoutes {
@@ -17,7 +17,11 @@ export default class PricesRoutes {
 
     this.#prices.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.PriceService.GetMany({});
+        const data = await Get({
+          id: `pricesGetMany-${10}-${undefined}`,
+          promise: this.#Container.PriceService.GetMany({}),
+        });
+
         ctx.response.body = stringifyJSON({
           prices: data,
         });
@@ -88,9 +92,13 @@ export default class PricesRoutes {
         await PriceSchema.validate(price);
         const posted: Price = await PriceSchema.cast(price);
 
-        const data = await this.#Container.PriceService.Update({
-          data: posted,
+        const data = await Update({
+          id: `price_${posted.id}`,
+          promise: this.#Container.PriceService.Update({
+            data: posted,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           prices: data,
         });
@@ -111,9 +119,13 @@ export default class PricesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.PriceService.Get({
-          id: ctx.params.id,
+        const data = await Get<Price>({
+          id: `price_${ctx.params.id}`,
+          promise: this.#Container.PriceService.Get({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           prices: data,
         });
@@ -134,7 +146,11 @@ export default class PricesRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.PriceService.Delete({ id: ctx.params.id });
+        await Delete({
+          id: `price_${ctx.params.id}`,
+          promise: this.#Container.PriceService.Delete({ id: ctx.params.id }),
+        });
+
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

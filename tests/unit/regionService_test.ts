@@ -1,11 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import regionService from "../../src/services/regionService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
-import cacheService from "../../src/services/cacheService/mod.ts";
 
-const cache = new cacheService();
-
-const region = new regionService(client, cache);
+const region = new regionService(client);
 let ID = "";
 
 Deno.test("RegionService", async (t) => {

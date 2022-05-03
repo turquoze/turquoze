@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Discount } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
 import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class DiscountsRoutes {
@@ -43,7 +43,6 @@ export default class DiscountsRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -55,7 +54,11 @@ export default class DiscountsRoutes {
 
     this.#discounts.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.DiscountService.GetMany({});
+        const data = await Get<Array<Discount>>({
+          id: `discountsGetMany-${10}-${undefined}`,
+          promise: this.#Container.DiscountService.GetMany({}),
+        });
+
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
@@ -76,9 +79,13 @@ export default class DiscountsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.DiscountService.Get({
-          id: ctx.params.id,
+        const data = await Get<Discount>({
+          id: `discount_${ctx.params.id}`,
+          promise: this.#Container.DiscountService.Get({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           discounts: data,
         });
@@ -99,9 +106,13 @@ export default class DiscountsRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.DiscountService.Delete({
-          id: ctx.params.id,
+        await Delete({
+          id: `discount_${ctx.params.id}`,
+          promise: this.#Container.DiscountService.Delete({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

@@ -12,6 +12,11 @@ Deno.test({
   async fn() {
     const app = new Application();
 
+    app.use(async (ctx, next) => {
+      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      await next();
+    });
+
     app.use(new CartsRoutes(container).routes());
 
     const data = JSON.stringify({
@@ -106,6 +111,11 @@ Deno.test({
   async fn() {
     const app = new Application();
 
+    app.use(async (ctx, next) => {
+      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      await next();
+    });
+
     app.use(new CartsRoutes(container).routes());
 
     const response = await app.handle(
@@ -125,6 +135,11 @@ Deno.test({
   name: "Carts - Delete | ok",
   async fn() {
     const app = new Application();
+
+    app.use(async (ctx, next) => {
+      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      await next();
+    });
 
     app.use(new CartsRoutes(container).routes());
 

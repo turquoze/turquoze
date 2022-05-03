@@ -2,15 +2,11 @@ import { Token } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import ICacheService from "../interfaces/cacheService.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class TokenService implements ITokenService {
   client: typeof postgresClient;
-  cache: ICacheService;
-  constructor(client: typeof postgresClient, cache: ICacheService) {
+  constructor(client: typeof postgresClient) {
     this.client = client;
-    this.cache = cache;
   }
 
   async Create(params: { data: Token }): Promise<Token> {
@@ -40,23 +36,11 @@ export default class TokenService implements ITokenService {
 
   async Get(params: { token: string }): Promise<Token> {
     try {
-      const cacheResult = await this.cache.get<Token>(params.token);
-
-      if (cacheResult != null) {
-        return cacheResult;
-      }
-
       await this.client.connect();
 
       const result = await this.client.queryObject<Token>({
         text: "SELECT * FROM tokens WHERE token = $1 LIMIT 1",
         args: [params.token],
-      });
-
-      await this.cache.set({
-        id: `token-${params.token}`,
-        data: stringifyJSON(result.rows[0]),
-        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -101,8 +85,6 @@ export default class TokenService implements ITokenService {
         text: "DELETE FROM tokens WHERE token = $1",
         args: [params.token],
       });
-
-      await this.cache.delete(`token-${params.token}`);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

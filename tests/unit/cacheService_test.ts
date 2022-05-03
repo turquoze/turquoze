@@ -1,4 +1,4 @@
-import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
+import { assert, assertObjectMatch } from "../test_deps.ts";
 import cacheService from "../../src/services/cacheService/mod.ts";
 import { stringifyJSON } from "../../src/utils/utils.ts";
 
@@ -32,7 +32,7 @@ Deno.test("CacheService", async (t) => {
             test: "1",
           }),
           id: "test-expire",
-          expire: Date.now(),
+          expire: 1,
         });
         assert(true);
       } catch {
@@ -54,18 +54,26 @@ Deno.test("CacheService", async (t) => {
   await t.step({
     name: "Get No object",
     fn: async () => {
-      const data: Record<string, unknown> | null = await cache.get("test-no");
-      assertEquals(data!, null);
+      try {
+        await cache.get("test-no");
+        assert(false);
+      } catch (_error) {
+        assert(true);
+      }
     },
   });
 
   await t.step({
     name: "Get Expired",
     fn: async () => {
-      const data: Record<string, unknown> | null = await cache.get(
-        "test-expire",
-      );
-      assertEquals(data, null);
+      try {
+        await cache.get(
+          "test-expire",
+        );
+        assert(false);
+      } catch (_error) {
+        assert(true);
+      }
     },
   });
 
@@ -84,8 +92,12 @@ Deno.test("CacheService", async (t) => {
   await t.step({
     name: "Null cache",
     fn: async () => {
-      const data: Record<string, unknown> | null = await cache.get("test");
-      assertEquals(data, null);
+      try {
+        await cache.get("test");
+        assert(false);
+      } catch (_error) {
+        assert(true);
+      }
     },
   });
 });

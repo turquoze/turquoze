@@ -2,14 +2,11 @@ import { CategoryLink, Product } from "../../utils/types.ts";
 import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
 import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import ICacheService from "../interfaces/cacheService.ts";
 
 export default class CategoryLinkService implements ICategoryLinkService {
   client: typeof postgresClient;
-  cache: ICacheService;
-  constructor(client: typeof postgresClient, cache: ICacheService) {
+  constructor(client: typeof postgresClient) {
     this.client = client;
-    this.cache = cache;
   }
 
   async Link(params: { data: CategoryLink }): Promise<CategoryLink> {
@@ -39,12 +36,6 @@ export default class CategoryLinkService implements ICategoryLinkService {
     },
   ): Promise<Product[]> {
     try {
-      const cacheResult = await this.cache.get<Array<Product>>(params.id);
-
-      if (cacheResult != null) {
-        return cacheResult;
-      }
-
       await this.client.connect();
 
       if (params.limit == null) {
@@ -55,12 +46,6 @@ export default class CategoryLinkService implements ICategoryLinkService {
         text:
           "SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.id WHERE categorieslink.category = $1 LIMIT $2 OFFSET $3",
         args: [params.id, params.limit, params.offset],
-      });
-
-      await this.cache.set({
-        id: params.id,
-        data: JSON.stringify(result.rows),
-        expire: (60 * 10),
       });
 
       return result.rows;

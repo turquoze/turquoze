@@ -2,15 +2,11 @@ import type postgresClient from "../dataClient/client.ts";
 import IRegionService from "../interfaces/regionService.ts";
 import { Region } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import ICacheService from "../interfaces/cacheService.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class RegionService implements IRegionService {
   client: typeof postgresClient;
-  cache: ICacheService;
-  constructor(client: typeof postgresClient, cache: ICacheService) {
+  constructor(client: typeof postgresClient) {
     this.client = client;
-    this.cache = cache;
   }
 
   async Create(params: { data: Region }): Promise<Region> {
@@ -35,23 +31,11 @@ export default class RegionService implements IRegionService {
 
   async Get(params: { id: string }): Promise<Region> {
     try {
-      const cacheResult = await this.cache.get<Region>(params.id);
-
-      if (cacheResult != null) {
-        return cacheResult;
-      }
-
       await this.client.connect();
 
       const result = await this.client.queryObject<Region>({
         text: "SELECT * FROM regions WHERE id = $1 LIMIT 1",
         args: [params.id],
-      });
-
-      await this.cache.set({
-        id: params.id,
-        data: stringifyJSON(result.rows[0]),
-        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -79,12 +63,6 @@ export default class RegionService implements IRegionService {
         ],
       });
 
-      await this.cache.set({
-        id: params.data.id,
-        data: stringifyJSON(params.data),
-        expire: (60 * 60),
-      });
-
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -103,8 +81,6 @@ export default class RegionService implements IRegionService {
         text: "DELETE FROM regions WHERE id = $1",
         args: [params.id],
       });
-
-      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -11,12 +11,15 @@ const redis = new Redis({
 });
 
 export default class CacheService implements ICacheService {
-  async get<T>(id: string): Promise<T | null> {
+  async get<T>(id: string): Promise<T> {
     try {
       const data = await redis.get<T>(id);
+      if (data == null) {
+        throw new Error("Not in cache");
+      }
       return data;
-    } catch (_error) {
-      return null;
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -31,16 +34,16 @@ export default class CacheService implements ICacheService {
       await redis.set(params.id, params.data, {
         ex: params.expire,
       });
-    } catch (_error) {
-      return;
+    } catch (error) {
+      throw error;
     }
   }
 
   async delete(id: string): Promise<void> {
     try {
       await redis.del(id);
-    } catch (_error) {
-      return;
+    } catch (error) {
+      throw error;
     }
   }
 }

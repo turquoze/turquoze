@@ -4,7 +4,7 @@ import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { JWTKEY } from "../../utils/secrets.ts";
 import { Cart, DiscountCheck } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
 import {
   CartSchema,
   DiscountCheckSchema,
@@ -126,7 +126,6 @@ export default class CartRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -141,6 +140,13 @@ export default class CartRoutes {
         await UuidSchema.validate({
           id: ctx.params.id,
         });
+
+        /*const cart = await Get<Cart>({
+          id: `cart_${ctx.params.id}`,
+          promise: this.#Container.CartService.Get({
+            id: ctx.params.id,
+          }),
+        });*/
 
         const cart = await this.#Container.CartService.Get({
           id: ctx.params.id,
@@ -172,9 +178,11 @@ export default class CartRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.CartService.Get({
-          id: ctx.params.id,
+        const data = await Get<Cart>({
+          id: `cart_${ctx.params.id}`,
+          promise: this.#Container.CartService.Get({ id: ctx.params.id }),
         });
+
         ctx.response.body = stringifyJSON({
           carts: data,
         });
@@ -195,9 +203,13 @@ export default class CartRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.CartService.Delete({
-          id: ctx.params.id,
+        await Delete({
+          id: `cart_${ctx.params.id}`,
+          promise: this.#Container.CartService.Delete({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

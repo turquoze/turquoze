@@ -2,15 +2,11 @@ import type postgresClient from "../dataClient/client.ts";
 import IDiscountService from "../interfaces/discountService.ts";
 import { Discount } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import ICacheService from "../interfaces/cacheService.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class DiscountService implements IDiscountService {
   client: typeof postgresClient;
-  cache: ICacheService;
-  constructor(client: typeof postgresClient, cache: ICacheService) {
+  constructor(client: typeof postgresClient) {
     this.client = client;
-    this.cache = cache;
   }
 
   async Create(params: { data: Discount }): Promise<Discount> {
@@ -42,23 +38,11 @@ export default class DiscountService implements IDiscountService {
 
   async Get(params: { id: string }): Promise<Discount> {
     try {
-      const cacheResult = await this.cache.get<Discount>(params.id);
-
-      if (cacheResult != null) {
-        return cacheResult;
-      }
-
       await this.client.connect();
 
       const result = await this.client.queryObject<Discount>({
         text: "SELECT * FROM discounts WHERE id = $1 LIMIT 1",
         args: [params.id],
-      });
-
-      await this.cache.set({
-        id: params.id,
-        data: stringifyJSON(result.rows[0]),
-        expire: (60 * 60),
       });
 
       return result.rows[0];
@@ -98,25 +82,11 @@ export default class DiscountService implements IDiscountService {
         params.limit = 10;
       }
 
-      const cacheResult = await this.cache.get<Array<Discount>>(
-        `discountGetMany-${params.limit}-${params.offset}`,
-      );
-
-      if (cacheResult != null) {
-        return cacheResult;
-      }
-
       await this.client.connect();
 
       const result = await this.client.queryObject<Discount>({
         text: "SELECT * FROM discounts LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
-      });
-
-      await this.cache.set({
-        id: `discountGetMany-${params.limit}-${params.offset}`,
-        data: stringifyJSON(result.rows),
-        expire: (60 * 10),
       });
 
       return result.rows;
@@ -137,8 +107,6 @@ export default class DiscountService implements IDiscountService {
         text: "DELETE FROM discounts WHERE id = $1",
         args: [params.id],
       });
-
-      await this.cache.delete(params.id);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

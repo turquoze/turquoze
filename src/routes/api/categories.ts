@@ -1,9 +1,9 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Category, CategoryLink } from "../../utils/types.ts";
+import { Category, CategoryLink, Product } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import {
   CategoryLinkSchema,
   CategorySchema,
@@ -21,7 +21,11 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.CategoryService.GetMany({});
+        const data = await Get<Array<Category>>({
+          id: `categoryGetMany-${10}-${10}`,
+          promise: this.#Container.CategoryService.GetMany({}),
+        });
+
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -78,9 +82,13 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.CategoryLinkService.GetProducts({
-          id: ctx.params.id,
+        const data = await Get<Array<Product>>({
+          id: `products_by_category_${ctx.params.id}`,
+          promise: this.#Container.CategoryLinkService.GetProducts({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -101,9 +109,13 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.CategoryService.Get({
-          id: ctx.params.id,
+        const data = await Get<Category>({
+          id: `category_${ctx.params.id}`,
+          promise: this.#Container.CategoryService.Get({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -138,9 +150,13 @@ export default class CategoriesRoutes {
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);
 
-        const data = await this.#Container.CategoryService.Update({
-          data: posted,
+        const data = await Update<Category>({
+          id: `category_${ctx.params.id}`,
+          promise: this.#Container.CategoryService.Update({
+            data: posted,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           categories: data,
         });
@@ -231,9 +247,13 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.CategoryService.Delete({
-          id: ctx.params.id,
+        const data = await Delete({
+          id: `category_${ctx.params.id}`,
+          promise: this.#Container.CategoryService.Delete({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           categories: data,
         });

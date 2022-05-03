@@ -3,7 +3,7 @@ import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Warehouse } from "../../utils/types.ts";
 
-import { stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UuidSchema, WarehouseSchema } from "../../utils/validator.ts";
 
 export default class WarehousesRoutes {
@@ -17,7 +17,11 @@ export default class WarehousesRoutes {
 
     this.#warehouses.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.WarehouseService.GetMany({});
+        const data = await Get<Array<Warehouse>>({
+          id: `warehousesGetMany-${10}-${undefined}`,
+          promise: this.#Container.WarehouseService.GetMany({}),
+        });
+
         ctx.response.body = stringifyJSON({
           warehouses: data,
         });
@@ -88,9 +92,13 @@ export default class WarehousesRoutes {
         await WarehouseSchema.validate(warehouse);
         const posted: Warehouse = await WarehouseSchema.cast(warehouse);
 
-        const data = await this.#Container.WarehouseService.Update({
-          data: posted,
+        const data = await Update<Warehouse>({
+          id: `warehouse_${ctx.params.id}`,
+          promise: this.#Container.WarehouseService.Update({
+            data: posted,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           warehouses: data,
         });
@@ -111,9 +119,13 @@ export default class WarehousesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await this.#Container.WarehouseService.Get({
-          id: ctx.params.id,
+        const data = await Get<Warehouse>({
+          id: `warehouse_${ctx.params.id}`,
+          promise: this.#Container.WarehouseService.Get({
+            id: ctx.params.id,
+          }),
         });
+
         ctx.response.body = stringifyJSON({
           warehouses: data,
         });
@@ -134,7 +146,13 @@ export default class WarehousesRoutes {
           id: ctx.params.id,
         });
 
-        await this.#Container.WarehouseService.Delete({ id: ctx.params.id });
+        await Delete({
+          id: `warehouse_${ctx.params.id}`,
+          promise: this.#Container.WarehouseService.Delete({
+            id: ctx.params.id,
+          }),
+        });
+
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
