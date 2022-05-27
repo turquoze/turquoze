@@ -12,14 +12,13 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
     app.use(new UsersRoutes(container).routes());
 
     const data = JSON.stringify({
-      system_id: "00000000-0000-0000-0000-000000000000",
       email: "test@example.com",
       name: "test",
       not_active: false,
@@ -39,7 +38,7 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    ID = users.system_id;
+    ID = users.public_id;
   },
 });
 
@@ -49,7 +48,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -71,7 +70,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -86,7 +85,7 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    assertEquals(users.system_id, ID);
+    assertEquals(users.public_id, ID);
   },
 });
 
@@ -96,15 +95,15 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
     app.use(new UsersRoutes(container).routes());
 
     const data = JSON.stringify({
-      id: "1",
-      system_id: "00000000-0000-0000-0000-000000000000",
+      id: 1,
+      public_id: "00000000-0000-0000-0000-000000000000",
       email: "test@example.com",
       name: "test update",
       not_active: false,
@@ -124,6 +123,6 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    assertEquals(users.system_id, ID);
+    assertEquals(users.public_id, ID);
   },
 });

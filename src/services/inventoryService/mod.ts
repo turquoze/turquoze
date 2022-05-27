@@ -15,7 +15,7 @@ export default class CartService implements IInventoryService {
 
       const result = await this.client.queryObject<Inventory>({
         text:
-          "INSERT INTO inventories (product, quantity, warehouse) VALUES ($1, $2, $3) RETURNING id",
+          "INSERT INTO inventories (product, quantity, warehouse) VALUES ($1, $2, $3) RETURNING public_id",
         args: [
           params.data.product,
           params.data.quantity,
@@ -38,8 +38,9 @@ export default class CartService implements IInventoryService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Inventory>({
-        text: "UPDATE inventories SET quantity = $1 WHERE id = $2 RETURNING id",
-        args: [params.data.quantity, params.data.id],
+        text:
+          "UPDATE inventories SET quantity = $1 WHERE public_id = $2 RETURNING public_id",
+        args: [params.data.quantity, params.data.public_id],
       });
 
       return result.rows[0];
@@ -57,7 +58,7 @@ export default class CartService implements IInventoryService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Inventory>({
-        text: "SELECT * FROM inventories WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM inventories WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -76,7 +77,7 @@ export default class CartService implements IInventoryService {
       await this.client.connect();
 
       await this.client.queryObject<Inventory>({
-        text: "DELETE FROM inventories WHERE id = $1",
+        text: "DELETE FROM inventories WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

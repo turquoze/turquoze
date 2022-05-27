@@ -12,15 +12,16 @@ Deno.test("WarehouseService", async (t) => {
       try {
         const data = await warehouse.Create({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             address: "Test 1B",
             country: "Sweden",
             name: "Sweden A",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -35,7 +36,7 @@ Deno.test("WarehouseService", async (t) => {
         await warehouse.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -53,12 +54,13 @@ Deno.test("WarehouseService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         created_at: data.created_at,
         address: "Test 1B",
         country: "Sweden",
         name: "Sweden A",
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
   });
@@ -83,15 +85,16 @@ Deno.test("WarehouseService", async (t) => {
       try {
         const data = await warehouse.Update({
           data: {
-            id: ID,
+            id: 0,
+            public_id: ID,
             address: "Test 1B - Update",
             country: "Sweden - Update",
             name: "Sweden A - Update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -105,11 +108,12 @@ Deno.test("WarehouseService", async (t) => {
       try {
         await warehouse.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             address: "Test 1B - Update",
             country: "Sweden - Update",
             name: "Sweden A - Update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 

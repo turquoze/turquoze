@@ -15,12 +15,12 @@ export default class CartService implements IWarehouseService {
 
       const result = await this.client.queryObject<Warehouse>({
         text:
-          "INSERT INTO warehouses (address, country, name, region) VALUES ($1, $2, $3, $4) RETURNING id",
+          "INSERT INTO warehouses (address, country, name, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
         args: [
           params.data.address,
           params.data.country,
           params.data.name,
-          params.data.region,
+          params.data.shop,
         ],
       });
 
@@ -40,12 +40,12 @@ export default class CartService implements IWarehouseService {
 
       const result = await this.client.queryObject<Warehouse>({
         text:
-          "UPDATE warehouses SET address = $1, country = $2, name = $3 WHERE id = $4 RETURNING id",
+          "UPDATE warehouses SET address = $1, country = $2, name = $3 WHERE public_id = $4 RETURNING public_id",
         args: [
           params.data.address,
           params.data.country,
           params.data.name,
-          params.data.id,
+          params.data.public_id,
         ],
       });
 
@@ -64,7 +64,7 @@ export default class CartService implements IWarehouseService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Warehouse>({
-        text: "SELECT * FROM warehouses WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM warehouses WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -108,7 +108,7 @@ export default class CartService implements IWarehouseService {
       await this.client.connect();
 
       await this.client.queryObject<Warehouse>({
-        text: "DELETE FROM warehouses WHERE id = $1",
+        text: "DELETE FROM warehouses WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

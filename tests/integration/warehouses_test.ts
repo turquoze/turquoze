@@ -12,7 +12,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -38,7 +38,7 @@ Deno.test({
     assert(response?.ok);
 
     const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    ID = warehouses.id;
+    ID = warehouses.public_id;
   },
 });
 
@@ -48,7 +48,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -70,7 +70,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -85,7 +85,7 @@ Deno.test({
     assert(response?.ok);
 
     const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    assertEquals(warehouses.id, ID);
+    assertEquals(warehouses.public_id, ID);
   },
 });
 
@@ -95,7 +95,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -121,7 +121,7 @@ Deno.test({
     assert(response?.ok);
 
     const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    assertEquals(warehouses.id, ID);
+    assertEquals(warehouses.public_id, ID);
   },
 });
 
@@ -131,7 +131,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 

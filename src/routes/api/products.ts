@@ -54,7 +54,7 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        query.region = ctx.state.region;
+        query.shop = ctx.state.shop;
 
         await SearchSchema.validate(query);
         const posted: Search = await SearchSchema.cast(query);
@@ -90,7 +90,7 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        product.region = ctx.state.region;
+        product.shop = ctx.state.shop;
 
         await ProductSchema.validate(product);
         const posted: Product = await ProductSchema.cast(product);
@@ -126,8 +126,8 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        product.id = ctx.params.id;
-        product.region = ctx.state.region;
+        product.public_id = ctx.params.id;
+        product.shop = ctx.state.shop;
 
         await ProductSchema.validate(product);
         const posted: Product = await ProductSchema.cast(product);

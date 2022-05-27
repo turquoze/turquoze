@@ -91,7 +91,7 @@ export default class RegionsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        region.id = ctx.params.id;
+        region.public_id = ctx.params.id;
 
         await RegionSchema.validate(region);
         const posted: Region = await RegionSchema.cast(region);

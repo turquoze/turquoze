@@ -50,7 +50,7 @@ export default class PricesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        price.region = ctx.state.region;
+        price.shop = ctx.state.shop;
 
         await PriceSchema.validate(price);
         const posted: Price = await PriceSchema.cast(price);
@@ -86,8 +86,8 @@ export default class PricesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        price.id = ctx.params.id;
-        price.region = ctx.state.region;
+        price.public_id = ctx.params.id;
+        price.shop = ctx.state.shop;
 
         await PriceSchema.validate(price);
         const posted: Price = await PriceSchema.cast(price);

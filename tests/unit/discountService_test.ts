@@ -12,17 +12,18 @@ Deno.test("DiscountService", async (t) => {
       try {
         const data = await discount.Create({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             type: "FIXED",
             valid_from: null,
             valid_to: null,
             value: 20,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
             code: "TEST",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -37,7 +38,7 @@ Deno.test("DiscountService", async (t) => {
         await discount.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -55,12 +56,13 @@ Deno.test("DiscountService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         type: "FIXED",
         valid_from: null,
         valid_to: null,
         value: 20,
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
         code: "TEST",
       });
     },
@@ -87,12 +89,13 @@ Deno.test("DiscountService", async (t) => {
         code: "TEST",
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         type: "FIXED",
         valid_from: null,
         valid_to: null,
         value: 20,
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
         code: "TEST",
       });
     },

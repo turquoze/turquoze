@@ -22,7 +22,7 @@ Deno.test("OrderService", async (t) => {
               subtotal: 0,
             },
             created_at: 0,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
             products: [
               {
                 price: {
@@ -79,7 +79,7 @@ Deno.test("OrderService", async (t) => {
           subtotal: 0,
         },
         created_at: 0,
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
         products: [
           {
             price: {

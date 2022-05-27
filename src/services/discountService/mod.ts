@@ -15,11 +15,11 @@ export default class DiscountService implements IDiscountService {
 
       const result = await this.client.queryObject<Discount>({
         text:
-          "INSERT INTO discounts (type, value, region, valid_from, valid_to, code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id",
+          "INSERT INTO discounts (type, value, shop, valid_from, valid_to, code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING public_id",
         args: [
           params.data.type,
           params.data.value,
-          params.data.region,
+          params.data.shop,
           params.data.valid_from,
           params.data.valid_to,
           params.data.code,
@@ -41,7 +41,7 @@ export default class DiscountService implements IDiscountService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Discount>({
-        text: "SELECT * FROM discounts WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM discounts WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -104,7 +104,7 @@ export default class DiscountService implements IDiscountService {
       await this.client.connect();
 
       await this.client.queryObject<void>({
-        text: "DELETE FROM discounts WHERE id = $1",
+        text: "DELETE FROM discounts WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

@@ -15,12 +15,12 @@ export default class CartService implements IOrderService {
 
       const result = await this.client.queryObject<Order>({
         text:
-          "INSERT INTO orders (payment, price, products, region) VALUES ($1, $2, $3, $4) RETURNING id",
+          "INSERT INTO orders (payment, price, products, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
         args: [
           params.data.payment,
           params.data.price,
           params.data.products,
-          params.data.region,
+          params.data.shop,
         ],
       });
 
@@ -39,7 +39,7 @@ export default class CartService implements IOrderService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Order>({
-        text: "SELECT * FROM orders WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM orders WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -86,7 +86,7 @@ export default class CartService implements IOrderService {
 
       const result = await this.client.queryObject<Order>({
         text:
-          "UPDATE orders SET payment.status = $1 WHERE id = $7 RETURNING id",
+          "UPDATE orders SET payment.status = $1 WHERE public_id = $7 RETURNING public_id",
         args: [
           params.status,
           params.id,

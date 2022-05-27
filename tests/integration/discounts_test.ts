@@ -12,7 +12,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -40,7 +40,7 @@ Deno.test({
     assert(response?.ok);
 
     const { discounts }: { discounts: Discount } = await response?.json();
-    ID = discounts.id;
+    ID = discounts.public_id;
   },
 });
 
@@ -50,7 +50,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -72,7 +72,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -87,7 +87,7 @@ Deno.test({
     assert(response?.ok);
 
     const { discounts }: { discounts: Discount } = await response?.json();
-    assertEquals(discounts.id, ID);
+    assertEquals(discounts.public_id, ID);
   },
 });
 
@@ -97,7 +97,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 

@@ -15,10 +15,10 @@ export default class PriceService implements IPriceService {
 
       const result = await this.client.queryObject<Price>({
         text:
-          "INSERT INTO prices (amount, region, product) VALUES ($1, $2, $3) RETURNING id",
+          "INSERT INTO prices (amount, shop, product) VALUES ($1, $2, $3) RETURNING public_id",
         args: [
           params.data.amount,
-          params.data.region,
+          params.data.shop,
           params.data.product,
         ],
       });
@@ -38,7 +38,7 @@ export default class PriceService implements IPriceService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Price>({
-        text: "SELECT * FROM prices WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM prices WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -82,10 +82,11 @@ export default class PriceService implements IPriceService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Price>({
-        text: "UPDATE prices SET amount = $1 WHERE id = $2 RETURNING id",
+        text:
+          "UPDATE prices SET amount = $1 WHERE public_id = $2 RETURNING public_id",
         args: [
           params.data.amount,
-          params.data.id,
+          params.data.public_id,
         ],
       });
 
@@ -104,7 +105,7 @@ export default class PriceService implements IPriceService {
       await this.client.connect();
 
       await this.client.queryObject<Price>({
-        text: "DELETE FROM prices WHERE id = $1",
+        text: "DELETE FROM prices WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

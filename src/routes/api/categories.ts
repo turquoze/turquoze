@@ -54,7 +54,7 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        category.region = ctx.state.region;
+        category.shop = ctx.state.region;
 
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);
@@ -144,8 +144,8 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        category.id = ctx.params.id;
-        category.region = ctx.state.region;
+        category.public_id = ctx.params.id;
+        category.shop = ctx.state.region;
 
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);

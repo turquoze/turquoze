@@ -15,32 +15,34 @@ export default class ProductService implements IProductService {
 
       let result;
 
-      if (params.data.id == "") {
+      if (params.data.public_id == "") {
         result = await this.client.queryObject<Product>({
           text:
-            "INSERT INTO products (active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+            "INSERT INTO products (active, price, title, parent, short_description, long_description, images, shop) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
           args: [
             params.data.active,
             params.data.price,
             params.data.title,
             params.data.parent,
-            params.data.description,
+            params.data.short_description,
+            params.data.long_description,
             params.data.images,
-            params.data.region,
+            params.data.shop,
           ],
         });
       } else {
         result = await this.client.queryObject<Product>({
           text:
-            "INSERT INTO products (active, price, title, parent, description, images, region) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id",
+            "INSERT INTO products (active, price, title, parent, short_description, long_description, images, shop) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
           args: [
             params.data.active,
             params.data.price,
             params.data.title,
             params.data.parent,
-            params.data.description,
+            params.data.short_description,
+            params.data.long_description,
             params.data.images,
-            params.data.region,
+            params.data.shop,
           ],
         });
       }
@@ -60,7 +62,7 @@ export default class ProductService implements IProductService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Product>({
-        text: "SELECT * FROM products WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM products WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -105,15 +107,16 @@ export default class ProductService implements IProductService {
 
       const result = await this.client.queryObject<Product>({
         text:
-          "UPDATE products SET title = $1, description = $2, active = $3, parent = $4, price = $5, images = $6 WHERE id = $7 RETURNING id",
+          "UPDATE products SET title = $1, short_description = $2, long_description = $3, active = $4, parent = $5, price = $6, images = $7 WHERE public_id = $8 RETURNING public_id",
         args: [
           params.data.title,
-          params.data.description,
+          params.data.short_description,
+          params.data.long_description,
           params.data.active,
           params.data.parent,
           params.data.price,
           params.data.images,
-          params.data.id,
+          params.data.public_id,
         ],
       });
 
@@ -132,7 +135,7 @@ export default class ProductService implements IProductService {
       await this.client.connect();
 
       await this.client.queryObject<Product>({
-        text: "DELETE FROM products WHERE id = $1",
+        text: "DELETE FROM products WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {
