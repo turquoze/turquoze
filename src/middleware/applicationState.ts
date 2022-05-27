@@ -9,12 +9,12 @@ export const ApplicationState = (regionService: IRegionService) =>
   ) => {
     try {
       if (
-        ctx.state.region == undefined || ctx.state.region == null ||
-        ctx.state.region == ""
+        ctx.state.shop == undefined || ctx.state.shop == null ||
+        ctx.state.shop == ""
       ) {
         throw new Error("Something is wrong");
       }
-      const region = await regionService.Get({ id: ctx.state.region });
+      const region = await regionService.Get({ id: ctx.state.shop });
       console.log(region.name);
       await next();
     } catch (_error) {

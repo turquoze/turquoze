@@ -13,7 +13,7 @@ Deno.test("TokenService", async (t) => {
         const data = await token.Create({
           data: {
             name: "Test - 123",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
             token: "test12345",
             expire: null,
           },
@@ -34,7 +34,7 @@ Deno.test("TokenService", async (t) => {
         await token.Create({
           // @ts-expect-error want to test
           data: {
-            region: "00000000-0000-0000-0000-000000000000",
+            shop: "00000000-0000-0000-0000-000000000000",
           },
         });
 
@@ -53,7 +53,7 @@ Deno.test("TokenService", async (t) => {
       });
       assertObjectMatch(data, {
         name: "Test - 123",
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
         token: ID,
         expire: null,
       });

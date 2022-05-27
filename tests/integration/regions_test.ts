@@ -33,7 +33,7 @@ Deno.test({
     assert(response?.ok);
 
     const { regions }: { regions: Region } = await response?.json();
-    ID = regions.id;
+    ID = regions.public_id;
   },
 });
 
@@ -53,7 +53,7 @@ Deno.test({
     assert(response?.ok);
 
     const { regions }: { regions: Region } = await response?.json();
-    assertEquals(regions.id, ID);
+    assertEquals(regions.public_id, ID);
   },
 });
 
@@ -85,7 +85,7 @@ Deno.test({
     assert(response?.ok);
 
     const { regions }: { regions: Region } = await response?.json();
-    assertEquals(regions.id, ID);
+    assertEquals(regions.public_id, ID);
   },
 });
 

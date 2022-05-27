@@ -12,7 +12,7 @@ Deno.test("SearchService", async (t) => {
         const data = await search.ProductSearch({
           data: {
             query: "test",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
@@ -30,7 +30,7 @@ Deno.test("SearchService", async (t) => {
         const data = await search.ProductSearch({
           data: {
             query: "NOTHING",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 

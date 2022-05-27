@@ -50,7 +50,7 @@ export default class WarehousesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        warehouse.region = ctx.state.region;
+        warehouse.shop = ctx.state.shop;
 
         await WarehouseSchema.validate(warehouse);
         const posted: Warehouse = await WarehouseSchema.cast(warehouse);
@@ -86,8 +86,8 @@ export default class WarehousesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        warehouse.region = ctx.state.region;
-        warehouse.id = ctx.params.id;
+        warehouse.shop = ctx.state.shop;
+        warehouse.public_id = ctx.params.id;
 
         await WarehouseSchema.validate(warehouse);
         const posted: Warehouse = await WarehouseSchema.cast(warehouse);

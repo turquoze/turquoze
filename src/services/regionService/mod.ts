@@ -15,7 +15,7 @@ export default class RegionService implements IRegionService {
 
       const result = await this.client.queryObject<Region>({
         text:
-          "INSERT INTO regions (name, currency, regions) VALUES ($1, $2, $3) RETURNING id",
+          "INSERT INTO shops (name, currency, regions) VALUES ($1, $2, $3) RETURNING public_id",
         args: [params.data.name, params.data.currency, params.data.regions],
       });
 
@@ -34,7 +34,7 @@ export default class RegionService implements IRegionService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Region>({
-        text: "SELECT * FROM regions WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM shops WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -54,12 +54,12 @@ export default class RegionService implements IRegionService {
 
       const result = await this.client.queryObject<Region>({
         text:
-          "UPDATE regions SET name = $1, currency = $2, regions = $3 WHERE id = $4 RETURNING id",
+          "UPDATE shops SET name = $1, currency = $2, regions = $3 WHERE public_id = $4 RETURNING public_id",
         args: [
           params.data.name,
           params.data.currency,
           params.data.regions,
-          params.data.id,
+          params.data.public_id,
         ],
       });
 
@@ -78,7 +78,7 @@ export default class RegionService implements IRegionService {
       await this.client.connect();
 
       await this.client.queryObject<void>({
-        text: "DELETE FROM regions WHERE id = $1",
+        text: "DELETE FROM shops WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

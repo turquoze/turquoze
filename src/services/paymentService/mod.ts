@@ -37,7 +37,7 @@ export default class PaymentService implements IPaymentService {
         id: params.data.cartId,
       });
 
-      const price = await this.Price({ cartId: cart.id });
+      const price = await this.Price({ cartId: cart.public_id });
 
       const order = await this.#OrderService.Create({
         data: {
@@ -47,7 +47,7 @@ export default class PaymentService implements IPaymentService {
           // @ts-expect-error price
           price: {},
           created_at: 0,
-          region: params.data.info?.data.region ?? "",
+          shop: params.data.info?.data.region ?? "",
           // @ts-expect-error products
           products: {},
         },

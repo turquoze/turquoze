@@ -12,17 +12,19 @@ Deno.test("ProductService", async (t) => {
       try {
         const data = await product.Create({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             active: true,
             images: [],
             price: 203300,
             title: "test product",
-            description: "test product",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            short_description: "test product",
+            long_description: "test product long",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -37,7 +39,7 @@ Deno.test("ProductService", async (t) => {
         await product.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -55,14 +57,16 @@ Deno.test("ProductService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         created_at: data.created_at,
         active: true,
         images: [],
         price: "203300",
         title: "test product",
-        description: "test product",
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        short_description: "test product",
+        long_description: "test product long",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
   });
@@ -87,17 +91,19 @@ Deno.test("ProductService", async (t) => {
       try {
         const data = await product.Update({
           data: {
-            id: ID,
+            id: 0,
+            public_id: ID,
             active: true,
             images: [],
             price: 203300,
             title: "test product update",
-            description: "test product update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            short_description: "test product update",
+            long_description: "test product long update",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -111,13 +117,15 @@ Deno.test("ProductService", async (t) => {
       try {
         await product.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             active: true,
             images: [],
             price: 203300,
             title: "test product update",
-            description: "test product update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            short_description: "test product update",
+            long_description: "test product long update",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 

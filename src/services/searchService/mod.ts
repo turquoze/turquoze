@@ -23,10 +23,10 @@ export default class SearchService implements ISearchService {
 
       const result = await this.client.queryObject<Product>({
         text:
-          "SELECT * FROM products WHERE to_tsvector(description || ' ' || title) @@ to_tsquery($1) AND region = $2 LIMIT $3 OFFSET $4",
+          "SELECT * FROM products WHERE to_tsvector(short_description || ' ' || title) @@ to_tsquery($1) AND shop = $2 LIMIT $3 OFFSET $4",
         args: [
           params.data.query,
-          params.data.region,
+          params.data.shop,
           params.data.limit,
           params.data.after,
         ],

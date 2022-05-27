@@ -12,14 +12,15 @@ Deno.test("InventoryService", async (t) => {
       try {
         const data = await inventory.Create({
           data: {
-            id: "",
-            product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+            id: 0,
+            public_id: "",
+            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
             quantity: 2,
-            warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+            warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -54,11 +55,12 @@ Deno.test("InventoryService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         created_at: data.created_at,
-        product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+        product: "00669ffc-bc13-47b1-aec6-f524611a657f",
         quantity: 2,
-        warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+        warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
       });
     },
   });
@@ -83,14 +85,15 @@ Deno.test("InventoryService", async (t) => {
       try {
         const data = await inventory.Update({
           data: {
-            id: ID,
-            product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+            id: 0,
+            public_id: ID,
+            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
             quantity: 10,
-            warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+            warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -104,7 +107,8 @@ Deno.test("InventoryService", async (t) => {
       try {
         await inventory.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             product: "00000000-0000-0000-0000-000000000000",
             quantity: 0,
             warehouse: "00000000-0000-0000-0000-000000000000",

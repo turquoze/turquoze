@@ -12,14 +12,15 @@ Deno.test("RegionService", async (t) => {
       try {
         const data = await region.Create({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             currency: "EUR",
             name: "TEST",
             regions: ["SE", "NO", "DK", "FI"],
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -34,7 +35,7 @@ Deno.test("RegionService", async (t) => {
         await region.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -52,7 +53,8 @@ Deno.test("RegionService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         currency: "EUR",
         name: "TEST",
         regions: ["SE", "NO", "DK", "FI"],
@@ -80,14 +82,15 @@ Deno.test("RegionService", async (t) => {
       try {
         const data = await region.Update({
           data: {
-            id: ID,
+            id: 0,
+            public_id: ID,
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -101,7 +104,8 @@ Deno.test("RegionService", async (t) => {
       try {
         await region.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],

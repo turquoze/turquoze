@@ -12,7 +12,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -23,7 +23,8 @@ Deno.test({
       images: [],
       price: 203300,
       title: "test product",
-      description: "test product",
+      short_description: "test product",
+      long_description: "test product long",
     });
 
     const response = await app.handle(
@@ -40,7 +41,7 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    ID = products.id;
+    ID = products.public_id;
   },
 });
 
@@ -50,7 +51,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -72,7 +73,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -87,7 +88,7 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    assertEquals(products.id, ID);
+    assertEquals(products.public_id, ID);
   },
 });
 
@@ -97,7 +98,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -109,7 +110,8 @@ Deno.test({
       images: ["https://test.com"],
       price: 203300,
       title: "Test product update",
-      description: "test description update",
+      short_description: "test description update",
+      long_description: "test description long update",
     });
 
     const response = await app.handle(
@@ -126,7 +128,7 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    assertEquals(products.id, ID);
+    assertEquals(products.public_id, ID);
   },
 });
 
@@ -136,7 +138,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 
@@ -167,7 +169,7 @@ Deno.test({
     const app = new Application();
 
     app.use(async (ctx, next) => {
-      ctx.state.region = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
       await next();
     });
 

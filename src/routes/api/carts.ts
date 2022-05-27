@@ -101,15 +101,15 @@ export default class CartRoutes {
             let hasDiscount = undefined;
             if (cart.discounts != null && cart.discounts != undefined) {
               hasDiscount = cart.discounts?.cart.find((d) =>
-                d.did == discount.id
+                d.did == discount.public_id
               );
             }
 
             if (hasDiscount == undefined) {
-              cart.discounts = { cart: [{ did: discount.id }] };
+              cart.discounts = { cart: [{ did: discount.public_id }] };
             } else {
               const newDiscountArr = cart.discounts.cart.filter((item) => {
-                if (item.did != discount.id) {
+                if (item.did != discount.public_id) {
                   return item;
                 }
               });
@@ -153,7 +153,7 @@ export default class CartRoutes {
         });
 
         const token = await jwt.default.sign({
-          cartId: cart.id,
+          cartId: cart.public_id,
           nbf: Math.floor(Date.now() / 1000),
           exp: Math.floor(Date.now() / 1000) + (1 * (60 * 60)),
         }, JWTKEY);

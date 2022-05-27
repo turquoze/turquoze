@@ -29,7 +29,7 @@ export default class DiscountsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        discount.region = ctx.state.region;
+        discount.shop = ctx.state.shop;
 
         await DiscountSchema.validate(discount);
         const posted: Discount = await DiscountSchema.cast(discount);

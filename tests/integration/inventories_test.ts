@@ -14,9 +14,9 @@ Deno.test({
     app.use(new InventoriesRoutes(container).routes());
 
     const data = JSON.stringify({
-      product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
       quantity: 2,
-      warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+      warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
     });
 
     const response = await app.handle(
@@ -33,7 +33,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    ID = inventories.id;
+    ID = inventories.public_id;
   },
 });
 
@@ -53,7 +53,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    assertEquals(inventories.id, ID);
+    assertEquals(inventories.public_id, ID);
   },
 });
 
@@ -65,9 +65,9 @@ Deno.test({
     app.use(new InventoriesRoutes(container).routes());
 
     const data = JSON.stringify({
-      product: "f1d7548e-8d6d-4287-b446-29627e8a3442",
+      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
       quantity: 10,
-      warehouse: "a03a718d-619c-415c-933d-9ebcdff35e3c",
+      warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
     });
 
     const response = await app.handle(
@@ -84,7 +84,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    assertEquals(inventories.id, ID);
+    assertEquals(inventories.public_id, ID);
   },
 });
 

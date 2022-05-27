@@ -15,19 +15,23 @@ export default class CartService implements ICartService {
 
       let result;
       if (
-        params.data.id == "" || params.data.id == undefined ||
-        params.data.id == null
+        params.data.public_id == "" || params.data.public_id == undefined ||
+        params.data.public_id == null
       ) {
         result = await this.client.queryObject<Cart>({
           text:
-            "INSERT INTO carts (products, discounts) VALUES ($1, $2) RETURNING id",
+            "INSERT INTO carts (products, discounts) VALUES ($1, $2) RETURNING public_id",
           args: [params.data.products, params.data.discounts],
         });
       } else {
         result = await this.client.queryObject<Cart>({
           text:
-            "UPDATE carts SET products = $1, discounts = $2 WHERE id = $3 RETURNING id",
-          args: [params.data.products, params.data.discounts, params.data.id],
+            "UPDATE carts SET products = $1, discounts = $2 WHERE public_id = $3 RETURNING public_id",
+          args: [
+            params.data.products,
+            params.data.discounts,
+            params.data.public_id,
+          ],
         });
       }
 
@@ -46,7 +50,7 @@ export default class CartService implements ICartService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Cart>({
-        text: "SELECT * FROM carts WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM carts WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -65,7 +69,7 @@ export default class CartService implements ICartService {
       await this.client.connect();
 
       await this.client.queryObject<Cart>({
-        text: "DELETE FROM carts WHERE id = $1",
+        text: "DELETE FROM carts WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

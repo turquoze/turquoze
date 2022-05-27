@@ -15,8 +15,8 @@ export default class CategoryService implements ICategoryService {
 
       const result = await this.client.queryObject<Category>({
         text:
-          "INSERT INTO categories (name, parent, region) VALUES ($1, $2, $3) RETURNING id",
-        args: [params.data.name, params.data.parent, params.data.region],
+          "INSERT INTO categories (name, parent, shop) VALUES ($1, $2, $3) RETURNING public_id",
+        args: [params.data.name, params.data.parent, params.data.shop],
       });
 
       return result.rows[0];
@@ -34,7 +34,7 @@ export default class CategoryService implements ICategoryService {
       await this.client.connect();
 
       const result = await this.client.queryObject<Category>({
-        text: "SELECT * FROM categories WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM categories WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -79,8 +79,8 @@ export default class CategoryService implements ICategoryService {
 
       const result = await this.client.queryObject<Category>({
         text:
-          "UPDATE categories SET name = $1, parent = $2 WHERE id = $3 RETURNING id",
-        args: [params.data.name, params.data.parent, params.data.id],
+          "UPDATE categories SET name = $1, parent = $2 WHERE public_id = $3 RETURNING public_id",
+        args: [params.data.name, params.data.parent, params.data.public_id],
       });
 
       return result.rows[0];
@@ -98,7 +98,7 @@ export default class CategoryService implements ICategoryService {
       await this.client.connect();
 
       await this.client.queryObject<Category>({
-        text: "DELETE FROM categories WHERE id = $1",
+        text: "DELETE FROM categories WHERE public_id = $1",
         args: [params.id],
       });
     } catch (error) {

@@ -12,7 +12,8 @@ Deno.test("CartService", async (t) => {
       try {
         const data = await cart.CreateOrUpdate({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             products: {
               cart: [{
                 pid: "234",
@@ -25,7 +26,7 @@ Deno.test("CartService", async (t) => {
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -40,7 +41,7 @@ Deno.test("CartService", async (t) => {
         await cart.CreateOrUpdate({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -58,7 +59,8 @@ Deno.test("CartService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         products: {
           cart: [{
             pid: "234",
@@ -79,7 +81,8 @@ Deno.test("CartService", async (t) => {
       try {
         await cart.CreateOrUpdate({
           data: {
-            id: ID,
+            id: 0,
+            public_id: ID,
             products: {
               cart: [{
                 pid: "111",

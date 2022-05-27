@@ -15,11 +15,11 @@ export default class TokenService implements ITokenService {
 
       const result = await this.client.queryObject<Token>({
         text:
-          "INSERT INTO tokens (name, token, region, expire) VALUES ($1, $2, $3, $4) RETURNING token",
+          "INSERT INTO tokens (name, token, shop, expire) VALUES ($1, $2, $3, $4) RETURNING token",
         args: [
           params.data.name,
           params.data.token,
-          params.data.region,
+          params.data.shop,
           params.data.expire,
         ],
       });

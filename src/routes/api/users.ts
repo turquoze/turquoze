@@ -50,7 +50,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        user.region = ctx.state.region;
+        user.shop = ctx.state.shop;
 
         await UserSchema.validate(user);
         const posted: User = await UserSchema.cast(user);
@@ -113,8 +113,8 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        user.system_id = ctx.params.id;
-        user.region = ctx.state.region;
+        user.public_id = ctx.params.id;
+        user.shop = ctx.state.shop;
 
         await UserSchema.validate(user);
         const posted: User = await UserSchema.cast(user);

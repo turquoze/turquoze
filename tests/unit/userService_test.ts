@@ -12,16 +12,16 @@ Deno.test("UserService", async (t) => {
       try {
         const data = await user.Create({
           data: {
-            id: "",
-            system_id: "",
+            id: 0,
+            public_id: "",
             email: "test@example.com",
             name: "test",
             not_active: false,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.system_id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -36,7 +36,7 @@ Deno.test("UserService", async (t) => {
         await user.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -55,12 +55,12 @@ Deno.test("UserService", async (t) => {
       });
       assertObjectMatch(data, {
         id: data.id,
-        system_id: ID,
+        public_id: ID,
         created_at: data.created_at,
         email: "test@example.com",
         name: "test",
         not_active: false,
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
   });
@@ -85,16 +85,16 @@ Deno.test("UserService", async (t) => {
       try {
         const data = await user.Update({
           data: {
-            id: "",
-            system_id: ID,
+            id: 0,
+            public_id: ID,
             email: "test+test123@example.com",
             name: "test update",
             not_active: true,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.system_id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -108,12 +108,12 @@ Deno.test("UserService", async (t) => {
       try {
         await user.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
-            system_id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             email: "test+fail@example.com",
             name: "test fail",
             not_active: true,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 

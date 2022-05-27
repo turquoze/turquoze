@@ -1,17 +1,20 @@
 export interface Product {
-  id: string;
+  id: number;
+  public_id: string;
   created_at?: string;
   active: boolean;
   parent?: string;
   title: string;
-  description: string;
+  short_description: string;
+  long_description: string;
   images: Array<string>;
   price: number;
-  region: string;
+  shop: string;
 }
 
 export interface Cart {
-  id: string;
+  id: number;
+  public_id: string;
   created_at?: number;
   products: {
     cart: Array<{
@@ -28,7 +31,7 @@ export interface Cart {
 
 export interface Order {
   id: string;
-  region: string;
+  shop: string;
   created_at: number;
   products: Array<OrderProduct>;
   payment: {
@@ -50,14 +53,16 @@ export interface OrderProduct {
 }
 
 export interface Category {
-  id: string;
+  id: number;
+  public_id: string;
   parent?: string;
   name: string;
-  region: string;
+  shop: string;
 }
 
 export interface Region {
-  id: string;
+  id: number;
+  public_id: string;
   regions: Array<string>;
   currency: string;
   name: string;
@@ -69,7 +74,7 @@ export interface CategoryLink {
 }
 
 export interface TurquozeState {
-  region: string;
+  shop: string;
 }
 
 export interface PaymentRequest {
@@ -99,12 +104,13 @@ export interface ErrorResponse {
 }
 
 export interface Discount {
-  id: string;
+  id: number;
+  public_id: string;
   type: "FIXED" | "PERCENT";
   value: number;
   valid_to: number | null;
   valid_from: number | null;
-  region: string;
+  shop: string;
   code: string;
 }
 
@@ -112,12 +118,13 @@ export interface Search {
   query: string;
   limit?: number;
   after?: string;
-  region: string;
+  shop: string;
 }
 
 export interface Warehouse {
-  id: string;
-  region: string;
+  id: number;
+  public_id: string;
+  shop: string;
   created_at?: number;
   country: string;
   address: string;
@@ -125,7 +132,8 @@ export interface Warehouse {
 }
 
 export interface Inventory {
-  id: string;
+  id: number;
+  public_id: string;
   created_at?: number;
   warehouse: string;
   product: string;
@@ -139,10 +147,11 @@ export interface PriceCalculation {
 }
 
 export interface Price {
-  id: string;
+  id: number;
+  public_id: string;
   created_at?: number;
   amount: number;
-  region: string;
+  shop: string;
   product: string;
 }
 
@@ -151,18 +160,18 @@ export interface DiscountCheck {
 }
 
 export interface User {
-  id: string;
-  system_id: string;
+  id: number;
+  public_id: string;
   created_at?: number;
   name: string;
   email: string;
   not_active: boolean;
-  region: string;
+  shop: string;
 }
 
 export interface Token {
   token: string;
   name: string;
   expire: number | null;
-  region: string;
+  shop: string;
 }

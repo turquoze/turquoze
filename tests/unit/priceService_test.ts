@@ -12,14 +12,15 @@ Deno.test("PriceService", async (t) => {
       try {
         const data = await price.Create({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             amount: 100,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -34,7 +35,7 @@ Deno.test("PriceService", async (t) => {
         await price.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -52,11 +53,12 @@ Deno.test("PriceService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         created_at: data.created_at,
         amount: 100,
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-        product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        product: "00669ffc-bc13-47b1-aec6-f524611a657f",
       });
     },
   });
@@ -81,14 +83,15 @@ Deno.test("PriceService", async (t) => {
       try {
         const data = await price.Update({
           data: {
-            id: ID,
+            id: 0,
+            public_id: ID,
             amount: 200,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "26b7157f-8c4b-4520-9e27-43500b668e8f",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -102,9 +105,10 @@ Deno.test("PriceService", async (t) => {
       try {
         await price.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             amount: 200,
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
             product: "00000000-0000-0000-0000-000000000000",
           },
         });

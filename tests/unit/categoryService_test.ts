@@ -12,13 +12,14 @@ Deno.test("CategoryService", async (t) => {
       try {
         const data = await category.Create({
           data: {
-            id: "",
+            id: 0,
+            public_id: "",
             name: "test",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -33,7 +34,7 @@ Deno.test("CategoryService", async (t) => {
         await category.Create({
           // @ts-expect-error want to test
           data: {
-            id: "",
+            public_id: "",
           },
         });
 
@@ -51,9 +52,10 @@ Deno.test("CategoryService", async (t) => {
         id: ID,
       });
       assertObjectMatch(data, {
-        id: ID,
+        id: data.id,
+        public_id: ID,
         name: "test",
-        region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
   });
@@ -78,13 +80,14 @@ Deno.test("CategoryService", async (t) => {
       try {
         const data = await category.Update({
           data: {
-            id: ID,
+            id: 0,
+            public_id: ID,
             name: "test update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
-        ID = data.id;
+        ID = data.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -98,9 +101,10 @@ Deno.test("CategoryService", async (t) => {
       try {
         await category.Update({
           data: {
-            id: "00000000-0000-0000-0000-000000000000",
+            id: 0,
+            public_id: "00000000-0000-0000-0000-000000000000",
             name: "test update",
-            region: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
 
