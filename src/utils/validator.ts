@@ -9,6 +9,7 @@ export const ProductSchema = yup.object().shape({
   long_description: yup.string().min(3).required(),
   images: yup.array().of(yup.string()),
   price: yup.number().required().positive().integer(),
+  slug: yup.string().min(3).required(),
 });
 
 export const RegionSchema = yup.object().shape({

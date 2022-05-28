@@ -18,7 +18,7 @@ export default class ProductService implements IProductService {
       if (params.data.public_id == "") {
         result = await this.client.queryObject<Product>({
           text:
-            "INSERT INTO products (active, price, title, parent, short_description, long_description, images, shop) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
+            "INSERT INTO products (active, price, title, parent, short_description, long_description, images, shop, slug) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING public_id",
           args: [
             params.data.active,
             params.data.price,
@@ -28,12 +28,13 @@ export default class ProductService implements IProductService {
             params.data.long_description,
             params.data.images,
             params.data.shop,
+            params.data.slug,
           ],
         });
       } else {
         result = await this.client.queryObject<Product>({
           text:
-            "INSERT INTO products (active, price, title, parent, short_description, long_description, images, shop) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
+            "INSERT INTO products (active, price, title, parent, short_description, long_description, images, shop, slug) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING public_id",
           args: [
             params.data.active,
             params.data.price,
@@ -43,6 +44,7 @@ export default class ProductService implements IProductService {
             params.data.long_description,
             params.data.images,
             params.data.shop,
+            params.data.slug,
           ],
         });
       }
@@ -64,6 +66,25 @@ export default class ProductService implements IProductService {
       const result = await this.client.queryObject<Product>({
         text: "SELECT * FROM products WHERE public_id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    } finally {
+      await this.client.end();
+    }
+  }
+
+  async GetBySlug(params: { slug: string }): Promise<Product> {
+    try {
+      await this.client.connect();
+
+      const result = await this.client.queryObject<Product>({
+        text: "SELECT * FROM products WHERE slug = $1 LIMIT 1",
+        args: [params.slug],
       });
 
       return result.rows[0];
@@ -107,7 +128,7 @@ export default class ProductService implements IProductService {
 
       const result = await this.client.queryObject<Product>({
         text:
-          "UPDATE products SET title = $1, short_description = $2, long_description = $3, active = $4, parent = $5, price = $6, images = $7 WHERE public_id = $8 RETURNING public_id",
+          "UPDATE products SET title = $1, short_description = $2, long_description = $3, active = $4, parent = $5, price = $6, images = $7, slug = $8 WHERE public_id = $9 RETURNING public_id",
         args: [
           params.data.title,
           params.data.short_description,
@@ -116,6 +137,7 @@ export default class ProductService implements IProductService {
           params.data.parent,
           params.data.price,
           params.data.images,
+          params.data.slug,
           params.data.public_id,
         ],
       });

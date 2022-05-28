@@ -76,6 +76,26 @@ export default class ProductsRoutes {
       }
     });
 
+    this.#products.get("/byslug/:slug", async (ctx) => {
+      try {
+        const data = await this.#Container.ProductService.GetBySlug({
+          slug: ctx.params.slug,
+        });
+
+        ctx.response.body = stringifyJSON({
+          products: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#products.post("/", async (ctx) => {
       try {
         if (!ctx.request.hasBody) {

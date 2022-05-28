@@ -4,6 +4,7 @@ import client from "../../src/services/dataClient/client.ts";
 
 const product = new productService(client);
 let ID = "";
+const SLUG = "test2";
 
 Deno.test("ProductService", async (t) => {
   await t.step({
@@ -21,6 +22,7 @@ Deno.test("ProductService", async (t) => {
             short_description: "test product",
             long_description: "test product long",
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            slug: "test2",
           },
         });
 
@@ -67,6 +69,7 @@ Deno.test("ProductService", async (t) => {
         short_description: "test product",
         long_description: "test product long",
         shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        slug: "test2",
       });
     },
   });
@@ -77,6 +80,42 @@ Deno.test("ProductService", async (t) => {
       try {
         await product.Get({
           id: "00000000-0000-0000-0000-000000000000",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Get By Slug",
+    fn: async () => {
+      const data = await product.GetBySlug({
+        slug: SLUG,
+      });
+      assertObjectMatch(data, {
+        id: data.id,
+        public_id: ID,
+        created_at: data.created_at,
+        active: true,
+        images: [],
+        price: "203300",
+        title: "test product",
+        short_description: "test product",
+        long_description: "test product long",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        slug: "test2",
+      });
+    },
+  });
+
+  await t.step({
+    name: "Get By Slug - Fail",
+    fn: async () => {
+      try {
+        await product.GetBySlug({
+          slug: "123",
         });
         assert(false);
       } catch {
@@ -100,6 +139,7 @@ Deno.test("ProductService", async (t) => {
             short_description: "test product update",
             long_description: "test product long update",
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            slug: "test2",
           },
         });
 
@@ -126,6 +166,7 @@ Deno.test("ProductService", async (t) => {
             short_description: "test product update",
             long_description: "test product long update",
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            slug: "test2",
           },
         });
 

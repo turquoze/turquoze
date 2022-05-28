@@ -5,6 +5,7 @@ import { Product } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
 
 let ID = "";
+const SLUG = "test1";
 
 Deno.test({
   name: "Products - Create | ok",
@@ -25,6 +26,7 @@ Deno.test({
       title: "test product",
       short_description: "test product",
       long_description: "test product long",
+      slug: "test1",
     });
 
     const response = await app.handle(
@@ -59,6 +61,28 @@ Deno.test({
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products`, {
+        method: "GET",
+      }),
+    );
+
+    assert(response?.ok);
+  },
+});
+
+Deno.test({
+  name: "Products - Get By Slug | ok",
+  async fn() {
+    const app = new Application();
+
+    app.use(async (ctx, next) => {
+      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+      await next();
+    });
+
+    app.use(new ProductsRoutes(container).routes());
+
+    const response = await app.handle(
+      new Request(`http://127.0.0.1/products/byslug/${SLUG}`, {
         method: "GET",
       }),
     );
@@ -112,6 +136,7 @@ Deno.test({
       title: "Test product update",
       short_description: "test description update",
       long_description: "test description long update",
+      slug: "test1",
     });
 
     const response = await app.handle(
