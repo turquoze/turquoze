@@ -1,9 +1,17 @@
-CREATE TABLE IF NOT EXISTS categorieslink (
-  id int NOT NULL,
-  category int NOT NULL,
-  product int NOT NULL,
-  PRIMARY KEY (id)
-)
+-- categorieslink definition
 
-// setup FK shop, price, parent
-// setup public_id to uuid
+-- Drop table
+
+-- DROP TABLE categorieslink;
+
+CREATE TABLE categorieslink (
+	category uuid NOT NULL,
+	product uuid NOT NULL,
+	CONSTRAINT "categoriesLink_pkey" PRIMARY KEY (category, product)
+);
+
+
+-- categorieslink foreign keys
+
+ALTER TABLE categorieslink ADD CONSTRAINT "categoriesLink_category_fkey" FOREIGN KEY (category) REFERENCES categories(public_id);
+ALTER TABLE categorieslink ADD CONSTRAINT "categoriesLink_product_fkey" FOREIGN KEY (product) REFERENCES products(public_id);
