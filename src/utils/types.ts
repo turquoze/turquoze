@@ -2,6 +2,7 @@ export interface Product {
   id: number;
   public_id: string;
   created_at?: string;
+  slug: string;
   active: boolean;
   parent?: string;
   title: string;

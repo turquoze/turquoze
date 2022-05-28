@@ -9,6 +9,10 @@ export default interface IProductService {
     id: string;
   }): Promise<Product>;
 
+  GetBySlug(params: {
+    slug: string;
+  }): Promise<Product>;
+
   GetMany(params: {
     offset?: string;
     limit?: number;
