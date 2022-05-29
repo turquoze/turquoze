@@ -75,6 +75,35 @@ Deno.test("CategoryService", async (t) => {
   });
 
   await t.step({
+    name: "Get By Name",
+    fn: async () => {
+      const data = await category.GetByName({
+        name: "test",
+      });
+      assertObjectMatch(data, {
+        id: data.id,
+        public_id: ID,
+        name: "test",
+        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+      });
+    },
+  });
+
+  await t.step({
+    name: "Get By Name - Fail",
+    fn: async () => {
+      try {
+        await category.GetByName({
+          name: "",
+        });
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
     name: "Update",
     fn: async () => {
       try {

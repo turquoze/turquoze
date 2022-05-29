@@ -76,6 +76,29 @@ export default class CategoriesRoutes {
       }
     });
 
+    this.#categories.get("/byname/:name", async (ctx) => {
+      try {
+        const data = await Get<Category>({
+          id: `category_name_${ctx.params.name}`,
+          promise: this.#Container.CategoryService.GetByName({
+            name: ctx.params.name,
+          }),
+        });
+
+        ctx.response.body = stringifyJSON({
+          categories: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#categories.get("/:id/products", async (ctx) => {
       try {
         await UuidSchema.validate({
