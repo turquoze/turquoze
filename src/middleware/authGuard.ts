@@ -12,7 +12,7 @@ export const AuthGuard = (tokenService: ITokenService) =>
           throw new Error("Not active");
         }
 
-        ctx.state.region = tokenInfo.shop;
+        ctx.state.shop = tokenInfo.shop;
 
         await next();
       } else {
