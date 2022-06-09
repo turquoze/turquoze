@@ -59,9 +59,7 @@ export class Container {
   DiscountService: IDiscountService = new DefaultDiscountService(
     client,
   );
-  SearchService: ISearchService = new DefaultSearchService(
-    client,
-  );
+  SearchService: ISearchService = new DefaultSearchService();
   WarehouseService: IWarehouseService = new DefaultWarehouseService(
     client,
   );

@@ -11,6 +11,9 @@ let TOKEN: string | undefined;
 let JWTKEY: string | undefined;
 let UPSTASH_REDIS_REST_URL: string | undefined;
 let UPSTASH_REDIS_REST_TOKEN: string | undefined;
+let MEILIHOST: string | undefined;
+let MEILIINDEX: string | undefined;
+let MEILIAPIKEY: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
 if (!DATABASE_CERT) {
@@ -62,6 +65,23 @@ if (!UPSTASH_REDIS_REST_TOKEN) {
   throw new Error("environment variable UPSTASH_REDIS_REST_TOKEN not set");
 }
 
+MEILIHOST = Deno.env.get("MEILIHOST");
+if (!MEILIHOST) {
+  throw new Error("environment variable MEILIHOST not set");
+}
+
+MEILIINDEX = Deno.env.get("MEILIINDEX");
+if (!MEILIINDEX) {
+  throw new Error("environment variable MEILIINDEX not set");
+}
+
+MEILIAPIKEY = Deno.env.get("MEILIAPIKEY");
+if (!MEILIAPIKEY) {
+  console.warn(
+    "environment variable MEILIAPIKEY not set \n Using public access",
+  );
+}
+
 export {
   DATABASE,
   DATABASE_CERT,
@@ -70,6 +90,9 @@ export {
   DATABASE_PORT,
   DATABASE_USER,
   JWTKEY,
+  MEILIAPIKEY,
+  MEILIHOST,
+  MEILIINDEX,
   TOKEN,
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,
