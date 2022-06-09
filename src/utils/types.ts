@@ -118,7 +118,7 @@ export interface Discount {
 export interface Search {
   query: string;
   limit?: number;
-  after?: string;
+  offset?: number;
   shop: string;
 }
 

@@ -1,14 +1,10 @@
-import type postgresClient from "../dataClient/client.ts";
 import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { Product, Search } from "../../utils/types.ts";
+import { MeiliSearch } from "../../deps.ts";
+import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "../../utils/secrets.ts";
 
 export default class SearchService implements ISearchService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
-  }
-
   async ProductSearch(
     params: {
       data: Search;
@@ -19,26 +15,21 @@ export default class SearchService implements ISearchService {
         params.data.limit = 10;
       }
 
-      await this.client.connect();
+      const client = new MeiliSearch({ host: MEILIHOST!, apiKey: MEILIAPIKEY });
 
-      const result = await this.client.queryObject<Product>({
-        text:
-          "SELECT * FROM products WHERE to_tsvector(short_description || ' ' || title) @@ to_tsquery($1) AND shop = $2 LIMIT $3 OFFSET $4",
-        args: [
-          params.data.query,
-          params.data.shop,
-          params.data.limit,
-          params.data.after,
-        ],
-      });
+      const response = await client.index(MEILIINDEX!).search<Product>(
+        params.data.query,
+        {
+          limit: params.data.limit ?? 20,
+          offset: params.data.offset ?? 0,
+        },
+      );
 
-      return result.rows;
+      return response.hits;
     } catch (error) {
-      throw new DatabaseError("DB error", {
+      throw new DatabaseError("Search error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }

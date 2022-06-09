@@ -1,8 +1,7 @@
 import { assert } from "../test_deps.ts";
 import searchService from "../../src/services/searchService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
 
-const search = new searchService(client);
+const search = new searchService();
 
 Deno.test("SearchService", async (t) => {
   await t.step({
@@ -11,7 +10,7 @@ Deno.test("SearchService", async (t) => {
       try {
         const data = await search.ProductSearch({
           data: {
-            query: "test",
+            query: "bo",
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
@@ -29,7 +28,7 @@ Deno.test("SearchService", async (t) => {
       try {
         const data = await search.ProductSearch({
           data: {
-            query: "NOTHING",
+            query: "NOTHING 12343",
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
           },
         });
