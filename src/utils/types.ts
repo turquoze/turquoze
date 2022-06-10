@@ -176,3 +176,8 @@ export interface Token {
   expire: number | null;
   shop: string;
 }
+
+export type TurquozeEvent =
+  | "CREATED_PRODUCT"
+  | "UPDATED_PRODUCT"
+  | "DELETED_PRODUCT";

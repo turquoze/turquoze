@@ -13,6 +13,7 @@ import DefaultInventoryService from "./inventoryService/mod.ts";
 import DefaultPriceService from "./priceService/mod.ts";
 import DefaultUserService from "./userService/mod.ts";
 import DefaultTokenService from "./tokenService/mod.ts";
+import DefaultNotificationService from "./notificationService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -29,6 +30,7 @@ import IInventoryService from "./interfaces/inventoryService.ts";
 import IPriceService from "./interfaces/priceService.ts";
 import IUserService from "./interfaces/userService.ts";
 import ITokenService from "./interfaces/tokenService.ts";
+import INotificationService from "./interfaces/notificationService.ts";
 
 import client from "./dataClient/client.ts";
 
@@ -73,6 +75,7 @@ export class Container {
   TokenService: ITokenService = new DefaultTokenService(
     client,
   );
+  NotificationService: INotificationService = new DefaultNotificationService();
 }
 
 const container = new Container();
