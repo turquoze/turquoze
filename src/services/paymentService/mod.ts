@@ -81,14 +81,14 @@ export default class PaymentService implements IPaymentService {
         addends.reduce(add);
       const arr: Array<Din.Dinero<number>> = [];
 
-      await Promise.all(cart.products.cart.map(async (product) => {
+      /*await Promise.all(cart.products.cart.map(async (product) => {
         const dbProduct = await this.#ProductService.Get({ id: product.pid });
         // @ts-expect-error fake int
         const productPrice = parseInt(dbProduct.price);
 
         const dineroObj = dollars(productPrice);
         arr.push(dineroObj);
-      }));
+      }));*/
 
       const price = addMany(arr);
       const total = price.toJSON();
