@@ -17,17 +17,15 @@ export interface Cart {
   id: number;
   public_id: string;
   created_at?: number;
-  products: {
-    cart: Array<{
-      pid: string;
-      quantity: number;
-    }>;
-  };
-  discounts: {
-    cart: Array<{
-      did: string;
-    }>;
-  };
+  items: Array<CartItem>;
+}
+
+export interface CartItem {
+  id: number;
+  cart_id: string;
+  product_id: string;
+  price: number;
+  quantity: number;
 }
 
 export interface Order {

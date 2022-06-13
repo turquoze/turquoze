@@ -46,16 +46,13 @@ export const DiscountSchema = yup.object().shape({
 export const CartSchema = yup.object().shape({
   public_id: yup.string().uuid().nullable(true),
   created_at: yup.date().nullable(true),
-  products: yup.object().shape({
-    cart: yup.array()
-      .of(
-        yup.object().shape({
-          pid: yup.string(),
-          quantity: yup.number().required().positive().integer(),
-        }),
-      )
-      .required(),
-  }),
+});
+
+export const CartItemSchema = yup.object().shape({
+  cart_id: yup.string().uuid().required(),
+  product_id: yup.string().uuid().required(),
+  price: yup.number().positive().integer().required(),
+  quantity: yup.number().positive().integer().required(),
 });
 
 export const SearchSchema = yup.object().shape({

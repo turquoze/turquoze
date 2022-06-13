@@ -10,41 +10,15 @@ Deno.test("CartService", async (t) => {
     name: "Create",
     fn: async () => {
       try {
-        const data = await cart.CreateOrUpdate({
+        const data = await cart.Create({
           data: {
-            id: 0,
             public_id: "",
-            products: {
-              cart: [{
-                pid: "234",
-                quantity: 3,
-              }],
-            },
-            discounts: {
-              cart: [],
-            },
+            id: 0,
+            items: [],
           },
         });
 
         ID = data.public_id;
-        assert(true);
-      } catch {
-        assert(false);
-      }
-    },
-  });
-
-  await t.step({
-    name: "Create - Fail",
-    fn: async () => {
-      try {
-        await cart.CreateOrUpdate({
-          // @ts-expect-error want to test
-          data: {
-            public_id: "",
-          },
-        });
-
         assert(true);
       } catch {
         assert(false);
@@ -61,43 +35,141 @@ Deno.test("CartService", async (t) => {
       assertObjectMatch(data, {
         id: data.id,
         public_id: ID,
-        products: {
-          cart: [{
-            pid: "234",
-            quantity: 3,
-          }],
-        },
         created_at: data.created_at,
-        discounts: {
-          cart: [],
-        },
       });
     },
   });
 
   await t.step({
-    name: "Update",
+    name: "Add Items",
     fn: async () => {
       try {
-        await cart.CreateOrUpdate({
+        await cart.AddItem({
           data: {
             id: 0,
-            public_id: ID,
-            products: {
-              cart: [{
-                pid: "111",
-                quantity: 1,
-              }],
-            },
-            discounts: {
-              cart: [],
-            },
+            cart_id: ID,
+            price: 2000,
+            product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            quantity: 2,
           },
         });
 
         assert(true);
       } catch {
         assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Add Items - Fail",
+    fn: async () => {
+      try {
+        await cart.AddItem({
+          data: {
+            id: 0,
+            cart_id: ID,
+            price: 2000,
+            product_id: "00000000-0000-0000-0000-000000000000",
+            quantity: 2,
+          },
+        });
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Get Items",
+    fn: async () => {
+      const data = await cart.GetCartItem(
+        ID,
+        "00669ffc-bc13-47b1-aec6-f524611a657f",
+      );
+
+      assertObjectMatch(data, {
+        id: data.id,
+        cart_id: ID,
+        product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+        quantity: 2,
+        price: 2000,
+      });
+    },
+  });
+
+  await t.step({
+    name: "Get Items - Fail",
+    fn: async () => {
+      try {
+        await cart.GetCartItem(
+          ID,
+          "00000000-0000-0000-0000-000000000000",
+        );
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Get All Items",
+    fn: async () => {
+      const data = await cart.GetAllItems(
+        ID,
+      );
+
+      assert(data.length > 0);
+
+      assertObjectMatch(data[0], {
+        id: data[0].id,
+        cart_id: ID,
+        product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+        quantity: 2,
+        price: 2000,
+      });
+    },
+  });
+
+  await t.step({
+    name: "Get All Items - Fail",
+    fn: async () => {
+      try {
+        await cart.GetAllItems(
+          "00000000-0000-0000-0000-000000000000",
+        );
+
+        assert(false);
+      } catch {
+        assert(true);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Delete Items",
+    fn: async () => {
+      try {
+        await cart.RemoveItem(ID, "00669ffc-bc13-47b1-aec6-f524611a657f");
+        assert(true);
+      } catch {
+        assert(false);
+      }
+    },
+  });
+
+  await t.step({
+    name: "Delete Items - Fail",
+    fn: async () => {
+      try {
+        await cart.RemoveItem(ID, "00000000-0000-0000-0000-000000000000");
+        assert(false);
+      } catch {
+        assert(true);
       }
     },
   });
