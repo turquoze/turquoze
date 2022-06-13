@@ -47,7 +47,6 @@ export default class CartRoutes {
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
-        console.log(error);
         const data = ErrorHandler(error);
         ctx.response.status = data.code;
         ctx.response.headers.set("content-type", "application/json");
@@ -217,10 +216,9 @@ export default class CartRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Array<CartItem>>({
-          id: `cart_items_${ctx.params.id}`,
-          promise: this.#Container.CartService.GetAllItems(ctx.params.id),
-        });
+        const data = await this.#Container.CartService.GetAllItems(
+          ctx.params.id,
+        );
 
         ctx.response.body = stringifyJSON({
           carts: data,
@@ -246,13 +244,10 @@ export default class CartRoutes {
           id: ctx.params.product_id,
         });
 
-        const data = await Get<CartItem>({
-          id: `cart_items_${ctx.params.id}_${ctx.params.product_id}`,
-          promise: this.#Container.CartService.GetCartItem(
-            ctx.params.id,
-            ctx.params.product_id,
-          ),
-        });
+        const data = await this.#Container.CartService.GetCartItem(
+          ctx.params.id,
+          ctx.params.product_id,
+        );
 
         ctx.response.body = stringifyJSON({
           carts: data,
@@ -278,13 +273,10 @@ export default class CartRoutes {
           id: ctx.params.product_id,
         });
 
-        await Delete({
-          id: `cart_${ctx.params.id}`,
-          promise: this.#Container.CartService.RemoveItem(
-            ctx.params.id,
-            ctx.params.product_id,
-          ),
-        });
+        await this.#Container.CartService.RemoveItem(
+          ctx.params.id,
+          ctx.params.product_id,
+        );
 
         ctx.response.status = 201;
         ctx.response.headers.set("content-type", "application/json");
@@ -304,9 +296,8 @@ export default class CartRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Cart>({
-          id: `cart_${ctx.params.id}`,
-          promise: this.#Container.CartService.Get({ id: ctx.params.id }),
+        const data = await this.#Container.CartService.Get({
+          id: ctx.params.id,
         });
 
         ctx.response.body = stringifyJSON({
@@ -329,11 +320,8 @@ export default class CartRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
-          id: `cart_${ctx.params.id}`,
-          promise: this.#Container.CartService.Delete({
-            id: ctx.params.id,
-          }),
+        await this.#Container.CartService.Delete({
+          id: ctx.params.id,
         });
 
         ctx.response.status = 201;
