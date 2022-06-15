@@ -62,8 +62,17 @@ export default class ProductsRoutes {
         const data = await this.#Container.SearchService.ProductSearch({
           data: posted,
         });
+
         ctx.response.body = stringifyJSON({
-          products: data,
+          info: {
+            hits: data.nbHits,
+            offset: data.offset,
+            limit: data.limit,
+            facetsDistribution: data.facetsDistribution,
+            exhaustiveNbHits: data.exhaustiveNbHits,
+            exhaustiveFacetsCount: data.exhaustiveFacetsCount,
+          },
+          products: data.hits,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

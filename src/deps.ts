@@ -10,3 +10,4 @@ export * as Din from "https://cdn.esm.sh/v77/dinero.js@2.0.0-alpha.8/dist/esm/in
 export * as jwt from "https://cdn.skypack.dev/-/@tsndr/cloudflare-worker-jwt@v1.1.7-P62O4EHUnrYht17GEqXf/dist=es2019,mode=imports/optimized/@tsndr/cloudflare-worker-jwt.js";
 export { Redis } from "https://deno.land/x/upstash_redis@v1.3.2/mod.ts";
 export { MeiliSearch } from "https://esm.sh/meilisearch";
+export type { SearchResponse } from "https://esm.sh/meilisearch";

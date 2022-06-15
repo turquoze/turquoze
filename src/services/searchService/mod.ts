@@ -1,7 +1,7 @@
 import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { Product, Search } from "../../utils/types.ts";
-import { MeiliSearch } from "../../deps.ts";
+import { MeiliSearch, SearchResponse } from "../../deps.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "../../utils/secrets.ts";
 
 export default class SearchService implements ISearchService {
@@ -9,7 +9,7 @@ export default class SearchService implements ISearchService {
     params: {
       data: Search;
     },
-  ): Promise<Product[]> {
+  ): Promise<SearchResponse<Product>> {
     try {
       if (params.data.limit == null) {
         params.data.limit = 10;
@@ -25,7 +25,7 @@ export default class SearchService implements ISearchService {
         },
       );
 
-      return response.hits;
+      return response;
     } catch (error) {
       throw new DatabaseError("Search error", {
         cause: error,
