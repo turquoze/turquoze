@@ -9,13 +9,10 @@ Deno.test("SearchService", async (t) => {
     fn: async () => {
       try {
         const data = await search.ProductSearch({
-          data: {
-            query: "bo",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-          },
+          query: "bo",
         });
 
-        assert(data.length > 0);
+        assert(data.hits.length > 0);
       } catch {
         assert(false);
       }
@@ -27,13 +24,10 @@ Deno.test("SearchService", async (t) => {
     fn: async () => {
       try {
         const data = await search.ProductSearch({
-          data: {
-            query: "NOTHING 12343",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-          },
+          query: "NOTHING 12343",
         });
 
-        assert(data.length <= 0);
+        assert(data.hits.length <= 0);
       } catch {
         assert(false);
       }

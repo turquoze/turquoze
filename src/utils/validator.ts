@@ -57,9 +57,7 @@ export const CartItemSchema = yup.object().shape({
 
 export const SearchSchema = yup.object().shape({
   query: yup.string().nullable(true),
-  limit: yup.number().positive().integer().nullable(true),
-  after: yup.string().uuid().nullable(true),
-  shop: yup.string().uuid().required(),
+  options: yup.object().nullable(),
 });
 
 export const WarehouseSchema = yup.object().shape({
