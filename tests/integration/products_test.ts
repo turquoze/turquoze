@@ -1,7 +1,7 @@
 import { Application, assert, assertEquals } from "../test_deps.ts";
 
 import ProductsRoutes from "../../src/routes/api/products.ts";
-import { Product } from "../../src/utils/types.ts";
+import { Product, Search } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
 
 let ID = "";
@@ -168,10 +168,14 @@ Deno.test({
     });
 
     app.use(new ProductsRoutes(container).routes());
-
-    const data = JSON.stringify({
+    const body: Search = {
       query: "test",
-    });
+      options: {
+        limit: 10,
+      },
+    };
+
+    const data = JSON.stringify(body);
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/search`, {

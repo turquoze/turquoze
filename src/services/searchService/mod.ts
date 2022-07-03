@@ -6,23 +6,14 @@ import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "../../utils/secrets.ts";
 
 export default class SearchService implements ISearchService {
   async ProductSearch(
-    params: {
-      data: Search;
-    },
+    params: Search,
   ): Promise<SearchResponse<Product>> {
     try {
-      if (params.data.limit == null) {
-        params.data.limit = 10;
-      }
-
       const client = new MeiliSearch({ host: MEILIHOST!, apiKey: MEILIAPIKEY });
 
       const response = await client.index(MEILIINDEX!).search<Product>(
-        params.data.query,
-        {
-          limit: params.data.limit ?? 20,
-          offset: params.data.offset ?? 0,
-        },
+        params.query,
+        params.options,
       );
 
       return response;

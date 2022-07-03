@@ -54,14 +54,10 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        query.shop = ctx.state.shop;
-
         await SearchSchema.validate(query);
         const posted: Search = await SearchSchema.cast(query);
 
-        const data = await this.#Container.SearchService.ProductSearch({
-          data: posted,
-        });
+        const data = await this.#Container.SearchService.ProductSearch(posted);
 
         ctx.response.body = stringifyJSON({
           info: {

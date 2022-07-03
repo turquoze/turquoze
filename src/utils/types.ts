@@ -1,3 +1,5 @@
+import { SearchParams } from "../deps.ts";
+
 export interface Product {
   id: number;
   public_id: string;
@@ -115,9 +117,7 @@ export interface Discount {
 
 export interface Search {
   query: string;
-  limit?: number;
-  offset?: number;
-  shop: string;
+  options?: SearchParams;
 }
 
 export interface Warehouse {
