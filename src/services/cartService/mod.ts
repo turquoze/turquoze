@@ -31,18 +31,38 @@ export default class CartService implements ICartService {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<CartItem>({
+      const hasItem = await this.client.queryObject<CartItem>({
         text:
-          "INSERT INTO cartitems (cart_id, product_id, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id",
-        args: [
-          params.data.cart_id,
-          params.data.product_id,
-          params.data.price,
-          params.data.quantity,
-        ],
+          "SELECT * FROM cartitems WHERE cart_id = $1 AND product_id = $2 LIMIT 1",
+        args: [params.data.cart_id, params.data.product_id],
       });
 
-      return result.rows[0];
+      if (hasItem.rows.length > 0) {
+        const result = await this.client.queryObject<CartItem>({
+          text:
+            "UPDATE cartitems SET price = $1, quantity = $2 WHERE id = $3 RETURNING id",
+          args: [
+            params.data.price,
+            params.data.quantity + hasItem.rows[0].quantity,
+            hasItem.rows[0].id,
+          ],
+        });
+
+        return result.rows[0];
+      } else {
+        const result = await this.client.queryObject<CartItem>({
+          text:
+            "INSERT INTO cartitems (cart_id, product_id, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id",
+          args: [
+            params.data.cart_id,
+            params.data.product_id,
+            params.data.price,
+            params.data.quantity,
+          ],
+        });
+
+        return result.rows[0];
+      }
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
