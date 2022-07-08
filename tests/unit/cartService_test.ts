@@ -62,6 +62,27 @@ Deno.test("CartService", async (t) => {
   });
 
   await t.step({
+    name: "Add Items - Again",
+    fn: async () => {
+      try {
+        await cart.AddItem({
+          data: {
+            id: 0,
+            cart_id: ID,
+            price: 2000,
+            product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            quantity: 3,
+          },
+        });
+
+        assert(true);
+      } catch {
+        assert(false);
+      }
+    },
+  });
+
+  await t.step({
     name: "Add Items - Fail",
     fn: async () => {
       try {
@@ -94,7 +115,7 @@ Deno.test("CartService", async (t) => {
         id: data.id,
         cart_id: ID,
         product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
-        quantity: 2,
+        quantity: 5,
         price: 2000,
       });
     },
@@ -129,7 +150,7 @@ Deno.test("CartService", async (t) => {
         id: data[0].id,
         cart_id: ID,
         product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
-        quantity: 2,
+        quantity: 5,
         price: 2000,
       });
     },
