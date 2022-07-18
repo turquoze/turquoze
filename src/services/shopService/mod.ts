@@ -1,19 +1,19 @@
 import type postgresClient from "../dataClient/client.ts";
-import IRegionService from "../interfaces/regionService.ts";
-import { Region } from "../../utils/types.ts";
+import IShopService from "../interfaces/shopService.ts";
+import { Shop } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
-export default class RegionService implements IRegionService {
+export default class ShopService implements IShopService {
   client: typeof postgresClient;
   constructor(client: typeof postgresClient) {
     this.client = client;
   }
 
-  async Create(params: { data: Region }): Promise<Region> {
+  async Create(params: { data: Shop }): Promise<Shop> {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<Region>({
+      const result = await this.client.queryObject<Shop>({
         text:
           "INSERT INTO shops (name, currency, regions) VALUES ($1, $2, $3) RETURNING public_id",
         args: [params.data.name, params.data.currency, params.data.regions],
@@ -29,11 +29,11 @@ export default class RegionService implements IRegionService {
     }
   }
 
-  async Get(params: { id: string }): Promise<Region> {
+  async Get(params: { id: string }): Promise<Shop> {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<Region>({
+      const result = await this.client.queryObject<Shop>({
         text: "SELECT * FROM shops WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
@@ -48,11 +48,11 @@ export default class RegionService implements IRegionService {
     }
   }
 
-  async Update(params: { data: Region }): Promise<Region> {
+  async Update(params: { data: Shop }): Promise<Shop> {
     try {
       await this.client.connect();
 
-      const result = await this.client.queryObject<Region>({
+      const result = await this.client.queryObject<Shop>({
         text:
           "UPDATE shops SET name = $1, currency = $2, regions = $3 WHERE public_id = $4 RETURNING public_id",
         args: [

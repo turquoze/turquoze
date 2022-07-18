@@ -9,7 +9,7 @@ import {
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { add, currency, Din, dinero } from "../../deps.ts";
+import { add, Din, dinero } from "../../deps.ts";
 import IProductService from "../interfaces/productService.ts";
 
 export default class PaymentService implements IPaymentService {
@@ -75,8 +75,8 @@ export default class PaymentService implements IPaymentService {
         id: params.cartId,
       });
 
-      const dollars = (amount: number) =>
-        dinero({ amount, currency: currency.USD });
+      /*const dollars = (amount: number) =>
+        dinero({ amount, currency: currency.USD });*/
       const addMany = (addends: Array<Din.Dinero<number>>) =>
         addends.reduce(add);
       const arr: Array<Din.Dinero<number>> = [];

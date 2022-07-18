@@ -12,7 +12,7 @@ export const ProductSchema = yup.object().shape({
   slug: yup.string().min(3).required(),
 });
 
-export const RegionSchema = yup.object().shape({
+export const ShopSchema = yup.object().shape({
   public_id: yup.string().uuid(),
   name: yup.string().min(3).required(),
   regions: yup.array().of(yup.string()),

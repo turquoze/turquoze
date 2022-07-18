@@ -3,7 +3,7 @@ import DefaultCartService from "./cartService/mod.ts";
 import DefaultOrderService from "./orderService/mod.ts";
 import DefaultCategoryService from "./categoryService/mod.ts";
 import DefaultCategoryLinkService from "./categoryLinkService/mod.ts";
-import DefaultRegionService from "./regionService/mod.ts";
+import DefaultShopService from "./shopService/mod.ts";
 import DefaultPaymentService from "./paymentService/mod.ts";
 import DefaultCacheService from "./cacheService/mod.ts";
 import DefaultDiscountService from "./discountService/mod.ts";
@@ -20,7 +20,7 @@ import ICartService from "./interfaces/cartService.ts";
 import IOrderService from "./interfaces/orderService.ts";
 import ICategoryService from "./interfaces/categoryService.ts";
 import ICategoryLinkService from "./interfaces/categoryLinkService.ts";
-import IRegionService from "./interfaces/regionService.ts";
+import IShopService from "./interfaces/shopService.ts";
 import IPaymentService from "./interfaces/paymentService.ts";
 import ICacheService from "./interfaces/cacheService.ts";
 import IDiscountService from "./interfaces/discountService.ts";
@@ -49,7 +49,7 @@ export class Container {
   CategoryLinkService: ICategoryLinkService = new DefaultCategoryLinkService(
     client,
   );
-  RegionService: IRegionService = new DefaultRegionService(
+  ShopService: IShopService = new DefaultShopService(
     client,
   );
   PaymentService: IPaymentService = new DefaultPaymentService(

@@ -13,7 +13,7 @@ const app = new Application<TurquozeState>();
 app.use(Logger);
 app.use(ResponseTimer);
 app.use(AuthGuard(container.TokenService));
-app.use(ApplicationState(container.RegionService));
+app.use(ApplicationState(container.ShopService));
 
 app.use(admin.routes());
 app.use(api.routes());
