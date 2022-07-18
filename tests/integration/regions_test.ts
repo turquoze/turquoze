@@ -1,17 +1,17 @@
 import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import RegionsRoutes from "../../src/routes/api/regions.ts";
+import ShopsRoutes from "../../src/routes/api/shops.ts";
 import container from "../../src/services/mod.ts";
-import { Region } from "../../src/utils/types.ts";
+import { Shop } from "../../src/utils/types.ts";
 
 let ID = "";
 
 Deno.test({
-  name: "Regions - Create | ok",
+  name: "Shops - Create | ok",
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(container).routes());
+    app.use(new ShopsRoutes(container).routes());
 
     const data = JSON.stringify({
       currency: "EUR",
@@ -20,7 +20,7 @@ Deno.test({
     });
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/regions`, {
+      new Request(`http://127.0.0.1/shops`, {
         headers: new Headers({
           "Content-Type": "application/json",
           "Content-Length": `${JSON.stringify(data).length}`,
@@ -32,37 +32,37 @@ Deno.test({
 
     assert(response?.ok);
 
-    const { regions }: { regions: Region } = await response?.json();
+    const { regions }: { regions: Shop } = await response?.json();
     ID = regions.public_id;
   },
 });
 
 Deno.test({
-  name: "Regions - Get | ok",
+  name: "Shops - Get | ok",
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(container).routes());
+    app.use(new ShopsRoutes(container).routes());
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/regions/${ID}`, {
+      new Request(`http://127.0.0.1/shops/${ID}`, {
         method: "GET",
       }),
     );
 
     assert(response?.ok);
 
-    const { regions }: { regions: Region } = await response?.json();
+    const { regions }: { regions: Shop } = await response?.json();
     assertEquals(regions.public_id, ID);
   },
 });
 
 Deno.test({
-  name: "Regions - Put | ok",
+  name: "Shops - Put | ok",
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(container).routes());
+    app.use(new ShopsRoutes(container).routes());
 
     const data = JSON.stringify({
       id: ID,
@@ -72,7 +72,7 @@ Deno.test({
     });
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/regions/${ID}`, {
+      new Request(`http://127.0.0.1/shops/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
           "Content-Length": `${JSON.stringify(data).length}`,
@@ -84,20 +84,20 @@ Deno.test({
 
     assert(response?.ok);
 
-    const { regions }: { regions: Region } = await response?.json();
+    const { regions }: { regions: Shop } = await response?.json();
     assertEquals(regions.public_id, ID);
   },
 });
 
 Deno.test({
-  name: "Regions - Delete | ok",
+  name: "Shops - Delete | ok",
   async fn() {
     const app = new Application();
 
-    app.use(new RegionsRoutes(container).routes());
+    app.use(new ShopsRoutes(container).routes());
 
     const response = await app.handle(
-      new Request(`http://127.0.0.1/regions/${ID}`, {
+      new Request(`http://127.0.0.1/shops/${ID}`, {
         method: "DELETE",
       }),
     );

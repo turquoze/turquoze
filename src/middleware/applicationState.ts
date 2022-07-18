@@ -1,8 +1,8 @@
 import type { Context } from "../deps.ts";
-import IRegionService from "../services/interfaces/regionService.ts";
+import IShopService from "../services/interfaces/shopService.ts";
 import { TurquozeState } from "../utils/types.ts";
 
-export const ApplicationState = (regionService: IRegionService) =>
+export const ApplicationState = (shopService: IShopService) =>
   async (
     ctx: Context<TurquozeState>,
     next: () => Promise<unknown>,
@@ -14,8 +14,7 @@ export const ApplicationState = (regionService: IRegionService) =>
       ) {
         throw new Error("Something is wrong");
       }
-      const region = await regionService.Get({ id: ctx.state.shop });
-      console.log(region.name);
+      const _shop = await shopService.Get({ id: ctx.state.shop });
       await next();
     } catch (_error) {
       ctx.response.status = 401;

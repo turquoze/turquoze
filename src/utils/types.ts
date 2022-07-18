@@ -61,7 +61,7 @@ export interface Category {
   shop: string;
 }
 
-export interface Region {
+export interface Shop {
   id: number;
   public_id: string;
   regions: Array<string>;
@@ -76,6 +76,7 @@ export interface CategoryLink {
 
 export interface TurquozeState {
   shop: string;
+  paymentProviderId: string;
 }
 
 export interface PaymentRequest {

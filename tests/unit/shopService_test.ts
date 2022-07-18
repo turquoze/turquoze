@@ -1,11 +1,11 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import regionService from "../../src/services/regionService/mod.ts";
+import shopService from "../../src/services/shopService/mod.ts";
 import client from "../../src/services/dataClient/client.ts";
 
-const region = new regionService(client);
+const region = new shopService(client);
 let ID = "";
 
-Deno.test("RegionService", async (t) => {
+Deno.test("ShopService", async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
