@@ -15,8 +15,13 @@ export default class ShopService implements IShopService {
 
       const result = await this.client.queryObject<Shop>({
         text:
-          "INSERT INTO shops (name, currency, regions) VALUES ($1, $2, $3) RETURNING public_id",
-        args: [params.data.name, params.data.currency, params.data.regions],
+          "INSERT INTO shops (name, currency, regions, payment_id) VALUES ($1, $2, $3, $4) RETURNING public_id",
+        args: [
+          params.data.name,
+          params.data.currency,
+          params.data.regions,
+          params.data.payment_id,
+        ],
       });
 
       return result.rows[0];
@@ -54,11 +59,12 @@ export default class ShopService implements IShopService {
 
       const result = await this.client.queryObject<Shop>({
         text:
-          "UPDATE shops SET name = $1, currency = $2, regions = $3 WHERE public_id = $4 RETURNING public_id",
+          "UPDATE shops SET name = $1, currency = $2, regions = $3, payment_id = $4 WHERE public_id = $5 RETURNING public_id",
         args: [
           params.data.name,
           params.data.currency,
           params.data.regions,
+          params.data.payment_id,
           params.data.public_id,
         ],
       });
