@@ -17,6 +17,7 @@ Deno.test("ShopService", async (t) => {
             currency: "EUR",
             name: "TEST",
             regions: ["SE", "NO", "DK", "FI"],
+            payment_id: "StripeCheckout",
           },
         });
 
@@ -87,6 +88,7 @@ Deno.test("ShopService", async (t) => {
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
+            payment_id: "StripeCheckout",
           },
         });
 
@@ -109,6 +111,7 @@ Deno.test("ShopService", async (t) => {
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
+            payment_id: "StripeCheckout",
           },
         });
 

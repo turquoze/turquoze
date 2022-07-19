@@ -14,7 +14,10 @@ export const ApplicationState = (shopService: IShopService) =>
       ) {
         throw new Error("Something is wrong");
       }
-      const _shop = await shopService.Get({ id: ctx.state.shop });
+      const shop = await shopService.Get({ id: ctx.state.shop });
+
+      ctx.state.paymentProviderId = shop.payment_id;
+
       await next();
     } catch (_error) {
       ctx.response.status = 401;

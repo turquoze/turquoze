@@ -65,6 +65,7 @@ export interface Shop {
   id: number;
   public_id: string;
   regions: Array<string>;
+  payment_id: string;
   currency: string;
   name: string;
 }

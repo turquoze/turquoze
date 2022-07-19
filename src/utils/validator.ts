@@ -16,6 +16,7 @@ export const ShopSchema = yup.object().shape({
   public_id: yup.string().uuid(),
   name: yup.string().min(3).required(),
   regions: yup.array().of(yup.string()),
+  payment_id: yup.string(),
   currency: yup.string().required(),
 });
 
