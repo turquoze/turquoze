@@ -14,6 +14,7 @@ import DefaultPriceService from "./priceService/mod.ts";
 import DefaultUserService from "./userService/mod.ts";
 import DefaultTokenService from "./tokenService/mod.ts";
 import DefaultNotificationService from "./notificationService/mod.ts";
+import DefaultPluginService from "./pluginService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -31,6 +32,7 @@ import IPriceService from "./interfaces/priceService.ts";
 import IUserService from "./interfaces/userService.ts";
 import ITokenService from "./interfaces/tokenService.ts";
 import INotificationService from "./interfaces/notificationService.ts";
+import IPluginService from "./interfaces/pluginService.ts";
 
 import client from "./dataClient/client.ts";
 
@@ -52,11 +54,13 @@ export class Container {
   ShopService: IShopService = new DefaultShopService(
     client,
   );
+  PluginService: IPluginService = new DefaultPluginService();
   PaymentService: IPaymentService = new DefaultPaymentService(
     client,
     this.CartService,
     this.OrderService,
     this.ProductService,
+    this.PluginService,
   );
   DiscountService: IDiscountService = new DefaultDiscountService(
     client,

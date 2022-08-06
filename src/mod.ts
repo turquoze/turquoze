@@ -7,6 +7,9 @@ import ApplicationState from "./middleware/applicationState.ts";
 import Logger from "./middleware/logger.ts";
 import AuthGuard from "./middleware/authGuard.ts";
 import container from "./services/mod.ts";
+import initPlugins from "./plugins/mod.ts";
+
+initPlugins();
 
 const app = new Application<TurquozeState>();
 
@@ -23,7 +26,7 @@ app.addEventListener("listen", ({ port }) => {
 });
 
 app.addEventListener("error", (error) => {
-  console.log(`error: ${error}`);
+  console.log(`error: ${JSON.stringify(error)}`);
 });
 
 await app.listen({ port: 8080 });

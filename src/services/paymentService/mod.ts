@@ -1,6 +1,8 @@
 import type postgresClient from "../dataClient/client.ts";
 import IPaymentService from "../interfaces/paymentService.ts";
 import {
+  CartItem,
+  PaymentPlugin,
   PaymentRequest,
   PaymentRequestResponse,
   PaymentValidation,
@@ -9,24 +11,30 @@ import {
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { add, Din, dinero } from "../../deps.ts";
+import { add, dinero } from "../../deps.ts";
 import IProductService from "../interfaces/productService.ts";
+import IPluginService from "../interfaces/pluginService.ts";
+import { CodeToCurrency } from "../../utils/utils.ts";
+import { Dinero } from "https://cdn.esm.sh/v77/dinero.js@2.0.0-alpha.8/dist/esm/index.d.ts";
 
 export default class PaymentService implements IPaymentService {
   client: typeof postgresClient;
   #CartService: ICartService;
   #OrderService: IOrderService;
   #ProductService: IProductService;
+  #PluginService: IPluginService;
   constructor(
     client: typeof postgresClient,
     cartService: ICartService,
     orderService: IOrderService,
     productService: IProductService,
+    pluginService: IPluginService,
   ) {
     this.client = client;
     this.#CartService = cartService;
     this.#OrderService = orderService;
     this.#ProductService = productService;
+    this.#PluginService = pluginService;
   }
 
   async Create(
@@ -37,9 +45,25 @@ export default class PaymentService implements IPaymentService {
         id: params.data.cartId,
       });
 
-      const price = await this.Price({ cartId: cart.public_id });
+      cart.items = await this.#CartService.GetAllItems(params.data.cartId);
 
-      const order = await this.#OrderService.Create({
+      const price = await this.Price({
+        items: cart.items,
+        cartId: cart.public_id,
+        currency: params.data.currency,
+      });
+
+      const paymentProvider = this.#PluginService.Get<PaymentPlugin>(
+        params.data.paymentProviderId,
+      );
+
+      const payData = await paymentProvider.pay(
+        cart.items,
+        price.price.valueOf(),
+        params.data.currency,
+      );
+
+      /*const order = await this.#OrderService.Create({
         data: {
           id: "",
           // @ts-expect-error payment
@@ -51,7 +75,11 @@ export default class PaymentService implements IPaymentService {
           // @ts-expect-error products
           products: {},
         },
-      });
+      });*/
+
+      const order = {
+        id: "123",
+      };
 
       return {
         data: {
@@ -60,6 +88,7 @@ export default class PaymentService implements IPaymentService {
             ...order,
           },
         },
+        payment: payData,
         id: order.id,
       };
     } catch (error) {
@@ -69,26 +98,26 @@ export default class PaymentService implements IPaymentService {
     }
   }
 
-  async Price(params: { cartId: string }): Promise<PriceCalculation> {
+  async Price(
+    params: { cartId: string; currency: string; items: Array<CartItem> },
+  ): Promise<PriceCalculation> {
     try {
-      const cart = await this.#CartService.Get({
-        id: params.cartId,
-      });
+      const dollars = (amount: number) =>
+        dinero({ amount, currency: CodeToCurrency(params.currency) });
+      const addMany = (addends: Array<Dinero<number>>) => addends.reduce(add);
 
-      /*const dollars = (amount: number) =>
-        dinero({ amount, currency: currency.USD });*/
-      const addMany = (addends: Array<Din.Dinero<number>>) =>
-        addends.reduce(add);
-      const arr: Array<Din.Dinero<number>> = [];
+      const arr = Array<Dinero<number>>();
 
-      /*await Promise.all(cart.products.cart.map(async (product) => {
-        const dbProduct = await this.#ProductService.Get({ id: product.pid });
+      await Promise.all(params.items.map(async (product) => {
+        const dbProduct = await this.#ProductService.Get({
+          id: product.product_id,
+        });
         // @ts-expect-error fake int
         const productPrice = parseInt(dbProduct.price);
 
         const dineroObj = dollars(productPrice);
         arr.push(dineroObj);
-      }));*/
+      }));
 
       const price = addMany(arr);
       const total = price.toJSON();

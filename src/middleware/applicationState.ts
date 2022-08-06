@@ -17,6 +17,7 @@ export const ApplicationState = (shopService: IShopService) =>
       const shop = await shopService.Get({ id: ctx.state.shop });
 
       ctx.state.paymentProviderId = shop.payment_id;
+      ctx.state.currency = shop.currency;
 
       await next();
     } catch (_error) {
