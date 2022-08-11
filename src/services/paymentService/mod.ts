@@ -11,11 +11,10 @@ import {
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { add, dinero } from "../../deps.ts";
+import { add, Dinero, dinero } from "../../deps.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
 import { CodeToCurrency } from "../../utils/utils.ts";
-import { Dinero } from "https://cdn.esm.sh/v77/dinero.js@2.0.0-alpha.8/dist/esm/index.d.ts";
 
 export default class PaymentService implements IPaymentService {
   client: typeof postgresClient;
@@ -50,18 +49,20 @@ export default class PaymentService implements IPaymentService {
       const price = await this.Price({
         items: cart.items,
         cartId: cart.public_id,
-        currency: params.data.currency,
+        currency: params.data.shop.currency,
       });
 
       const paymentProvider = this.#PluginService.Get<PaymentPlugin>(
-        params.data.paymentProviderId,
+        params.data.shop.payment_id,
       );
 
       const payData = await paymentProvider.pay(
         cart.items,
         price.price.valueOf(),
-        params.data.currency,
+        params.data.shop,
       );
+
+      //1. Add to order table
 
       /*const order = await this.#OrderService.Create({
         data: {
@@ -80,6 +81,8 @@ export default class PaymentService implements IPaymentService {
       const order = {
         id: "123",
       };
+
+      //2. Remove cart
 
       return {
         data: {
@@ -104,9 +107,10 @@ export default class PaymentService implements IPaymentService {
     try {
       const dollars = (amount: number) =>
         dinero({ amount, currency: CodeToCurrency(params.currency) });
-      const addMany = (addends: Array<Dinero<number>>) => addends.reduce(add);
+      const addMany = (addends: Array<Dinero.Dinero<number>>) =>
+        addends.reduce(add);
 
-      const arr = Array<Dinero<number>>();
+      const arr = Array<Dinero.Dinero<number>>();
 
       await Promise.all(params.items.map(async (product) => {
         const dbProduct = await this.#ProductService.Get({
