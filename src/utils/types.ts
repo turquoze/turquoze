@@ -68,6 +68,7 @@ export interface Shop {
   payment_id: string;
   currency: string;
   name: string;
+  url: string;
 }
 
 export interface CategoryLink {
@@ -77,16 +78,14 @@ export interface CategoryLink {
 
 export interface TurquozeState {
   shop: string;
-  paymentProviderId: string;
-  currency: string;
+  request_data: Shop;
 }
 
 export interface PaymentRequest {
   id: string;
   cartId: string;
   customerId?: string;
-  paymentProviderId: string;
-  currency: string;
+  shop: Shop;
   info?: {
     country: string;
     type: "COMPANY" | "PERSONAL" | "UNKNOWN";
@@ -98,7 +97,7 @@ export interface PaymentPlugin {
   pay(
     items: Array<CartItem>,
     amount: number,
-    currency: string,
+    shop: Shop,
   ): Promise<PaymentPluginResponse>;
 }
 

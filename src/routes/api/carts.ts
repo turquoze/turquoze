@@ -148,8 +148,7 @@ export default class CartRoutes {
           data: {
             cartId: ctx.params.id,
             id: "",
-            paymentProviderId: ctx.state.paymentProviderId,
-            currency: ctx.state.currency,
+            shop: ctx.state.request_data,
           },
         });
 

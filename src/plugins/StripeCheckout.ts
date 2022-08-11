@@ -2,6 +2,7 @@ import {
   CartItem,
   PaymentPlugin,
   PaymentPluginResponse,
+  Shop,
 } from "../utils/types.ts";
 import Stripe from "https://esm.sh/stripe@10.0.0";
 
@@ -21,12 +22,12 @@ export default class StripeCheckout implements PaymentPlugin {
   async pay(
     items: Array<CartItem>,
     amount: number,
-    currency: string,
+    shop: Shop,
   ): Promise<PaymentPluginResponse> {
     const cartItems = items.map((item) => {
       return {
         price_data: {
-          currency: currency,
+          currency: shop.currency,
           product_data: {
             name: item.product_id,
           },
@@ -44,7 +45,7 @@ export default class StripeCheckout implements PaymentPlugin {
     const session = await this.#stripe.checkout.sessions.create({
       line_items: cartItems,
       shipping_address_collection: {
-        allowed_countries: ["SE", "NO", "FI", "DK"],
+        allowed_countries: shop.regions,
       },
       shipping_options: [
         {
@@ -52,7 +53,7 @@ export default class StripeCheckout implements PaymentPlugin {
             type: "fixed_amount",
             fixed_amount: {
               amount: 0,
-              currency: currency,
+              currency: shop.currency,
             },
             display_name: "Free shipping",
             // Delivers between 5-7 business days
@@ -73,7 +74,7 @@ export default class StripeCheckout implements PaymentPlugin {
             type: "fixed_amount",
             fixed_amount: {
               amount: 1500,
-              currency: currency,
+              currency: shop.currency,
             },
             display_name: "Next day air",
             // Delivers in exactly 1 business day
@@ -93,6 +94,7 @@ export default class StripeCheckout implements PaymentPlugin {
       mode: "payment",
       success_url: "https://example.com/success",
       cancel_url: "https://example.com/cancel",
+      expires_at: Math.floor(Date.now() / 1000) + (3600 * 1),
     });
 
     return {

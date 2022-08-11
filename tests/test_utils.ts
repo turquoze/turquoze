@@ -8,7 +8,7 @@ export default class TestCheckout implements PaymentPlugin {
   async pay(
     items: CartItem[],
     amount: number,
-    currency: string,
+    shop: {},
   ): Promise<PaymentPluginResponse> {
     await new Promise((resolve) => setTimeout(resolve, 10));
     return {
