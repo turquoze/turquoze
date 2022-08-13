@@ -1,7 +1,8 @@
 import type { Context } from "../deps.ts";
 import ITokenService from "../services/interfaces/tokenService.ts";
 
-export const AuthGuard = (tokenService: ITokenService) =>
+export const AuthGuard =
+  (tokenService: ITokenService) =>
   async (ctx: Context, next: () => Promise<unknown>) => {
     try {
       const token = ctx.request.headers.get("x-turquoze-key");

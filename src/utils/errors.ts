@@ -17,6 +17,14 @@ export class NoBodyError extends Error {
   }
 }
 
+export class NoCartError extends Error {
+  // deno-lint-ignore no-explicit-any
+  constructor(message: string, ...args: any) {
+    super(message, ...args);
+    this.message = message;
+  }
+}
+
 export function ErrorHandler(error: Error): ErrorResponse {
   if (error instanceof DatabaseError) {
     return {
@@ -32,6 +40,11 @@ export function ErrorHandler(error: Error): ErrorResponse {
     return {
       code: 400,
       message: "No body content sent",
+    };
+  } else if (error instanceof NoCartError) {
+    return {
+      code: 404,
+      message: "No cart found",
     };
   } else {
     return {
