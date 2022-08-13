@@ -10,7 +10,7 @@ import {
 } from "../../utils/types.ts";
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
-import { DatabaseError } from "../../utils/errors.ts";
+import { DatabaseError, NoCartError } from "../../utils/errors.ts";
 import { add, Dinero, dinero } from "../../deps.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
@@ -44,6 +44,10 @@ export default class PaymentService implements IPaymentService {
         id: params.data.cartId,
       });
 
+      if (cart == undefined || cart == null) {
+        throw new NoCartError("No cart");
+      }
+
       cart.items = await this.#CartService.GetAllItems(params.data.cartId);
 
       const price = await this.Price({
@@ -62,27 +66,26 @@ export default class PaymentService implements IPaymentService {
         params.data.shop,
       );
 
-      //1. Add to order table
-
-      /*const order = await this.#OrderService.Create({
+      const order = await this.#OrderService.Create({
         data: {
-          id: "",
-          // @ts-expect-error payment
-          payment: {},
-          // @ts-expect-error price
-          price: {},
+          id: 0,
+          payment: {
+            status: "WAITING",
+            // @ts-expect-error payment
+            pg: payData,
+          },
+          price: {
+            subtotal: parseInt(price.subtotal.toString()),
+            total: parseInt(price.price.toString()),
+          },
           created_at: 0,
-          shop: params.data.info?.data.region ?? "",
-          // @ts-expect-error products
-          products: {},
+          shop: params.data.shop.public_id,
+          // @ts-expect-error payment
+          products: {}, //JSON.parse(stringifyJSON(cart.items)),
         },
-      });*/
+      });
 
-      const order = {
-        id: "123",
-      };
-
-      //2. Remove cart
+      await this.#CartService.Delete({ id: params.data.cartId });
 
       return {
         data: {
@@ -92,12 +95,16 @@ export default class PaymentService implements IPaymentService {
           },
         },
         payment: payData,
-        id: order.id,
+        id: order.public_id,
       };
     } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
+      if (error instanceof NoCartError) {
+        throw error;
+      } else {
+        throw new DatabaseError("DB error", {
+          cause: error,
+        });
+      }
     }
   }
 

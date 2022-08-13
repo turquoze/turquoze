@@ -31,7 +31,8 @@ export interface CartItem {
 }
 
 export interface Order {
-  id: string;
+  public_id: string;
+  id: number;
   shop: string;
   created_at: number;
   products: Array<OrderProduct>;

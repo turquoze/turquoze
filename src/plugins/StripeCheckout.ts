@@ -77,7 +77,6 @@ export default class StripeCheckout implements PaymentPlugin {
               currency: shop.currency,
             },
             display_name: "Next day air",
-            // Delivers in exactly 1 business day
             delivery_estimate: {
               minimum: {
                 unit: "business_day",
@@ -85,15 +84,15 @@ export default class StripeCheckout implements PaymentPlugin {
               },
               maximum: {
                 unit: "business_day",
-                value: 1,
+                value: 2,
               },
             },
           },
         },
       ],
       mode: "payment",
-      success_url: "https://example.com/success",
-      cancel_url: "https://example.com/cancel",
+      success_url: `${shop.url}/success`,
+      cancel_url: `${shop.url}/cancel`,
       expires_at: Math.floor(Date.now() / 1000) + (3600 * 1),
     });
 
