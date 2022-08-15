@@ -11,10 +11,10 @@ import {
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError, NoCartError } from "../../utils/errors.ts";
-import { add, Dinero, dinero } from "../../deps.ts";
+//import { add, Dinero, dinero } from "../../deps.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-import { CodeToCurrency } from "../../utils/utils.ts";
+//import { CodeToCurrency } from "../../utils/utils.ts";
 
 export default class PaymentService implements IPaymentService {
   client: typeof postgresClient;
@@ -112,6 +112,7 @@ export default class PaymentService implements IPaymentService {
     params: { cartId: string; currency: string; items: Array<CartItem> },
   ): Promise<PriceCalculation> {
     try {
+      /*
       const dollars = (amount: number) =>
         dinero({ amount, currency: CodeToCurrency(params.currency) });
       const addMany = (addends: Array<Dinero.Dinero<number>>) =>
@@ -131,10 +132,13 @@ export default class PaymentService implements IPaymentService {
       }));
 
       const price = addMany(arr);
-      const total = price.toJSON();
+      const total = price.toJSON();*/
+
+      // dinero not working in deploy
+      await new Promise((resolve) => setTimeout(resolve, 1));
 
       return {
-        price: total.amount,
+        price: 299, //total.amount,
         subtotal: 0,
         vat: 0,
       };
