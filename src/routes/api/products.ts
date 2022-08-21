@@ -81,6 +81,46 @@ export default class ProductsRoutes {
       }
     });
 
+    this.#products.get("/byids", async (ctx) => {
+      try {
+        const params = (new URL(ctx.request.url)).searchParams;
+        const id = params.get("ids");
+
+        if (id == undefined || id == null) {
+          return ctx.response.body = stringifyJSON({
+            products: [],
+          });
+        } else {
+          let ids: Array<string> = [];
+          if (id.includes(",")) {
+            ids = id.split(",");
+          } else {
+            ids.push(id);
+          }
+
+          const products = Array<Product>();
+
+          for (const i in ids) {
+            products.push(
+              await this.#Container.ProductService.Get({ id: ids[i] }),
+            );
+          }
+
+          ctx.response.body = stringifyJSON({
+            products,
+          });
+        }
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#products.get("/byslug/:slug", async (ctx) => {
       try {
         const data = await this.#Container.ProductService.GetBySlug({
