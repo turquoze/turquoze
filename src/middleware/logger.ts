@@ -7,9 +7,9 @@ export const Logger = async (
   await next();
   const rt = ctx.response.headers.get("X-Response-Time");
   console.log(
-    `${ctx.request.method} ${ctx.response.status} ${ctx.request.url.pathname} - ${String(rt)} | ${
-      new Date().getTime()
-    }`,
+    `${ctx.request.method} ${ctx.response.status} ${ctx.request.ip} ${ctx.request.url.pathname} - ${
+      String(rt)
+    } | ${new Date().getTime()}`,
   );
 };
 

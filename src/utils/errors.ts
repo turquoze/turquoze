@@ -26,7 +26,7 @@ export class NoCartError extends Error {
 }
 
 export function ErrorHandler(error: Error): ErrorResponse {
-  console.error(error)
+  console.error(error);
   if (error instanceof DatabaseError) {
     return {
       code: 500,
