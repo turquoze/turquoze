@@ -1,9 +1,4 @@
-import {
-  CartItem,
-  PaymentPlugin,
-  PaymentPluginResponse,
-  Shop,
-} from "../utils/types.ts";
+import { PaymentPlugin, PaymentPluginResponse, Shop } from "../utils/types.ts";
 import Stripe from "https://esm.sh/stripe@10.0.0";
 
 export default class StripeCheckout implements PaymentPlugin {
@@ -20,7 +15,11 @@ export default class StripeCheckout implements PaymentPlugin {
   }
 
   async pay(
-    items: Array<CartItem>,
+    items: Array<{
+      name: string;
+      price: number;
+      quantity: number;
+    }>,
     amount: number,
     shop: Shop,
   ): Promise<PaymentPluginResponse> {
@@ -29,7 +28,7 @@ export default class StripeCheckout implements PaymentPlugin {
         price_data: {
           currency: shop.currency,
           product_data: {
-            name: item.product_id,
+            name: item.name,
           },
           unit_amount: item.price,
         },

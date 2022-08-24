@@ -60,8 +60,20 @@ export default class PaymentService implements IPaymentService {
         params.data.shop.payment_id,
       );
 
+      const payCartItemsPromises = cart.items.map(async (item) => {
+        const product = await this.#ProductService.Get({ id: item.product_id });
+
+        return {
+          name: product.title,
+          price: product.price,
+          quantity: item.quantity,
+        };
+      });
+
+      const payCartItems = await Promise.all(payCartItemsPromises);
+
       const payData = await paymentProvider.pay(
-        cart.items,
+        payCartItems,
         price.price.valueOf(),
         params.data.shop,
       );
@@ -137,10 +149,19 @@ export default class PaymentService implements IPaymentService {
       // dinero not working in deploy
       await new Promise((resolve) => setTimeout(resolve, 1));
 
+      // FAKE DATA
+      let price = 0;
+
+      params.items.map((item) => {
+        price += item.price * item.quantity;
+      });
+
+      const sub = (price * 1.25);
+
       return {
-        price: 299, //total.amount,
-        subtotal: 0,
-        vat: 0,
+        price: parseInt(price.toString()),
+        subtotal: parseInt(sub.toString()),
+        vat: parseInt((sub - price).toString()),
       };
     } catch (error) {
       throw new DatabaseError("DB error", {
