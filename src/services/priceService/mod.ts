@@ -4,16 +4,16 @@ import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class PriceService implements IPriceService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Create(params: { data: Price }): Promise<Price> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Price>({
+      const result = await client.queryObject<Price>({
         text:
           "INSERT INTO prices (amount, shop, product) VALUES ($1, $2, $3) RETURNING public_id",
         args: [
@@ -23,32 +23,30 @@ export default class PriceService implements IPriceService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Get(params: { id: string }): Promise<Price> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Price>({
+      const result = await client.queryObject<Price>({
         text: "SELECT * FROM prices WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -60,28 +58,27 @@ export default class PriceService implements IPriceService {
         params.limit = 10;
       }
 
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Price>({
+      const result = await client.queryObject<Price>({
         text: "SELECT * FROM prices LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
       });
 
+      client.release();
       return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Update(params: { data: Price }): Promise<Price> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Price>({
+      const result = await client.queryObject<Price>({
         text:
           "UPDATE prices SET amount = $1 WHERE public_id = $2 RETURNING public_id",
         args: [
@@ -90,30 +87,29 @@ export default class PriceService implements IPriceService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      await this.client.queryObject<Price>({
+      await client.queryObject<Price>({
         text: "DELETE FROM prices WHERE public_id = $1",
         args: [params.id],
       });
+
+      client.release();
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }

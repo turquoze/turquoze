@@ -4,16 +4,16 @@ import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class TokenService implements ITokenService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Create(params: { data: Token }): Promise<Token> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Token>({
+      const result = await client.queryObject<Token>({
         text:
           "INSERT INTO tokens (name, token, shop, expire) VALUES ($1, $2, $3, $4) RETURNING token",
         args: [
@@ -24,32 +24,30 @@ export default class TokenService implements ITokenService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Get(params: { token: string }): Promise<Token> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Token>({
+      const result = await client.queryObject<Token>({
         text: "SELECT * FROM tokens WHERE token = $1 LIMIT 1",
         args: [params.token],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -60,37 +58,36 @@ export default class TokenService implements ITokenService {
       if (params.limit == null) {
         params.limit = 10;
       }
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Token>({
+      const result = await client.queryObject<Token>({
         text: "SELECT * FROM tokens LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
       });
 
+      client.release();
       return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Delete(params: { token: string }): Promise<void> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      await this.client.queryObject<Token>({
+      await client.queryObject<Token>({
         text: "DELETE FROM tokens WHERE token = $1",
         args: [params.token],
       });
+
+      client.release();
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }

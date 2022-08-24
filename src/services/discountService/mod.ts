@@ -4,16 +4,16 @@ import { Discount } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class DiscountService implements IDiscountService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Create(params: { data: Discount }): Promise<Discount> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Discount>({
+      const result = await client.queryObject<Discount>({
         text:
           "INSERT INTO discounts (type, value, shop, valid_from, valid_to, code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING public_id",
         args: [
@@ -26,51 +26,48 @@ export default class DiscountService implements IDiscountService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Get(params: { id: string }): Promise<Discount> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Discount>({
+      const result = await client.queryObject<Discount>({
         text: "SELECT * FROM discounts WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async GetByCode(params: { code: string }): Promise<Discount> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Discount>({
+      const result = await client.queryObject<Discount>({
         text: "SELECT * FROM discounts WHERE code = $1 LIMIT 1",
         args: [params.code],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -82,49 +79,49 @@ export default class DiscountService implements IDiscountService {
         params.limit = 10;
       }
 
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Discount>({
+      const result = await client.queryObject<Discount>({
         text: "SELECT * FROM discounts LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
       });
 
+      client.release();
       return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      await this.client.queryObject<void>({
+      await client.queryObject<void>({
         text: "DELETE FROM discounts WHERE public_id = $1",
         args: [params.id],
       });
+
+      client.release();
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Validate(params: { code: string }): Promise<Discount | undefined> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const data = await this.client.queryObject<Discount>({
+      const data = await client.queryObject<Discount>({
         text: "SELECT * FROM discounts WHERE code = $1",
         args: [params.code],
       });
 
+      client.release();
       if (data.rows.length > 0) {
         return data.rows[0];
       }
@@ -132,8 +129,6 @@ export default class DiscountService implements IDiscountService {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }
