@@ -17,19 +17,19 @@ import IPluginService from "../interfaces/pluginService.ts";
 //import { CodeToCurrency } from "../../utils/utils.ts";
 
 export default class PaymentService implements IPaymentService {
-  client: typeof postgresClient;
+  pool: typeof postgresClient;
   #CartService: ICartService;
   #OrderService: IOrderService;
   #ProductService: IProductService;
   #PluginService: IPluginService;
   constructor(
-    client: typeof postgresClient,
+    pool: typeof postgresClient,
     cartService: ICartService,
     orderService: IOrderService,
     productService: IProductService,
     pluginService: IPluginService,
   ) {
-    this.client = client;
+    this.pool = pool;
     this.#CartService = cartService;
     this.#OrderService = orderService;
     this.#ProductService = productService;

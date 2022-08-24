@@ -4,16 +4,16 @@ import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class CartService implements IWarehouseService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Create(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Warehouse>({
+      const result = await client.queryObject<Warehouse>({
         text:
           "INSERT INTO warehouses (address, country, name, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
         args: [
@@ -24,21 +24,20 @@ export default class CartService implements IWarehouseService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Update(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Warehouse>({
+      const result = await client.queryObject<Warehouse>({
         text:
           "UPDATE warehouses SET address = $1, country = $2, name = $3 WHERE public_id = $4 RETURNING public_id",
         args: [
@@ -49,32 +48,30 @@ export default class CartService implements IWarehouseService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Get(params: { id: string }): Promise<Warehouse> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Warehouse>({
+      const result = await client.queryObject<Warehouse>({
         text: "SELECT * FROM warehouses WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -86,37 +83,36 @@ export default class CartService implements IWarehouseService {
         params.limit = 10;
       }
 
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Warehouse>({
+      const result = await client.queryObject<Warehouse>({
         text: "SELECT * FROM warehouses LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
       });
 
+      client.release();
       return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      await this.client.queryObject<Warehouse>({
+      await client.queryObject<Warehouse>({
         text: "DELETE FROM warehouses WHERE public_id = $1",
         args: [params.id],
       });
+
+      client.release();
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }

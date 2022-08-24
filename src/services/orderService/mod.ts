@@ -4,16 +4,16 @@ import { Order } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class CartService implements IOrderService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Create(params: { data: Order }): Promise<Order> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Order>({
+      const result = await client.queryObject<Order>({
         text:
           "INSERT INTO orders (payment, price, products, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
         args: [
@@ -24,32 +24,30 @@ export default class CartService implements IOrderService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Get(params: { id: string }): Promise<Order> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Order>({
+      const result = await client.queryObject<Order>({
         text: "SELECT * FROM orders WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -61,20 +59,19 @@ export default class CartService implements IOrderService {
         params.limit = 10;
       }
 
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Order>({
+      const result = await client.queryObject<Order>({
         text: "SELECT * FROM orders LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
       });
 
+      client.release();
       return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -82,9 +79,9 @@ export default class CartService implements IOrderService {
     params: { id: string; status: "PAYED" | "WAITING" | "FAILED" },
   ): Promise<Order> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Order>({
+      const result = await client.queryObject<Order>({
         text:
           "UPDATE orders SET payment.status = $1 WHERE public_id = $7 RETURNING public_id",
         args: [
@@ -93,13 +90,12 @@ export default class CartService implements IOrderService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }

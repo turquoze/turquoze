@@ -4,16 +4,16 @@ import { Inventory } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class CartService implements IInventoryService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Create(params: { data: Inventory }): Promise<Inventory> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Inventory>({
+      const result = await client.queryObject<Inventory>({
         text:
           "INSERT INTO inventories (product, quantity, warehouse) VALUES ($1, $2, $3) RETURNING public_id",
         args: [
@@ -23,69 +23,66 @@ export default class CartService implements IInventoryService {
         ],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Update(params: { data: Inventory }): Promise<Inventory> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Inventory>({
+      const result = await client.queryObject<Inventory>({
         text:
           "UPDATE inventories SET quantity = $1 WHERE public_id = $2 RETURNING public_id",
         args: [params.data.quantity, params.data.public_id],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Get(params: { id: string }): Promise<Inventory> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<Inventory>({
+      const result = await client.queryObject<Inventory>({
         text: "SELECT * FROM inventories WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      await this.client.queryObject<Inventory>({
+      await client.queryObject<Inventory>({
         text: "DELETE FROM inventories WHERE public_id = $1",
         args: [params.id],
       });
+
+      client.release();
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }

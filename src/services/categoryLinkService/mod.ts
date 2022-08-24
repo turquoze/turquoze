@@ -4,27 +4,26 @@ import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 
 export default class CategoryLinkService implements ICategoryLinkService {
-  client: typeof postgresClient;
-  constructor(client: typeof postgresClient) {
-    this.client = client;
+  pool: typeof postgresClient;
+  constructor(pool: typeof postgresClient) {
+    this.pool = pool;
   }
 
   async Link(params: { data: CategoryLink }): Promise<CategoryLink> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      const result = await this.client.queryObject<CategoryLink>({
+      const result = await client.queryObject<CategoryLink>({
         text: "INSERT INTO categorieslink (category, product) VALUES ($1, $2)",
         args: [params.data.category, params.data.product],
       });
 
+      client.release();
       return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
@@ -36,43 +35,42 @@ export default class CategoryLinkService implements ICategoryLinkService {
     },
   ): Promise<Product[]> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
       if (params.limit == null) {
         params.limit = 10;
       }
 
-      const result = await this.client.queryObject<Product>({
+      const result = await client.queryObject<Product>({
         text:
           "SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.id WHERE categorieslink.category = $1 LIMIT $2 OFFSET $3",
         args: [params.id, params.limit, params.offset],
       });
 
+      client.release();
       return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 
   async Delete(params: { data: CategoryLink }): Promise<void> {
     try {
-      await this.client.connect();
+      const client = await this.pool.connect();
 
-      await this.client.queryObject<CategoryLink>({
+      await client.queryObject<CategoryLink>({
         text:
           "DELETE FROM categorieslink WHERE (category = $1 AND product = $2)",
         args: [params.data.category, params.data.product],
       });
+
+      client.release();
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
       });
-    } finally {
-      await this.client.end();
     }
   }
 }
