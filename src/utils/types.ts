@@ -96,7 +96,11 @@ export interface PaymentRequest {
 
 export interface PaymentPlugin {
   pay(
-    items: Array<CartItem>,
+    items: Array<{
+      name: string;
+      price: number;
+      quantity: number;
+    }>,
     amount: number,
     shop: Shop,
   ): Promise<PaymentPluginResponse>;
