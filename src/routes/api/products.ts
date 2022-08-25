@@ -86,11 +86,7 @@ export default class ProductsRoutes {
         const params = (new URL(ctx.request.url)).searchParams;
         const id = params.get("ids");
 
-        if (id == undefined || id == null) {
-          return ctx.response.body = stringifyJSON({
-            products: [],
-          });
-        } else {
+        if (id != null && id.length > 35) {
           let ids: Array<string> = [];
           if (id.includes(",")) {
             ids = id.split(",");
@@ -108,6 +104,10 @@ export default class ProductsRoutes {
 
           ctx.response.body = stringifyJSON({
             products,
+          });
+        } else {
+          return ctx.response.body = stringifyJSON({
+            products: [],
           });
         }
         ctx.response.headers.set("content-type", "application/json");
