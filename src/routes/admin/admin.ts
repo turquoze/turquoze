@@ -15,6 +15,5 @@ admin.use(ApplicationState(container.ShopService));
 
 admin.use(settings.routes());
 admin.use(tokens.routes());
-admin.allowedMethods();
 
 export default admin;

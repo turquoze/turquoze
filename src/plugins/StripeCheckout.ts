@@ -113,8 +113,10 @@ export default class StripeCheckout implements PaymentPlugin {
   }
 
   Routes() {
-    const router = new Router();
-    router.post("/stripe-checkout/webhook", async (ctx) => {
+    const router = new Router({
+      prefix: "/stripe-checkout",
+    });
+    router.post("/webhook", async (ctx) => {
       const signature = ctx.request.headers.get("Stripe-Signature");
 
       // First step is to verify the event. The .text() method must be used as the
@@ -130,8 +132,8 @@ export default class StripeCheckout implements PaymentPlugin {
           cryptoProvider,
         );
       } catch (err) {
-        return ctx.response.body = JSON.stringify({ error: err.message }),
-          { status: 400 };
+        ctx.response.status = 404;
+        return ctx.response.body = JSON.stringify({ error: err.message });
       }
 
       console.log(
@@ -154,15 +156,12 @@ export default class StripeCheckout implements PaymentPlugin {
           requestOptions,
         );
       } catch (err) {
-        return ctx.response.body = JSON.stringify({ error: err.message }),
-          { status: 400 };
+        ctx.response.status = 404;
+        return ctx.response.body = JSON.stringify({ error: err.message });
       }*/
 
-      ctx.response.body = JSON.stringify({ status: "ok" }), { status: 200 };
-    });
-
-    router.get("/", (ctx) => {
-      ctx.response.body = JSON.stringify("Hello"), { status: 200 };
+      ctx.response.status = 200;
+      ctx.response.body = JSON.stringify({ status: "ok" });
     });
 
     return router;

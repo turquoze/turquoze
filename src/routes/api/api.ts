@@ -27,6 +27,5 @@ api.use(new shops(container).routes());
 api.use(new discounts(container).routes());
 api.use(new warehouses(container).routes());
 api.use(new inventories(container).routes());
-api.allowedMethods();
 
 export default api;
