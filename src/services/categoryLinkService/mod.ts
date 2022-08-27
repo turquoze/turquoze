@@ -1,11 +1,11 @@
 import { CategoryLink, Product } from "../../utils/types.ts";
 import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
-import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import type { Pool } from "../../deps.ts";
 
 export default class CategoryLinkService implements ICategoryLinkService {
-  pool: typeof postgresClient;
-  constructor(pool: typeof postgresClient) {
+  pool: Pool;
+  constructor(pool: Pool) {
     this.pool = pool;
   }
 
