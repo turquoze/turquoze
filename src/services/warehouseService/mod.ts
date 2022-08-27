@@ -1,11 +1,11 @@
-import type postgresClient from "../dataClient/client.ts";
 import IWarehouseService from "../interfaces/warehouseService.ts";
 import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import type { Pool } from "../../deps.ts";
 
 export default class CartService implements IWarehouseService {
-  pool: typeof postgresClient;
-  constructor(pool: typeof postgresClient) {
+  pool: Pool;
+  constructor(pool: Pool) {
     this.pool = pool;
   }
 

@@ -2,7 +2,7 @@ export {
   Application,
   Context,
   Router,
-} from "https://deno.land/x/oak@v10.5.1/mod.ts";
+} from "https://deno.land/x/oak@v11.1.0/mod.ts";
 export * as yup from "https://cdn.skypack.dev/yup@0.32.11";
 //export { add, allocate, dinero } from "https://esm.sh/dinero.js@alpha";
 export * as currency from "https://esm.sh/@dinero.js/currencies@2.0.0-alpha.8";
@@ -14,3 +14,5 @@ export type {
   SearchParams,
   SearchResponse,
 } from "https://esm.sh/meilisearch@0.25.1";
+export * as postgres from "https://deno.land/x/postgres@v0.16.1/mod.ts";
+export type { Pool } from "https://deno.land/x/postgres@v0.16.1/mod.ts";

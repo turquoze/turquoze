@@ -34,7 +34,7 @@ import ITokenService from "./interfaces/tokenService.ts";
 import INotificationService from "./interfaces/notificationService.ts";
 import IPluginService from "./interfaces/pluginService.ts";
 
-import client from "./dataClient/client.ts";
+import client from "../db/client.ts";
 
 export class Container {
   CacheService: ICacheService = new DefaultCacheService();

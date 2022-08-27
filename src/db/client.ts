@@ -1,4 +1,4 @@
-import { postgres } from "./_deps.ts";
+import { postgres } from "../deps.ts";
 import {
   DATABASE,
   DATABASE_CERT,
@@ -6,7 +6,7 @@ import {
   DATABASE_PASSWORD,
   DATABASE_PORT,
   DATABASE_USER,
-} from "../../utils/secrets.ts";
+} from "../utils/secrets.ts";
 
 /*
 const client = new postgres.Client({

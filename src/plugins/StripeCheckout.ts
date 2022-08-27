@@ -1,6 +1,6 @@
 import { PaymentPlugin, PaymentPluginResponse, Shop } from "../utils/types.ts";
 import Stripe from "https://esm.sh/stripe@10.0.0";
-import { Router } from "https://deno.land/x/oak@v10.5.1/router.ts";
+import { Router } from "https://deno.land/x/oak@v11.1.0/router.ts";
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 export default class StripeCheckout implements PaymentPlugin {

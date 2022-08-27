@@ -1,4 +1,3 @@
-import type postgresClient from "../dataClient/client.ts";
 import IPaymentService from "../interfaces/paymentService.ts";
 import {
   CartItem,
@@ -15,15 +14,16 @@ import { DatabaseError, NoCartError } from "../../utils/errors.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
 //import { CodeToCurrency } from "../../utils/utils.ts";
+import type { Pool } from "../../deps.ts";
 
 export default class PaymentService implements IPaymentService {
-  pool: typeof postgresClient;
+  pool: Pool;
   #CartService: ICartService;
   #OrderService: IOrderService;
   #ProductService: IProductService;
   #PluginService: IPluginService;
   constructor(
-    pool: typeof postgresClient,
+    pool: Pool,
     cartService: ICartService,
     orderService: IOrderService,
     productService: IProductService,

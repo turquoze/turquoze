@@ -1,11 +1,11 @@
 import { Token } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
-import type postgresClient from "../dataClient/client.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import type { Pool } from "../../deps.ts";
 
 export default class TokenService implements ITokenService {
-  pool: typeof postgresClient;
-  constructor(pool: typeof postgresClient) {
+  pool: Pool;
+  constructor(pool: Pool) {
     this.pool = pool;
   }
 
