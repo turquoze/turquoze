@@ -1,4 +1,4 @@
-import { SearchParams } from "../deps.ts";
+import { Router, SearchParams } from "../deps.ts";
 
 export interface Product {
   id: number;
@@ -104,6 +104,8 @@ export interface PaymentPlugin {
     amount: number,
     shop: Shop,
   ): Promise<PaymentPluginResponse>;
+
+  Routes(): Router;
 }
 
 export interface PaymentPluginResponse {
