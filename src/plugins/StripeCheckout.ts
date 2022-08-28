@@ -1,5 +1,5 @@
 import { PaymentPlugin, PaymentPluginResponse, Shop } from "../utils/types.ts";
-import Stripe from "https://esm.sh/stripe@10.0.0";
+import Stripe from "https://esm.sh/stripe@10.6.0?target=deno";
 import { Router } from "https://deno.land/x/oak@v11.1.0/router.ts";
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
@@ -22,6 +22,7 @@ export default class StripeCheckout implements PaymentPlugin {
     }
     this.#stripe = Stripe(STRIPE_API_KEY, {
       httpClient: Stripe.createFetchHttpClient(),
+      apiVersion: '2022-08-01',
     });
   }
 
