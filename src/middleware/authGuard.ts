@@ -4,8 +4,8 @@ import ITokenService from "../services/interfaces/tokenService.ts";
 export const AuthGuard =
   (tokenService: ITokenService) =>
   async (ctx: Context, next: () => Promise<unknown>) => {
+    const token = ctx.request.headers.get("x-turquoze-key");
     try {
-      const token = ctx.request.headers.get("x-turquoze-key");
       if (token != null) {
         const tokenInfo = await tokenService.Get({ token });
 
@@ -19,7 +19,9 @@ export const AuthGuard =
       } else {
         throw new Error("Not allowed");
       }
-    } catch (_error) {
+    } catch (error) {
+      console.log(`token used: ${token}`);
+      console.error(error);
       ctx.response.status = 401;
       ctx.response.headers.set("content-type", "application/json");
       ctx.response.body = JSON.stringify({
