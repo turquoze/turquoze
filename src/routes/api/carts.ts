@@ -1,7 +1,13 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Cart, CartItem, DiscountCheck } from "../../utils/types.ts";
+import {
+  Cart,
+  CartItem,
+  DiscountCheck,
+  TurquozeState,
+} from "../../utils/types.ts";
+import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
 import {
@@ -12,11 +18,11 @@ import {
 } from "../../utils/validator.ts";
 
 export default class CartRoutes {
-  #carts: Router;
+  #carts: Router<TurquozeState>;
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
-    this.#carts = new Router({
+    this.#carts = new Router<TurquozeState>({
       prefix: "/carts",
     });
 
@@ -105,6 +111,15 @@ export default class CartRoutes {
           data: posted,
         });
 
+        data.price = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
+        data.totalPrice = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).multiply(data.quantity).getAmount();
+
         ctx.response.body = stringifyJSON({
           carts: data,
         });
@@ -129,8 +144,21 @@ export default class CartRoutes {
           ctx.params.id,
         );
 
+        const response = data.map((item) => {
+          item.price = Dinero({
+            amount: (item.price * 100),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+          item.totalPrice = Dinero({
+            amount: (item.price * 100),
+            currency: ctx.state.request_data.currency,
+          }).multiply(item.quantity).getAmount();
+
+          return item;
+        });
+
         ctx.response.body = stringifyJSON({
-          carts: data,
+          carts: response,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
@@ -157,6 +185,15 @@ export default class CartRoutes {
           ctx.params.id,
           ctx.params.product_id,
         );
+
+        data.price = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
+        data.totalPrice = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).multiply(data.quantity).getAmount();
 
         ctx.response.body = stringifyJSON({
           carts: data,
