@@ -1,4 +1,3 @@
-import { currency } from "../deps.ts";
 import container from "../services/mod.ts";
 
 /**
@@ -15,17 +14,6 @@ export function stringifyJSON(
     (_, v) => typeof v === "bigint" ? v.toString() : v,
     2,
   );
-}
-
-export function CodeToCurrency(code: string) {
-  switch (code) {
-    case "USD":
-      return currency.USD;
-    case "SEK":
-      return currency.SEK;
-    default:
-      throw new Error("Unsupported currency");
-  }
 }
 
 export async function Get<T>(params: {

@@ -1,6 +1,7 @@
 import { PaymentPlugin, PaymentPluginResponse, Shop } from "../utils/types.ts";
 import Stripe from "https://esm.sh/stripe@10.6.0?target=deno";
 import { Router } from "https://deno.land/x/oak@v11.1.0/router.ts";
+import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 export default class StripeCheckout implements PaymentPlugin {
@@ -22,7 +23,7 @@ export default class StripeCheckout implements PaymentPlugin {
     }
     this.#stripe = Stripe(STRIPE_API_KEY, {
       httpClient: Stripe.createFetchHttpClient(),
-      apiVersion: '2022-08-01',
+      apiVersion: "2022-08-01",
     });
   }
 
@@ -42,7 +43,10 @@ export default class StripeCheckout implements PaymentPlugin {
           product_data: {
             name: item.name,
           },
-          unit_amount: item.price,
+          unit_amount: Dinero({
+            amount: (item.price * 100),
+            currency: shop.currency,
+          }).getAmount(),
         },
         adjustable_quantity: {
           enabled: true,
