@@ -1,7 +1,8 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Product, Search } from "../../utils/types.ts";
+import { Product, Search, TurquozeState } from "../../utils/types.ts";
+import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import {
@@ -11,11 +12,11 @@ import {
 } from "../../utils/validator.ts";
 
 export default class ProductsRoutes {
-  #products: Router;
+  #products: Router<TurquozeState>;
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
-    this.#products = new Router({
+    this.#products = new Router<TurquozeState>({
       prefix: "/products",
     });
 
@@ -26,8 +27,17 @@ export default class ProductsRoutes {
           promise: this.#Container.ProductService.GetMany({}),
         });
 
+        const products = data.map((product) => {
+          product.price = Dinero({
+            amount: (product.price * 100),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+
+          return product;
+        });
+
         ctx.response.body = stringifyJSON({
-          products: data,
+          products,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
@@ -102,8 +112,17 @@ export default class ProductsRoutes {
             );
           }
 
+          const data = products.map((product) => {
+            product.price = Dinero({
+              amount: (product.price * 100),
+              currency: ctx.state.request_data.currency,
+            }).getAmount();
+
+            return product;
+          });
+
           ctx.response.body = stringifyJSON({
-            products,
+            products: data,
           });
         } else {
           return ctx.response.body = stringifyJSON({
@@ -126,6 +145,11 @@ export default class ProductsRoutes {
         const data = await this.#Container.ProductService.GetBySlug({
           slug: ctx.params.slug,
         });
+
+        data.price = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
 
         ctx.response.body = stringifyJSON({
           products: data,
@@ -163,6 +187,12 @@ export default class ProductsRoutes {
         const data = await this.#Container.ProductService.Create({
           data: posted,
         });
+
+        data.price = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -204,6 +234,11 @@ export default class ProductsRoutes {
           }),
         });
 
+        data.price = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -230,6 +265,11 @@ export default class ProductsRoutes {
             id: ctx.params.id,
           }),
         });
+
+        data.price = Dinero({
+          amount: (data.price * 100),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
 
         ctx.response.body = stringifyJSON({
           products: data,
