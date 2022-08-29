@@ -10,11 +10,10 @@ import {
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError, NoCartError } from "../../utils/errors.ts";
-//import { add, Dinero, dinero } from "../../deps.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-//import { CodeToCurrency } from "../../utils/utils.ts";
-import type { Pool } from "../../deps.ts";
+import { Pool } from "../../deps.ts";
+import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 export default class PaymentService implements IPaymentService {
   pool: Pool;
@@ -124,13 +123,11 @@ export default class PaymentService implements IPaymentService {
     params: { cartId: string; currency: string; items: Array<CartItem> },
   ): Promise<PriceCalculation> {
     try {
-      /*
       const dollars = (amount: number) =>
-        dinero({ amount, currency: CodeToCurrency(params.currency) });
-      const addMany = (addends: Array<Dinero.Dinero<number>>) =>
-        addends.reduce(add);
+        Dinero({ amount, currency: params.currency });
+      const addMany = (addends: Array<any>) => addends.reduce(Dinero);
 
-      const arr = Array<Dinero.Dinero<number>>();
+      const arr = Array<any>();
 
       await Promise.all(params.items.map(async (product) => {
         const dbProduct = await this.#ProductService.Get({
@@ -144,22 +141,12 @@ export default class PaymentService implements IPaymentService {
       }));
 
       const price = addMany(arr);
-      const total = price.toJSON();*/
-
-      // dinero not working in deploy
-      await new Promise((resolve) => setTimeout(resolve, 1));
-
-      // FAKE DATA
-      let price = 0;
-
-      params.items.map((item) => {
-        price += item.price * item.quantity;
-      });
+      const total = price.toJSON();
 
       const sub = (price * 1.25);
 
       return {
-        price: parseInt(price.toString()),
+        price: total.amount,
         subtotal: parseInt(sub.toString()),
         vat: parseInt((sub - price).toString()),
       };
