@@ -188,11 +188,6 @@ export default class ProductsRoutes {
           data: posted,
         });
 
-        data.price = Dinero({
-          amount: parseInt((data.price * 100).toString()),
-          currency: ctx.state.request_data.currency,
-        }).getAmount();
-
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -233,11 +228,6 @@ export default class ProductsRoutes {
             data: posted,
           }),
         });
-
-        data.price = Dinero({
-          amount: parseInt((data.price * 100).toString()),
-          currency: ctx.state.request_data.currency,
-        }).getAmount();
 
         ctx.response.body = stringifyJSON({
           products: data,

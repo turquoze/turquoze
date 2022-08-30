@@ -111,15 +111,6 @@ export default class CartRoutes {
           data: posted,
         });
 
-        data.price = Dinero({
-          amount: parseInt((data.price * 100).toString()),
-          currency: ctx.state.request_data.currency,
-        }).getAmount();
-        data.totalPrice = Dinero({
-          amount: parseInt((data.price * 100).toString()),
-          currency: ctx.state.request_data.currency,
-        }).multiply(parseInt(data.quantity.toString())).getAmount();
-
         ctx.response.body = stringifyJSON({
           carts: data,
         });
