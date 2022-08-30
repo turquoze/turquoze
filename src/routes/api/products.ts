@@ -29,7 +29,7 @@ export default class ProductsRoutes {
 
         const products = data.map((product) => {
           product.price = Dinero({
-            amount: (product.price * 100),
+            amount: parseInt((product.price * 100).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
@@ -114,7 +114,7 @@ export default class ProductsRoutes {
 
           const data = products.map((product) => {
             product.price = Dinero({
-              amount: (product.price * 100),
+              amount: parseInt((product.price * 100).toString()),
               currency: ctx.state.request_data.currency,
             }).getAmount();
 
@@ -147,7 +147,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: (data.price * 100),
+          amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
@@ -189,7 +189,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: (data.price * 100),
+          amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
@@ -235,7 +235,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: (data.price * 100),
+          amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
@@ -267,7 +267,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: (data.price * 100),
+          amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
