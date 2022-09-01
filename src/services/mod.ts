@@ -34,50 +34,51 @@ import ITokenService from "./interfaces/tokenService.ts";
 import INotificationService from "./interfaces/notificationService.ts";
 import IPluginService from "./interfaces/pluginService.ts";
 
-import client from "../db/client.ts";
+import dbClient from "../clients/db.ts";
+import searchClient from "../clients/search.ts";
 
 export class Container {
   CacheService: ICacheService = new DefaultCacheService();
   ProductService: IProductService = new DefaultProductService(
-    client,
+    dbClient,
   );
-  CartService: ICartService = new DefaultCartService(client);
+  CartService: ICartService = new DefaultCartService(dbClient);
   OrderService: IOrderService = new DefaultOrderService(
-    client,
+    dbClient,
   );
   CategoryService: ICategoryService = new DefaultCategoryService(
-    client,
+    dbClient,
   );
   CategoryLinkService: ICategoryLinkService = new DefaultCategoryLinkService(
-    client,
+    dbClient,
   );
   ShopService: IShopService = new DefaultShopService(
-    client,
+    dbClient,
   );
   PluginService: IPluginService = new DefaultPluginService();
   PaymentService: IPaymentService = new DefaultPaymentService(
-    client,
+    dbClient,
     this.CartService,
     this.OrderService,
     this.ProductService,
     this.PluginService,
   );
   DiscountService: IDiscountService = new DefaultDiscountService(
-    client,
+    dbClient,
   );
-  SearchService: ISearchService = new DefaultSearchService();
+  SearchService: ISearchService = new DefaultSearchService(searchClient);
   WarehouseService: IWarehouseService = new DefaultWarehouseService(
-    client,
+    dbClient,
   );
   InventoryService: IInventoryService = new DefaultInventoryService(
-    client,
+    dbClient,
   );
   PriceService: IPriceService = new DefaultPriceService(
-    client,
+    dbClient,
   );
-  UserService: IUserService = new DefaultUserService(client);
+  UserService: IUserService = new DefaultUserService(dbClient);
   TokenService: ITokenService = new DefaultTokenService(
-    client,
+    dbClient,
   );
   NotificationService: INotificationService = new DefaultNotificationService();
 }

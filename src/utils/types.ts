@@ -71,6 +71,7 @@ export interface Shop {
   currency: string;
   name: string;
   url: string;
+  search_index: string;
 }
 
 export interface CategoryLink {
@@ -142,8 +143,14 @@ export interface Discount {
 }
 
 export interface Search {
+  index: string;
   query: string;
   options?: SearchParams;
+}
+
+export interface MeiliIndex {
+  product: Product;
+  index: string;
 }
 
 export interface Warehouse {
