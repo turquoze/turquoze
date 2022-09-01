@@ -67,6 +67,8 @@ export default class ProductsRoutes {
         await SearchSchema.validate(query);
         const posted: Search = await SearchSchema.cast(query);
 
+        posted.index = ctx.state.request_data.search_index;
+
         const data = await this.#Container.SearchService.ProductSearch(posted);
 
         ctx.response.body = stringifyJSON({
