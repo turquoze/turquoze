@@ -16,8 +16,8 @@ const api = new Router({
   prefix: "/api",
 });
 
-api.use(AuthGuard(container.TokenService));
-api.use(ApplicationState(container.ShopService));
+api.use(AuthGuard(container));
+api.use(ApplicationState(container));
 
 api.use(new products(container).routes());
 api.use(new carts(container).routes());

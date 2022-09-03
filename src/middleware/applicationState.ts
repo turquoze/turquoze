@@ -1,8 +1,8 @@
 import type { Context } from "../deps.ts";
-import IShopService from "../services/interfaces/shopService.ts";
+import { Container } from "../services/mod.ts";
 import { TurquozeState } from "../utils/types.ts";
 
-export const ApplicationState = (shopService: IShopService) =>
+export const ApplicationState = (container: Container) =>
 async (
   ctx: Context<TurquozeState>,
   next: () => Promise<unknown>,
@@ -14,7 +14,9 @@ async (
     ) {
       throw new Error("Something is wrong");
     }
-    const shop = await shopService.Get({ id: ctx.state.shop });
+    const shop = await container.ShopService.Get({ id: ctx.state.shop });
+
+    container.Shop = shop;
 
     ctx.state.request_data = shop;
 

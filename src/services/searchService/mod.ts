@@ -1,6 +1,6 @@
 import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { MeiliIndex, Product, Search } from "../../utils/types.ts";
+import { MeiliDelete, MeiliIndex, Product, Search } from "../../utils/types.ts";
 import { EnqueuedTask, MeiliSearch, SearchResponse } from "../../deps.ts";
 import { MEILIINDEX } from "../../utils/secrets.ts";
 
@@ -36,7 +36,19 @@ export default class SearchService implements ISearchService {
       ]);
       return task;
     } catch (error) {
-      throw new DatabaseError("Search error", {
+      throw new DatabaseError("Index Add error", {
+        cause: error,
+      });
+    }
+  }
+
+  async ProductRemove(params: MeiliDelete): Promise<EnqueuedTask> {
+    try {
+      const task = await this.client.index<Product>(params.index)
+        .deleteDocument(params.id);
+      return task;
+    } catch (error) {
+      throw new DatabaseError("Index delete error", {
         cause: error,
       });
     }

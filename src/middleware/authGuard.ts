@@ -1,13 +1,13 @@
 import type { Context } from "../deps.ts";
-import ITokenService from "../services/interfaces/tokenService.ts";
+import { Container } from "../services/mod.ts";
 
 export const AuthGuard =
-  (tokenService: ITokenService) =>
+  (container: Container) =>
   async (ctx: Context, next: () => Promise<unknown>) => {
     const token = ctx.request.headers.get("x-turquoze-key");
     try {
       if (token != null) {
-        const tokenInfo = await tokenService.Get({ token });
+        const tokenInfo = await container.TokenService.Get({ token });
 
         if (tokenInfo.expire != null && tokenInfo.expire < Date.now()) {
           throw new Error("Not active");
