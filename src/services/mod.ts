@@ -36,6 +36,7 @@ import IPluginService from "./interfaces/pluginService.ts";
 
 import dbClient from "../clients/db.ts";
 import searchClient from "../clients/search.ts";
+import { Shop } from "../utils/types.ts";
 
 export class Container {
   CacheService: ICacheService = new DefaultCacheService();
@@ -81,6 +82,16 @@ export class Container {
     dbClient,
   );
   NotificationService: INotificationService = new DefaultNotificationService();
+  Shop: Shop = {
+    id: 0,
+    public_id: "",
+    regions: [],
+    payment_id: "",
+    currency: "",
+    name: "",
+    url: "",
+    search_index: "",
+  };
 }
 
 const container = new Container();

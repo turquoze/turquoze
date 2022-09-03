@@ -153,6 +153,11 @@ export interface MeiliIndex {
   index: string;
 }
 
+export interface MeiliDelete {
+  id: string;
+  index: string;
+}
+
 export interface Warehouse {
   id: number;
   public_id: string;
@@ -211,4 +216,5 @@ export interface Token {
 export type TurquozeEvent =
   | "CREATED_PRODUCT"
   | "UPDATED_PRODUCT"
-  | "DELETED_PRODUCT";
+  | "DELETED_PRODUCT"
+  | "TEST_EVENT";

@@ -6,8 +6,10 @@ import { TurquozeState } from "./utils/types.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
 import initPlugins from "./plugins/mod.ts";
+import AddEvents from "./utils/events.ts";
 
 initPlugins();
+AddEvents();
 
 const app = new Application<TurquozeState>();
 
@@ -20,7 +22,11 @@ app.use(plugin.routes());
 
 app.use((ctx) => {
   ctx.response.status = 404;
-  ctx.response.body = JSON.stringify({ status: 404 });
+  ctx.response.headers.set("content-type", "application/json");
+  ctx.response.body = JSON.stringify({
+    msg: "Not Found",
+    error: "NOT_FOUND",
+  });
 });
 
 app.addEventListener("listen", ({ port }) => {

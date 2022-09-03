@@ -10,8 +10,8 @@ const admin = new Router({
   prefix: "/admin",
 });
 
-admin.use(AuthGuard(container.TokenService));
-admin.use(ApplicationState(container.ShopService));
+admin.use(AuthGuard(container));
+admin.use(ApplicationState(container));
 
 admin.use(settings.routes());
 admin.use(tokens.routes());
