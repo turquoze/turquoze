@@ -13,6 +13,10 @@ export default interface IProductService {
     slug: string;
   }): Promise<Product>;
 
+  GetVariantsByParent(params: {
+    id: string;
+  }): Promise<Array<Product>>;
+
   GetMany(params: {
     offset?: string;
     limit?: number;
