@@ -8,19 +8,23 @@ import {
   DATABASE_USER,
 } from "../utils/secrets.ts";
 
-const pool = new postgres.Pool({
-  hostname: DATABASE_HOSTNAME,
-  password: DATABASE_PASSWORD,
-  database: DATABASE,
-  user: DATABASE_USER,
-  port: DATABASE_PORT,
-  tls: {
-    caCertificates: [
-      DATABASE_CERT!,
-    ],
-    enabled: false,
+const pool = new postgres.Pool(
+  {
+    hostname: DATABASE_HOSTNAME,
+    password: DATABASE_PASSWORD,
+    database: DATABASE,
+    user: DATABASE_USER,
+    port: DATABASE_PORT,
+    tls: {
+      caCertificates: [
+        DATABASE_CERT!,
+      ],
+      enabled: false,
+    },
   },
-}, 10);
+  10,
+  true,
+);
 
 export default pool;
 export const postgresClient = postgres.PoolClient;

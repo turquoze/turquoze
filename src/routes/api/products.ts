@@ -167,6 +167,35 @@ export default class ProductsRoutes {
       }
     });
 
+    this.#products.get("/byparent/:id", async (ctx) => {
+      try {
+        const data = await this.#Container.ProductService.GetVariantsByParent({
+          id: ctx.params.id,
+        });
+
+        const dataWPrice = data.map((product) => {
+          product.price = Dinero({
+            amount: parseInt((product.price * 100).toString()),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+
+          return product;
+        });
+
+        ctx.response.body = stringifyJSON({
+          products: dataWPrice,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#products.post("/", async (ctx) => {
       try {
         if (!ctx.request.hasBody) {

@@ -94,6 +94,24 @@ export default class ProductService implements IProductService {
     }
   }
 
+  async GetVariantsByParent(params: { id: string }): Promise<Product[]> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Product>({
+        text: "SELECT * FROM products WHERE parent = $1",
+        args: [params.id],
+      });
+
+      client.release();
+      return result.rows;
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
   async GetMany(
     params: { offset?: string; limit?: number },
   ): Promise<Array<Product>> {
