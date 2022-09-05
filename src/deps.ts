@@ -14,3 +14,5 @@ export type {
 export * as postgres from "https://deno.land/x/postgres@v0.16.1/mod.ts";
 export type { Pool } from "https://deno.land/x/postgres@v0.16.1/mod.ts";
 export * as jose from "https://deno.land/x/jose@v4.9.1/index.ts";
+export { createClient } from "https://esm.sh/@supabase/supabase-js@1.35.3";
+export type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@1.35.3";

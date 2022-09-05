@@ -14,6 +14,8 @@ let UPSTASH_REDIS_REST_TOKEN: string | undefined;
 let MEILIHOST: string | undefined;
 let MEILIINDEX: string | undefined;
 let MEILIAPIKEY: string | undefined;
+let SUPABASE_KEY: string | undefined;
+let SUPABASE_URL: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
 if (!DATABASE_CERT) {
@@ -82,6 +84,16 @@ if (!MEILIAPIKEY) {
   );
 }
 
+SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
+if (!SUPABASE_KEY) {
+  throw new Error("environment variable SUPABASE_KEY not set");
+}
+
+SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+if (!SUPABASE_URL) {
+  throw new Error("environment variable SUPABASE_URL not set");
+}
+
 export {
   DATABASE,
   DATABASE_CERT,
@@ -93,6 +105,8 @@ export {
   MEILIAPIKEY,
   MEILIHOST,
   MEILIINDEX,
+  SUPABASE_KEY,
+  SUPABASE_URL,
   TOKEN,
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,
