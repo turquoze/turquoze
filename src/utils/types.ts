@@ -213,6 +213,22 @@ export interface Token {
   shop: string;
 }
 
+export interface Media {
+  file:
+    | ArrayBuffer
+    | ArrayBufferView
+    | Blob
+    | Buffer
+    | File
+    | FormData
+    | ReadableStream
+    | ReadableStream
+    | URLSearchParams
+    | string;
+  name: string;
+  public: boolean;
+}
+
 export type TurquozeEvent =
   | "CREATED_PRODUCT"
   | "UPDATED_PRODUCT"
