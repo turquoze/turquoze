@@ -145,9 +145,20 @@ export default class StripeCheckout implements PaymentPlugin {
         return ctx.response.body = JSON.stringify({ error: err.message });
       }
 
-      console.log(
-        JSON.stringify({ stripe_event: "webhook", event: receivedEvent }),
-      );
+      switch (receivedEvent.type) {
+        case "checkout.session.async_payment_succeeded":
+          this.#handleSuccess(receivedEvent);
+          break;
+        case "checkout.session.completed":
+          this.#handleSuccess(receivedEvent);
+          break;
+        case "checkout.session.async_payment_failed":
+          this.#handleFailed(receivedEvent);
+          break;
+        default:
+          console.log(`Unused event: ${receivedEvent.type}`);
+          break;
+      }
 
       // Secondly, we use this event to query the Stripe API in order to avoid
       // handling any forged event. If available, we use the idempotency key.
@@ -174,5 +185,23 @@ export default class StripeCheckout implements PaymentPlugin {
     });
 
     return router;
+  }
+
+  #handleSuccess(receivedEvent: any) {
+    const orderId = receivedEvent.data.object.metadata.orderId;
+    const paymentStatus = receivedEvent.data.object.payment_status;
+    const status = receivedEvent.data.object.status;
+    console.log(
+      `order succeeded | status: ${status} payment: ${paymentStatus} id: ${orderId}`,
+    );
+  }
+
+  #handleFailed(receivedEvent: any) {
+    const orderId = receivedEvent.data.object.metadata.orderId;
+    const paymentStatus = receivedEvent.data.object.payment_status;
+    const status = receivedEvent.data.object.status;
+    console.log(
+      `order Failed | status: ${status} payment: ${paymentStatus} id: ${orderId}`,
+    );
   }
 }
