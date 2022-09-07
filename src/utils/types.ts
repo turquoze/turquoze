@@ -103,6 +103,7 @@ export interface PaymentPlugin {
       price: number;
       quantity: number;
     }>,
+    orderId: string,
     amount: number,
     shop: Shop,
   ): Promise<PaymentPluginResponse>;
