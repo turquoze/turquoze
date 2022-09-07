@@ -33,6 +33,7 @@ export default class StripeCheckout implements PaymentPlugin {
       price: number;
       quantity: number;
     }>,
+    orderId: string,
     amount: number,
     shop: Shop,
   ): Promise<PaymentPluginResponse> {
@@ -59,6 +60,9 @@ export default class StripeCheckout implements PaymentPlugin {
 
     const session = await this.#stripe.checkout.sessions.create({
       line_items: cartItems,
+      metadata: {
+        orderId: orderId,
+      },
       shipping_address_collection: {
         allowed_countries: shop.regions,
       },

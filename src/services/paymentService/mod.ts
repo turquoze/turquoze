@@ -71,19 +71,11 @@ export default class PaymentService implements IPaymentService {
 
       const payCartItems = await Promise.all(payCartItemsPromises);
 
-      const payData = await paymentProvider.pay(
-        payCartItems,
-        price.price.valueOf(),
-        params.data.shop,
-      );
-
       const order = await this.#OrderService.Create({
         data: {
           id: 0,
           payment: {
             status: "WAITING",
-            // @ts-expect-error payment
-            pg: payData,
           },
           price: {
             subtotal: parseInt(price.subtotal.toString()),
@@ -95,6 +87,13 @@ export default class PaymentService implements IPaymentService {
           products: {}, //JSON.parse(stringifyJSON(cart.items)),
         },
       });
+
+      const payData = await paymentProvider.pay(
+        payCartItems,
+        order.public_id,
+        price.price.valueOf(),
+        params.data.shop,
+      );
 
       await this.#CartService.Delete({ id: params.data.cartId });
 
