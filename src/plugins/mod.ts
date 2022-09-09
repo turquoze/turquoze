@@ -1,6 +1,6 @@
 import container from "../services/mod.ts";
 import StripeCheckout from "./StripeCheckout.ts";
-const stripeCheckout = new StripeCheckout();
+const stripeCheckout = new StripeCheckout(container);
 
 export default function initPlugins() {
   container.PluginService.Add(stripeCheckout.Id, stripeCheckout);

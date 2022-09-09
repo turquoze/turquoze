@@ -2,13 +2,16 @@ import { PaymentPlugin, PaymentPluginResponse, Shop } from "../utils/types.ts";
 import Stripe from "https://esm.sh/stripe@10.6.0?target=deno";
 import { Router } from "https://deno.land/x/oak@v11.1.0/router.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import { Container } from "../services/mod.ts";
 const cryptoProvider = Stripe.createSubtleCryptoProvider();
 
 export default class StripeCheckout implements PaymentPlugin {
   Id = "StripeCheckout";
   #stripe: typeof Stripe;
   #STRIPE_WEBHOOK_SIGNING_SECRET: string | undefined;
-  constructor() {
+  container: Container;
+  constructor(container: Container) {
+    this.container = container;
     const STRIPE_API_KEY = Deno.env.get("STRIPE_API_KEY");
     this.#STRIPE_WEBHOOK_SIGNING_SECRET = Deno.env.get(
       "STRIPE_WEBHOOK_SIGNING_SECRET",
@@ -194,6 +197,11 @@ export default class StripeCheckout implements PaymentPlugin {
     console.log(
       `order succeeded | status: ${status} payment: ${paymentStatus} id: ${orderId}`,
     );
+
+    this.container.OrderService.SetPaymentStatus({
+      id: orderId,
+      status: paymentStatus == "paid" ? "PAYED" : "FAILED",
+    });
   }
 
   #handleFailed(receivedEvent: any) {
@@ -203,5 +211,10 @@ export default class StripeCheckout implements PaymentPlugin {
     console.log(
       `order Failed | status: ${status} payment: ${paymentStatus} id: ${orderId}`,
     );
+
+    this.container.OrderService.SetPaymentStatus({
+      id: orderId,
+      status: paymentStatus == "paid" ? "PAYED" : "FAILED",
+    });
   }
 }
