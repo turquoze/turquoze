@@ -37,13 +37,8 @@ export interface Order {
   shop: string;
   created_at: number;
   products: Array<OrderProduct>;
-  payment: {
-    status: "PAYED" | "WAITING" | "FAILED";
-  };
-  price: {
-    total: number;
-    subtotal: number;
-  };
+  payment_status: "PAYED" | "WAITING" | "FAILED";
+  price_total: number;
 }
 
 export interface OrderProduct {

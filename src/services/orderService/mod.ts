@@ -15,10 +15,10 @@ export default class CartService implements IOrderService {
 
       const result = await client.queryObject<Order>({
         text:
-          "INSERT INTO orders (payment, price, products, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
+          "INSERT INTO orders (payment_status, price_total, products, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
         args: [
-          params.data.payment,
-          params.data.price,
+          params.data.payment_status,
+          params.data.price_total,
           params.data.products,
           params.data.shop,
         ],
@@ -83,7 +83,7 @@ export default class CartService implements IOrderService {
 
       const result = await client.queryObject<Order>({
         text:
-          "UPDATE orders SET payment.status = $1 WHERE public_id = $7 RETURNING public_id",
+          "UPDATE orders SET payment_status = $1 WHERE public_id = $7 RETURNING public_id",
         args: [
           params.status,
           params.id,
