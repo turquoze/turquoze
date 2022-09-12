@@ -71,20 +71,26 @@ export default class PaymentService implements IPaymentService {
 
       const payCartItems = await Promise.all(payCartItemsPromises);
 
+      const orderProducts = cart.items.map((product) => {
+        return {
+          price: {
+            currency: params.data.shop.currency,
+            value: product.price,
+          },
+          product: product.product_id,
+          quantity: product.quantity,
+        };
+      });
+
       const order = await this.#OrderService.Create({
         data: {
+          public_id: "",
           id: 0,
-          payment: {
-            status: "WAITING",
-          },
-          price: {
-            subtotal: parseInt(price.subtotal.toString()),
-            total: parseInt(price.price.toString()),
-          },
+          payment_status: "WAITING",
+          price_total: parseInt(price.price.toString()),
           created_at: 0,
           shop: params.data.shop.public_id,
-          // @ts-expect-error payment
-          products: {}, //JSON.parse(stringifyJSON(cart.items)),
+          products: orderProducts,
         },
       });
 
