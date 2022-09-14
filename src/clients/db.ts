@@ -22,7 +22,7 @@ const pool = new postgres.Pool(
       enabled: false,
     },
   },
-  2,
+  3,
 );
 
 export default pool;
