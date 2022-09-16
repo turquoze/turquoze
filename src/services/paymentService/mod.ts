@@ -90,7 +90,8 @@ export default class PaymentService implements IPaymentService {
           price_total: parseInt(price.price.toString()),
           created_at: 0,
           shop: params.data.shop.public_id,
-          products: orderProducts,
+          // @ts-expect-error db is json
+          products: JSON.stringify(orderProducts),
         },
       });
 
