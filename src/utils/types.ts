@@ -67,6 +67,8 @@ export interface Shop {
   name: string;
   url: string;
   search_index: string;
+  secret: string;
+  _signKey: any;
 }
 
 export interface CategoryLink {
@@ -198,6 +200,7 @@ export interface User {
   created_at?: number;
   name: string;
   email: string;
+  password: string;
   not_active: boolean;
   shop: string;
 }
@@ -223,6 +226,12 @@ export interface Media {
     | string;
   name: string;
   public: boolean;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+  shop: string;
 }
 
 export type TurquozeEvent =

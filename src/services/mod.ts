@@ -91,6 +91,8 @@ export class Container {
     name: "",
     url: "",
     search_index: "",
+    secret: "",
+    _signKey: "",
   };
 }
 

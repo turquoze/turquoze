@@ -1,4 +1,4 @@
-import type { Context } from "../deps.ts";
+import { Context, jose } from "../deps.ts";
 import { Container } from "../services/mod.ts";
 import { TurquozeState } from "../utils/types.ts";
 
@@ -15,6 +15,9 @@ async (
       throw new Error("Something is wrong");
     }
     const shop = await container.ShopService.Get({ id: ctx.state.shop });
+
+    const signKey = await jose.importJWK(JSON.parse(shop.secret).pk);
+    shop._signKey = signKey;
 
     container.Shop = shop;
 

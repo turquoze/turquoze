@@ -99,3 +99,9 @@ export const UserSchema = yup.object().shape({
   not_active: yup.bool().default(false),
   shop: yup.string().uuid().required(),
 });
+
+export const LoginSchema = yup.object().shape({
+  email: yup.string().email(),
+  password: yup.string().required().min(6),
+  shop: yup.string().uuid().required(),
+});

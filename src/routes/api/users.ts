@@ -1,13 +1,13 @@
-import { Router } from "../../deps.ts";
+import { jose, Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { User } from "../../utils/types.ts";
+import { LoginRequest, TurquozeState, User } from "../../utils/types.ts";
 
 import { Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { UserSchema, UuidSchema } from "../../utils/validator.ts";
+import { LoginSchema, UserSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
-  #users: Router;
+  #users: Router<TurquozeState>;
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
@@ -83,6 +83,96 @@ export default class UsersRoutes {
           promise: this.#Container.UserService.Get({
             id: ctx.params.id,
           }),
+        });
+
+        ctx.response.body = stringifyJSON({
+          users: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#users.post("/login", async (ctx) => {
+      try {
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
+
+        const body = ctx.request.body();
+        let login: LoginRequest;
+        if (body.type === "json") {
+          login = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        login.shop = ctx.state.shop;
+
+        await LoginSchema.validate(login);
+        const posted: LoginRequest = await LoginSchema.cast(login);
+
+        const data = await this.#Container.UserService.Login({
+          email: posted.email,
+          password: posted.password,
+          shop: posted.shop,
+        });
+
+        const jwt = await new jose.SignJWT({
+          "user": {
+            email: data.email,
+            name: data.name,
+          },
+        })
+          .setProtectedHeader({ alg: "PS256" })
+          .setIssuedAt()
+          .setIssuer("urn:turquoze:shop")
+          .setAudience("urn:turquoze:user")
+          .sign(ctx.state.request_data._signKey);
+
+        ctx.response.body = stringifyJSON({
+          token: jwt,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#users.put("/update-password", async (ctx) => {
+      try {
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
+
+        const body = ctx.request.body();
+        let login: LoginRequest;
+        if (body.type === "json") {
+          login = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        login.shop = ctx.state.shop;
+
+        await LoginSchema.validate(login);
+        const posted: LoginRequest = await LoginSchema.cast(login);
+
+        const data = await this.#Container.UserService.UpdatePassword({
+          email: posted.email,
+          new_password: posted.password,
+          shop: posted.shop,
         });
 
         ctx.response.body = stringifyJSON({
