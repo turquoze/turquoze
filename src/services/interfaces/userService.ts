@@ -9,6 +9,18 @@ export default interface IUserService {
     id: string;
   }): Promise<User>;
 
+  Login(params: {
+    email: string;
+    password: string;
+    shop: string;
+  }): Promise<User>;
+
+  UpdatePassword(params: {
+    email: string;
+    new_password: string;
+    shop: string;
+  }): Promise<User>;
+
   GetMany(params: {
     offset?: string;
     limit?: number;

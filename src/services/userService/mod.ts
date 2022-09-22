@@ -15,12 +15,13 @@ export default class UserService implements IUserService {
 
       const result = await client.queryObject<User>({
         text:
-          "INSERT INTO users (email, name, not_active, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
+          "INSERT INTO users (email, name, not_active, shop, password) VALUES ($1, $2, $3, $4, crypt($5, gen_salt('bf'))) RETURNING public_id",
         args: [
           params.data.email,
           params.data.name,
           params.data.not_active,
           params.data.shop,
+          params.data.password,
         ],
       });
 
@@ -40,6 +41,51 @@ export default class UserService implements IUserService {
       const result = await client.queryObject<User>({
         text: "SELECT * FROM users WHERE public_id = $1 LIMIT 1",
         args: [params.id],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async Login(
+    params: { email: string; password: string; shop: string },
+  ): Promise<User> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<User>({
+        text:
+          "SELECT * FROM users WHERE shop = $1 AND email = $2 AND password = crypt($3, password)",
+        args: [params.shop, params.email, params.password],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async UpdatePassword(
+    params: { email: string; new_password: string },
+  ): Promise<User> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<User>({
+        text:
+          "INSERT INTO users (password) VALUES (crypt($1, gen_salt('bf'))) WHERE email = $2 RETURNING public_id",
+        args: [
+          params.new_password,
+          params.email,
+        ],
       });
 
       client.release();
