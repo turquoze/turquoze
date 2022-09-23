@@ -16,7 +16,7 @@ async (
     }
     const shop = await container.ShopService.Get({ id: ctx.state.shop });
 
-    const signKey = await jose.importJWK(JSON.parse(shop.secret).pk);
+    const signKey = await jose.importJWK(JSON.parse(shop.secret).pk, "PS256");
     shop._signKey = signKey;
 
     container.Shop = shop;
