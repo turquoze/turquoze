@@ -3,9 +3,6 @@ import products from "./products.ts";
 import carts from "./carts.ts";
 import orders from "./orders.ts";
 import categories from "./categories.ts";
-import shops from "./shops.ts";
-import discounts from "./discounts.ts";
-import warehouses from "./warehouses.ts";
 import inventories from "./inventories.ts";
 
 import container from "../../services/mod.ts";
@@ -23,9 +20,6 @@ api.use(new products(container).routes());
 api.use(new carts(container).routes());
 api.use(new orders(container).routes());
 api.use(new categories(container).routes());
-api.use(new shops(container).routes());
-api.use(new discounts(container).routes());
-api.use(new warehouses(container).routes());
 api.use(new inventories(container).routes());
 
 export default api;

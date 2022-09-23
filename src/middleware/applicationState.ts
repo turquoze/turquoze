@@ -25,7 +25,7 @@ async (
 
     await next();
   } catch (error) {
-    console.error(error)
+    console.error(error);
     ctx.response.status = 401;
     ctx.response.headers.set("content-type", "application/json");
     ctx.response.body = JSON.stringify({

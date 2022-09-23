@@ -128,12 +128,15 @@ export default class UsersRoutes {
           "user": {
             email: data.email,
             name: data.name,
+            id: data.public_id,
           },
         })
           .setProtectedHeader({ alg: "PS256" })
           .setIssuedAt()
           .setIssuer("urn:turquoze:shop")
           .setAudience("urn:turquoze:user")
+          .setNotBefore("")
+          .setExpirationTime("1h")
           .sign(ctx.state.request_data._signKey);
 
         ctx.response.body = stringifyJSON({
