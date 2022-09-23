@@ -24,7 +24,8 @@ async (
     ctx.state.request_data = shop;
 
     await next();
-  } catch (_error) {
+  } catch (error) {
+    console.error(error)
     ctx.response.status = 401;
     ctx.response.headers.set("content-type", "application/json");
     ctx.response.body = JSON.stringify({
