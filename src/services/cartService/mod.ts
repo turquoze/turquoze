@@ -70,6 +70,30 @@ export default class CartService implements ICartService {
     }
   }
 
+  async AddMetadata(
+    params: { id: string; metadata: Record<string, unknown> },
+  ): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO cart (metadata) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          params.metadata,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
   async GetCartItem(cartId: string, productId: string): Promise<CartItem> {
     try {
       const client = await this.pool.connect();

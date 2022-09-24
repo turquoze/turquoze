@@ -9,6 +9,11 @@ export default interface ICartService {
     data: CartItem;
   }): Promise<CartItem>;
 
+  AddMetadata(params: {
+    id: string;
+    metadata: Record<string, unknown>;
+  }): Promise<Cart>;
+
   GetCartItem(cartId: string, productId: string): Promise<CartItem>;
 
   GetAllItems(cartId: string): Promise<Array<CartItem>>;

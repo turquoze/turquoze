@@ -69,6 +69,26 @@ export default class CartService implements IInventoryService {
     }
   }
 
+  async GetInventoryByProduct(
+    params: { id: string },
+  ): Promise<Array<Inventory>> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Inventory>({
+        text: "SELECT * FROM inventories WHERE product = $1",
+        args: [params.id],
+      });
+
+      client.release();
+      return result.rows;
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
   async Delete(params: { id: string }): Promise<void> {
     try {
       const client = await this.pool.connect();

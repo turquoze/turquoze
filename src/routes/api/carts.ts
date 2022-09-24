@@ -14,6 +14,7 @@ import {
   CartItemSchema,
   CartSchema,
   DiscountCheckSchema,
+  MetadataSchema,
   UuidSchema,
 } from "../../utils/validator.ts";
 
@@ -78,6 +79,44 @@ export default class CartRoutes {
         ctx.response.body = stringifyJSON({
           order: order.id,
           payment: order.payment,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.post("/:id/metadata", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        const body = ctx.request.body();
+        let metadata: Record<string, unknown>;
+        if (body.type === "json") {
+          metadata = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await MetadataSchema.validate(metadata);
+        const posted: Record<string, unknown> = await MetadataSchema.cast(
+          metadata,
+        );
+
+        await this.#Container.CartService.AddMetadata({
+          id: ctx.params.id,
+          metadata: posted,
+        });
+
+        ctx.response.body = stringifyJSON({
+          metadata: posted,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
