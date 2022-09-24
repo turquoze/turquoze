@@ -13,6 +13,10 @@ export default interface IInventoryService {
     id: string;
   }): Promise<Inventory>;
 
+  GetInventoryByProduct(params: {
+    id: string;
+  }): Promise<Array<Inventory>>;
+
   Delete(params: {
     id: string;
   }): Promise<void>;

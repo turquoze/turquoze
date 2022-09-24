@@ -196,6 +196,27 @@ export default class ProductsRoutes {
       }
     });
 
+    this.#products.get("/inventory/:id", async (ctx) => {
+      try {
+        const data = await this.#Container.InventoryService
+          .GetInventoryByProduct({
+            id: ctx.params.id,
+          });
+
+        ctx.response.body = stringifyJSON({
+          inventories: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#products.post("/", async (ctx) => {
       try {
         if (!ctx.request.hasBody) {

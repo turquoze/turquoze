@@ -4,6 +4,7 @@ import tokens from "./tokens.ts";
 import discounts from "./discounts.ts";
 import shops from "./shops.ts";
 import warehouses from "./warehouses.ts";
+import inventories from "./inventories.ts";
 
 import container from "../../services/mod.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
@@ -21,5 +22,6 @@ admin.use(tokens.routes());
 admin.use(new discounts(container).routes());
 admin.use(new shops(container).routes());
 admin.use(new warehouses(container).routes());
+admin.use(new inventories(container).routes());
 
 export default admin;

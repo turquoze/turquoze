@@ -20,6 +20,7 @@ export interface Cart {
   public_id: string;
   created_at?: number;
   items: Array<CartItem>;
+  metadata: Record<string, unknown>;
 }
 
 export interface CartItem {

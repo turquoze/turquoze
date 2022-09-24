@@ -105,3 +105,7 @@ export const LoginSchema = yup.object().shape({
   password: yup.string().required().min(6),
   shop: yup.string().uuid().required(),
 });
+
+export const MetadataSchema = yup.object().shape({
+  metadata: yup.object().nullable(true),
+});
