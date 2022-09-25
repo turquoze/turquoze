@@ -109,3 +109,14 @@ export const LoginSchema = yup.object().shape({
 export const MetadataSchema = yup.object().shape({
   metadata: yup.object().nullable(true),
 });
+
+export const ShippingSchema = yup.object().shape({
+  name: yup.string().min(3).required(),
+  address1: yup.string().min(3).required(),
+  address2: yup.string().min(3).nullable(),
+  city: yup.string().min(3).required(),
+  state: yup.string().min(3).nullable(),
+  zip: yup.string().min(3).required(),
+  country: yup.string().min(2).max(4).required(),
+  phone: yup.string().min(5).nullable(),
+});
