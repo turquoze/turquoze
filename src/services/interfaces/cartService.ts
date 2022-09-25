@@ -1,4 +1,4 @@
-import { Cart, CartItem } from "../../utils/types.ts";
+import { Cart, CartItem, Shipping } from "../../utils/types.ts";
 
 export default interface ICartService {
   Create(params: {
@@ -12,6 +12,16 @@ export default interface ICartService {
   AddMetadata(params: {
     id: string;
     metadata: Record<string, unknown>;
+  }): Promise<Cart>;
+
+  AddShipping(params: {
+    id: string;
+    shipping: Shipping;
+  }): Promise<Cart>;
+
+  AddBilling(params: {
+    id: string;
+    billing: Shipping;
   }): Promise<Cart>;
 
   GetCartItem(cartId: string, productId: string): Promise<CartItem>;

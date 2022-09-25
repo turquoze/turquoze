@@ -1,5 +1,5 @@
 import ICartService from "../interfaces/cartService.ts";
-import { Cart, CartItem } from "../../utils/types.ts";
+import { Cart, CartItem, Shipping } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { Pool } from "../../deps.ts";
 
@@ -81,6 +81,50 @@ export default class CartService implements ICartService {
           "INSERT INTO cart (metadata) VALUES ($1) WHERE public_id = $2 RETURNING id",
         args: [
           params.metadata,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async AddShipping(params: { id: string; shipping: Shipping }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO cart (shipping) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          params.shipping,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async AddBilling(params: { id: string; billing: Shipping }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO cart (billing) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          params.billing,
           params.id,
         ],
       });

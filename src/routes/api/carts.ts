@@ -1,20 +1,15 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import {
-  Cart,
-  CartItem,
-  DiscountCheck,
-  TurquozeState,
-} from "../../utils/types.ts";
+import { Cart, CartItem, Shipping, TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
-import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 import {
   CartItemSchema,
   CartSchema,
-  DiscountCheckSchema,
   MetadataSchema,
+  ShippingSchema,
   UuidSchema,
 } from "../../utils/validator.ts";
 
@@ -117,6 +112,82 @@ export default class CartRoutes {
 
         ctx.response.body = stringifyJSON({
           metadata: posted,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.post("/:id/shipping", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        const body = ctx.request.body();
+        let shipping: Shipping;
+        if (body.type === "json") {
+          shipping = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await ShippingSchema.validate(shipping);
+        const posted: Shipping = await ShippingSchema.cast(
+          shipping,
+        );
+
+        const data = await this.#Container.CartService.AddShipping({
+          id: ctx.params.id,
+          shipping: posted,
+        });
+
+        ctx.response.body = stringifyJSON({
+          carts: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.post("/:id/billing", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        const body = ctx.request.body();
+        let billing: Shipping;
+        if (body.type === "json") {
+          billing = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await ShippingSchema.validate(billing);
+        const posted: Shipping = await ShippingSchema.cast(
+          billing,
+        );
+
+        const data = await this.#Container.CartService.AddBilling({
+          id: ctx.params.id,
+          billing: posted,
+        });
+
+        ctx.response.body = stringifyJSON({
+          carts: data,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

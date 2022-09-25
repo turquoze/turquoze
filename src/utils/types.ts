@@ -21,6 +21,8 @@ export interface Cart {
   created_at?: number;
   items: Array<CartItem>;
   metadata: Record<string, unknown>;
+  shipping: Shipping;
+  billing: Shipping;
 }
 
 export interface CartItem {
@@ -204,6 +206,17 @@ export interface User {
   password: string;
   not_active: boolean;
   shop: string;
+}
+
+export interface Shipping {
+  name: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  zip: string;
+  country: string;
+  phone: string;
 }
 
 export interface Token {
