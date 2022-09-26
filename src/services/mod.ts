@@ -15,6 +15,7 @@ import DefaultUserService from "./userService/mod.ts";
 import DefaultTokenService from "./tokenService/mod.ts";
 import DefaultNotificationService from "./notificationService/mod.ts";
 import DefaultPluginService from "./pluginService/mod.ts";
+import DefaultPluginDataService from "./pluginDataService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -33,6 +34,7 @@ import IUserService from "./interfaces/userService.ts";
 import ITokenService from "./interfaces/tokenService.ts";
 import INotificationService from "./interfaces/notificationService.ts";
 import IPluginService from "./interfaces/pluginService.ts";
+import IPluginDataService from "./interfaces/pluginDataService.ts";
 
 import dbClient from "../clients/db.ts";
 import searchClient from "../clients/search.ts";
@@ -57,6 +59,9 @@ export class Container {
     dbClient,
   );
   PluginService: IPluginService = new DefaultPluginService();
+  PluginDataService: IPluginDataService = new DefaultPluginDataService(
+    dbClient,
+  );
   PaymentService: IPaymentService = new DefaultPaymentService(
     dbClient,
     this.CartService,
