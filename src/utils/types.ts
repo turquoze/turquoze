@@ -71,7 +71,15 @@ export interface Shop {
   url: string;
   search_index: string;
   secret: string;
-  _signKey: any;
+  _signKey: unknown;
+}
+
+export interface PluginData<T> {
+  id: string;
+  public_id: string;
+  plugin_id: string;
+  shop: string;
+  data: T;
 }
 
 export interface CategoryLink {
