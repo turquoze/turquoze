@@ -24,6 +24,34 @@ export default interface ICartService {
     billing: Shipping;
   }): Promise<Cart>;
 
+  UpdateShipping(params: {
+    id: string;
+    shipping: Shipping;
+  }): Promise<Cart>;
+
+  UpdateBilling(params: {
+    id: string;
+    billing: Shipping;
+  }): Promise<Cart>;
+
+  ApplyCoupon(params: {
+    id: string;
+    coupon: string;
+  }): Promise<Cart>;
+
+  ApplyGiftcard(params: {
+    id: string;
+    giftcard: string;
+  }): Promise<Cart>;
+
+  RemoveCoupon(params: {
+    id: string;
+  }): Promise<Cart>;
+
+  RemoveGiftcard(params: {
+    id: string;
+  }): Promise<Cart>;
+
   GetCartItem(cartId: string, productId: string): Promise<CartItem>;
 
   GetAllItems(cartId: string): Promise<Array<CartItem>>;

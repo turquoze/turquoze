@@ -23,6 +23,8 @@ export interface Cart {
   metadata: Record<string, unknown>;
   shipping: Shipping;
   billing: Shipping;
+  coupon: string;
+  giftcard: string;
 }
 
 export interface CartItem {
