@@ -78,7 +78,7 @@ export default class CartService implements ICartService {
 
       const result = await client.queryObject<Cart>({
         text:
-          "INSERT INTO cart (metadata) VALUES ($1) WHERE public_id = $2 RETURNING id",
+          "INSERT INTO carts (metadata) VALUES ($1) WHERE public_id = $2 RETURNING id",
         args: [
           params.metadata,
           params.id,
@@ -100,7 +100,7 @@ export default class CartService implements ICartService {
 
       const result = await client.queryObject<Cart>({
         text:
-          "INSERT INTO cart (shipping) VALUES ($1) WHERE public_id = $2 RETURNING id",
+          "INSERT INTO carts (shipping) VALUES ($1) WHERE public_id = $2 RETURNING id",
         args: [
           params.shipping,
           params.id,
@@ -122,9 +122,145 @@ export default class CartService implements ICartService {
 
       const result = await client.queryObject<Cart>({
         text:
-          "INSERT INTO cart (billing) VALUES ($1) WHERE public_id = $2 RETURNING id",
+          "INSERT INTO carts (billing) VALUES ($1) WHERE public_id = $2 RETURNING id",
         args: [
           params.billing,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async UpdateShipping(
+    params: { id: string; shipping: Shipping },
+  ): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "UPDATE carts SET shipping = $1 WHERE public_id = $2 RETURNING public_id",
+        args: [
+          params.shipping,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async UpdateBilling(
+    params: { id: string; billing: Shipping },
+  ): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "UPDATE carts SET billing = $1 WHERE public_id = $2 RETURNING public_id",
+        args: [
+          params.billing,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async ApplyCoupon(params: { id: string; coupon: string }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO carts (coupon) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          params.coupon,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async ApplyGiftcard(params: { id: string; giftcard: string }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO carts (giftcard) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          params.giftcard,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async RemoveCoupon(params: { id: string }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO carts (coupon) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          "",
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async RemoveGiftcard(params: { id: string }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO carts (giftcard) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          "",
           params.id,
         ],
       });
