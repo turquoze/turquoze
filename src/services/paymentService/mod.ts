@@ -102,7 +102,7 @@ export default class PaymentService implements IPaymentService {
         params.data.shop,
       );
 
-      await this.#CartService.Delete({ id: params.data.cartId });
+      //await this.#CartService.Delete({ id: params.data.cartId });
 
       return {
         data: {
