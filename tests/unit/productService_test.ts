@@ -1,12 +1,16 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import productService from "../../src/services/productService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const product = new productService(client);
 let ID = "";
 const SLUG = "test2";
 
-Deno.test("ProductService", async (t) => {
+Deno.test("ProductService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
@@ -32,6 +36,9 @@ Deno.test("ProductService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -50,6 +57,9 @@ Deno.test("ProductService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -72,6 +82,9 @@ Deno.test("ProductService", async (t) => {
         slug: "test2",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -86,6 +99,9 @@ Deno.test("ProductService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -108,6 +124,9 @@ Deno.test("ProductService", async (t) => {
         slug: "test2",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -122,6 +141,9 @@ Deno.test("ProductService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -149,6 +171,9 @@ Deno.test("ProductService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -175,6 +200,9 @@ Deno.test("ProductService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -183,6 +211,9 @@ Deno.test("ProductService", async (t) => {
       const data = await product.GetMany({});
       assert(data.length > 0);
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -197,6 +228,9 @@ Deno.test("ProductService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -211,6 +245,9 @@ Deno.test("ProductService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -225,5 +262,8 @@ Deno.test("ProductService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });

@@ -1,11 +1,15 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import warehouseService from "../../src/services/warehouseService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const warehouse = new warehouseService(client);
 let ID = "";
 
-Deno.test("WarehouseService", async (t) => {
+Deno.test("WarehouseService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {

@@ -81,7 +81,7 @@ export default class UserService implements IUserService {
 
       const result = await client.queryObject<User>({
         text:
-          "INSERT INTO users (password) VALUES (crypt($1, gen_salt('bf'))) WHERE email = $2 RETURNING public_id",
+          "UPDATE users SET password = crypt($1, gen_salt('bf')) WHERE email = $2 RETURNING public_id",
         args: [
           params.new_password,
           params.email,

@@ -1,11 +1,15 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import discountService from "../../src/services/discountService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const discount = new discountService(client);
 let ID = "";
 
-Deno.test("DiscountService", async (t) => {
+Deno.test("DiscountService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
@@ -29,6 +33,9 @@ Deno.test("DiscountService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -47,6 +54,9 @@ Deno.test("DiscountService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -66,6 +76,9 @@ Deno.test("DiscountService", async (t) => {
         code: "TEST",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -80,6 +93,9 @@ Deno.test("DiscountService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -99,6 +115,9 @@ Deno.test("DiscountService", async (t) => {
         code: "TEST",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -113,6 +132,9 @@ Deno.test("DiscountService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -121,6 +143,9 @@ Deno.test("DiscountService", async (t) => {
       const data = await discount.GetMany({});
       assert(data.length > 0);
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -135,6 +160,9 @@ Deno.test("DiscountService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -149,6 +177,9 @@ Deno.test("DiscountService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -163,5 +194,8 @@ Deno.test("DiscountService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });

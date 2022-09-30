@@ -38,10 +38,11 @@ import IPluginDataService from "./interfaces/pluginDataService.ts";
 
 import dbClient from "../clients/db.ts";
 import searchClient from "../clients/search.ts";
+import redisClient from "../clients/redis.ts";
 import { Shop } from "../utils/types.ts";
 
 export class Container {
-  CacheService: ICacheService = new DefaultCacheService();
+  CacheService: ICacheService = new DefaultCacheService(redisClient);
   ProductService: IProductService = new DefaultProductService(
     dbClient,
   );
@@ -97,7 +98,7 @@ export class Container {
     url: "",
     search_index: "",
     secret: "",
-    _signKey: "",
+    _signKey: new Uint8Array(),
   };
 }
 

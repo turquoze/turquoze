@@ -1,4 +1,4 @@
-import { Router, SearchParams } from "../deps.ts";
+import { jose, Router, SearchParams } from "../deps.ts";
 
 export interface Product {
   id: number;
@@ -73,7 +73,7 @@ export interface Shop {
   url: string;
   search_index: string;
   secret: string;
-  _signKey: unknown;
+  _signKey: Uint8Array | jose.KeyLike;
 }
 
 export interface PluginData<T> {

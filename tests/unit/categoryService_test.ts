@@ -1,11 +1,15 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import categoryService from "../../src/services/categoryService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const category = new categoryService(client);
 let ID = "";
 
-Deno.test("CategoryService", async (t) => {
+Deno.test("CategoryService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
@@ -25,6 +29,9 @@ Deno.test("CategoryService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -43,6 +50,9 @@ Deno.test("CategoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -58,6 +68,9 @@ Deno.test("CategoryService", async (t) => {
         shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -72,6 +85,9 @@ Deno.test("CategoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -87,6 +103,9 @@ Deno.test("CategoryService", async (t) => {
         shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -101,6 +120,9 @@ Deno.test("CategoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -122,6 +144,9 @@ Deno.test("CategoryService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -142,6 +167,9 @@ Deno.test("CategoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -150,6 +178,9 @@ Deno.test("CategoryService", async (t) => {
       const data = await category.GetMany({});
       assert(data.length > 0);
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -164,6 +195,9 @@ Deno.test("CategoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -179,6 +213,9 @@ Deno.test("CategoryService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -193,5 +230,8 @@ Deno.test("CategoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });

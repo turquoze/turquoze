@@ -1,11 +1,15 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import inventoryService from "../../src/services/inventoryService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const inventory = new inventoryService(client);
 let ID = "";
 
-Deno.test("InventoryService", async (t) => {
+Deno.test("InventoryService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
@@ -26,6 +30,9 @@ Deno.test("InventoryService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -46,6 +53,9 @@ Deno.test("InventoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -63,6 +73,9 @@ Deno.test("InventoryService", async (t) => {
         warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -77,6 +90,9 @@ Deno.test("InventoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -99,6 +115,9 @@ Deno.test("InventoryService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -120,6 +139,9 @@ Deno.test("InventoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -134,6 +156,9 @@ Deno.test("InventoryService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -148,5 +173,8 @@ Deno.test("InventoryService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });
