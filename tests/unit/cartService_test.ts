@@ -1,11 +1,15 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import cartService from "../../src/services/cartService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const cart = new cartService(client);
 let ID = "";
 
-Deno.test("CartService", async (t) => {
+Deno.test("CartService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Create",
     fn: async () => {
@@ -14,6 +18,29 @@ Deno.test("CartService", async (t) => {
           data: {
             public_id: "",
             id: 0,
+            billing: {
+              address1: "",
+              address2: "",
+              city: "",
+              country: "",
+              name: "",
+              phone: "",
+              state: "",
+              zip: "",
+            },
+            shipping: {
+              address1: "",
+              address2: "",
+              city: "",
+              country: "",
+              name: "",
+              phone: "",
+              state: "",
+              zip: "",
+            },
+            coupon: "",
+            giftcard: "",
+            metadata: {},
             items: [],
           },
         });
@@ -24,6 +51,9 @@ Deno.test("CartService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -32,12 +62,12 @@ Deno.test("CartService", async (t) => {
       const data = await cart.Get({
         id: ID,
       });
-      assertObjectMatch(data, {
-        id: data.id,
-        public_id: ID,
-        created_at: data.created_at,
-      });
+
+      assert(data);
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -51,6 +81,7 @@ Deno.test("CartService", async (t) => {
             price: 2000,
             product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
             quantity: 2,
+            totalPrice: 4000,
           },
         });
 
@@ -59,6 +90,9 @@ Deno.test("CartService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -72,6 +106,7 @@ Deno.test("CartService", async (t) => {
             price: 2000,
             product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
             quantity: 3,
+            totalPrice: 6000,
           },
         });
 
@@ -80,6 +115,9 @@ Deno.test("CartService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -93,6 +131,7 @@ Deno.test("CartService", async (t) => {
             price: 2000,
             product_id: "00000000-0000-0000-0000-000000000000",
             quantity: 2,
+            totalPrice: 4000,
           },
         });
 
@@ -101,6 +140,9 @@ Deno.test("CartService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -119,6 +161,9 @@ Deno.test("CartService", async (t) => {
         price: 2000,
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -135,6 +180,9 @@ Deno.test("CartService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -154,6 +202,9 @@ Deno.test("CartService", async (t) => {
         price: 2000,
       });
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -169,6 +220,9 @@ Deno.test("CartService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -181,6 +235,9 @@ Deno.test("CartService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -193,6 +250,9 @@ Deno.test("CartService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -207,6 +267,9 @@ Deno.test("CartService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -221,6 +284,9 @@ Deno.test("CartService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -235,5 +301,8 @@ Deno.test("CartService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });

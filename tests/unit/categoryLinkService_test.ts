@@ -1,10 +1,14 @@
 import { assert } from "../test_deps.ts";
 import categoryLinkService from "../../src/services/categoryLinkService/mod.ts";
-import client from "../../src/services/dataClient/client.ts";
+import { pool as client } from "../test_utils.ts";
 
 const categoryLink = new categoryLinkService(client);
 
-Deno.test("CategoryLinkService", async (t) => {
+Deno.test("CategoryLinkService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Link",
     fn: async () => {
@@ -21,6 +25,9 @@ Deno.test("CategoryLinkService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -37,6 +44,9 @@ Deno.test("CategoryLinkService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -55,6 +65,9 @@ Deno.test("CategoryLinkService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -73,6 +86,9 @@ Deno.test("CategoryLinkService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -91,5 +107,8 @@ Deno.test("CategoryLinkService", async (t) => {
         assert(true);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });

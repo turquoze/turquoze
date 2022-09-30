@@ -1,15 +1,22 @@
 import { assert } from "../test_deps.ts";
 import searchService from "../../src/services/searchService/mod.ts";
+import { searchClient } from "../test_utils.ts";
+import { MEILIINDEX } from "../test_secrets.ts";
 
-const search = new searchService();
+const search = new searchService(searchClient);
 
-Deno.test("SearchService", async (t) => {
+Deno.test("SearchService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Search",
     fn: async () => {
       try {
         const data = await search.ProductSearch({
-          query: "bo",
+          index: MEILIINDEX!,
+          query: "bacon",
         });
 
         assert(data.hits.length > 0);
@@ -17,6 +24,9 @@ Deno.test("SearchService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 
   await t.step({
@@ -24,6 +34,7 @@ Deno.test("SearchService", async (t) => {
     fn: async () => {
       try {
         const data = await search.ProductSearch({
+          index: MEILIINDEX!,
           query: "NOTHING 12343",
         });
 
@@ -32,5 +43,8 @@ Deno.test("SearchService", async (t) => {
         assert(false);
       }
     },
+    sanitizeOps: false,
+    sanitizeResources: false,
+    sanitizeExit: false,
   });
 });

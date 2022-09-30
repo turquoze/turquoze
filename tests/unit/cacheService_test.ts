@@ -1,10 +1,15 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import cacheService from "../../src/services/cacheService/mod.ts";
 import { stringifyJSON } from "../../src/utils/utils.ts";
+import { redis } from "../test_utils.ts";
 
-const cache = new cacheService();
+const cache = new cacheService(redis);
 
-Deno.test("CacheService", async (t) => {
+Deno.test("CacheService", {
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+}, async (t) => {
   await t.step({
     name: "Set",
     fn: async () => {
