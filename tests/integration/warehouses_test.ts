@@ -1,23 +1,25 @@
 import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import WarehousesRoutes from "../../src/routes/api/warehouses.ts";
+import WarehousesRoutes from "../../src/routes/admin/warehouses.ts";
 import { Warehouse } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
 
 let ID = "";
+const app = new Application();
+
+app.use(async (ctx, next) => {
+  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  await next();
+});
+
+app.use(new WarehousesRoutes(container).routes());
 
 Deno.test({
   name: "Warehouses - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new WarehousesRoutes(container).routes());
-
     const data = JSON.stringify({
       address: "Test 1B",
       country: "Sweden",
@@ -44,16 +46,10 @@ Deno.test({
 
 Deno.test({
   name: "Warehouses - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new WarehousesRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/warehouses`, {
         method: "GET",
@@ -66,16 +62,10 @@ Deno.test({
 
 Deno.test({
   name: "Warehouses - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new WarehousesRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/warehouses/${ID}`, {
         method: "GET",
@@ -91,16 +81,10 @@ Deno.test({
 
 Deno.test({
   name: "Warehouses - Put | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new WarehousesRoutes(container).routes());
-
     const data = JSON.stringify({
       address: "Test 1B - Update",
       country: "Sweden - Update",
@@ -127,16 +111,10 @@ Deno.test({
 
 Deno.test({
   name: "Warehouses - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new WarehousesRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/warehouses/${ID}`, {
         method: "DELETE",

@@ -3,22 +3,37 @@ import { Application, assert, assertEquals } from "../test_deps.ts";
 import ProductsRoutes from "../../src/routes/api/products.ts";
 import { Product, Search } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
+import { MEILIINDEX } from "../test_secrets.ts";
 
 let ID = "";
 const SLUG = "test1";
+const app = new Application();
+
+app.use(async (ctx, next) => {
+  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  ctx.state.request_data = {
+    id: 0,
+    public_id: "",
+    regions: ["SE"],
+    payment_id: "",
+    currency: "SEK",
+    name: "test",
+    url: "https://example.com",
+    search_index: MEILIINDEX!,
+    secret: "test",
+    _signKey: new Uint8Array(),
+  };
+  await next();
+});
+
+app.use(new ProductsRoutes(container).routes());
 
 Deno.test({
   name: "Products - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
-
     const data = JSON.stringify({
       active: true,
       images: [],
@@ -49,16 +64,10 @@ Deno.test({
 
 Deno.test({
   name: "Products - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/products`, {
         method: "GET",
@@ -71,16 +80,10 @@ Deno.test({
 
 Deno.test({
   name: "Products - Get By Slug | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/byslug/${SLUG}`, {
         method: "GET",
@@ -93,16 +96,10 @@ Deno.test({
 
 Deno.test({
   name: "Products - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
         method: "GET",
@@ -118,16 +115,10 @@ Deno.test({
 
 Deno.test({
   name: "Products - Put | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
-
     const data = JSON.stringify({
       id: ID,
       active: true,
@@ -159,16 +150,12 @@ Deno.test({
 
 Deno.test({
   name: "Products - Search | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
     const body: Search = {
+      index: MEILIINDEX!,
       query: "test",
       options: {
         limit: 10,
@@ -194,16 +181,10 @@ Deno.test({
 
 Deno.test({
   name: "Products - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new ProductsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
         method: "DELETE",

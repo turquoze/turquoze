@@ -5,24 +5,27 @@ import container from "../../src/services/mod.ts";
 import { User } from "../../src/utils/types.ts";
 
 let ID = "";
+const app = new Application();
+
+app.use(async (ctx, next) => {
+  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  await next();
+});
+
+app.use(new UsersRoutes(container).routes());
 
 Deno.test({
   name: "Users - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new UsersRoutes(container).routes());
-
-    const data = JSON.stringify({
+    const data = {
+      password: "test123",
       email: "test@example.com",
       name: "test",
       not_active: false,
-    });
+    };
 
     const response = await app.handle(
       new Request(`http://127.0.0.1/users`, {
@@ -31,7 +34,7 @@ Deno.test({
           "Content-Length": `${JSON.stringify(data).length}`,
         }),
         method: "POST",
-        body: data,
+        body: JSON.stringify(data),
       }),
     );
 
@@ -44,16 +47,10 @@ Deno.test({
 
 Deno.test({
   name: "Users - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new UsersRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/users`, {
         method: "GET",
@@ -66,16 +63,10 @@ Deno.test({
 
 Deno.test({
   name: "Users - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new UsersRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/users/${ID}`, {
         method: "GET",
@@ -91,16 +82,10 @@ Deno.test({
 
 Deno.test({
   name: "Users - Put | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new UsersRoutes(container).routes());
-
     const data = JSON.stringify({
       id: 1,
       public_id: "00000000-0000-0000-0000-000000000000",

@@ -5,19 +5,21 @@ import { Price } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
 
 let ID = "";
+const app = new Application();
+
+app.use(async (ctx, next) => {
+  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  await next();
+});
+
+app.use(new PricesRoutes(container).routes());
 
 Deno.test({
   name: "Prices - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new PricesRoutes(container).routes());
-
     const data = JSON.stringify({
       amount: 100,
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",
@@ -43,16 +45,10 @@ Deno.test({
 
 Deno.test({
   name: "Prices - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new PricesRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/prices`, {
         method: "GET",
@@ -65,16 +61,10 @@ Deno.test({
 
 Deno.test({
   name: "Prices - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new PricesRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/prices/${ID}`, {
         method: "GET",
@@ -90,16 +80,10 @@ Deno.test({
 
 Deno.test({
   name: "Prices - Put | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new PricesRoutes(container).routes());
-
     const data = JSON.stringify({
       amount: 200,
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",
@@ -125,16 +109,10 @@ Deno.test({
 
 Deno.test({
   name: "Prices - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new PricesRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/prices/${ID}`, {
         method: "DELETE",
