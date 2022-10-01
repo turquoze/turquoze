@@ -5,14 +5,16 @@ import { Order } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
 
 let ID = "";
+const app = new Application();
+
+app.use(new OrdersRoutes(container).routes());
 
 Deno.test({
   name: "Orders - Get Many | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(new OrdersRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/orders`, {
         method: "Get",
@@ -23,7 +25,7 @@ Deno.test({
 
     const { orders }: { orders: Array<Order> } = await response?.json();
     if (orders.length > 0) {
-      ID = orders[0].id;
+      ID = orders[0].public_id;
     }
   },
 });
@@ -31,11 +33,10 @@ Deno.test({
 Deno.test({
   name: "Orders - Get | ok",
   ignore: ID == "" || ID == undefined || ID == null ? true : false,
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(new OrdersRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/orders/${ID}`, {
         method: "GET",

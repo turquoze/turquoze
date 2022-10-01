@@ -37,7 +37,7 @@ export default class StripeCheckout implements PaymentPlugin {
       quantity: number;
     }>,
     orderId: string,
-    amount: number,
+    _amount: number,
     shop: Shop,
   ): Promise<PaymentPluginResponse> {
     const cartItems = items.map((item) => {
@@ -190,9 +190,12 @@ export default class StripeCheckout implements PaymentPlugin {
     return router;
   }
 
-  #handleSuccess(receivedEvent: any) {
+  #handleSuccess(receivedEvent: unknown) {
+    // @ts-expect-error no type
     const orderId = receivedEvent.data.object.metadata.orderId;
+    // @ts-expect-error no type
     const paymentStatus = receivedEvent.data.object.payment_status;
+    // @ts-expect-error no type
     const status = receivedEvent.data.object.status;
     console.log(
       `order succeeded | status: ${status} payment: ${paymentStatus} id: ${orderId}`,
@@ -204,9 +207,12 @@ export default class StripeCheckout implements PaymentPlugin {
     });
   }
 
-  #handleFailed(receivedEvent: any) {
+  #handleFailed(receivedEvent: unknown) {
+    // @ts-expect-error no type
     const orderId = receivedEvent.data.object.metadata.orderId;
+    // @ts-expect-error no type
     const paymentStatus = receivedEvent.data.object.payment_status;
+    // @ts-expect-error no type
     const status = receivedEvent.data.object.status;
     console.log(
       `order Failed | status: ${status} payment: ${paymentStatus} id: ${orderId}`,

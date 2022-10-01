@@ -31,7 +31,7 @@ export class TestCheckout implements PaymentPlugin {
     };
   }
 
-  Routes(): Router<Record<string, any>> {
+  Routes(): Router<Record<string, unknown>> {
     const router = new Router();
     return router;
   }

@@ -5,21 +5,21 @@ import { Category } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
 
 let ID = "";
+const app = new Application();
+
+app.use(async (ctx, next) => {
+  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  await next();
+});
+
+app.use(new CategoriesRoutes(container).routes());
 
 Deno.test({
   name: "Categories - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const data = JSON.stringify({
       public_id: "156e4529-8131-46bf-b0f7-03863a608214",
       name: "test",
@@ -45,13 +45,10 @@ Deno.test({
 
 Deno.test({
   name: "Categories - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories`, {
         method: "GET",
@@ -64,18 +61,10 @@ Deno.test({
 
 Deno.test({
   name: "Categories - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories/${ID}`, {
         method: "GET",
@@ -92,18 +81,10 @@ Deno.test({
 Deno.test({
   name: "Categories - Get | ok",
   ignore: true, // Not stable
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories/byname/test`, {
         method: "GET",
@@ -119,18 +100,10 @@ Deno.test({
 
 Deno.test({
   name: "Categories - Put | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const data = JSON.stringify({
       public_id: ID,
       name: "test update",
@@ -156,18 +129,10 @@ Deno.test({
 
 Deno.test({
   name: "Categories - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/categories/${ID}`, {
         method: "DELETE",
@@ -181,18 +146,10 @@ Deno.test({
 Deno.test({
   name: "Categories Link - Post | ok",
   ignore: true,
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const data = JSON.stringify({
       category: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",
@@ -215,18 +172,10 @@ Deno.test({
 
 Deno.test({
   name: "Categories Link - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(
-      new CategoriesRoutes(container).routes(),
-    );
-
     const data = JSON.stringify({
       category: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",

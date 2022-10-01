@@ -1,18 +1,20 @@
 import { Application, assert, assertEquals } from "../test_deps.ts";
 
-import ShopsRoutes from "../../src/routes/api/shops.ts";
+import ShopsRoutes from "../../src/routes/admin/shops.ts";
 import container from "../../src/services/mod.ts";
 import { Shop } from "../../src/utils/types.ts";
 
 let ID = "";
+const app = new Application();
+
+app.use(new ShopsRoutes(container).routes());
 
 Deno.test({
   name: "Shops - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(new ShopsRoutes(container).routes());
-
     const data = JSON.stringify({
       currency: "EUR",
       name: "TEST-REGION",
@@ -39,11 +41,10 @@ Deno.test({
 
 Deno.test({
   name: "Shops - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(new ShopsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/shops/${ID}`, {
         method: "GET",
@@ -59,11 +60,10 @@ Deno.test({
 
 Deno.test({
   name: "Shops - Put | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(new ShopsRoutes(container).routes());
-
     const data = JSON.stringify({
       id: ID,
       name: "TEST-UPDATE",
@@ -91,11 +91,10 @@ Deno.test({
 
 Deno.test({
   name: "Shops - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(new ShopsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/shops/${ID}`, {
         method: "DELETE",

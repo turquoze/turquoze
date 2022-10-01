@@ -8,22 +8,36 @@ import {
 import CartsRoutes from "../../src/routes/api/carts.ts";
 import { Cart, CartItem } from "../../src/utils/types.ts";
 import container from "../../src/services/mod.ts";
+import { MEILIINDEX } from "../test_secrets.ts";
 
 let ID = "";
-let TOKEN = "";
+const app = new Application();
+
+app.use(async (ctx, next) => {
+  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  ctx.state.request_data = {
+    id: 0,
+    public_id: "",
+    regions: ["SE"],
+    payment_id: "",
+    currency: "SEK",
+    name: "test",
+    url: "https://example.com",
+    search_index: MEILIINDEX!,
+    secret: "test",
+    _signKey: new Uint8Array(),
+  };
+  await next();
+});
+
+app.use(new CartsRoutes(container).routes());
 
 Deno.test({
   name: "Carts - Create | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const data = JSON.stringify({});
 
     const response = await app.handle(
@@ -45,79 +59,11 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Carts - Session | ok",
-  async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
-    const response = await app.handle(
-      new Request(`http://127.0.0.1/carts/${ID}/init`, {
-        headers: new Headers({
-          "Content-Type": "application/json",
-        }),
-        method: "POST",
-      }),
-    );
-
-    assert(response?.ok);
-
-    const body = await response?.json();
-    TOKEN = body.token;
-  },
-});
-
-/*
-Deno.test({
-  name: "Carts - Session Discount | ok",
-  async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    const data = JSON.stringify({
-      code: "test",
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
-    const response = await app.handle(
-      new Request(`http://127.0.0.1/carts/discount`, {
-        headers: new Headers({
-          "Content-Type": "application/json",
-          "Content-Length": `${JSON.stringify(data).length}`,
-          "x-cart-token": TOKEN,
-        }),
-        method: "POST",
-        body: data,
-      }),
-    );
-
-    assert(response?.ok);
-  },
-});
-*/
-
-Deno.test({
   name: "Carts - Get | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/carts/${ID}`, {
         method: "GET",
@@ -133,16 +79,10 @@ Deno.test({
 
 Deno.test({
   name: "Carts - Create Item | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const data = JSON.stringify({
       cart_id: ID,
       price: 2000,
@@ -167,16 +107,10 @@ Deno.test({
 
 Deno.test({
   name: "Carts - Get Items | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/carts/${ID}/items`, {
         method: "GET",
@@ -194,23 +128,17 @@ Deno.test({
       cart_id: ID,
       product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
       quantity: 2,
-      price: 2000,
+      price: 200000,
     });
   },
 });
 
 Deno.test({
   name: "Carts - Get Items | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(
         `http://127.0.0.1/carts/${ID}/items/00669ffc-bc13-47b1-aec6-f524611a657f`,
@@ -229,23 +157,17 @@ Deno.test({
       cart_id: ID,
       product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
       quantity: 2,
-      price: 2000,
+      price: 200000,
     });
   },
 });
 
 Deno.test({
   name: "Carts - Delete Items | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(
         `http://127.0.0.1/carts/${ID}/items/00669ffc-bc13-47b1-aec6-f524611a657f`,
@@ -261,16 +183,10 @@ Deno.test({
 
 Deno.test({
   name: "Carts - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
   async fn() {
-    const app = new Application();
-
-    app.use(async (ctx, next) => {
-      ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-      await next();
-    });
-
-    app.use(new CartsRoutes(container).routes());
-
     const response = await app.handle(
       new Request(`http://127.0.0.1/carts/${ID}`, {
         method: "DELETE",
