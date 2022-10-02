@@ -229,10 +229,19 @@ export interface Shipping {
   phone: string;
 }
 
-export interface Token {
+export interface TokenOld {
   token: string;
   name: string;
   expire: number | null;
+  shop: string;
+}
+
+export interface Token {
+  id: string;
+  name: string;
+  secret: string;
+  role: string;
+  created_at?: number;
   shop: string;
 }
 

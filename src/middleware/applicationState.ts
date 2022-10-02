@@ -8,22 +8,26 @@ async (
   next: () => Promise<unknown>,
 ) => {
   try {
-    if (
-      ctx.state.shop == undefined || ctx.state.shop == null ||
-      ctx.state.shop == ""
-    ) {
-      throw new Error("Something is wrong");
+    if (ctx.state.request_data != null) {
+      return await next();
+    } else {
+      if (
+        ctx.state.shop == undefined || ctx.state.shop == null ||
+        ctx.state.shop == ""
+      ) {
+        throw new Error("Something is wrong");
+      }
+      const shop = await container.ShopService.Get({ id: ctx.state.shop });
+
+      const signKey = await jose.importJWK(JSON.parse(shop.secret).pk, "PS256");
+      shop._signKey = signKey;
+
+      container.Shop = shop;
+
+      ctx.state.request_data = shop;
+
+      await next();
     }
-    const shop = await container.ShopService.Get({ id: ctx.state.shop });
-
-    const signKey = await jose.importJWK(JSON.parse(shop.secret).pk, "PS256");
-    shop._signKey = signKey;
-
-    container.Shop = shop;
-
-    ctx.state.request_data = shop;
-
-    await next();
   } catch (error) {
     console.error(error);
     ctx.response.status = 401;

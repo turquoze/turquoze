@@ -1,4 +1,4 @@
-import { Token } from "../../utils/types.ts";
+import { Shop, Token, TokenOld } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { Pool } from "../../deps.ts";
@@ -15,12 +15,13 @@ export default class TokenService implements ITokenService {
 
       const result = await client.queryObject<Token>({
         text:
-          "INSERT INTO tokens (name, token, shop, expire) VALUES ($1, $2, $3, $4) RETURNING token",
+          "INSERT INTO tokens_new (id, name, role, secret, shop) VALUES ($1, $2, $3, crypt($4, gen_salt('bf')), $5) RETURNING id",
         args: [
+          params.data.id,
           params.data.name,
-          params.data.token,
+          params.data.role,
+          params.data.secret,
           params.data.shop,
-          params.data.expire,
         ],
       });
 
@@ -33,11 +34,50 @@ export default class TokenService implements ITokenService {
     }
   }
 
-  async Get(params: { token: string }): Promise<Token> {
+  async GetShopByToken(
+    params: { tokenId: string; tokenSecret: string },
+  ): Promise<Shop> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Shop>({
+        text:
+          "SELECT shops.* FROM tokens_new RIGHT JOIN shops ON tokens_new.shop = shops.public_id WHERE tokens_new.id = $1 AND tokens_new.secret = crypt($2, tokens_new.secret) LIMIT 1",
+        args: [params.tokenId, params.tokenSecret],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async Get(params: { tokenId: string }): Promise<Token> {
     try {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Token>({
+        text: "SELECT * FROM tokens_new WHERE id = $1 LIMIT 1",
+        args: [params.tokenId],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async GetOld(params: { token: string }): Promise<TokenOld> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<TokenOld>({
         text: "SELECT * FROM tokens WHERE token = $1 LIMIT 1",
         args: [params.token],
       });
@@ -74,13 +114,13 @@ export default class TokenService implements ITokenService {
     }
   }
 
-  async Delete(params: { token: string }): Promise<void> {
+  async Delete(params: { tokenId: string }): Promise<void> {
     try {
       const client = await this.pool.connect();
 
       await client.queryObject<Token>({
-        text: "DELETE FROM tokens WHERE token = $1",
-        args: [params.token],
+        text: "DELETE FROM tokens_new WHERE id = $1",
+        args: [params.tokenId],
       });
 
       client.release();
