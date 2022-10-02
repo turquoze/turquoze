@@ -1,12 +1,21 @@
-import { Token } from "../../utils/types.ts";
+import { Shop, Token, TokenOld } from "../../utils/types.ts";
 
 export default interface ITokenService {
   Create(params: {
     data: Token;
   }): Promise<Token>;
 
-  Get(params: {
+  GetShopByToken(params: {
+    tokenId: string;
+    tokenSecret: string;
+  }): Promise<Shop>;
+
+  GetOld(params: {
     token: string;
+  }): Promise<TokenOld>;
+
+  Get(params: {
+    tokenId: string;
   }): Promise<Token>;
 
   GetMany(params: {
@@ -15,6 +24,6 @@ export default interface ITokenService {
   }): Promise<Array<Token>>;
 
   Delete(params: {
-    token: string;
+    tokenId: string;
   }): Promise<void>;
 }
