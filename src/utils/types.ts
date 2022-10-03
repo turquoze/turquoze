@@ -229,13 +229,6 @@ export interface Shipping {
   phone: string;
 }
 
-export interface TokenOld {
-  token: string;
-  name: string;
-  expire: number | null;
-  shop: string;
-}
-
 export interface Token {
   id: string;
   name: string;

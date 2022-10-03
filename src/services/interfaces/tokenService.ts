@@ -1,4 +1,4 @@
-import { Shop, Token, TokenOld } from "../../utils/types.ts";
+import { Shop, Token } from "../../utils/types.ts";
 
 export default interface ITokenService {
   Create(params: {
@@ -9,10 +9,6 @@ export default interface ITokenService {
     tokenId: string;
     tokenSecret: string;
   }): Promise<Shop>;
-
-  GetOld(params: {
-    token: string;
-  }): Promise<TokenOld>;
 
   Get(params: {
     tokenId: string;
