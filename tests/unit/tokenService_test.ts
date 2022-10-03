@@ -18,12 +18,13 @@ Deno.test("TokenService", {
           data: {
             name: "Test - 123",
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            token: "test12345",
-            expire: null,
+            id: "test12345",
+            secret: "test",
+            role: "WEBSITE",
           },
         });
 
-        ID = data.token;
+        ID = data.id;
         assert(true);
       } catch {
         assert(false);
@@ -59,13 +60,14 @@ Deno.test("TokenService", {
     name: "Get",
     fn: async () => {
       const data = await token.Get({
-        token: ID,
+        tokenId: ID,
       });
       assertObjectMatch(data, {
         name: "Test - 123",
         shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-        token: ID,
-        expire: null,
+        secret: data.secret,
+        id: "test12345",
+        role: "WEBSITE",
       });
     },
     sanitizeOps: false,
@@ -78,7 +80,7 @@ Deno.test("TokenService", {
     fn: async () => {
       try {
         await token.Get({
-          token: "00000000-0000-0000-0000-000000000000",
+          tokenId: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
       } catch {
@@ -95,7 +97,7 @@ Deno.test("TokenService", {
     fn: async () => {
       try {
         await token.Delete({
-          token: ID,
+          tokenId: ID,
         });
         assert(true);
       } catch {
@@ -112,7 +114,7 @@ Deno.test("TokenService", {
     fn: async () => {
       try {
         await token.Delete({
-          token: "00000000-0000-0000-0000-000000000000",
+          tokenId: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
       } catch {

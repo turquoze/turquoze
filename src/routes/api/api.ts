@@ -6,14 +6,12 @@ import categories from "./categories.ts";
 
 import container from "../../services/mod.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
-import ApplicationState from "../../middleware/applicationState.ts";
 
 const api = new Router({
   prefix: "/api",
 });
 
 api.use(AuthGuard(container));
-api.use(ApplicationState(container));
 
 api.use(new products(container).routes());
 api.use(new carts(container).routes());

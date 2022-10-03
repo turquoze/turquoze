@@ -1,4 +1,4 @@
-import { Shop, Token, TokenOld } from "../../utils/types.ts";
+import { Shop, Token } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { Pool } from "../../deps.ts";
@@ -15,7 +15,7 @@ export default class TokenService implements ITokenService {
 
       const result = await client.queryObject<Token>({
         text:
-          "INSERT INTO tokens_new (id, name, role, secret, shop) VALUES ($1, $2, $3, crypt($4, gen_salt('bf')), $5) RETURNING id",
+          "INSERT INTO tokens (id, name, role, secret, shop) VALUES ($1, $2, $3, crypt($4, gen_salt('bf')), $5) RETURNING id",
         args: [
           params.data.id,
           params.data.name,
@@ -42,7 +42,7 @@ export default class TokenService implements ITokenService {
 
       const result = await client.queryObject<Shop>({
         text:
-          "SELECT shops.* FROM tokens_new RIGHT JOIN shops ON tokens_new.shop = shops.public_id WHERE tokens_new.id = $1 AND tokens_new.secret = crypt($2, tokens_new.secret) LIMIT 1",
+          "SELECT shops.* FROM tokens RIGHT JOIN shops ON tokens.shop = shops.public_id WHERE tokens.id = $1 AND tokens.secret = crypt($2, tokens.secret) LIMIT 1",
         args: [params.tokenId, params.tokenSecret],
       });
 
@@ -60,26 +60,8 @@ export default class TokenService implements ITokenService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Token>({
-        text: "SELECT * FROM tokens_new WHERE id = $1 LIMIT 1",
+        text: "SELECT * FROM tokens WHERE id = $1 LIMIT 1",
         args: [params.tokenId],
-      });
-
-      client.release();
-      return result.rows[0];
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
-  }
-
-  async GetOld(params: { token: string }): Promise<TokenOld> {
-    try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<TokenOld>({
-        text: "SELECT * FROM tokens WHERE token = $1 LIMIT 1",
-        args: [params.token],
       });
 
       client.release();
@@ -119,7 +101,7 @@ export default class TokenService implements ITokenService {
       const client = await this.pool.connect();
 
       await client.queryObject<Token>({
-        text: "DELETE FROM tokens_new WHERE id = $1",
+        text: "DELETE FROM tokens WHERE id = $1",
         args: [params.tokenId],
       });
 
