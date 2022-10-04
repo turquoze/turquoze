@@ -265,3 +265,10 @@ export type TurquozeEvent =
   | "UPDATED_PRODUCT"
   | "DELETED_PRODUCT"
   | "TEST_EVENT";
+
+export type TurquozeRole =
+  | "SUPERADMIN"
+  | "ADMIN"
+  | "WEBSITE"
+  | "VIEWER"
+  | "USER";
