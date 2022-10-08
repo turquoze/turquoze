@@ -50,7 +50,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        user.shop = ctx.state.shop;
+        user.shop = ctx.state.request_data.public_id;
 
         await UserSchema.validate(user);
         const posted: User = await UserSchema.cast(user);
@@ -113,7 +113,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        login.shop = ctx.state.shop;
+        login.shop = ctx.state.request_data.public_id;
 
         await LoginSchema.validate(login);
         const posted: LoginRequest = await LoginSchema.cast(login);
@@ -167,7 +167,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        login.shop = ctx.state.shop;
+        login.shop = ctx.state.request_data.public_id;
 
         await LoginSchema.validate(login);
         const posted: LoginRequest = await LoginSchema.cast(login);
@@ -207,7 +207,8 @@ export default class UsersRoutes {
         }
 
         user.public_id = ctx.params.id;
-        user.shop = ctx.state.shop;
+        user.shop = ctx.state.request_data.public_id;
+        user.password = "_______";
 
         await UserSchema.validate(user);
         const posted: User = await UserSchema.cast(user);

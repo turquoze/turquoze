@@ -96,6 +96,7 @@ export const UserSchema = yup.object().shape({
   created_at: yup.date().nullable(true),
   name: yup.string().required().min(3),
   email: yup.string().email(),
+  password: yup.string().required().min(6),
   not_active: yup.bool().default(false),
   shop: yup.string().uuid().required(),
 });
