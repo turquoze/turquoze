@@ -27,7 +27,6 @@ export const AuthGuard =
         throw new Error("Not allowed");
       }
     } catch (error) {
-      console.log(`token used: ${tokenId}`);
       console.error(error);
       ctx.response.status = 401;
       ctx.response.headers.set("content-type", "application/json");
