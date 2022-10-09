@@ -6,8 +6,6 @@ export const DBCloser = async (
   next: () => Promise<unknown>,
 ) => {
   await next();
-  console.log(dbClient.available);
-  console.log(dbClient.size);
   if (dbClient.available > 0 && dbClient.size > 0) {
     await dbClient.end();
   }
