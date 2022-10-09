@@ -7,12 +7,14 @@ import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
 import initPlugins from "./plugins/mod.ts";
 import AddEvents from "./utils/events.ts";
+import DBCloser from "./middleware/dbCloser.ts";
 
 initPlugins();
 AddEvents();
 
 const app = new Application<TurquozeState>();
 
+app.use(DBCloser);
 app.use(Logger);
 app.use(ResponseTimer);
 
