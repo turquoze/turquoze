@@ -135,7 +135,7 @@ export default class UsersRoutes {
           .setIssuedAt()
           .setIssuer("urn:turquoze:shop")
           .setAudience("urn:turquoze:user")
-          .setNotBefore("")
+          .setNotBefore("1s")
           .setExpirationTime("1h")
           .sign(ctx.state.request_data._signKey);
 
