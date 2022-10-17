@@ -1,17 +1,17 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Price } from "../../utils/types.ts";
+import { Price, TurquozeState } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { PriceSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class PricesRoutes {
-  #prices: Router;
+  #prices: Router<TurquozeState>;
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
-    this.#prices = new Router({
+    this.#prices = new Router<TurquozeState>({
       prefix: "/prices",
     });
 

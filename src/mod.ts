@@ -6,11 +6,12 @@ import { TurquozeState } from "./utils/types.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
 import initPlugins from "./plugins/mod.ts";
-import AddEvents from "./utils/events.ts";
+import addEvents from "./utils/events.ts";
 import DBCloser from "./middleware/dbCloser.ts";
+import { stringifyJSON } from "./utils/utils.ts";
 
 initPlugins();
-AddEvents();
+addEvents();
 
 const app = new Application<TurquozeState>();
 
@@ -36,7 +37,7 @@ app.addEventListener("listen", ({ port }) => {
 });
 
 app.addEventListener("error", (error) => {
-  console.log(`error: ${JSON.stringify(error)}`);
+  console.log(`error: ${stringifyJSON(error)}`);
 });
 
 await app.listen({ port: 8080 });
