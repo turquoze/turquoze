@@ -1,7 +1,7 @@
 import container from "../services/mod.ts";
 import { TurquozeEvent } from "./types.ts";
 
-export default function AddEvents() {
+export default function addEvents() {
   container.NotificationService.add(
     ["CREATED_PRODUCT", "UPDATED_PRODUCT"],
     (_event: TurquozeEvent, id: string) => {

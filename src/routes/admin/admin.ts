@@ -5,6 +5,9 @@ import discounts from "./discounts.ts";
 import shops from "./shops.ts";
 import warehouses from "./warehouses.ts";
 import inventories from "./inventories.ts";
+import orders from "./orders.ts";
+import prices from "./prices.ts";
+import users from "./users.ts";
 
 import container from "../../services/mod.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
@@ -21,5 +24,8 @@ admin.use(new discounts(container).routes());
 admin.use(new shops(container).routes());
 admin.use(new warehouses(container).routes());
 admin.use(new inventories(container).routes());
+admin.use(new orders(container).routes());
+admin.use(new prices(container).routes());
+admin.use(new users(container).routes());
 
 export default admin;

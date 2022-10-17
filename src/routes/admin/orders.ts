@@ -1,16 +1,17 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
+import { TurquozeState } from "../../utils/types.ts";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 
 export default class OrdersRoutes {
-  #orders: Router;
+  #orders: Router<TurquozeState>;
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
-    this.#orders = new Router({
+    this.#orders = new Router<TurquozeState>({
       prefix: "/orders",
     });
 
