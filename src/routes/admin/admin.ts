@@ -8,6 +8,7 @@ import inventories from "./inventories.ts";
 import orders from "./orders.ts";
 import prices from "./prices.ts";
 import users from "./users.ts";
+import categories from "./categories.ts";
 
 import container from "../../services/mod.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
@@ -27,5 +28,6 @@ admin.use(new inventories(container).routes());
 admin.use(new orders(container).routes());
 admin.use(new prices(container).routes());
 admin.use(new users(container).routes());
+admin.use(new categories(container).routes());
 
 export default admin;
