@@ -23,7 +23,7 @@ export default class ProductsRoutes {
     this.#products.get("/", async (ctx) => {
       try {
         const data = await Get<Array<Product>>({
-          id: `productsGetMany-${10}-${undefined}`,
+          id: `productsGetMany-${ctx.state.request_data.public_id}-${10}-${10}`,
           promise: this.#Container.ProductService.GetMany({}),
         });
 
@@ -275,7 +275,7 @@ export default class ProductsRoutes {
         const posted: Product = await ProductSchema.cast(product);
 
         const data = await Update<Product>({
-          id: `product_${product.id}`,
+          id: `product_${ctx.state.request_data.public_id}-${product.id}`,
           promise: this.#Container.ProductService.Update({
             data: posted,
           }),
@@ -302,7 +302,7 @@ export default class ProductsRoutes {
         });
 
         const data = await Get<Product>({
-          id: `product_${ctx.params.id}`,
+          id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Get({
             id: ctx.params.id,
           }),
@@ -334,7 +334,7 @@ export default class ProductsRoutes {
         });
 
         await Delete({
-          id: `product_${ctx.params.id}`,
+          id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Delete({ id: ctx.params.id }),
         });
 

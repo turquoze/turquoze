@@ -1,24 +1,24 @@
 import { Router } from "../../deps.ts";
 import Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Category, Product } from "../../utils/types.ts";
+import { Category, Product, TurquozeState } from "../../utils/types.ts";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 
 export default class CategoriesRoutes {
-  #categories: Router;
+  #categories: Router<TurquozeState>;
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
-    this.#categories = new Router({
+    this.#categories = new Router<TurquozeState>({
       prefix: "/categories",
     });
 
     this.#categories.get("/", async (ctx) => {
       try {
         const data = await Get<Array<Category>>({
-          id: `categoryGetMany-${10}-${10}`,
+          id: `categoryGetMany-${ctx.state.request_data.public_id}-${10}-${10}`,
           promise: this.#Container.CategoryService.GetMany({}),
         });
 
@@ -39,7 +39,7 @@ export default class CategoriesRoutes {
     this.#categories.get("/byname/:name", async (ctx) => {
       try {
         const data = await Get<Category>({
-          id: `category_name_${ctx.params.name}`,
+          id: `category_name_${ctx.state.request_data.public_id}-${ctx.params.name}`,
           promise: this.#Container.CategoryService.GetByName({
             name: ctx.params.name,
           }),
@@ -66,7 +66,7 @@ export default class CategoriesRoutes {
         });
 
         const data = await Get<Array<Product>>({
-          id: `products_by_category_${ctx.params.id}`,
+          id: `products_by_category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.CategoryLinkService.GetProducts({
             id: ctx.params.id,
           }),
@@ -93,7 +93,7 @@ export default class CategoriesRoutes {
         });
 
         const data = await Get<Category>({
-          id: `category_${ctx.params.id}`,
+          id: `category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.CategoryService.Get({
             id: ctx.params.id,
           }),
