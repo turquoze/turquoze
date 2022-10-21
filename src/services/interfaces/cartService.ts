@@ -44,11 +44,20 @@ export default interface ICartService {
     giftcard: string;
   }): Promise<Cart>;
 
+  UpsertComment(params: {
+    id: string;
+    comment: string;
+  }): Promise<Cart>;
+
   RemoveCoupon(params: {
     id: string;
   }): Promise<Cart>;
 
   RemoveGiftcard(params: {
+    id: string;
+  }): Promise<Cart>;
+
+  RemoveComment(params: {
     id: string;
   }): Promise<Cart>;
 

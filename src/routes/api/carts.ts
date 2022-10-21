@@ -8,6 +8,7 @@ import { stringifyJSON } from "../../utils/utils.ts";
 import {
   CartItemSchema,
   CartSchema,
+  CommentSchema,
   MetadataSchema,
   ShippingSchema,
   UuidSchema,
@@ -223,6 +224,44 @@ export default class CartRoutes {
 
         ctx.response.body = stringifyJSON({
           carts: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.post("/:id/comment", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        const body = ctx.request.body();
+        let comment: { comment: string };
+        if (body.type === "json") {
+          comment = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await CommentSchema.validate(comment);
+        const posted: { comment: string } = await CommentSchema.cast(
+          comment,
+        );
+
+        await this.#Container.CartService.UpsertComment({
+          id: ctx.params.id,
+          comment: posted.comment,
+        });
+
+        ctx.response.body = stringifyJSON({
+          comment: posted,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {

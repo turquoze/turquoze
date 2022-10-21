@@ -25,6 +25,7 @@ export interface Cart {
   billing: Shipping;
   coupon: string;
   giftcard: string;
+  comment: string;
 }
 
 export interface CartItem {
