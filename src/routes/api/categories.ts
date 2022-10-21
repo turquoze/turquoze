@@ -39,7 +39,8 @@ export default class CategoriesRoutes {
     this.#categories.get("/byname/:name", async (ctx) => {
       try {
         const data = await Get<Category>({
-          id: `category_name_${ctx.state.request_data.public_id}-${ctx.params.name}`,
+          id:
+            `category_name_${ctx.state.request_data.public_id}-${ctx.params.name}`,
           promise: this.#Container.CategoryService.GetByName({
             name: ctx.params.name,
           }),
@@ -66,7 +67,8 @@ export default class CategoriesRoutes {
         });
 
         const data = await Get<Array<Product>>({
-          id: `products_by_category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
+          id:
+            `products_by_category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.CategoryLinkService.GetProducts({
             id: ctx.params.id,
           }),

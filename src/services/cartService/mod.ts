@@ -230,6 +230,50 @@ export default class CartService implements ICartService {
     }
   }
 
+  async UpsertComment(params: { id: string; comment: string }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO carts (comment) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          params.comment,
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async RemoveComment(params: { id: string }): Promise<Cart> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Cart>({
+        text:
+          "INSERT INTO carts (comment) VALUES ($1) WHERE public_id = $2 RETURNING id",
+        args: [
+          "",
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
   async RemoveCoupon(params: { id: string }): Promise<Cart> {
     try {
       const client = await this.pool.connect();

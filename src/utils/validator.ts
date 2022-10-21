@@ -111,6 +111,10 @@ export const MetadataSchema = yup.object().shape({
   metadata: yup.object().nullable(true),
 });
 
+export const CommentSchema = yup.object().shape({
+  comment: yup.string().required().min(2).nullable(false),
+});
+
 export const ShippingSchema = yup.object().shape({
   name: yup.string().min(3).required(),
   address1: yup.string().min(3).required(),
