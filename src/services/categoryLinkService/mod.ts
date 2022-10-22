@@ -43,7 +43,7 @@ export default class CategoryLinkService implements ICategoryLinkService {
 
       const result = await client.queryObject<Product>({
         text:
-          "SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.id WHERE categorieslink.category = $1 LIMIT $2 OFFSET $3",
+          "SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.public_id WHERE categorieslink.category = $1 LIMIT $2 OFFSET $3",
         args: [params.id, params.limit, params.offset],
       });
 
