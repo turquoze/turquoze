@@ -2,7 +2,6 @@ import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { MeiliDelete, MeiliIndex, Product, Search } from "../../utils/types.ts";
 import { EnqueuedTask, MeiliSearch, SearchResponse } from "../../deps.ts";
-import { MEILIINDEX } from "../../utils/secrets.ts";
 
 export default class SearchService implements ISearchService {
   client: MeiliSearch;
@@ -14,7 +13,7 @@ export default class SearchService implements ISearchService {
     params: Search,
   ): Promise<SearchResponse<Product>> {
     try {
-      const response = await this.client.index(MEILIINDEX!).search<Product>(
+      const response = await this.client.index(params.index).search<Product>(
         params.query,
         params.options,
       );

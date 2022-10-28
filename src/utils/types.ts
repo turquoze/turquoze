@@ -74,7 +74,16 @@ export interface Shop {
   url: string;
   search_index: string;
   secret: string;
+  settings: Settings;
   _signKey: Uint8Array | jose.KeyLike;
+}
+
+export interface Settings {
+  meilisearch: {
+    index: string;
+    api_key: string;
+    host: string;
+  };
 }
 
 export interface PluginData<T> {
