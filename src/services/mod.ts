@@ -98,6 +98,13 @@ export class Container {
     url: "",
     search_index: "",
     secret: "",
+    settings: {
+      meilisearch: {
+        api_key: "",
+        host: "",
+        index: "",
+      },
+    },
     _signKey: new Uint8Array(),
   };
 }
