@@ -131,8 +131,10 @@ export default class PaymentService implements IPaymentService {
     try {
       const dollars = (amount: number) =>
         Dinero({ amount, currency: params.currency });
+      // deno-lint-ignore no-explicit-any
       const addMany = (addends: Array<any>) => addends.reduce(Dinero);
 
+      // deno-lint-ignore no-explicit-any
       const arr = Array<any>();
 
       await Promise.all(params.items.map(async (product) => {

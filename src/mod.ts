@@ -1,8 +1,7 @@
-import { Application } from "./deps.ts";
+import app from "./app.ts";
 import admin from "./routes/admin/admin.ts";
 import api from "./routes/api/api.ts";
 import plugin from "./routes/plugin/mod.ts";
-import { TurquozeState } from "./utils/types.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
 import initPlugins from "./plugins/mod.ts";
@@ -12,8 +11,6 @@ import { stringifyJSON } from "./utils/utils.ts";
 
 initPlugins();
 addEvents();
-
-const app = new Application<TurquozeState>();
 
 app.use(DBCloser);
 app.use(Logger);
