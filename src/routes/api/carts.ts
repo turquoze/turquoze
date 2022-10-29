@@ -1,5 +1,5 @@
 import { Router } from "../../deps.ts";
-import Container from "../../services/mod.ts";
+import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Cart, CartItem, Shipping, TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";

@@ -1,13 +1,12 @@
-import { Application, assert, assertEquals } from "../test_deps.ts";
+import { assert, assertEquals } from "../test_deps.ts";
 
 import InventoriesRoutes from "../../src/routes/admin/inventories.ts";
 import { Inventory } from "../../src/utils/types.ts";
-import container from "../../src/services/mod.ts";
+import app from "../test_app.ts";
 
 let ID = "";
-const app = new Application();
 
-app.use(new InventoriesRoutes(container).routes());
+app.use(new InventoriesRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Inventories - Create | ok",

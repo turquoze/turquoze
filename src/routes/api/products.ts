@@ -1,5 +1,5 @@
-import { Router } from "../../deps.ts";
-import Container from "../../services/mod.ts";
+import { MeiliSearch, Router } from "../../deps.ts";
+import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, Search, TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
@@ -67,9 +67,18 @@ export default class ProductsRoutes {
         await SearchSchema.validate(query);
         const posted: Search = await SearchSchema.cast(query);
 
-        posted.index = ctx.state.request_data.search_index;
+        console.log(ctx.state.request_data.settings.meilisearch.index)
+        posted.index = ctx.state.request_data.settings.meilisearch.index;
 
-        const data = await this.#Container.SearchService.ProductSearch(posted);
+        const client = new MeiliSearch({
+          host: this.#Container.Shop.settings.meilisearch.host,
+          apiKey: this.#Container.Shop.settings.meilisearch.api_key,
+        });
+
+        const data = await this.#Container.SearchService.ProductSearch(
+          posted,
+          client,
+        );
 
         ctx.response.body = stringifyJSON({
           info: {

@@ -16,6 +16,7 @@ import DefaultTokenService from "./tokenService/mod.ts";
 import DefaultNotificationService from "./notificationService/mod.ts";
 import DefaultPluginService from "./pluginService/mod.ts";
 import DefaultPluginDataService from "./pluginDataService/mod.ts";
+import DefaultSettingsService from "./settingsService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -35,9 +36,9 @@ import ITokenService from "./interfaces/tokenService.ts";
 import INotificationService from "./interfaces/notificationService.ts";
 import IPluginService from "./interfaces/pluginService.ts";
 import IPluginDataService from "./interfaces/pluginDataService.ts";
+import ISettingsService from "./interfaces/settingsService.ts";
 
 import dbClient from "../clients/db.ts";
-import searchClient from "../clients/search.ts";
 import redisClient from "../clients/redis.ts";
 import { Shop } from "../utils/types.ts";
 
@@ -73,7 +74,7 @@ export class Container {
   DiscountService: IDiscountService = new DefaultDiscountService(
     dbClient,
   );
-  SearchService: ISearchService = new DefaultSearchService(searchClient);
+  SearchService: ISearchService = new DefaultSearchService();
   WarehouseService: IWarehouseService = new DefaultWarehouseService(
     dbClient,
   );
@@ -88,6 +89,7 @@ export class Container {
     dbClient,
   );
   NotificationService: INotificationService = new DefaultNotificationService();
+  SettingsService: ISettingsService = new DefaultSettingsService(dbClient);
   Shop: Shop = {
     id: 0,
     public_id: "",

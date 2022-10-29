@@ -67,23 +67,6 @@ if (!UPSTASH_REDIS_REST_TOKEN) {
   throw new Error("environment variable UPSTASH_REDIS_REST_TOKEN not set");
 }
 
-MEILIHOST = Deno.env.get("MEILIHOST");
-if (!MEILIHOST) {
-  throw new Error("environment variable MEILIHOST not set");
-}
-
-MEILIINDEX = Deno.env.get("MEILIINDEX");
-if (!MEILIINDEX) {
-  throw new Error("environment variable MEILIINDEX not set");
-}
-
-MEILIAPIKEY = Deno.env.get("MEILIAPIKEY");
-if (!MEILIAPIKEY) {
-  console.warn(
-    "environment variable MEILIAPIKEY not set \n Using public access",
-  );
-}
-
 SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
 if (!SUPABASE_KEY) {
   throw new Error("environment variable SUPABASE_KEY not set");

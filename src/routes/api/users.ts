@@ -1,5 +1,5 @@
 import { jose, Router } from "../../deps.ts";
-import Container from "../../services/mod.ts";
+import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { LoginRequest, TurquozeState } from "../../utils/types.ts";
 import { stringifyJSON } from "../../utils/utils.ts";

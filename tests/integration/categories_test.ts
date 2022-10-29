@@ -1,30 +1,12 @@
-import { Application, assert, assertEquals } from "../test_deps.ts";
+import { assert, assertEquals } from "../test_deps.ts";
 
-import CategoriesRoutes from "../../src/routes/api/categories.ts";
+import CategoriesRoutes from "../../src/routes/admin/categories.ts";
 import { Category } from "../../src/utils/types.ts";
-import container from "../../src/services/mod.ts";
+import app from "../test_app.ts";
 
 let ID = "";
-const app = new Application();
 
-app.use(async (ctx, next) => {
-  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-  ctx.state.request_data = {
-    id: 0,
-    public_id: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-    regions: ["SE"],
-    payment_id: "",
-    currency: "SEK",
-    name: "test",
-    url: "https://example.com",
-    search_index: "",
-    secret: "test",
-    _signKey: new Uint8Array(),
-  };
-  await next();
-});
-
-app.use(new CategoriesRoutes(container).routes());
+app.use(new CategoriesRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Categories - Create | ok",

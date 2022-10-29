@@ -1,4 +1,5 @@
 import { jose, Router, SearchParams } from "../deps.ts";
+import { Container } from "../services/mod.ts";
 
 export interface Product {
   id: number;
@@ -102,6 +103,7 @@ export interface CategoryLink {
 export interface TurquozeState {
   shop: string;
   request_data: Shop;
+  container: Container;
 }
 
 export interface PaymentRequest {

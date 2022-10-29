@@ -42,6 +42,7 @@ Deno.test("CartService", {
             giftcard: "",
             metadata: {},
             items: [],
+            comment: "",
           },
         });
 

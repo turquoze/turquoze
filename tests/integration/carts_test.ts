@@ -1,36 +1,12 @@
-import {
-  Application,
-  assert,
-  assertEquals,
-  assertObjectMatch,
-} from "../test_deps.ts";
+import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
 
 import CartsRoutes from "../../src/routes/api/carts.ts";
 import { Cart, CartItem } from "../../src/utils/types.ts";
-import container from "../../src/services/mod.ts";
-import { MEILIINDEX } from "../test_secrets.ts";
+import app from "../test_app.ts";
 
 let ID = "";
-const app = new Application();
 
-app.use(async (ctx, next) => {
-  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
-  ctx.state.request_data = {
-    id: 0,
-    public_id: "",
-    regions: ["SE"],
-    payment_id: "",
-    currency: "SEK",
-    name: "test",
-    url: "https://example.com",
-    search_index: MEILIINDEX!,
-    secret: "test",
-    _signKey: new Uint8Array(),
-  };
-  await next();
-});
-
-app.use(new CartsRoutes(container).routes());
+app.use(new CartsRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Carts - Create | ok",

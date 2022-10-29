@@ -1,13 +1,12 @@
-import { Application, assert, assertEquals } from "../test_deps.ts";
+import { assert, assertEquals } from "../test_deps.ts";
 
 import ShopsRoutes from "../../src/routes/admin/shops.ts";
-import container from "../../src/services/mod.ts";
 import { Shop } from "../../src/utils/types.ts";
+import app from "../test_app.ts";
 
 let ID = "";
-const app = new Application();
 
-app.use(new ShopsRoutes(container).routes());
+app.use(new ShopsRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Shops - Create | ok",
@@ -19,6 +18,11 @@ Deno.test({
       currency: "EUR",
       name: "TEST-REGION",
       regions: ["EU"],
+      meilisearch: {
+        api_key: "",
+        host: "",
+        index: "",
+      },
     });
 
     const response = await app.handle(
