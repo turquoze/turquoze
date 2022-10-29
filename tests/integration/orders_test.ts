@@ -1,13 +1,12 @@
-import { Application, assert, assertEquals } from "../test_deps.ts";
+import { assert, assertEquals } from "../test_deps.ts";
 
-import OrdersRoutes from "../../src/routes/api/orders.ts";
+import OrdersRoutes from "../../src/routes/admin/orders.ts";
 import { Order } from "../../src/utils/types.ts";
-import container from "../../src/services/mod.ts";
+import app from "../test_app.ts";
 
 let ID = "";
-const app = new Application();
 
-app.use(new OrdersRoutes(container).routes());
+app.use(new OrdersRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Orders - Get Many | ok",

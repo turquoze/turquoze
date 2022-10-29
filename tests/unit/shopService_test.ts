@@ -26,6 +26,13 @@ Deno.test("ShopService", {
             secret: "test",
             url: "https://example.com",
             _signKey: new Uint8Array(),
+            settings: {
+              meilisearch: {
+                api_key: "",
+                host: "",
+                index: "",
+              },
+            },
           },
         });
 
@@ -108,6 +115,13 @@ Deno.test("ShopService", {
             secret: "test",
             url: "https://example.com",
             _signKey: new Uint8Array(),
+            settings: {
+              meilisearch: {
+                api_key: "",
+                host: "",
+                index: "",
+              },
+            },
           },
         });
 
@@ -138,6 +152,13 @@ Deno.test("ShopService", {
             secret: "test",
             url: "https://example.com",
             _signKey: new Uint8Array(),
+            settings: {
+              meilisearch: {
+                api_key: "",
+                host: "",
+                index: "",
+              },
+            },
           },
         });
 
