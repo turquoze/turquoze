@@ -67,7 +67,6 @@ export default class ProductsRoutes {
         await SearchSchema.validate(query);
         const posted: Search = await SearchSchema.cast(query);
 
-        console.log(ctx.state.request_data.settings.meilisearch.index)
         posted.index = ctx.state.request_data.settings.meilisearch.index;
 
         const client = new MeiliSearch({
