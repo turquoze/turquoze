@@ -250,6 +250,22 @@ export interface Token {
   shop: string;
 }
 
+export interface Tax {
+  id: number;
+  public_id: string;
+  created_at?: number;
+  type: "Inclusive" | "Exclusive";
+  name: string;
+  value: number;
+  shop: string;
+}
+
+export interface TaxProductLink {
+  tax_id: string;
+  country: string;
+  product_id: string;
+}
+
 export interface Media {
   file:
     | ArrayBuffer
