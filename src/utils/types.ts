@@ -227,6 +227,7 @@ export interface User {
   email: string;
   password: string;
   not_active: boolean;
+  role: string;
   shop: string;
 }
 

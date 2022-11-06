@@ -37,4 +37,4 @@ app.addEventListener("error", (error) => {
   console.log(`error: ${stringifyJSON(error)}`);
 });
 
-await app.listen({ port: 8080 });
+await app.listen({ port: 8080, hostname: "127.0.0.1" });
