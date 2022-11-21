@@ -289,6 +289,22 @@ export interface LoginRequest {
   shop: string;
 }
 
+export interface OrderReturn {
+  public_id: string;
+  id: number;
+  order_id: string;
+  shop: string;
+  created_at: number;
+  items: Array<ReturnProduct>;
+  status: "INIT" | "WAITING" | "RETURNED" | "FAILED";
+}
+
+export interface ReturnProduct {
+  quantity: number;
+  quantity_returned: number;
+  product_id: string;
+}
+
 export type TurquozeEvent =
   | "CREATED_PRODUCT"
   | "UPDATED_PRODUCT"
