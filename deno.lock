@@ -1,0 +1,17 @@
+{
+  "version": "2",
+  "remote": {},
+  "npm": {
+    "specifiers": { "prisma": "prisma@4.6.1" },
+    "packages": {
+      "@prisma/engines@4.6.1": {
+        "integrity": "sha512-3u2/XxvxB+Q7cMXHnKU0CpBiUK1QWqpgiBv28YDo1zOIJE3FCF8DI2vrp6vuwjGt5h0JGXDSvmSf4D4maVjJdw==",
+        "dependencies": {}
+      },
+      "prisma@4.6.1": {
+        "integrity": "sha512-BR4itMCuzrDV4tn3e2TF+nh1zIX/RVU0isKtKoN28ADeoJ9nYaMhiuRRkFd2TZN8+l/XfYzoRKyHzUFXLQhmBQ==",
+        "dependencies": { "@prisma/engines": "@prisma/engines@4.6.1" }
+      }
+    }
+  }
+}
