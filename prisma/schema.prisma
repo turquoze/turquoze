@@ -144,6 +144,7 @@ model shops {
   taxes        taxes[]
   tokens       tokens[]
   users        users[]
+  returns      returns[]
 }
 
 model taxes {
@@ -200,4 +201,15 @@ model warehouses {
   shop        String        @db.Uuid
   id          BigInt        @default(autoincrement())
   inventories inventories[]
+}
+
+model returns {
+  id         BigInt    @default(autoincrement())
+  public_id  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  shop       String    @db.Uuid
+  order_id   String    @db.VarChar
+  items      Json      @db.Json
+  status     String    @default("INIT") @db.VarChar
+  shops      shops     @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
 }

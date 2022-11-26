@@ -13,10 +13,9 @@ export default class ReturnService implements IReturnService {
     try {
       const client = await this.pool.connect();
 
-      //TODO: add new table
       const result = await client.queryObject<OrderReturn>({
         text:
-          "INSERT INTO warehouses (address, country, name, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
+          "INSERT INTO returns (order_id, shop, items, status) VALUES ($1, $2, $3, $4) RETURNING public_id",
         args: [
           params.data.order_id,
           params.data.shop,
@@ -38,10 +37,9 @@ export default class ReturnService implements IReturnService {
     try {
       const client = await this.pool.connect();
 
-      //TODO: add new table
       const result = await client.queryObject<OrderReturn>({
         text:
-          "UPDATE warehouses SET address = $1, country = $2, name = $3 WHERE public_id = $4 RETURNING public_id",
+          "UPDATE returns SET order_id = $1, shop = $2, items = $3, status = $4 WHERE public_id = $5 RETURNING public_id",
         args: [
           params.data.order_id,
           params.data.shop,
@@ -64,9 +62,8 @@ export default class ReturnService implements IReturnService {
     try {
       const client = await this.pool.connect();
 
-      //TODO: add new table
       const result = await client.queryObject<OrderReturn>({
-        text: "SELECT * FROM warehouses WHERE public_id = $1 LIMIT 1",
+        text: "SELECT * FROM returns WHERE public_id = $1 LIMIT 1",
         args: [params.id],
       });
 
@@ -89,9 +86,8 @@ export default class ReturnService implements IReturnService {
 
       const client = await this.pool.connect();
 
-      //TODO: add new table
       const result = await client.queryObject<OrderReturn>({
-        text: "SELECT * FROM warehouses LIMIT $1 OFFSET $2",
+        text: "SELECT * FROM returns LIMIT $1 OFFSET $2",
         args: [params.limit, params.offset],
       });
 
