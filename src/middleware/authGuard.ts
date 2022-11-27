@@ -9,19 +9,20 @@ export const AuthGuard =
     const tokenSecret = ctx.request.headers.get("X-Turquoze-Secret");
     try {
       if (tokenId != null && tokenSecret != null) {
-        const shop = await container.TokenService.GetShopByToken({
+        const data = await container.TokenService.GetShopByToken({
           tokenId,
           tokenSecret,
         });
 
         const signKey = await jose.importJWK(
-          JSON.parse(shop.secret).pk,
+          JSON.parse(data.shop.secret).pk,
           "PS256",
         );
-        shop._signKey = signKey;
-        container.Shop = shop;
+        data.shop._signKey = signKey;
+        data.shop._role = data.role;
+        container.Shop = data.shop;
 
-        ctx.state.request_data = shop;
+        ctx.state.request_data = data.shop;
         await next();
       } else {
         throw new Error("Not allowed");

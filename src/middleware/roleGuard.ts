@@ -1,14 +1,12 @@
 import type { Context } from "../deps.ts";
 import { TurquozeRole, TurquozeState } from "../utils/types.ts";
 
-export const RoleGuard = (role: TurquozeRole) => {
-  return (
-    ctx: Context<TurquozeState>,
-    next: () => Promise<unknown>,
-  ) => {
-    const userRole: TurquozeRole = "WEBSITE";
+export const RoleGuard =
+  (role: TurquozeRole) =>
+  async (ctx: Context<TurquozeState>, next: () => Promise<unknown>) => {
+    const userRole = ctx.state.request_data._role;
     if (isAllowed(role, userRole)) {
-      next();
+      await next();
     } else {
       ctx.response.status = 401;
       ctx.response.headers.set("content-type", "application/json");
@@ -18,7 +16,6 @@ export const RoleGuard = (role: TurquozeRole) => {
       });
     }
   };
-};
 
 function isAllowed(role: TurquozeRole, userRole: TurquozeRole): boolean {
   if (role == "SUPERADMIN") {

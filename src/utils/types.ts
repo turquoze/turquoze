@@ -77,6 +77,7 @@ export interface Shop {
   secret: string;
   settings: Settings;
   _signKey: Uint8Array | jose.KeyLike;
+  _role: TurquozeRole;
 }
 
 export interface Settings {

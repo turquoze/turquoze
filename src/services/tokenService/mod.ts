@@ -1,4 +1,4 @@
-import { Shop, Token } from "../../utils/types.ts";
+import { Shop, Token, TurquozeRole } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { Pool } from "../../deps.ts";
@@ -36,18 +36,22 @@ export default class TokenService implements ITokenService {
 
   async GetShopByToken(
     params: { tokenId: string; tokenSecret: string },
-  ): Promise<Shop> {
+  ): Promise<{ shop: Shop; role: TurquozeRole }> {
     try {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Shop>({
         text:
-          "SELECT shops.* FROM tokens RIGHT JOIN shops ON tokens.shop = shops.public_id WHERE tokens.id = $1 AND tokens.secret = crypt($2, tokens.secret) LIMIT 1",
+          "SELECT shops.*, tokens.role FROM tokens RIGHT JOIN shops ON tokens.shop = shops.public_id WHERE tokens.id = $1 AND tokens.secret = crypt($2, tokens.secret) LIMIT 1",
         args: [params.tokenId, params.tokenSecret],
       });
 
       client.release();
-      return result.rows[0];
+      return {
+        shop: result.rows[0],
+        // @ts-expect-error not on type
+        role: result.rows[0].role,
+      };
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
