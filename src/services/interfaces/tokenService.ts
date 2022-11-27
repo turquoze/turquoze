@@ -1,4 +1,4 @@
-import { Shop, Token } from "../../utils/types.ts";
+import { Shop, Token, TurquozeRole } from "../../utils/types.ts";
 
 export default interface ITokenService {
   Create(params: {
@@ -8,7 +8,7 @@ export default interface ITokenService {
   GetShopByToken(params: {
     tokenId: string;
     tokenSecret: string;
-  }): Promise<Shop>;
+  }): Promise<{ shop: Shop; role: TurquozeRole }>;
 
   Get(params: {
     tokenId: string;

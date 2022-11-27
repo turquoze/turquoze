@@ -11,12 +11,14 @@ import users from "./users.ts";
 import categories from "./categories.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
 import app from "../../app.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 
 const admin = new Router({
   prefix: "/admin",
 });
 
 admin.use(AuthGuard(app.state.container));
+admin.use(RoleGuard("ADMIN"));
 
 admin.use(settings.routes());
 admin.use(tokens.routes());

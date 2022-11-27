@@ -2,8 +2,11 @@
   "tasks": {
     "run": "deno run --allow-net --allow-env --allow-read src/mod.ts",
     "run:w": "deno run --allow-net --allow-env --allow-read --watch ./src/mod.ts",
+    "run:debug": "deno run --inspect-brk --allow-net --allow-env --allow-read src/mod.ts",
     "test": "deno test --allow-net --allow-env --allow-read --no-check=remote --coverage=cov_profile",
     "coverage": "deno coverage cov_profile",
-    "bench": "deno bench --unstable --allow-net --allow-env --allow-read"
+    "bench": "deno bench --unstable --allow-net --allow-env --allow-read",
+    "db:push": "deno run -A --unstable npm:prisma db push",
+    "db:pull": "deno run -A --unstable npm:prisma db pull"
   }
 }
