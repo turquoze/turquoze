@@ -99,4 +99,25 @@ export default class ReturnService implements IReturnService {
       });
     }
   }
+
+  async SetReturnExported(params: { id: string }): Promise<OrderReturn> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<OrderReturn>({
+        text:
+          "UPDATE returns SET exported = true WHERE public_id = $7 RETURNING public_id",
+        args: [
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
 }

@@ -46,6 +46,7 @@ export interface Order {
   products: Array<OrderProduct>;
   payment_status: "PAYED" | "WAITING" | "FAILED";
   price_total: number;
+  exported: boolean;
 }
 
 export interface OrderProduct {
@@ -298,6 +299,7 @@ export interface OrderReturn {
   created_at: number;
   items: Array<ReturnProduct>;
   status: "INIT" | "WAITING" | "RETURNED" | "FAILED";
+  exported: boolean;
 }
 
 export interface ReturnProduct {

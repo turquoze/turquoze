@@ -98,4 +98,25 @@ export default class CartService implements IOrderService {
       });
     }
   }
+
+  async SetOrderExported(params: { id: string }): Promise<Order> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Order>({
+        text:
+          "UPDATE orders SET exported = true WHERE public_id = $7 RETURNING public_id",
+        args: [
+          params.id,
+        ],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
 }

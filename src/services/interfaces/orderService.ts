@@ -18,4 +18,8 @@ export default interface IOrderService {
     id: string;
     status: "PAYED" | "WAITING" | "FAILED";
   }): Promise<Order>;
+
+  SetOrderExported(params: {
+    id: string;
+  }): Promise<Order>;
 }

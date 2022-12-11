@@ -17,4 +17,8 @@ export default interface IReturnService {
     offset?: string;
     limit?: number;
   }): Promise<Array<OrderReturn>>;
+
+  SetReturnExported(params: {
+    id: string;
+  }): Promise<OrderReturn>;
 }

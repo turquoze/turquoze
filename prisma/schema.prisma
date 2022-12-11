@@ -87,6 +87,7 @@ model orders {
   shop           String    @db.Uuid
   id             BigInt    @default(autoincrement())
   price_total    Int?
+  exported       Boolean   @default(false)
   shops          shops     @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -141,10 +142,10 @@ model shops {
   orders       orders[]
   prices       prices[]
   products     products[]
+  returns      returns[]
   taxes        taxes[]
   tokens       tokens[]
   users        users[]
-  returns      returns[]
 }
 
 model taxes {
@@ -211,5 +212,6 @@ model returns {
   order_id   String    @db.VarChar
   items      Json      @db.Json
   status     String    @default("INIT") @db.VarChar
+  exported   Boolean   @default(false)
   shops      shops     @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
 }
