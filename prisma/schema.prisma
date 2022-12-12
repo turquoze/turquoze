@@ -133,6 +133,7 @@ model shops {
   name         String?
   id           BigInt       @default(autoincrement())
   payment_id   String?      @db.VarChar
+  shipping_id  String?      @db.VarChar
   url          String?      @db.VarChar
   search_index String?      @db.VarChar
   secret       String       @default("test")
