@@ -221,6 +221,31 @@ export default class ProductsRoutes {
       }
     });
 
+    this.#products.get("/price/:id", async (ctx) => {
+      try {
+        const data = await this.#Container.PriceService.GetByProduct({
+          productId: ctx.params.id,
+        });
+
+        data.amount = Dinero({
+          amount: parseInt((data.amount * 100).toString()),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
+
+        ctx.response.body = stringifyJSON({
+          price: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
     this.#products.get("/:id", async (ctx) => {
       try {
         await UuidSchema.validate({

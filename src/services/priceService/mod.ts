@@ -50,6 +50,24 @@ export default class PriceService implements IPriceService {
     }
   }
 
+  async GetByProduct(params: { productId: string }): Promise<Price> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Price>({
+        text: "SELECT * FROM prices WHERE product = $1 LIMIT 1",
+        args: [params.productId],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
   async GetMany(
     params: { offset?: string; limit?: number },
   ): Promise<Array<Price>> {
