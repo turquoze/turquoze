@@ -9,6 +9,10 @@ export default interface IPriceService {
     id: string;
   }): Promise<Price>;
 
+  GetByProduct(params: {
+    productId: string;
+  }): Promise<Price>;
+
   GetMany(params: {
     offset?: string;
     limit?: number;
