@@ -126,3 +126,12 @@ export const ShippingSchema = yup.object().shape({
   country: yup.string().min(2).max(4).required(),
   phone: yup.string().min(5).nullable(),
 });
+
+export const TokenSchema = yup.object().shape({
+  id: yup.string().uuid(),
+  name: yup.string().min(3).required(),
+  secret: yup.string().min(3).required(),
+  role: yup.string().min(3).required(),
+  created_at: yup.date().nullable(true),
+  shop: yup.string().uuid().required(),
+});
