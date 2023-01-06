@@ -22,7 +22,7 @@ admin.use(AuthGuard(app.state.container));
 admin.use(RoleGuard("ADMIN"));
 
 admin.use(settings.routes());
-admin.use(tokens.routes());
+admin.use(new tokens(app.state.container).routes());
 admin.use(new discounts(app.state.container).routes());
 admin.use(new shops(app.state.container).routes());
 admin.use(new warehouses(app.state.container).routes());
