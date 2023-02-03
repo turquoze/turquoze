@@ -109,6 +109,7 @@ export class Container {
     },
     _signKey: new Uint8Array(),
     _role: "VIEWER",
+    shipping_id: "",
   };
 }
 

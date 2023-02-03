@@ -151,7 +151,7 @@ export default class PaymentService implements IPaymentService {
       const price = addMany(arr);
       const total = price.toJSON();
 
-      const sub = (price * 1.25);
+      const sub = price * 1.25;
 
       return {
         price: total.amount,
