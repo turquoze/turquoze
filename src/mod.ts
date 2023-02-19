@@ -2,6 +2,7 @@ import app from "./app.ts";
 import admin from "./routes/admin/admin.ts";
 import api from "./routes/api/api.ts";
 import plugin from "./routes/plugin/mod.ts";
+import ui from "./routes/ui/ui.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
 import initPlugins from "./plugins/mod.ts";
@@ -16,6 +17,7 @@ app.use(DBCloser);
 app.use(Logger);
 app.use(ResponseTimer);
 
+app.use(ui.routes());
 app.use(admin.routes());
 app.use(api.routes());
 app.use(plugin.routes());
