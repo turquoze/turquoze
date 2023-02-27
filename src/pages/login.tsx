@@ -6,18 +6,21 @@
 
 import { h, Helmet } from "../deps.ts";
 
-const App = () => (
+const Login = () => (
   <div>
     <Helmet>
-      <title>Test page</title>
+      <title>Login page</title>
       <meta
         name="description"
-        content="Test page"
+        content="Login page"
       />
     </Helmet>
 
-    <h1 class="text(3xl blue-500)">Hello from Deno</h1>
+    <div class="grid gap-2 grid-cols-1 sm:grid-cols-2">
+      <div class="bg-black">01</div>
+      <div class="bg-red-500">02</div>
+    </div>
   </div>
 );
 
-export default App;
+export default Login;
