@@ -4,7 +4,7 @@
 /// <reference lib="dom.asynciterable" />
 /// <reference lib="deno.ns" />
 
-import { h, Helmet, tw } from "../deps.ts";
+import { h, Helmet } from "../deps.ts";
 
 const App = () => (
   <div>
@@ -16,7 +16,7 @@ const App = () => (
       />
     </Helmet>
 
-    <h1 class={tw`text(3xl blue-500)`}>Hello from Deno</h1>
+    <h1 class="text(3xl blue-500)">Hello from Deno</h1>
   </div>
 );
 

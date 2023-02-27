@@ -4,7 +4,7 @@
 /// <reference lib="dom.asynciterable" />
 /// <reference lib="deno.ns" />
 
-import { h, Helmet, tw } from "../deps.ts";
+import { h, Helmet } from "../deps.ts";
 
 const Login = () => (
   <div>
@@ -16,9 +16,9 @@ const Login = () => (
       />
     </Helmet>
 
-    <div class={tw`grid gap-2 grid-cols-2 sm:grid-cols-1`}>
-      <div class={tw`bg-black`}>01</div>
-      <div class={tw`bg-red-500`}>02</div>
+    <div class="grid gap-2 grid-cols-1 sm:grid-cols-2">
+      <div class="bg-black">01</div>
+      <div class="bg-red-500">02</div>
     </div>
   </div>
 );

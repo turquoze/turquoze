@@ -1,23 +1,8 @@
-import {
-  getStyleTag,
-  Helmet,
-  renderSSR,
-  setup,
-  virtualSheet,
-} from "../deps.ts";
-
-const sheet = virtualSheet();
-
-setup({
-  sheet,
-});
+import { Helmet, inline, renderSSR } from "../deps.ts";
 
 export default function Render(page: unknown): string {
   const ssr = renderSSR(page);
   const { body, head, footer } = Helmet.SSR(ssr);
-
-  sheet.reset();
-  const styleTag = getStyleTag(sheet);
 
   const html = `
   <!DOCTYPE html>
@@ -26,7 +11,6 @@ export default function Render(page: unknown): string {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       ${head.join("\n")}
-      ${styleTag}
     </head>
     <body>
       ${body}
@@ -34,5 +18,7 @@ export default function Render(page: unknown): string {
     </body>
   </html>`;
 
-  return html;
+  const response = inline(html);
+
+  return response;
 }

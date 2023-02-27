@@ -24,5 +24,8 @@ export {
   render,
   renderSSR,
 } from "https://deno.land/x/nano_jsx@v0.0.36/mod.ts";
-export { setup, tw } from "https://esm.sh/twind@0.16.16";
-export { getStyleTag, virtualSheet } from "https://esm.sh/twind@0.16.16/sheets";
+export {
+  defineConfig,
+  inline,
+  install,
+} from "https://esm.sh/@twind/core@1.1.3";
