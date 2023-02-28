@@ -113,6 +113,8 @@ export class Container {
         index: MEILIINDEX!,
       },
     },
+    _role: "VIEWER",
+    shipping_id: "",
   };
 }
 
@@ -141,6 +143,8 @@ app.use(async (ctx, next) => {
         index: MEILIINDEX!,
       },
     },
+    _role: "VIEWER",
+    shipping_id: "",
   };
   await next();
 });
