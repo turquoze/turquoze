@@ -54,7 +54,8 @@ const Login = (email: string | null) => (
 
           <div class="flex items-center justify-between">
             <div class="flex items-center">
-              <input
+              {
+                /*<input
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
@@ -63,6 +64,8 @@ const Login = (email: string | null) => (
               <label for="remember-me" class="ml-2 block text-sm text-gray-900">
                 Remember me
               </label>
+              */
+              }
             </div>
 
             <div class="text-sm">
