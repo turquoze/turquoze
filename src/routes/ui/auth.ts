@@ -9,7 +9,9 @@ export default class AuthRoutes {
   #Container: typeof Container;
   constructor(container: typeof Container) {
     this.#Container = container;
-    this.#auth = new Router<TurquozeState>();
+    this.#auth = new Router<TurquozeState>({
+      prefix: "/auth",
+    });
 
     this.#auth.get("/login", (ctx) => {
       const html = Render(loginPage);
@@ -17,10 +19,19 @@ export default class AuthRoutes {
       ctx.response.body = html;
     });
 
-    this.#auth.post("/login", (ctx) => {
-      const html = Render(loginPage("test@example.com"));
+    this.#auth.post("/login", async (ctx) => {
+      const form = await ctx.request.body({ type: "form" }).value;
 
-      ctx.response.body = html;
+      const email = form.get("email");
+      const password = form.get("password");
+
+      if (email != null && password != null) {
+        ctx.response.redirect("/ui/dashboard");
+      } else {
+        const html = Render(loginPage(email));
+
+        ctx.response.body = html;
+      }
     });
   }
 
