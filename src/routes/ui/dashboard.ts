@@ -1,7 +1,7 @@
 import { Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
-import testPage from "../../pages/test.tsx";
+import dashboardPage from "../../pages/dashboard.tsx";
 import Render from "../../utils/render.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
 
@@ -17,7 +17,7 @@ export default class DashBoardRoutes {
     this.#dashboard.use(CookieGuard(container));
 
     this.#dashboard.get("/", (ctx) => {
-      const html = Render(testPage);
+      const html = Render(dashboardPage);
 
       ctx.response.body = html;
     });
