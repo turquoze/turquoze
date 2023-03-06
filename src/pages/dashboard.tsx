@@ -17,8 +17,6 @@ const App = () => (
       />
     </Helmet>
 
-    <h1 class="text(3xl blue-500)">Hello from Deno</h1>
-
     <ShopSelector shops={[{ id: "test", title: "shop test" }]} />
   </div>
 );
