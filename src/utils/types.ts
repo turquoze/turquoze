@@ -234,6 +234,16 @@ export interface User {
   shop: string;
 }
 
+export interface Admin {
+  id: number;
+  public_id: string;
+  created_at?: number;
+  name: string;
+  email: string;
+  password: string;
+  not_active: boolean;
+}
+
 export interface Shipping {
   name: string;
   address1: string;

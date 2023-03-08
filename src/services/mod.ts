@@ -17,6 +17,7 @@ import DefaultNotificationService from "./notificationService/mod.ts";
 import DefaultPluginService from "./pluginService/mod.ts";
 import DefaultPluginDataService from "./pluginDataService/mod.ts";
 import DefaultSettingsService from "./settingsService/mod.ts";
+import DefaultAdminService from "./adminService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -37,6 +38,7 @@ import INotificationService from "./interfaces/notificationService.ts";
 import IPluginService from "./interfaces/pluginService.ts";
 import IPluginDataService from "./interfaces/pluginDataService.ts";
 import ISettingsService from "./interfaces/settingsService.ts";
+import IAdminService from "./interfaces/adminService.ts";
 
 import dbClient from "../clients/db.ts";
 import redisClient from "../clients/redis.ts";
@@ -85,6 +87,7 @@ export class Container {
     dbClient,
   );
   UserService: IUserService = new DefaultUserService(dbClient);
+  AdminService: IAdminService = new DefaultAdminService(dbClient);
   TokenService: ITokenService = new DefaultTokenService(
     dbClient,
   );
