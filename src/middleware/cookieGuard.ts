@@ -5,34 +5,30 @@ import { TurquozeState } from "../utils/types.ts";
 export const CookieGuard =
   (container: Container) =>
   async (ctx: Context<TurquozeState>, next: () => Promise<unknown>) => {
-    const authCookie = await ctx.cookies.get("Turquoze");
+    const authCookie = await ctx.cookies.get("TurquozeAuth");
 
     try {
       if (authCookie != undefined && authCookie != null) {
-        //TODO: change to decrypt the cookie content
-        const tokenId = authCookie.split(":")[0];
-        const tokenSecret = authCookie.split(":")[1];
+        //TODO: get id from user
 
-        const data = await container.TokenService.GetShopByToken({
-          tokenId,
-          tokenSecret,
+        const data = await container.ShopService.Get({
+          id: "27dfd086-35d1-45f5-a921-b6866e5c24d8",
         });
 
         const signKey = await jose.importJWK(
-          JSON.parse(data.shop.secret).pk,
+          JSON.parse(data.secret).pk,
           "PS256",
         );
-        data.shop._signKey = signKey;
-        data.shop._role = data.role;
-        container.Shop = data.shop;
+        data._signKey = signKey;
+        data._role = "ADMIN"; //TODO: get from user
+        container.Shop = data;
 
-        ctx.state.request_data = data.shop;
+        ctx.state.request_data = data;
         await next();
       } else {
         throw new Error("Not allowed");
       }
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       ctx.response.redirect("/ui/auth/login");
     }
   };

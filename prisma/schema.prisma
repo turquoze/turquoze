@@ -216,3 +216,13 @@ model returns {
   exported   Boolean   @default(false)
   shops      shops     @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
 }
+
+model admins {
+  id         BigInt    @default(autoincrement())
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  public_id  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name       String?
+  email      String
+  not_active Boolean   @default(false)
+  password   String    @db.VarChar
+}

@@ -20,18 +20,41 @@ export default class AuthRoutes {
     });
 
     this.#auth.post("/login", async (ctx) => {
-      const form = await ctx.request.body({ type: "form" }).value;
+      try {
+        const form = await ctx.request.body({ type: "form" }).value;
 
-      const email = form.get("email");
-      const password = form.get("password");
+        const email = form.get("email");
+        const password = form.get("password");
 
-      if (email != null && password != null) {
-        ctx.response.redirect("/ui/dashboard");
-      } else {
-        const html = Render(loginPage(email));
+        if (email != null && password != null) {
+          const admin = await this.#Container.AdminService.Login({
+            email,
+            password,
+          });
+
+          const nextWeek = new Date();
+          nextWeek.setDate(new Date().getDate() + 7);
+          ctx.cookies.set("TurquozeAuth", admin.public_id, {
+            expires: nextWeek,
+          });
+
+          ctx.response.redirect("/ui/dashboard");
+        } else {
+          const html = Render(loginPage(email));
+
+          ctx.response.body = html;
+        }
+      } catch (_error) {
+        const html = Render(loginPage);
 
         ctx.response.body = html;
       }
+    });
+
+    this.#auth.post("/logout", (ctx) => {
+      ctx.cookies.delete("TurquozeAuth");
+
+      ctx.response.redirect("/ui/auth/login");
     });
   }
 
