@@ -70,7 +70,7 @@ const Login = (email: string | null) => (
 
             <div class="text-sm">
               <a
-                href="/ui/reset-password"
+                href="/ui/auth/reset-password"
                 class="font-medium text-indigo-600 hover:text-indigo-500"
               >
                 Forgot your password?

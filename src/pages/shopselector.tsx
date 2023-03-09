@@ -41,6 +41,13 @@ export default class ShopSelector extends Component {
                 </svg>
                 New
               </a>
+              <form
+                class="group relative"
+                action="/ui/auth/logout"
+                method="POST"
+              >
+                <button>Logout</button>
+              </form>
             </div>
             <form class="group relative">
               <svg
@@ -69,7 +76,7 @@ export default class ShopSelector extends Component {
               return (
                 <li class="group cursor-pointer rounded-md p-3 bg-white ring-1 ring-slate-200 shadow-sm hover:bg-blue-500 hover:ring-blue-500 hover:shadow-md dark:bg-slate-700 dark:ring-0 dark:highlight-white/10 dark:hover:bg-blue-500">
                   <a
-                    href={shop.id}
+                    href={"/ui/dashboard/" + shop.id}
                     class="grid sm:block lg:grid xl:block grid-cols-2 grid-rows-2 items-center"
                   >
                     <div>
