@@ -275,6 +275,11 @@ export default class Shop extends Component {
                       </li>
                     </ul>
                   </div>
+                  <div>
+                    <form class="pl-6" action="/ui/auth/logout" method="POST">
+                      <button>Logout</button>
+                    </form>
+                  </div>
                 </div>
               </div>
             </aside>
