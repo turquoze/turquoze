@@ -133,17 +133,18 @@ model shops {
   name         String?
   id           BigInt       @default(autoincrement())
   payment_id   String?      @db.VarChar
-  shipping_id  String?      @db.VarChar
   url          String?      @db.VarChar
   search_index String?      @db.VarChar
   secret       String       @default("test")
   settings     Json?        @db.Json
+  shipping_id  String?      @db.VarChar
   categories   categories[]
   discounts    discounts[]
   orders       orders[]
   prices       prices[]
   products     products[]
   returns      returns[]
+  shopslink    shopslink[]
   taxes        taxes[]
   tokens       tokens[]
   users        users[]
@@ -218,11 +219,22 @@ model returns {
 }
 
 model admins {
-  id         BigInt    @default(autoincrement())
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  public_id  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id         BigInt      @default(autoincrement())
+  created_at DateTime?   @default(now()) @db.Timestamptz(6)
+  public_id  String      @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name       String?
   email      String
-  not_active Boolean   @default(false)
-  password   String    @db.VarChar
+  not_active Boolean     @default(false)
+  password   String      @db.VarChar
+  shopslink  shopslink[]
+}
+
+model shopslink {
+  id         BigInt    @id @default(autoincrement())
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  admin      String    @db.Uuid
+  shop       String    @db.Uuid
+  role       String    @default("VIEWER") @db.VarChar
+  admins     admins    @relation(fields: [admin], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
+  shops      shops     @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
 }
