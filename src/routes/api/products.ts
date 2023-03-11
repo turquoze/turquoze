@@ -77,12 +77,12 @@ export default class ProductsRoutes {
 
         ctx.response.body = stringifyJSON({
           info: {
-            hits: data.nbHits,
+            hits: data.hits,
             offset: data.offset,
             limit: data.limit,
-            facetsDistribution: data.facetsDistribution,
-            exhaustiveNbHits: data.exhaustiveNbHits,
-            exhaustiveFacetsCount: data.exhaustiveFacetsCount,
+            facetsDistribution: data.facetDistribution,
+            exhaustiveNbHits: data.totalHits,
+            exhaustiveFacetsCount: data.facetDistribution,
           },
           products: data.hits,
         });

@@ -17,6 +17,7 @@ import DefaultNotificationService from "../src/services/notificationService/mod.
 import DefaultPluginService from "../src/services/pluginService/mod.ts";
 import DefaultPluginDataService from "../src/services/pluginDataService/mod.ts";
 import DefaultSettingsService from "../src/services/settingsService/mod.ts";
+import DefaultAdminService from "../src/services/adminService/mod.ts";
 
 import IProductService from "../src/services/interfaces/productService.ts";
 import ICartService from "../src/services/interfaces/cartService.ts";
@@ -37,6 +38,7 @@ import INotificationService from "../src/services/interfaces/notificationService
 import IPluginService from "../src/services/interfaces/pluginService.ts";
 import IPluginDataService from "../src/services/interfaces/pluginDataService.ts";
 import ISettingsService from "../src/services/interfaces/settingsService.ts";
+import IAdminService from "../src/services/interfaces/adminService.ts";
 
 import { Application } from "./bench_deps.ts";
 import type { Shop, TurquozeState } from "../src/utils/types.ts";
@@ -90,6 +92,7 @@ export class Container {
     dbClient,
   );
   UserService: IUserService = new DefaultUserService(dbClient);
+  AdminService: IAdminService = new DefaultAdminService(dbClient);
   TokenService: ITokenService = new DefaultTokenService(
     dbClient,
   );

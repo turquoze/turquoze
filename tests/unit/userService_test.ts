@@ -44,6 +44,7 @@ Deno.test("UserService", {
             name: "test",
             not_active: false,
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            role: "",
           },
         });
 
@@ -173,6 +174,7 @@ Deno.test("UserService", {
             name: "test update",
             not_active: true,
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            role: "",
           },
         });
 
@@ -200,6 +202,7 @@ Deno.test("UserService", {
             name: "test fail",
             not_active: true,
             shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            role: "",
           },
         });
 

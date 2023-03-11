@@ -1,6 +1,7 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import ProductsRoutes from "../../src/routes/api/products.ts";
+import ProductsAdminRoutes from "../../src/routes/admin/products.ts";
 import { Product, Search } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
 
@@ -8,6 +9,7 @@ let ID = "";
 const SLUG = "test1";
 
 app.use(new ProductsRoutes(app.state.container).routes());
+app.use(new ProductsAdminRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Products - Create | ok",

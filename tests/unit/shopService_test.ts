@@ -33,6 +33,8 @@ Deno.test("ShopService", {
                 index: "",
               },
             },
+            _role: "VIEWER",
+            shipping_id: "",
           },
         });
 
@@ -122,6 +124,8 @@ Deno.test("ShopService", {
                 index: "",
               },
             },
+            _role: "VIEWER",
+            shipping_id: "",
           },
         });
 
@@ -159,6 +163,8 @@ Deno.test("ShopService", {
                 index: "",
               },
             },
+            _role: "VIEWER",
+            shipping_id: "",
           },
         });
 

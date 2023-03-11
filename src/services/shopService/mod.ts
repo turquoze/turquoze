@@ -15,7 +15,7 @@ export default class ShopService implements IShopService {
 
       const result = await client.queryObject<Shop>({
         text:
-          "INSERT INTO shops (name, currency, regions, payment_id, shipping_id, url, search_index, settings) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING public_id",
+          "INSERT INTO shops (name, currency, regions, payment_id, shipping_id, url, search_index, settings) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
         args: [
           params.data.name,
           params.data.currency,
