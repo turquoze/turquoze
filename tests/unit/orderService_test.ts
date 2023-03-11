@@ -33,6 +33,7 @@ Deno.test("OrderService", {
                 quantity: 1,
               },
             ],
+            exported: false,
           },
         });
 
