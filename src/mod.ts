@@ -9,6 +9,8 @@ import initPlugins from "./plugins/mod.ts";
 import addEvents from "./utils/events.ts";
 import DBCloser from "./middleware/dbCloser.ts";
 import { stringifyJSON } from "./utils/utils.ts";
+import notFoundPage from "./pages/404.tsx";
+import Render from "./utils/render.ts";
 
 initPlugins();
 addEvents();
@@ -23,12 +25,21 @@ app.use(api.routes());
 app.use(plugin.routes());
 
 app.use((ctx) => {
-  ctx.response.status = 404;
-  ctx.response.headers.set("content-type", "application/json");
-  ctx.response.body = JSON.stringify({
-    msg: "Not Found",
-    error: "NOT_FOUND",
-  });
+  const hit = ctx.request.accepts()?.find((x) => x == "text/html");
+
+  if (hit != undefined) {
+    const html = Render(notFoundPage);
+
+    ctx.response.status = 404;
+    ctx.response.body = html;
+  } else {
+    ctx.response.status = 404;
+    ctx.response.headers.set("content-type", "application/json");
+    ctx.response.body = JSON.stringify({
+      msg: "Not Found",
+      error: "NOT_FOUND",
+    });
+  }
 });
 
 app.addEventListener("listen", ({ port }) => {
