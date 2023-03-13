@@ -103,6 +103,14 @@ export interface CategoryLink {
   product: string;
 }
 
+export interface ShopLink {
+  id: number;
+  admin: string;
+  shop: string;
+  role: string;
+  created_at?: number;
+}
+
 export interface TurquozeState {
   shop: string;
   request_data: Shop;
