@@ -183,7 +183,7 @@ export interface Search {
 }
 
 export interface MeiliIndex {
-  product: Product;
+  products: Array<Product>;
   index: string;
 }
 
