@@ -21,7 +21,7 @@ const admin = new Router({
 admin.use(AuthGuard(app.state.container));
 admin.use(RoleGuard("ADMIN"));
 
-admin.use(settings.routes());
+admin.use(new settings(app.state.container).routes());
 admin.use(new tokens(app.state.container).routes());
 admin.use(new discounts(app.state.container).routes());
 admin.use(new shops(app.state.container).routes());

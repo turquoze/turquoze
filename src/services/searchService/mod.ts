@@ -49,9 +49,7 @@ export default class SearchService implements ISearchService {
       }
 
       const task = await localClient!.index<Product>(params.index).addDocuments(
-        [
-          params.product,
-        ],
+        params.products,
       );
       return task;
     } catch (error) {
