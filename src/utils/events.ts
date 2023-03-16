@@ -7,9 +7,14 @@ export default function addEvents() {
     (_event: TurquozeEvent, id: string) => {
       container.ProductService.Get({ id }).then((product) => {
         const index = container.Shop.search_index;
+        const productToIndex = {
+          ...product,
+        };
+        delete productToIndex.public_id;
+
         container.SearchService.ProductIndex({
           index: index,
-          product: product,
+          products: [productToIndex],
         }).then((task) => {
           console.info(task);
         }).catch((error) => console.log(`could not finish event`, error));
