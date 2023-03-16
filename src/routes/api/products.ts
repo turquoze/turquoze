@@ -77,7 +77,7 @@ export default class ProductsRoutes {
 
         ctx.response.body = stringifyJSON({
           info: {
-            hits: data.hits,
+            hits: data.estimatedTotalHits,
             offset: data.offset,
             limit: data.limit,
             facetsDistribution: data.facetDistribution,
