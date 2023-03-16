@@ -1,7 +1,7 @@
 import { MeiliSearch, Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { TurquozeState } from "../../utils/types.ts";
+import { Product, TurquozeState } from "../../utils/types.ts";
 
 export default class SettingsRoutes {
   #settings: Router<TurquozeState>;
@@ -23,9 +23,20 @@ export default class SettingsRoutes {
           apiKey: this.#Container.Shop.settings.meilisearch.api_key,
         });
 
+        const productsMapped: Array<Product> = products.map((product) => {
+          const obj = {
+            ...product,
+            id: Number(product.id),
+          };
+
+          delete obj.public_id;
+
+          return obj;
+        });
+
         await this.#Container.SearchService.ProductIndex({
           index: "products",
-          products: products,
+          products: productsMapped,
         }, client);
 
         ctx.response.status = 201;
