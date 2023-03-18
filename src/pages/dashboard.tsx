@@ -7,7 +7,7 @@
 import { h, Helmet } from "../deps.ts";
 import ShopSelector from "./shopselector.tsx";
 
-const App = () => (
+const App = (shops: Array<{ id: string; title: string }>) => (
   <div>
     <Helmet>
       <title>Test page</title>
@@ -17,7 +17,7 @@ const App = () => (
       />
     </Helmet>
 
-    <ShopSelector shops={[{ id: "test", title: "shop test" }]} />
+    <ShopSelector shops={shops} />
   </div>
 );
 

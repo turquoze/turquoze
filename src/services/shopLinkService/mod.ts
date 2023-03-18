@@ -56,6 +56,26 @@ export default class ShopLinkService implements IShopLinkService {
     }
   }
 
+  async GetShop(
+    params: { shopId: string; adminId: string },
+  ): Promise<ShopLink> {
+    try {
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<ShopLink>({
+        text: "SELECT * FROM shopslink WHERE admin = $1 AND shop = $2",
+        args: [params.adminId, params.shopId],
+      });
+
+      client.release();
+      return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
   async Delete(params: { data: ShopLink }): Promise<void> {
     try {
       const client = await this.pool.connect();

@@ -1,4 +1,4 @@
-import { Context, jose } from "../deps.ts";
+import { Context } from "../deps.ts";
 import { Container } from "../services/mod.ts";
 import { TurquozeState } from "../utils/types.ts";
 
@@ -9,21 +9,10 @@ export const CookieGuard =
 
     try {
       if (authCookie != undefined && authCookie != null) {
-        //TODO: get id from user
+        const admin = await container.AdminService.Get({ id: authCookie });
 
-        const data = await container.ShopService.Get({
-          id: "27dfd086-35d1-45f5-a921-b6866e5c24d8",
-        });
+        ctx.state.adminId = admin.public_id;
 
-        const signKey = await jose.importJWK(
-          JSON.parse(data.secret).pk,
-          "PS256",
-        );
-        data._signKey = signKey;
-        data._role = "ADMIN"; //TODO: get from user
-        container.Shop = data;
-
-        ctx.state.request_data = data;
         await next();
       } else {
         throw new Error("Not allowed");
