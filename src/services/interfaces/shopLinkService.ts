@@ -14,4 +14,9 @@ export default interface IShopLinkService {
     offset?: string;
     limit?: number;
   }): Promise<Array<Shop>>;
+
+  GetShop(params: {
+    shopId: string;
+    adminId: string;
+  }): Promise<ShopLink>;
 }

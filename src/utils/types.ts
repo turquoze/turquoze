@@ -107,7 +107,7 @@ export interface ShopLink {
   id: number;
   admin: string;
   shop: string;
-  role: string;
+  role: TurquozeRole;
   created_at?: number;
 }
 
@@ -115,6 +115,7 @@ export interface TurquozeState {
   shop: string;
   request_data: Shop;
   container: Container;
+  adminId?: string;
 }
 
 export interface PaymentRequest {
