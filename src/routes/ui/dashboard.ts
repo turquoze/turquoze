@@ -49,6 +49,10 @@ export default class DashBoardRoutes {
 
       ctx.response.body = html;
     });
+
+    this.#dashboard.get("/:id/products", ShopGuard(container), (ctx) => {
+      ctx.response.body = "products";
+    });
   }
 
   routes() {
