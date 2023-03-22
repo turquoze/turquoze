@@ -3,6 +3,7 @@ import admin from "./routes/admin/admin.ts";
 import api from "./routes/api/api.ts";
 import plugin from "./routes/plugin/mod.ts";
 import ui from "./routes/ui/ui.ts";
+import utils from "./routes/utils/utils.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
 import initPlugins from "./plugins/mod.ts";
@@ -23,6 +24,7 @@ app.use(ui.routes());
 app.use(admin.routes());
 app.use(api.routes());
 app.use(plugin.routes());
+app.use(utils.routes());
 
 app.use((ctx) => {
   const hit = ctx.request.accepts()?.find((x) => x == "text/html");
