@@ -1,4 +1,4 @@
-import { jose, Router, SearchParams } from "../deps.ts";
+import { jose, SearchParams } from "../deps.ts";
 import { Container } from "../services/mod.ts";
 
 export interface Product {
@@ -90,14 +90,6 @@ export interface Settings {
   };
 }
 
-export interface PluginData<T> {
-  id: string;
-  public_id: string;
-  plugin_id: string;
-  shop: string;
-  data: T;
-}
-
 export interface CategoryLink {
   category: string;
   product: string;
@@ -128,21 +120,6 @@ export interface PaymentRequest {
     type: "COMPANY" | "PERSONAL" | "UNKNOWN";
     data: Record<string, string>;
   };
-}
-
-export interface PaymentPlugin {
-  pay(
-    items: Array<{
-      name: string;
-      price: number;
-      quantity: number;
-    }>,
-    orderId: string,
-    amount: number,
-    shop: Shop,
-  ): Promise<PaymentPluginResponse>;
-
-  Routes(): Router;
 }
 
 export interface PaymentPluginResponse {
@@ -340,3 +317,14 @@ export type TurquozeRole =
   | "WEBSITE"
   | "VIEWER"
   | "USER";
+
+export interface Plugin {
+  id: number;
+  public_id: string;
+  created_at?: string;
+  name: string;
+  url: string;
+  type: "PAYMENT" | "SHIPPING" | "MISC";
+  shop: string;
+  token: string;
+}

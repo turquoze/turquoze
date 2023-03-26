@@ -141,6 +141,7 @@ model shops {
   categories   categories[]
   discounts    discounts[]
   orders       orders[]
+  plugins      plugins[]
   prices       prices[]
   products     products[]
   returns      returns[]
@@ -237,4 +238,16 @@ model shopslink {
   role       String    @default("VIEWER") @db.VarChar
   admins     admins    @relation(fields: [admin], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
   shops      shops     @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model plugins {
+  id         BigInt    @id @default(autoincrement())
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  public_id  String    @unique @db.VarChar
+  name       String?   @db.VarChar
+  url        String    @db.VarChar
+  type       String    @db.VarChar
+  shop       String    @db.Uuid
+  token      String    @db.VarChar
+  shops      shops     @relation(fields: [shop], references: [public_id], onDelete: Cascade, onUpdate: NoAction)
 }
