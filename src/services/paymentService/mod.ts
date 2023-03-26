@@ -5,7 +5,9 @@ import {
   PaymentRequest,
   PaymentRequestResponse,
   PaymentValidation,
+  Plugin,
   PriceCalculation,
+  Shop,
 } from "../../utils/types.ts";
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
@@ -55,9 +57,9 @@ export default class PaymentService implements IPaymentService {
         currency: params.data.shop.currency,
       });
 
-      /*const paymentProvider = this.#PluginService.Get<PaymentPlugin>(
-        params.data.shop.payment_id,
-      );*/
+      const paymentProvider = await this.#PluginService.Get({
+        id: params.data.shop.payment_id,
+      });
 
       const payCartItemsPromises = cart.items.map(async (item) => {
         const product = await this.#ProductService.Get({ id: item.product_id });
@@ -95,19 +97,12 @@ export default class PaymentService implements IPaymentService {
         },
       });
 
-      const payData: PaymentPluginResponse = {
-        type: "URL",
-        value: "https://pay.checkout.fish/x/test1",
-      };
-
-      /*= await paymentProvider.pay(
-        payCartItems,
-        order.public_id,
-        price.price.valueOf(),
-        params.data.shop,
-      );*/
-
-      //await this.#CartService.Delete({ id: params.data.cartId });
+      const payData = await this.#PaymentRequest({
+        plugin: paymentProvider,
+        orderId: order.public_id,
+        items: payCartItems,
+        shop: params.data.shop,
+      });
 
       return {
         data: {
@@ -128,6 +123,40 @@ export default class PaymentService implements IPaymentService {
         });
       }
     }
+  }
+
+  async #PaymentRequest(params: {
+    plugin: Plugin;
+    orderId: string;
+    items: Array<{ name: string; price: number; quantity: number }>;
+    shop: Shop;
+  }) {
+    const response = await fetch(
+      params.plugin.url + `/checkout/8f1c1016-31b9-47b9-8933-250e43bcede5`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${params.plugin.token}`,
+        },
+        body: JSON.stringify({
+          items: params.items,
+          currency: params.shop.currency,
+          orderId: params.orderId,
+          shop: {
+            url: params.shop.url,
+            regions: params.shop.regions,
+          },
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Not ok response");
+    }
+
+    const paymentResponse: PaymentPluginResponse = await response.json();
+
+    return paymentResponse;
   }
 
   async Price(
