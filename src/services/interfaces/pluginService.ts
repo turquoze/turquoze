@@ -1,5 +1,19 @@
-export default interface IPluginService {
-  Get<T>(id: string): T;
+import { Plugin } from "../../utils/types.ts";
 
-  Add(id: string, plugin: unknown): void;
+export default interface IPluginService {
+  Create(params: {
+    data: Plugin;
+  }): Promise<Plugin>;
+
+  Get(params: {
+    id: string;
+  }): Promise<Plugin>;
+
+  Update(params: {
+    data: Plugin;
+  }): Promise<Plugin>;
+
+  Delete(params: {
+    id: string;
+  }): Promise<void>;
 }

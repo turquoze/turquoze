@@ -1,7 +1,7 @@
 import IPaymentService from "../interfaces/paymentService.ts";
 import {
   CartItem,
-  PaymentPlugin,
+  PaymentPluginResponse,
   PaymentRequest,
   PaymentRequestResponse,
   PaymentValidation,
@@ -55,9 +55,9 @@ export default class PaymentService implements IPaymentService {
         currency: params.data.shop.currency,
       });
 
-      const paymentProvider = this.#PluginService.Get<PaymentPlugin>(
+      /*const paymentProvider = this.#PluginService.Get<PaymentPlugin>(
         params.data.shop.payment_id,
-      );
+      );*/
 
       const payCartItemsPromises = cart.items.map(async (item) => {
         const product = await this.#ProductService.Get({ id: item.product_id });
@@ -95,12 +95,17 @@ export default class PaymentService implements IPaymentService {
         },
       });
 
-      const payData = await paymentProvider.pay(
+      const payData: PaymentPluginResponse = {
+        type: "URL",
+        value: "https://pay.checkout.fish/x/test1",
+      };
+
+      /*= await paymentProvider.pay(
         payCartItems,
         order.public_id,
         price.price.valueOf(),
         params.data.shop,
-      );
+      );*/
 
       //await this.#CartService.Delete({ id: params.data.cartId });
 

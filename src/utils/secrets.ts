@@ -11,9 +11,6 @@ let TOKEN: string | undefined;
 let JWTKEY: string | undefined;
 let UPSTASH_REDIS_REST_URL: string | undefined;
 let UPSTASH_REDIS_REST_TOKEN: string | undefined;
-let MEILIHOST: string | undefined;
-let MEILIINDEX: string | undefined;
-let MEILIAPIKEY: string | undefined;
 let SUPABASE_KEY: string | undefined;
 let SUPABASE_URL: string | undefined;
 
@@ -85,9 +82,6 @@ export {
   DATABASE_PORT,
   DATABASE_USER,
   JWTKEY,
-  MEILIAPIKEY,
-  MEILIHOST,
-  MEILIINDEX,
   SUPABASE_KEY,
   SUPABASE_URL,
   TOKEN,
