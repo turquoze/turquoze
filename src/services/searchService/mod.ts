@@ -81,4 +81,28 @@ export default class SearchService implements ISearchService {
       });
     }
   }
+
+  async ProductFilterableAttributes(
+    index: string,
+    attributes: string[],
+    client?: MeiliSearch | undefined,
+  ): Promise<EnqueuedTask> {
+    try {
+      let localClient = this.#client;
+      if (this.#client == undefined) {
+        localClient = client;
+      }
+      if (localClient == undefined) {
+        throw new Error("No client connection");
+      }
+
+      const task = await localClient!.index<Product>(index)
+        .updateFilterableAttributes(attributes);
+      return task;
+    } catch (error) {
+      throw new DatabaseError("Index Add error", {
+        cause: error,
+      });
+    }
+  }
 }
