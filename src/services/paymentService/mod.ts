@@ -152,6 +152,8 @@ export default class PaymentService implements IPaymentService {
     );
 
     if (!response.ok) {
+      const error = await response.json();
+      console.error(`${response.status} ${JSON.stringify(error)}`);
       throw new Error("Not ok response");
     }
 
