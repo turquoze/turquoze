@@ -66,7 +66,7 @@ export default class PaymentService implements IPaymentService {
 
         return {
           name: product.title,
-          price: product.price,
+          price: parseInt(product.price.toString()),
           image_url: product.images[0],
           quantity: item.quantity,
         };
