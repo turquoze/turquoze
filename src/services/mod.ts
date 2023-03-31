@@ -77,48 +77,30 @@ export class Container {
 
     this.CacheService = new DefaultCacheService(redisClient);
     this.ProductService = new DefaultProductService(this.#pool);
-    this.CartService = new DefaultCartService(dbClient);
-    this.OrderService = new DefaultOrderService(
-      dbClient,
-    );
-    this.CategoryService = new DefaultCategoryService(
-      dbClient,
-    );
-    this.CategoryLinkService = new DefaultCategoryLinkService(
-      dbClient,
-    );
-    this.ShopService = new DefaultShopService(
-      dbClient,
-    );
-    this.PluginService = new DefaultPluginService(dbClient);
+    this.CartService = new DefaultCartService(this.#pool);
+    this.OrderService = new DefaultOrderService(this.#pool);
+    this.CategoryService = new DefaultCategoryService(this.#pool);
+    this.CategoryLinkService = new DefaultCategoryLinkService(this.#pool);
+    this.ShopService = new DefaultShopService(this.#pool);
+    this.PluginService = new DefaultPluginService(this.#pool);
     this.PaymentService = new DefaultPaymentService(
-      dbClient,
+      this.#pool,
       this.CartService,
       this.OrderService,
       this.ProductService,
       this.PluginService,
     );
-    this.DiscountService = new DefaultDiscountService(
-      dbClient,
-    );
+    this.DiscountService = new DefaultDiscountService(this.#pool);
     this.SearchService = new DefaultSearchService();
-    this.WarehouseService = new DefaultWarehouseService(
-      dbClient,
-    );
-    this.InventoryService = new DefaultInventoryService(
-      dbClient,
-    );
-    this.PriceService = new DefaultPriceService(
-      dbClient,
-    );
-    this.UserService = new DefaultUserService(dbClient);
-    this.AdminService = new DefaultAdminService(dbClient);
-    this.TokenService = new DefaultTokenService(
-      dbClient,
-    );
+    this.WarehouseService = new DefaultWarehouseService(this.#pool);
+    this.InventoryService = new DefaultInventoryService(this.#pool);
+    this.PriceService = new DefaultPriceService(this.#pool);
+    this.UserService = new DefaultUserService(this.#pool);
+    this.AdminService = new DefaultAdminService(this.#pool);
+    this.TokenService = new DefaultTokenService(this.#pool);
     this.NotificationService = new DefaultNotificationService();
-    this.SettingsService = new DefaultSettingsService(dbClient);
-    this.ShopLinkService = new DefaultShopLinkService(dbClient);
+    this.SettingsService = new DefaultSettingsService(this.#pool);
+    this.ShopLinkService = new DefaultShopLinkService(this.#pool);
   }
 
   Shop: Shop = {
