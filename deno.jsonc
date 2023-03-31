@@ -17,6 +17,7 @@
     "coverage": "deno coverage cov_profile",
     "bench": "deno bench --unstable --allow-net --allow-env --allow-read",
     "db:push": "deno run -A --unstable npm:prisma db push",
-    "db:pull": "deno run -A --unstable npm:prisma db pull"
+    "db:pull": "deno run -A --unstable npm:prisma db pull",
+    "db:init": "deno run --allow-net --allow-env --allow-read ./init/mod.ts"
   }
 }

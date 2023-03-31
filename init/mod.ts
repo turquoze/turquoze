@@ -1,78 +1,109 @@
-import container from "../src/services/mod.ts";
+import { Container } from "../src/services/mod.ts";
 import { faker } from "npm:@faker-js/faker";
 import { Category, Product } from "../src/utils/types.ts";
+import { postgres } from "../src/deps.ts";
 
-const { public_id } = await container.ShopService.Create({
-  data: {
-    name: "Demo - Store",
-    regions: ["SE"],
-    url: "https://shop.example.com",
-    shipping_id: "",
-    payment_id: "",
-    currency: "SEK",
-    secret: "",
-    settings: {
-      meilisearch: {
-        api_key: "",
-        host: "",
-        index: "",
+const hostname = "";
+const password = "";
+const database = "";
+const username = "";
+const port = 0;
+
+const pool = new postgres.Pool(
+  {
+    hostname: hostname,
+    password: password,
+    database: database,
+    user: username,
+    port: port,
+  },
+  3,
+);
+const container = new Container(pool);
+
+console.log("Start - Demo init");
+
+try {
+  const { public_id } = await container.ShopService.Create({
+    data: {
+      name: "Demo - Store",
+      regions: ["SE"],
+      url: "https://shop.example.com",
+      shipping_id: "",
+      payment_id: undefined,
+      currency: "SEK",
+      secret: "",
+      settings: {
+        meilisearch: {
+          api_key: "",
+          host: "https://example.com",
+          index: "products",
+        },
       },
+      search_index: "",
+      id: 0,
+      public_id: crypto.randomUUID(),
+      _role: "WEBSITE",
+      _signKey: new Uint8Array(),
     },
-    search_index: "",
-    id: 0,
-    public_id: "",
-    _role: "WEBSITE",
-    _signKey: new Uint8Array(),
-  },
-});
-
-const categories: Array<string> = [];
-const products: Array<string> = [];
-
-for (let index = 0; index < 10; index++) {
-  const category = GenerateCategory();
-  const categoryCreated = await container.CategoryService.Create({
-    data: category,
   });
 
-  categories.push(categoryCreated.public_id);
-}
+  const categories: Array<string> = [];
+  const products: Array<string> = [];
 
-for (let index = 0; index < 100; index++) {
-  const product = GenerateProduct();
-  const productCreated = await container.ProductService.Create({
-    data: product,
-  });
+  for (let index = 0; index < 10; index++) {
+    const category = GenerateCategory(public_id);
+    const categoryCreated = await container.CategoryService.Create({
+      data: category,
+    });
 
-  products.push(productCreated.public_id!);
-}
-
-const warehouse = await container.WarehouseService.Create({
-  data: {
-    address: faker.address.streetAddress(),
-    country: faker.address.countryCode("alpha-2"),
-    name: faker.address.cityName(),
-    shop: public_id,
-    id: 0,
-    public_id: "",
-  },
-});
-
-for (const product in products) {
-  await GenerateInventoryItem(
-    warehouse.public_id,
-    product,
-    faker.datatype.number({ max: 800 }),
-  );
-}
-
-const chunkSize = 10;
-for (let i = 0; i < products.length; i += chunkSize) {
-  const chunk = products.slice(i, i + chunkSize);
-
-  for (const product in chunk) {
-    await GenerateCategoryLink(product, categories[i / chunkSize]);
+    categories.push(categoryCreated.public_id);
   }
+
+  for (let index = 0; index < 100; index++) {
+    try {
+      const product = GenerateProduct(public_id);
+      const productCreated = await container.ProductService.Create({
+        data: product,
+      });
+
+      products.push(productCreated.public_id!);
+    } catch (error) {
+      console.warn("products error", error);
+    }
+  }
+
+  const warehouse = await container.WarehouseService.Create({
+    data: {
+      address: faker.address.streetAddress(),
+      country: faker.address.countryCode("alpha-2"),
+      name: faker.address.cityName(),
+      shop: public_id,
+      id: 0,
+      public_id: "",
+    },
+  });
+
+  for (const product in products) {
+    await GenerateInventoryItem(
+      warehouse.public_id,
+      product,
+      faker.datatype.number({ max: 800 }),
+    );
+  }
+
+  const chunkSize = 10;
+  for (let i = 0; i < products.length; i += chunkSize) {
+    const chunk = products.slice(i, i + chunkSize);
+
+    for (const product in chunk) {
+      await GenerateCategoryLink(product, categories[i / chunkSize]);
+    }
+  }
+} catch (error) {
+  console.warn(error);
+} finally {
+  console.log("End - Demo init");
 }
 
 async function GenerateCategoryLink(product: string, category: string) {
@@ -100,16 +131,16 @@ async function GenerateInventoryItem(
   });
 }
 
-function GenerateCategory(): Category {
+function GenerateCategory(public_id: string): Category {
   return {
     id: 0,
     public_id: "",
-    name: faker.commerce.department(),
+    name: `${faker.commerce.department()} - ${faker.commerce.productName()}`,
     shop: public_id,
   };
 }
 
-function GenerateProduct(): Product {
+function GenerateProduct(public_id: string): Product {
   return {
     id: 0,
     active: true,

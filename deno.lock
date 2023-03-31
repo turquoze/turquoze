@@ -952,5 +952,16 @@
     "https://esm.sh/v92/stripe@10.6.0/types/lib.d.ts": "168dd8b0ba73f4a223b9f99a340d7554164a1dcd08b6456ca5ebcf6cde73005f",
     "https://esm.sh/v92/stripe@10.6.0/types/net/net.d.ts": "16ebf284d16e3a9720f35241e56d9031dc71012c0d23394c5c148469afe0cc68",
     "https://esm.sh/v92/stripe@10.6.0/types/shared.d.ts": "df79df836afa222e3854ff092f119128d5a6c6f2507bf206d102a09a5e6b6b3d"
+  },
+  "npm": {
+    "specifiers": {
+      "@faker-js/faker": "@faker-js/faker@7.6.0"
+    },
+    "packages": {
+      "@faker-js/faker@7.6.0": {
+        "integrity": "sha512-XK6BTq1NDMo9Xqw/YkYyGjSsg44fbNwYRx7QK2CuoQgyy+f1rrTDHoExVM5PsyXCtfl2vs2vVJ0MN0yN6LppRw==",
+        "dependencies": {}
+      }
+    }
   }
 }
