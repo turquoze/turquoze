@@ -70,8 +70,8 @@ export interface Shop {
   id: number;
   public_id: string;
   regions: Array<string>;
-  payment_id: string;
-  shipping_id: string;
+  payment_id?: string;
+  shipping_id?: string;
   currency: string;
   name: string;
   url: string;

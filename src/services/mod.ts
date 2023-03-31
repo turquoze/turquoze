@@ -43,54 +43,84 @@ import IShopLinkService from "./interfaces/shopLinkService.ts";
 import dbClient from "../clients/db.ts";
 import redisClient from "../clients/redis.ts";
 import { Shop } from "../utils/types.ts";
+import { postgres } from "../deps.ts";
 
 export class Container {
-  CacheService: ICacheService = new DefaultCacheService(redisClient);
-  ProductService: IProductService = new DefaultProductService(
-    dbClient,
-  );
-  CartService: ICartService = new DefaultCartService(dbClient);
-  OrderService: IOrderService = new DefaultOrderService(
-    dbClient,
-  );
-  CategoryService: ICategoryService = new DefaultCategoryService(
-    dbClient,
-  );
-  CategoryLinkService: ICategoryLinkService = new DefaultCategoryLinkService(
-    dbClient,
-  );
-  ShopService: IShopService = new DefaultShopService(
-    dbClient,
-  );
-  PluginService: IPluginService = new DefaultPluginService(dbClient);
-  PaymentService: IPaymentService = new DefaultPaymentService(
-    dbClient,
-    this.CartService,
-    this.OrderService,
-    this.ProductService,
-    this.PluginService,
-  );
-  DiscountService: IDiscountService = new DefaultDiscountService(
-    dbClient,
-  );
-  SearchService: ISearchService = new DefaultSearchService();
-  WarehouseService: IWarehouseService = new DefaultWarehouseService(
-    dbClient,
-  );
-  InventoryService: IInventoryService = new DefaultInventoryService(
-    dbClient,
-  );
-  PriceService: IPriceService = new DefaultPriceService(
-    dbClient,
-  );
-  UserService: IUserService = new DefaultUserService(dbClient);
-  AdminService: IAdminService = new DefaultAdminService(dbClient);
-  TokenService: ITokenService = new DefaultTokenService(
-    dbClient,
-  );
-  NotificationService: INotificationService = new DefaultNotificationService();
-  SettingsService: ISettingsService = new DefaultSettingsService(dbClient);
-  ShopLinkService: IShopLinkService = new DefaultShopLinkService(dbClient);
+  #pool: postgres.Pool;
+  CacheService: ICacheService;
+  ProductService: IProductService;
+  CartService: ICartService;
+  OrderService: IOrderService;
+  CategoryService: ICategoryService;
+  CategoryLinkService: ICategoryLinkService;
+  ShopService: IShopService;
+  PluginService: IPluginService;
+  PaymentService: IPaymentService;
+  DiscountService: IDiscountService;
+  SearchService: ISearchService;
+  WarehouseService: IWarehouseService;
+  InventoryService: IInventoryService;
+  PriceService: IPriceService;
+  UserService: IUserService;
+  AdminService: IAdminService;
+  TokenService: ITokenService;
+  NotificationService: INotificationService;
+  SettingsService: ISettingsService;
+  ShopLinkService: IShopLinkService;
+
+  constructor(db?: postgres.Pool) {
+    if (db == undefined) {
+      this.#pool = dbClient;
+    } else {
+      this.#pool = db;
+    }
+
+    this.CacheService = new DefaultCacheService(redisClient);
+    this.ProductService = new DefaultProductService(this.#pool);
+    this.CartService = new DefaultCartService(dbClient);
+    this.OrderService = new DefaultOrderService(
+      dbClient,
+    );
+    this.CategoryService = new DefaultCategoryService(
+      dbClient,
+    );
+    this.CategoryLinkService = new DefaultCategoryLinkService(
+      dbClient,
+    );
+    this.ShopService = new DefaultShopService(
+      dbClient,
+    );
+    this.PluginService = new DefaultPluginService(dbClient);
+    this.PaymentService = new DefaultPaymentService(
+      dbClient,
+      this.CartService,
+      this.OrderService,
+      this.ProductService,
+      this.PluginService,
+    );
+    this.DiscountService = new DefaultDiscountService(
+      dbClient,
+    );
+    this.SearchService = new DefaultSearchService();
+    this.WarehouseService = new DefaultWarehouseService(
+      dbClient,
+    );
+    this.InventoryService = new DefaultInventoryService(
+      dbClient,
+    );
+    this.PriceService = new DefaultPriceService(
+      dbClient,
+    );
+    this.UserService = new DefaultUserService(dbClient);
+    this.AdminService = new DefaultAdminService(dbClient);
+    this.TokenService = new DefaultTokenService(
+      dbClient,
+    );
+    this.NotificationService = new DefaultNotificationService();
+    this.SettingsService = new DefaultSettingsService(dbClient);
+    this.ShopLinkService = new DefaultShopLinkService(dbClient);
+  }
+
   Shop: Shop = {
     id: 0,
     public_id: "",
