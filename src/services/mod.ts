@@ -43,10 +43,11 @@ import IShopLinkService from "./interfaces/shopLinkService.ts";
 import dbClient from "../clients/db.ts";
 import redisClient from "../clients/redis.ts";
 import { Shop } from "../utils/types.ts";
-import { postgres } from "../deps.ts";
+import { postgres, Redis } from "../deps.ts";
 
 export class Container {
   #pool: postgres.Pool;
+  #redis: Redis;
   CacheService: ICacheService;
   ProductService: IProductService;
   CartService: ICartService;
@@ -68,14 +69,20 @@ export class Container {
   SettingsService: ISettingsService;
   ShopLinkService: IShopLinkService;
 
-  constructor(db?: postgres.Pool) {
+  constructor(db?: postgres.Pool, redis?: Redis) {
     if (db == undefined) {
       this.#pool = dbClient;
     } else {
       this.#pool = db;
     }
 
-    this.CacheService = new DefaultCacheService(redisClient);
+    if (redis == undefined) {
+      this.#redis = redisClient;
+    } else {
+      this.#redis = redis;
+    }
+
+    this.CacheService = new DefaultCacheService(this.#redis);
     this.ProductService = new DefaultProductService(this.#pool);
     this.CartService = new DefaultCartService(this.#pool);
     this.OrderService = new DefaultOrderService(this.#pool);
