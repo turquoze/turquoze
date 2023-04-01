@@ -1,9 +1,4 @@
-import {
-  PaymentPlugin,
-  PaymentPluginResponse,
-  Shop,
-} from "../src/utils/types.ts";
-import { MeiliSearch, postgres, Redis, Router } from "./test_deps.ts";
+import { MeiliSearch, postgres, Redis } from "../src/deps.ts";
 import {
   DATABASE,
   DATABASE_CERT,
@@ -16,26 +11,6 @@ import {
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,
 } from "./test_secrets.ts";
-
-export class TestCheckout implements PaymentPlugin {
-  async pay(
-    _items: { name: string; price: number; quantity: number }[],
-    _orderId: string,
-    _amount: number,
-    _shop: Shop,
-  ): Promise<PaymentPluginResponse> {
-    await new Promise((resolve) => setTimeout(resolve, 1));
-    return {
-      type: "URL",
-      value: "https://example.com",
-    };
-  }
-
-  Routes(): Router<Record<string, unknown>> {
-    const router = new Router();
-    return router;
-  }
-}
 
 export const pool = new postgres.Pool(
   {
