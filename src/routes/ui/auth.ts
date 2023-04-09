@@ -1,8 +1,8 @@
 import { Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
-import loginPage from "../../pages/login.tsx";
-import Render from "../../utils/render.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
 
 export default class AuthRoutes {
   #auth: Router<TurquozeState>;
@@ -11,12 +11,6 @@ export default class AuthRoutes {
     this.#Container = container;
     this.#auth = new Router<TurquozeState>({
       prefix: "/auth",
-    });
-
-    this.#auth.get("/login", (ctx) => {
-      const html = Render(loginPage);
-
-      ctx.response.body = html;
     });
 
     this.#auth.post("/login", async (ctx) => {
@@ -32,22 +26,28 @@ export default class AuthRoutes {
             password,
           });
 
-          const nextWeek = new Date();
+          //TODO: create a token
+
+          /*const nextWeek = new Date();
           nextWeek.setDate(new Date().getDate() + 7);
           ctx.cookies.set("TurquozeAuth", admin.public_id, {
             expires: nextWeek,
+          });*/
+
+          ctx.response.body = stringifyJSON({
+            token: `token-${admin.public_id}`,
           });
-
-          ctx.response.redirect("/ui/dashboard");
+          ctx.response.headers.set("content-type", "application/json");
         } else {
-          const html = Render(loginPage(email));
-
-          ctx.response.body = html;
+          throw new Error("No username/passord")
         }
-      } catch (_error) {
-        const html = Render(loginPage);
-
-        ctx.response.body = html;
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
       }
     });
 
