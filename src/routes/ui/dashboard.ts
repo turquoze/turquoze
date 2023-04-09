@@ -1,9 +1,8 @@
 import { Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
-import dashboardPage from "../../pages/dashboard.tsx";
-import shopPage from "../../pages/shop.tsx";
-import Render from "../../utils/render.ts";
+import { stringifyJSON } from "../../utils/utils.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
 import ShopGuard from "../../middleware/shopGuard.ts";
 
@@ -33,25 +32,18 @@ export default class DashBoardRoutes {
           };
         });
 
-        const html = Render(() => dashboardPage(shopLinks));
-
-        ctx.response.body = html;
-      } catch (_error) {
-        const html = Render(() => dashboardPage([]));
-
-        ctx.response.status = 500;
-        ctx.response.body = html;
+        ctx.response.body = stringifyJSON({
+          shops: shopLinks,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
       }
-    });
-
-    this.#dashboard.get("/:id", ShopGuard(container), (ctx) => {
-      const html = Render(shopPage);
-
-      ctx.response.body = html;
-    });
-
-    this.#dashboard.get("/:id/products", ShopGuard(container), (ctx) => {
-      ctx.response.body = "products";
     });
   }
 
