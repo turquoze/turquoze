@@ -3,8 +3,7 @@ import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import CookieGuard from "../../middleware/cookieGuard.ts";
-import ShopGuard from "../../middleware/shopGuard.ts";
+import TokenGuard from "../../middleware/tokenGuard.ts";
 
 export default class DashBoardRoutes {
   #dashboard: Router<TurquozeState>;
@@ -15,7 +14,7 @@ export default class DashBoardRoutes {
       prefix: "/dashboard",
     });
 
-    this.#dashboard.use(CookieGuard(container));
+    this.#dashboard.use(TokenGuard());
 
     this.#dashboard.get("/", async (ctx) => {
       try {
