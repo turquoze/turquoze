@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { jose, Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
@@ -26,20 +26,44 @@ export default class AuthRoutes {
             password,
           });
 
-          //TODO: create a token
+          const shops = await this.#Container.ShopLinkService.GetShops({
+            id: admin.public_id,
+          });
 
-          /*const nextWeek = new Date();
-          nextWeek.setDate(new Date().getDate() + 7);
-          ctx.cookies.set("TurquozeAuth", admin.public_id, {
-            expires: nextWeek,
-          });*/
+          const KID = ctx.state.request_data.public_id;
+          const iat = Math.floor(Date.now() / 1000);
+          const exp = iat + 15 * 60;
+          const claims = {
+            iat,
+            exp,
+            shops,
+            adminId: admin.public_id,
+          };
+
+          const iatRefresh = Math.floor(Date.now() / 1000);
+          const expRefresh = iat + 60 * 60;
+          const claimsRefresh = {
+            iat: iatRefresh,
+            exp: expRefresh,
+            adminId: admin.public_id,
+          };
+
+          const jwt = await new jose.SignJWT(claims)
+            .setProtectedHeader({ typ: "JWT", alg: "PS256", kid: KID })
+            .sign(ctx.state.request_data._signKey);
+
+          const refresh = await new jose.SignJWT(claimsRefresh)
+            .setProtectedHeader({ typ: "JWT", alg: "PS256" })
+            .sign(ctx.state.request_data._signKey);
 
           ctx.response.body = stringifyJSON({
-            token: `token-${admin.public_id}`,
+            token: jwt,
+            refreshToken: refresh,
+            expire: exp,
           });
           ctx.response.headers.set("content-type", "application/json");
         } else {
-          throw new Error("No username/passord")
+          throw new Error("No username/passord");
         }
       } catch (error) {
         const data = ErrorHandler(error);
@@ -49,12 +73,6 @@ export default class AuthRoutes {
           message: data.message,
         });
       }
-    });
-
-    this.#auth.post("/logout", (ctx) => {
-      ctx.cookies.delete("TurquozeAuth");
-
-      ctx.response.redirect("/ui/auth/login");
     });
   }
 
