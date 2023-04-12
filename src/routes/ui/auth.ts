@@ -3,6 +3,8 @@ import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
+import { SHARED_SECRET } from "../../utils/secrets.ts";
+const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class AuthRoutes {
   #auth: Router<TurquozeState>;
@@ -41,7 +43,7 @@ export default class AuthRoutes {
           };
 
           const iatRefresh = Math.floor(Date.now() / 1000);
-          const expRefresh = iat + 60 * 60;
+          const expRefresh = iatRefresh + 60 * 60;
           const claimsRefresh = {
             iat: iatRefresh,
             exp: expRefresh,
@@ -50,11 +52,11 @@ export default class AuthRoutes {
 
           const jwt = await new jose.SignJWT(claims)
             .setProtectedHeader({ typ: "JWT", alg: "PS256", kid: KID })
-            .sign(ctx.state.request_data._signKey);
+            .sign(SHARED_SECRET_KEY);
 
           const refresh = await new jose.SignJWT(claimsRefresh)
             .setProtectedHeader({ typ: "JWT", alg: "PS256" })
-            .sign(ctx.state.request_data._signKey);
+            .sign(SHARED_SECRET_KEY);
 
           ctx.response.body = stringifyJSON({
             token: jwt,
