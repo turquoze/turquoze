@@ -43,7 +43,7 @@ export default class ShopLinkService implements IShopLinkService {
 
       const result = await client.queryObject<Shop>({
         text:
-          "SELECT shops.* FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = $1 LIMIT $2 OFFSET $3",
+          "SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = $1 LIMIT $2 OFFSET $3",
         args: [params.id, params.limit, params.offset],
       });
 
