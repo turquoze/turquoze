@@ -1,4 +1,4 @@
-import { Shop, ShopLink } from "../../utils/types.ts";
+import { ShopLink, ShopLinkData } from "../../utils/types.ts";
 
 export default interface IShopLinkService {
   Link(params: {
@@ -13,7 +13,7 @@ export default interface IShopLinkService {
     id: string;
     offset?: string;
     limit?: number;
-  }): Promise<Array<Shop>>;
+  }): Promise<Array<ShopLinkData>>;
 
   GetShop(params: {
     shopId: string;

@@ -10,6 +10,8 @@ import prices from "./prices.ts";
 import users from "./users.ts";
 import categories from "./categories.ts";
 import products from "./products.ts";
+import auth from "./auth.ts";
+import dashboard from "./dashboard.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
 import app from "../../app.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
@@ -17,6 +19,9 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 const admin = new Router({
   prefix: "/admin",
 });
+
+admin.use(new auth(app.state.container).routes());
+admin.use(new dashboard(app.state.container).routes());
 
 admin.use(AuthGuard(app.state.container));
 admin.use(RoleGuard("ADMIN"));
