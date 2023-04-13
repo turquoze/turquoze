@@ -1,4 +1,4 @@
-import { Shop, ShopLink } from "../../utils/types.ts";
+import { ShopLink, ShopLinkData } from "../../utils/types.ts";
 import IShopLinkService from "../interfaces/shopLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { Pool } from "../../deps.ts";
@@ -33,7 +33,7 @@ export default class ShopLinkService implements IShopLinkService {
       offset?: string | undefined;
       limit?: number | undefined;
     },
-  ): Promise<Shop[]> {
+  ): Promise<ShopLinkData[]> {
     try {
       const client = await this.pool.connect();
 
@@ -41,7 +41,7 @@ export default class ShopLinkService implements IShopLinkService {
         params.limit = 10;
       }
 
-      const result = await client.queryObject<Shop>({
+      const result = await client.queryObject<ShopLinkData>({
         text:
           "SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = $1 LIMIT $2 OFFSET $3",
         args: [params.id, params.limit, params.offset],

@@ -58,7 +58,7 @@ export default class PaymentService implements IPaymentService {
       });
 
       const paymentProvider = await this.#PluginService.Get({
-        id: params.data.shop.payment_id,
+        id: params.data.shop.payment_id!,
       });
 
       const payCartItemsPromises = cart.items.map(async (item) => {

@@ -82,6 +82,10 @@ export interface Shop {
   _role: TurquozeRole;
 }
 
+export interface ShopLinkData extends Shop {
+  role: TurquozeRole;
+}
+
 export interface Settings {
   meilisearch: {
     index: string;
