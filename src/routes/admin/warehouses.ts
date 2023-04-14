@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Warehouse } from "../../utils/types.ts";
@@ -15,7 +16,7 @@ export default class WarehousesRoutes {
       prefix: "/warehouses",
     });
 
-    this.#warehouses.get("/", async (ctx) => {
+    this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await Get<Array<Warehouse>>({
           id: `warehousesGetMany-${10}-${undefined}`,
@@ -36,7 +37,7 @@ export default class WarehousesRoutes {
       }
     });
 
-    this.#warehouses.post("/", async (ctx) => {
+    this.#warehouses.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -72,7 +73,7 @@ export default class WarehousesRoutes {
       }
     });
 
-    this.#warehouses.put("/:id", async (ctx) => {
+    this.#warehouses.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -113,7 +114,7 @@ export default class WarehousesRoutes {
       }
     });
 
-    this.#warehouses.get("/:id", async (ctx) => {
+    this.#warehouses.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
@@ -140,7 +141,7 @@ export default class WarehousesRoutes {
       }
     });
 
-    this.#warehouses.delete("/:id", async (ctx) => {
+    this.#warehouses.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,

@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { TurquozeState, User } from "../../utils/types.ts";
@@ -14,7 +15,7 @@ export default class UsersRoutes {
       prefix: "/users",
     });
 
-    this.#users.get("/", async (ctx) => {
+    this.#users.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await Get<Array<User>>({
           id: `usersGetMany-${10}-${undefined}`,
@@ -35,7 +36,7 @@ export default class UsersRoutes {
       }
     });
 
-    this.#users.post("/", async (ctx) => {
+    this.#users.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -71,7 +72,7 @@ export default class UsersRoutes {
       }
     });
 
-    this.#users.get("/:id", async (ctx) => {
+    this.#users.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
@@ -98,7 +99,7 @@ export default class UsersRoutes {
       }
     });
 
-    this.#users.put("/:id", async (ctx) => {
+    this.#users.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");

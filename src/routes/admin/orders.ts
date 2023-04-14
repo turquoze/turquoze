@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { TurquozeState } from "../../utils/types.ts";
@@ -14,6 +15,8 @@ export default class OrdersRoutes {
     this.#orders = new Router<TurquozeState>({
       prefix: "/orders",
     });
+
+    this.#orders.use(RoleGuard("VIEWER"));
 
     this.#orders.get("/", async (ctx) => {
       try {

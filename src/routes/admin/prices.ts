@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Price, TurquozeState } from "../../utils/types.ts";
@@ -15,7 +16,7 @@ export default class PricesRoutes {
       prefix: "/prices",
     });
 
-    this.#prices.get("/", async (ctx) => {
+    this.#prices.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await Get({
           id: `pricesGetMany-${10}-${undefined}`,
@@ -36,7 +37,7 @@ export default class PricesRoutes {
       }
     });
 
-    this.#prices.post("/", async (ctx) => {
+    this.#prices.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -72,7 +73,7 @@ export default class PricesRoutes {
       }
     });
 
-    this.#prices.put("/:id", async (ctx) => {
+    this.#prices.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -113,7 +114,7 @@ export default class PricesRoutes {
       }
     });
 
-    this.#prices.get("/:id", async (ctx) => {
+    this.#prices.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
@@ -140,7 +141,7 @@ export default class PricesRoutes {
       }
     });
 
-    this.#prices.delete("/:id", async (ctx) => {
+    this.#prices.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,

@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Token } from "../../utils/types.ts";
@@ -14,6 +15,8 @@ export default class TokensRoutes {
     this.#tokens = new Router({
       prefix: "/tokens",
     });
+
+    this.#tokens.use(RoleGuard("ADMIN"));
 
     this.#tokens.get("/", async (ctx) => {
       try {

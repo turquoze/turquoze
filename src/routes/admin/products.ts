@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, TurquozeState } from "../../utils/types.ts";
@@ -15,7 +16,7 @@ export default class ProductsRoutes {
       prefix: "/products",
     });
 
-    this.#products.post("/", async (ctx) => {
+    this.#products.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -52,7 +53,7 @@ export default class ProductsRoutes {
       }
     });
 
-    this.#products.put("/:id", async (ctx) => {
+    this.#products.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -93,7 +94,7 @@ export default class ProductsRoutes {
       }
     });
 
-    this.#products.delete("/:id", async (ctx) => {
+    this.#products.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,

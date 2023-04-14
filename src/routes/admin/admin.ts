@@ -14,7 +14,6 @@ import auth from "./auth.ts";
 import dashboard from "./dashboard.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
 import app from "../../app.ts";
-import RoleGuard from "../../middleware/roleGuard.ts";
 
 const admin = new Router({
   prefix: "/admin",
@@ -24,7 +23,6 @@ admin.use(new auth(app.state.container).routes());
 admin.use(new dashboard(app.state.container).routes());
 
 admin.use(AuthGuard(app.state.container));
-admin.use(RoleGuard("ADMIN"));
 
 admin.use(new settings(app.state.container).routes());
 admin.use(new tokens(app.state.container).routes());
