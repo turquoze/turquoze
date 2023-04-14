@@ -1,4 +1,5 @@
 import { MeiliSearch, Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, TurquozeState } from "../../utils/types.ts";
@@ -11,6 +12,8 @@ export default class SettingsRoutes {
     this.#settings = new Router<TurquozeState>({
       prefix: "/settings",
     });
+
+    this.#settings.use(RoleGuard("ADMIN"));
 
     this.#settings.post("/re-index", async (ctx) => {
       try {

@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Inventory } from "../../utils/types.ts";
@@ -15,7 +16,7 @@ export default class InventoriesRoutes {
       prefix: "/inventories",
     });
 
-    this.#inventories.post("/", async (ctx) => {
+    this.#inventories.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -49,7 +50,7 @@ export default class InventoriesRoutes {
       }
     });
 
-    this.#inventories.put("/:id", async (ctx) => {
+    this.#inventories.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -89,7 +90,7 @@ export default class InventoriesRoutes {
       }
     });
 
-    this.#inventories.get("/:id", async (ctx) => {
+    this.#inventories.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
@@ -116,7 +117,7 @@ export default class InventoriesRoutes {
       }
     });
 
-    this.#inventories.delete("/:id", async (ctx) => {
+    this.#inventories.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,

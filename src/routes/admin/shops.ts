@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Shop } from "../../utils/types.ts";
@@ -14,6 +15,8 @@ export default class RegionsRoutes {
     this.#shops = new Router({
       prefix: "/shops",
     });
+
+    this.#shops.use(RoleGuard("SUPERADMIN"));
 
     this.#shops.post("/", async (ctx) => {
       try {

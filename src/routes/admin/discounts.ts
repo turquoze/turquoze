@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Discount } from "../../utils/types.ts";
@@ -15,7 +16,7 @@ export default class DiscountsRoutes {
       prefix: "/discounts",
     });
 
-    this.#discounts.post("/", async (ctx) => {
+    this.#discounts.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -52,7 +53,7 @@ export default class DiscountsRoutes {
       }
     });
 
-    this.#discounts.get("/", async (ctx) => {
+    this.#discounts.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await Get<Array<Discount>>({
           id: `discountsGetMany-${10}-${undefined}`,
@@ -73,7 +74,7 @@ export default class DiscountsRoutes {
       }
     });
 
-    this.#discounts.get("/:id", async (ctx) => {
+    this.#discounts.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
@@ -100,7 +101,7 @@ export default class DiscountsRoutes {
       }
     });
 
-    this.#discounts.delete("/:id", async (ctx) => {
+    this.#discounts.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,

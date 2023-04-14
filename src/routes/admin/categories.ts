@@ -1,4 +1,5 @@
 import { Router } from "../../deps.ts";
+import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Category, CategoryLink } from "../../utils/types.ts";
@@ -19,7 +20,7 @@ export default class CategoriesRoutes {
       prefix: "/categories",
     });
 
-    this.#categories.get("/", async (ctx) => {
+    this.#categories.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await Get<Array<Category>>({
           id: `categoryGetMany-${10}-${10}`,
@@ -40,7 +41,7 @@ export default class CategoriesRoutes {
       }
     });
 
-    this.#categories.post("/", async (ctx) => {
+    this.#categories.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -54,7 +55,7 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        category.shop = ctx.state.region;
+        category.shop = ctx.state.request_data.public_id;
 
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);
@@ -76,7 +77,7 @@ export default class CategoriesRoutes {
       }
     });
 
-    this.#categories.get("/:id", async (ctx) => {
+    this.#categories.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
@@ -103,7 +104,7 @@ export default class CategoriesRoutes {
       }
     });
 
-    this.#categories.put("/:id", async (ctx) => {
+    this.#categories.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -118,7 +119,7 @@ export default class CategoriesRoutes {
         }
 
         category.public_id = ctx.params.id;
-        category.shop = ctx.state.region;
+        category.shop = ctx.state.request_data.public_id;
 
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);
@@ -144,7 +145,7 @@ export default class CategoriesRoutes {
       }
     });
 
-    this.#categories.post("/link", async (ctx) => {
+    this.#categories.post("/link", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -179,7 +180,7 @@ export default class CategoriesRoutes {
       }
     });
 
-    this.#categories.delete("/link", async (ctx) => {
+    this.#categories.delete("/link", RoleGuard("ADMIN"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -214,7 +215,7 @@ export default class CategoriesRoutes {
       }
     });
 
-    this.#categories.delete("/:id", async (ctx) => {
+    this.#categories.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
         await UuidSchema.validate({
           id: ctx.params.id,
