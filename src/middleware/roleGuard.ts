@@ -8,11 +8,11 @@ export const RoleGuard =
     if (isAllowed(role, userRole)) {
       await next();
     } else {
-      ctx.response.status = 401;
+      ctx.response.status = 403;
       ctx.response.headers.set("content-type", "application/json");
       ctx.response.body = JSON.stringify({
         msg: "Not allowed",
-        error: "NO_TOKEN",
+        error: "NO_PERMISSION",
       });
     }
   };
