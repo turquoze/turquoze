@@ -17,14 +17,19 @@ export const TokenGuard =
         ctx.state.adminId = result.payload.adminId as string;
         await next();
       } else {
-        throw new Error("Not allowed");
+        ctx.response.status = 401;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          msg: "Not allowed",
+          error: "NO_TOKEN",
+        });
       }
     } catch (_error) {
-      ctx.response.status = 401;
+      ctx.response.status = 403;
       ctx.response.headers.set("content-type", "application/json");
       ctx.response.body = JSON.stringify({
         msg: "Not allowed",
-        error: "NO_TOKEN",
+        error: "NO_PERMISSION",
       });
     }
   };
