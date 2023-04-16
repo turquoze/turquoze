@@ -14,14 +14,13 @@ Deno.test("ShopService", {
     name: "Create",
     fn: async () => {
       try {
-        const data = await region.Create({
+        const shop = await region.Create({
           data: {
             id: 0,
             public_id: "",
             currency: "EUR",
             name: "TEST",
             regions: ["SE", "NO", "DK", "FI"],
-            payment_id: "StripeCheckout",
             search_index: "test",
             secret: "test",
             url: "https://example.com",
@@ -34,11 +33,10 @@ Deno.test("ShopService", {
               },
             },
             _role: "VIEWER",
-            shipping_id: "",
           },
         });
 
-        ID = data.public_id;
+        ID = shop.public_id;
         assert(true);
       } catch {
         assert(false);
@@ -112,7 +110,6 @@ Deno.test("ShopService", {
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
-            payment_id: "StripeCheckout",
             search_index: "test",
             secret: "test",
             url: "https://example.com",
@@ -151,7 +148,6 @@ Deno.test("ShopService", {
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
-            payment_id: "StripeCheckout",
             search_index: "test",
             secret: "test",
             url: "https://example.com",

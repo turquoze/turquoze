@@ -43,7 +43,7 @@ Deno.test("UserService", {
             password: "test123",
             name: "test",
             not_active: false,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             role: "",
           },
         });
@@ -96,7 +96,7 @@ Deno.test("UserService", {
       const data = await user.Login({
         email: "test@example.com",
         password: "test123",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
 
       assert(data != null);
@@ -113,7 +113,7 @@ Deno.test("UserService", {
         await user.Login({
           email: "test@example.com",
           password: "wrongpassword",
-          shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+          shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         });
 
         assert(false);
@@ -151,7 +151,7 @@ Deno.test("UserService", {
       const data = await user.Login({
         email: "test@example.com",
         password: "newpassword",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
 
       assert(data != null);
@@ -173,7 +173,7 @@ Deno.test("UserService", {
             password: "",
             name: "test update",
             not_active: true,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             role: "",
           },
         });
@@ -201,7 +201,7 @@ Deno.test("UserService", {
             password: "",
             name: "test fail",
             not_active: true,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             role: "",
           },
         });

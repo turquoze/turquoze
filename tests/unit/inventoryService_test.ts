@@ -18,9 +18,9 @@ Deno.test("InventoryService", {
           data: {
             id: 0,
             public_id: "",
-            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            product: "62e03261-c37d-4037-8f0b-b3dd1974f2c2",
             quantity: 2,
-            warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
+            warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
           },
         });
 
@@ -68,9 +68,9 @@ Deno.test("InventoryService", {
         id: data.id,
         public_id: ID,
         created_at: data.created_at,
-        product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+        product: "62e03261-c37d-4037-8f0b-b3dd1974f2c2",
         quantity: 2,
-        warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
+        warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
       });
     },
     sanitizeOps: false,
@@ -103,9 +103,9 @@ Deno.test("InventoryService", {
           data: {
             id: 0,
             public_id: ID,
-            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            product: "62e03261-c37d-4037-8f0b-b3dd1974f2c2",
             quantity: 10,
-            warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
+            warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
           },
         });
 

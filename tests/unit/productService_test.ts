@@ -25,12 +25,12 @@ Deno.test("ProductService", {
             title: "test product",
             short_description: "test product",
             long_description: "test product long",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             slug: "test2",
           },
         });
 
-        ID = data.public_id;
+        ID = data.public_id!;
         assert(true);
       } catch {
         assert(false);
@@ -78,7 +78,7 @@ Deno.test("ProductService", {
         title: "test product",
         short_description: "test product",
         long_description: "test product long",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         slug: "test2",
       });
     },
@@ -120,7 +120,7 @@ Deno.test("ProductService", {
         title: "test product",
         short_description: "test product",
         long_description: "test product long",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         slug: "test2",
       });
     },
@@ -160,12 +160,12 @@ Deno.test("ProductService", {
             title: "test product update",
             short_description: "test product update",
             long_description: "test product long update",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             slug: "test2",
           },
         });
 
-        ID = data.public_id;
+        ID = data.public_id!;
         assert(true);
       } catch {
         assert(false);
@@ -190,7 +190,7 @@ Deno.test("ProductService", {
             title: "test product update",
             short_description: "test product update",
             long_description: "test product long update",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             slug: "test2",
           },
         });
