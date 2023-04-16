@@ -17,7 +17,7 @@ Deno.test("TokenService", {
         const data = await token.Create({
           data: {
             name: "Test - 123",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             id: "test12345",
             secret: "test",
             role: "WEBSITE",
@@ -64,7 +64,7 @@ Deno.test("TokenService", {
       });
       assertObjectMatch(data, {
         name: "Test - 123",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         secret: data.secret,
         id: "test12345",
         role: "WEBSITE",

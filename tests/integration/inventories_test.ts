@@ -15,9 +15,9 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+      product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
       quantity: 2,
-      warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
+      warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
     });
 
     const response = await app.handle(

@@ -22,7 +22,7 @@ Deno.test("DiscountService", {
             valid_from: null,
             valid_to: null,
             value: 20,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             code: "TEST",
           },
         });
@@ -72,7 +72,7 @@ Deno.test("DiscountService", {
         valid_from: null,
         valid_to: null,
         value: 20,
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         code: "TEST",
       });
     },
@@ -111,7 +111,7 @@ Deno.test("DiscountService", {
         valid_from: null,
         valid_to: null,
         value: 20,
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         code: "TEST",
       });
     },

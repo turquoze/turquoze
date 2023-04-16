@@ -16,7 +16,7 @@ Deno.test({
   async fn() {
     const data = JSON.stringify({
       amount: 100,
-      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+      product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
     });
 
     const response = await app.handle(

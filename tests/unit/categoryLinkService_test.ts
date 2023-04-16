@@ -15,8 +15,8 @@ Deno.test("CategoryLinkService", {
       try {
         await categoryLink.Link({
           data: {
-            category: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
-            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            category: "c150e5b3-c203-46a3-8f87-56af2c220bfe",
+            product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
           },
         });
 
@@ -36,7 +36,7 @@ Deno.test("CategoryLinkService", {
     fn: async () => {
       try {
         const data = await categoryLink.GetProducts({
-          id: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
+          id: "c150e5b3-c203-46a3-8f87-56af2c220bfe",
         });
 
         assert(data.length > 0);
@@ -55,8 +55,8 @@ Deno.test("CategoryLinkService", {
       try {
         await categoryLink.Delete({
           data: {
-            category: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
-            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            category: "c150e5b3-c203-46a3-8f87-56af2c220bfe",
+            product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
           },
         });
 

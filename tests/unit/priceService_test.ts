@@ -19,8 +19,8 @@ Deno.test("PriceService", {
             id: 0,
             public_id: "",
             amount: 100,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
           },
         });
 
@@ -67,8 +67,8 @@ Deno.test("PriceService", {
         public_id: ID,
         created_at: data.created_at,
         amount: 100,
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-        product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
       });
     },
     sanitizeOps: false,
@@ -102,8 +102,8 @@ Deno.test("PriceService", {
             id: 0,
             public_id: ID,
             amount: 200,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
-            product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
           },
         });
 
@@ -127,7 +127,7 @@ Deno.test("PriceService", {
             id: 0,
             public_id: "00000000-0000-0000-0000-000000000000",
             amount: 200,
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             product: "00000000-0000-0000-0000-000000000000",
           },
         });

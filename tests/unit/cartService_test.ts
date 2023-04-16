@@ -80,7 +80,7 @@ Deno.test("CartService", {
             id: 0,
             cart_id: ID,
             price: 2000,
-            product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            product_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
             quantity: 2,
             totalPrice: 4000,
           },
@@ -105,7 +105,7 @@ Deno.test("CartService", {
             id: 0,
             cart_id: ID,
             price: 2000,
-            product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+            product_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
             quantity: 3,
             totalPrice: 6000,
           },
@@ -151,13 +151,13 @@ Deno.test("CartService", {
     fn: async () => {
       const data = await cart.GetCartItem(
         ID,
-        "00669ffc-bc13-47b1-aec6-f524611a657f",
+        "d72f032b-b91b-4dbf-811c-a01ab0938358",
       );
 
       assertObjectMatch(data, {
         id: data.id,
         cart_id: ID,
-        product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+        product_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
         quantity: 5,
         price: 2000,
       });
@@ -198,7 +198,7 @@ Deno.test("CartService", {
       assertObjectMatch(data[0], {
         id: data[0].id,
         cart_id: ID,
-        product_id: "00669ffc-bc13-47b1-aec6-f524611a657f",
+        product_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
         quantity: 5,
         price: 2000,
       });
@@ -230,7 +230,7 @@ Deno.test("CartService", {
     name: "Delete Items",
     fn: async () => {
       try {
-        await cart.RemoveItem(ID, "00669ffc-bc13-47b1-aec6-f524611a657f");
+        await cart.RemoveItem(ID, "d72f032b-b91b-4dbf-811c-a01ab0938358");
         assert(true);
       } catch {
         assert(false);

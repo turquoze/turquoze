@@ -13,13 +13,18 @@ const container = new Container(dbClient, redisClient);
 container.SearchService = new SearchService(searchClient);
 
 const app = new Application<TurquozeState>();
+container.Shop.settings.meilisearch = {
+  api_key: MEILIAPIKEY!,
+  host: MEILIHOST!,
+  index: MEILIINDEX!,
+};
 app.state.container = container;
 
 app.use(async (ctx, next) => {
-  ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
+  ctx.state.shop = "6d14431e-6d57-4ab5-842b-b6604e2038c7";
   ctx.state.request_data = {
     id: 0,
-    public_id: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+    public_id: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
     regions: ["SE"],
     payment_id: "",
     currency: "SEK",
@@ -35,7 +40,7 @@ app.use(async (ctx, next) => {
         index: MEILIINDEX!,
       },
     },
-    _role: "VIEWER",
+    _role: "SUPERADMIN",
     shipping_id: "",
   };
   await next();

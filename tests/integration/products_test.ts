@@ -41,7 +41,7 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    ID = products.public_id;
+    ID = products.public_id!;
   },
 });
 

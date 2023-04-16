@@ -19,7 +19,7 @@ Deno.test("CategoryService", {
             id: 0,
             public_id: "",
             name: "test",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
           },
         });
 
@@ -65,7 +65,7 @@ Deno.test("CategoryService", {
         id: data.id,
         public_id: ID,
         name: "test",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
     },
     sanitizeOps: false,
@@ -100,7 +100,7 @@ Deno.test("CategoryService", {
         id: data.id,
         public_id: ID,
         name: "test",
-        shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
     },
     sanitizeOps: false,
@@ -134,7 +134,7 @@ Deno.test("CategoryService", {
             id: 0,
             public_id: ID,
             name: "test update",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
           },
         });
 
@@ -158,7 +158,7 @@ Deno.test("CategoryService", {
             id: 0,
             public_id: "00000000-0000-0000-0000-000000000000",
             name: "test update",
-            shop: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
           },
         });
 
