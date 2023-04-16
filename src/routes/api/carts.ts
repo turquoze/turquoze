@@ -16,8 +16,8 @@ import {
 
 export default class CartRoutes {
   #carts: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#carts = new Router<TurquozeState>({
       prefix: "/carts",

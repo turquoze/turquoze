@@ -8,8 +8,8 @@ import { UserSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
   #users: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#users = new Router({
       prefix: "/users",
@@ -17,7 +17,7 @@ export default class UsersRoutes {
 
     this.#users.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<User>>({
+        const data = await Get<Array<User>>(this.#Container, {
           id: `usersGetMany-${10}-${undefined}`,
           promise: this.#Container.UserService.GetMany({}),
         });
@@ -78,7 +78,7 @@ export default class UsersRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<User>({
+        const data = await Get<User>(this.#Container, {
           id: `user_${ctx.params.id}`,
           promise: this.#Container.UserService.Get({
             id: ctx.params.id,
@@ -120,7 +120,7 @@ export default class UsersRoutes {
         await UserSchema.validate(user);
         const posted: User = await UserSchema.cast(user);
 
-        const data = await Update<User>({
+        const data = await Update<User>(this.#Container, {
           id: `user_${ctx.params.id}`,
           promise: this.#Container.UserService.Update({
             data: posted,

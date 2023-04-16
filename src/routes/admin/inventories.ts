@@ -9,8 +9,8 @@ import { InventorySchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class InventoriesRoutes {
   #inventories: Router;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#inventories = new Router({
       prefix: "/inventories",
@@ -69,7 +69,7 @@ export default class InventoriesRoutes {
         await InventorySchema.validate(inventory);
         const posted: Inventory = await InventorySchema.cast(inventory);
 
-        const data = await Update<Inventory>({
+        const data = await Update<Inventory>(this.#Container, {
           id: `inventory_${ctx.params.id}`,
           promise: this.#Container.InventoryService.Update({
             data: posted,
@@ -96,7 +96,7 @@ export default class InventoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Inventory>({
+        const data = await Get<Inventory>(this.#Container, {
           id: `inventory_${ctx.params.id}`,
           promise: this.#Container.InventoryService.Get({
             id: ctx.params.id,
@@ -123,7 +123,7 @@ export default class InventoriesRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `inventory_${ctx.params.id}`,
           promise: this.#Container.InventoryService.Delete({
             id: ctx.params.id,

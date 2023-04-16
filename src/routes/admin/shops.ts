@@ -9,8 +9,8 @@ import { ShopSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class RegionsRoutes {
   #shops: Router;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#shops = new Router({
       prefix: "/shops",
@@ -59,7 +59,7 @@ export default class RegionsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Shop>({
+        const data = await Get<Shop>(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.ShopService.Get({
             id: ctx.params.id,
@@ -99,7 +99,7 @@ export default class RegionsRoutes {
         await ShopSchema.validate(shop);
         const posted: Shop = await ShopSchema.cast(shop);
 
-        const data = await Update<Shop>({
+        const data = await Update<Shop>(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.ShopService.Update({
             data: posted,
@@ -126,7 +126,7 @@ export default class RegionsRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.ShopService.Delete({ id: ctx.params.id }),
         });

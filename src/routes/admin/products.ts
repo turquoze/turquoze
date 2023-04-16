@@ -9,8 +9,8 @@ import { ProductSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class ProductsRoutes {
   #products: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#products = new Router<TurquozeState>({
       prefix: "/products",
@@ -73,7 +73,7 @@ export default class ProductsRoutes {
         await ProductSchema.validate(product);
         const posted: Product = await ProductSchema.cast(product);
 
-        const data = await Update<Product>({
+        const data = await Update<Product>(this.#Container, {
           id: `product_${ctx.state.request_data.public_id}-${product.id}`,
           promise: this.#Container.ProductService.Update({
             data: posted,
@@ -100,7 +100,7 @@ export default class ProductsRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Delete({ id: ctx.params.id }),
         });

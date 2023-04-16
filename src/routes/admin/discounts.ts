@@ -9,8 +9,8 @@ import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class DiscountsRoutes {
   #discounts: Router;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#discounts = new Router({
       prefix: "/discounts",
@@ -55,7 +55,7 @@ export default class DiscountsRoutes {
 
     this.#discounts.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<Discount>>({
+        const data = await Get<Array<Discount>>(this.#Container, {
           id: `discountsGetMany-${10}-${undefined}`,
           promise: this.#Container.DiscountService.GetMany({}),
         });
@@ -80,7 +80,7 @@ export default class DiscountsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Discount>({
+        const data = await Get<Discount>(this.#Container, {
           id: `discount_${ctx.params.id}`,
           promise: this.#Container.DiscountService.Get({
             id: ctx.params.id,
@@ -107,7 +107,7 @@ export default class DiscountsRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `discount_${ctx.params.id}`,
           promise: this.#Container.DiscountService.Delete({
             id: ctx.params.id,

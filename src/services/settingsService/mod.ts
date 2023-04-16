@@ -1,6 +1,6 @@
 import ISettingsService from "../interfaces/settingsService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import container from "../mod.ts";
+//import container from "../mod.ts";
 import type { Pool } from "../../deps.ts";
 import type { Settings, Shop } from "../../utils/types.ts";
 
@@ -31,7 +31,8 @@ export default class SettingsService implements ISettingsService {
     }
   }
 
-  async GetById(params: { id: string }): Promise<string> {
+  /*async*/ GetById(_params: { id: string }): Promise<string> {
+    /*
     const obj = Object.entries(container.Shop.settings).find((x) =>
       x[0] == params.id
     );
@@ -44,12 +45,16 @@ export default class SettingsService implements ISettingsService {
     }
 
     throw new Error("No setting");
+    */
+    throw new Error();
   }
 
-  async Get(): Promise<Settings> {
-    await new Promise((resolve, _reject) => {
+  /*async*/ Get(): Promise<Settings> {
+    /*await new Promise((resolve, _reject) => {
       resolve("");
     });
     return container.Shop.settings;
+    */
+    throw new Error();
   }
 }

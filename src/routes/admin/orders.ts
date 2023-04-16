@@ -9,8 +9,8 @@ import { UuidSchema } from "../../utils/validator.ts";
 
 export default class OrdersRoutes {
   #orders: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#orders = new Router<TurquozeState>({
       prefix: "/orders",
@@ -20,7 +20,7 @@ export default class OrdersRoutes {
 
     this.#orders.get("/", async (ctx) => {
       try {
-        const data = await Get({
+        const data = await Get(this.#Container, {
           id: `ordersGetMany-${10}-${undefined}`,
           promise: this.#Container.OrderService.GetMany({}),
         });
@@ -45,7 +45,7 @@ export default class OrdersRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get({
+        const data = await Get(this.#Container, {
           id: `order_${ctx.params.id}`,
           promise: this.#Container.OrderService.Get({
             id: ctx.params.id,

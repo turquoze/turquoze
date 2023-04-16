@@ -1,6 +1,6 @@
 import { Application } from "../src/deps.ts";
 import type { TurquozeState } from "../src/utils/types.ts";
-import { Container } from "../src/services/mod.ts";
+import Container from "../src/services/mod.ts";
 import {
   pool as dbClient,
   redis as redisClient,

@@ -9,8 +9,8 @@ import { UuidSchema, WarehouseSchema } from "../../utils/validator.ts";
 
 export default class WarehousesRoutes {
   #warehouses: Router;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#warehouses = new Router({
       prefix: "/warehouses",
@@ -18,7 +18,7 @@ export default class WarehousesRoutes {
 
     this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<Warehouse>>({
+        const data = await Get<Array<Warehouse>>(this.#Container, {
           id: `warehousesGetMany-${10}-${undefined}`,
           promise: this.#Container.WarehouseService.GetMany({}),
         });
@@ -93,7 +93,7 @@ export default class WarehousesRoutes {
         await WarehouseSchema.validate(warehouse);
         const posted: Warehouse = await WarehouseSchema.cast(warehouse);
 
-        const data = await Update<Warehouse>({
+        const data = await Update<Warehouse>(this.#Container, {
           id: `warehouse_${ctx.params.id}`,
           promise: this.#Container.WarehouseService.Update({
             data: posted,
@@ -120,7 +120,7 @@ export default class WarehousesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Warehouse>({
+        const data = await Get<Warehouse>(this.#Container, {
           id: `warehouse_${ctx.params.id}`,
           promise: this.#Container.WarehouseService.Get({
             id: ctx.params.id,
@@ -147,7 +147,7 @@ export default class WarehousesRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `warehouse_${ctx.params.id}`,
           promise: this.#Container.WarehouseService.Delete({
             id: ctx.params.id,

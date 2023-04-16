@@ -13,8 +13,8 @@ import {
 
 export default class CategoriesRoutes {
   #categories: Router;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#categories = new Router({
       prefix: "/categories",
@@ -22,7 +22,7 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<Category>>({
+        const data = await Get<Array<Category>>(this.#Container, {
           id: `categoryGetMany-${10}-${10}`,
           promise: this.#Container.CategoryService.GetMany({}),
         });
@@ -83,7 +83,7 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Category>({
+        const data = await Get<Category>(this.#Container, {
           id: `category_${ctx.params.id}`,
           promise: this.#Container.CategoryService.Get({
             id: ctx.params.id,
@@ -124,7 +124,7 @@ export default class CategoriesRoutes {
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);
 
-        const data = await Update<Category>({
+        const data = await Update<Category>(this.#Container, {
           id: `category_${ctx.params.id}`,
           promise: this.#Container.CategoryService.Update({
             data: posted,
@@ -221,7 +221,7 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Delete({
+        const data = await Delete(this.#Container, {
           id: `category_${ctx.params.id}`,
           promise: this.#Container.CategoryService.Delete({
             id: ctx.params.id,

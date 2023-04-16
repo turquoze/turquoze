@@ -9,8 +9,8 @@ import { PriceSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class PricesRoutes {
   #prices: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#prices = new Router<TurquozeState>({
       prefix: "/prices",
@@ -18,7 +18,7 @@ export default class PricesRoutes {
 
     this.#prices.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get({
+        const data = await Get(this.#Container, {
           id: `pricesGetMany-${10}-${undefined}`,
           promise: this.#Container.PriceService.GetMany({}),
         });
@@ -93,7 +93,7 @@ export default class PricesRoutes {
         await PriceSchema.validate(price);
         const posted: Price = await PriceSchema.cast(price);
 
-        const data = await Update({
+        const data = await Update(this.#Container, {
           id: `price_${posted.id}`,
           promise: this.#Container.PriceService.Update({
             data: posted,
@@ -120,7 +120,7 @@ export default class PricesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Price>({
+        const data = await Get<Price>(this.#Container, {
           id: `price_${ctx.params.id}`,
           promise: this.#Container.PriceService.Get({
             id: ctx.params.id,
@@ -147,7 +147,7 @@ export default class PricesRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `price_${ctx.params.id}`,
           promise: this.#Container.PriceService.Delete({ id: ctx.params.id }),
         });
