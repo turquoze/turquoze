@@ -1,4 +1,4 @@
-import container from "../services/mod.ts";
+import Container from "../services/mod.ts";
 
 /**
  * Returns a string.
@@ -16,10 +16,13 @@ export function stringifyJSON(
   );
 }
 
-export async function Get<T>(params: {
-  id: string;
-  promise: Promise<T>;
-}): Promise<T> {
+export async function Get<T>(
+  container: Container,
+  params: {
+    id: string;
+    promise: Promise<T>;
+  },
+): Promise<T> {
   try {
     let data;
     try {
@@ -45,10 +48,13 @@ export async function Get<T>(params: {
   }
 }
 
-export async function Update<T>(params: {
-  id: string;
-  promise: Promise<T>;
-}): Promise<T> {
+export async function Update<T>(
+  container: Container,
+  params: {
+    id: string;
+    promise: Promise<T>;
+  },
+): Promise<T> {
   try {
     const data = await params.promise;
 
@@ -64,7 +70,7 @@ export async function Update<T>(params: {
   }
 }
 
-export async function Delete(params: {
+export async function Delete(container: Container, params: {
   id: string;
   promise: Promise<void>;
 }): Promise<void> {

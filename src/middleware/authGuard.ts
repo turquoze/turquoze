@@ -1,5 +1,5 @@
 import { Context, jose } from "../deps.ts";
-import { Container } from "../services/mod.ts";
+import Container from "../services/mod.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
 import { Shop, ShopLinkData, TurquozeState } from "../utils/types.ts";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);

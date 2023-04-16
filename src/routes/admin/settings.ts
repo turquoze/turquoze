@@ -6,8 +6,8 @@ import { Product, TurquozeState } from "../../utils/types.ts";
 
 export default class SettingsRoutes {
   #settings: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#settings = new Router<TurquozeState>({
       prefix: "/settings",

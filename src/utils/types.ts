@@ -1,5 +1,5 @@
 import { jose, SearchParams } from "../deps.ts";
-import { Container } from "../services/mod.ts";
+import Container from "../services/mod.ts";
 
 export interface Product {
   id: number;

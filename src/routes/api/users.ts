@@ -7,8 +7,8 @@ import { LoginSchema } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
   #users: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#users = new Router({
       prefix: "/users",

@@ -8,8 +8,8 @@ import { UuidSchema } from "../../utils/validator.ts";
 
 export default class CategoriesRoutes {
   #categories: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#categories = new Router<TurquozeState>({
       prefix: "/categories",
@@ -17,7 +17,7 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/", async (ctx) => {
       try {
-        const data = await Get<Array<Category>>({
+        const data = await Get<Array<Category>>(this.#Container, {
           id: `categoryGetMany-${ctx.state.request_data.public_id}-${10}-${10}`,
           promise: this.#Container.CategoryService.GetMany({}),
         });
@@ -38,7 +38,7 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/byname/:name", async (ctx) => {
       try {
-        const data = await Get<Category>({
+        const data = await Get<Category>(this.#Container, {
           id:
             `category_name_${ctx.state.request_data.public_id}-${ctx.params.name}`,
           promise: this.#Container.CategoryService.GetByName({
@@ -66,7 +66,7 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Array<Product>>({
+        const data = await Get<Array<Product>>(this.#Container, {
           id:
             `products_by_category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.CategoryLinkService.GetProducts({
@@ -94,7 +94,7 @@ export default class CategoriesRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Category>({
+        const data = await Get<Category>(this.#Container, {
           id: `category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.CategoryService.Get({
             id: ctx.params.id,

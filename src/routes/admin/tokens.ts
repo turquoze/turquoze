@@ -9,8 +9,8 @@ import { TokenSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class TokensRoutes {
   #tokens: Router;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#tokens = new Router({
       prefix: "/tokens",
@@ -79,7 +79,7 @@ export default class TokensRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Token>({
+        const data = await Get<Token>(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.TokenService.Get({
             tokenId: ctx.params.id,
@@ -106,7 +106,7 @@ export default class TokensRoutes {
           id: ctx.params.id,
         });
 
-        await Delete({
+        await Delete(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.TokenService.Delete({
             tokenId: ctx.params.id,

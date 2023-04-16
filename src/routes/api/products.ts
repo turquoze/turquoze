@@ -9,8 +9,8 @@ import { SearchSchema, UuidSchema } from "../../utils/validator.ts";
 
 export default class ProductsRoutes {
   #products: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#products = new Router<TurquozeState>({
       prefix: "/products",
@@ -18,7 +18,7 @@ export default class ProductsRoutes {
 
     this.#products.get("/", async (ctx) => {
       try {
-        const data = await Get<Array<Product>>({
+        const data = await Get<Array<Product>>(this.#Container, {
           id: `productsGetMany-${ctx.state.request_data.public_id}-${10}-${10}`,
           promise: this.#Container.ProductService.GetMany({}),
         });
@@ -252,7 +252,7 @@ export default class ProductsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Product>({
+        const data = await Get<Product>(this.#Container, {
           id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Get({
             id: ctx.params.id,

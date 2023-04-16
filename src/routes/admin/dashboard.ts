@@ -7,8 +7,8 @@ import TokenGuard from "../../middleware/tokenGuard.ts";
 
 export default class DashBoardRoutes {
   #dashboard: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#dashboard = new Router<TurquozeState>({
       prefix: "/dashboard",

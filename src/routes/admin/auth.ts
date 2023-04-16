@@ -8,8 +8,8 @@ const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class AuthRoutes {
   #auth: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#auth = new Router<TurquozeState>({
       prefix: "/auth",
