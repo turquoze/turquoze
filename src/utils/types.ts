@@ -191,6 +191,7 @@ export interface Inventory {
   warehouse: string;
   product: string;
   quantity: number;
+  warehouse_name?: string;
 }
 
 export interface PriceCalculation {

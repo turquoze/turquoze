@@ -76,7 +76,8 @@ export default class CartService implements IInventoryService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Inventory>({
-        text: "SELECT * FROM inventories WHERE product = $1",
+        text:
+          "SELECT inventories.*, warehouses.name AS warehouse_name FROM inventories INNER JOIN warehouses ON inventories.warehouse = warehouses.public_id WHERE inventories.product = $1",
         args: [params.id],
       });
 
