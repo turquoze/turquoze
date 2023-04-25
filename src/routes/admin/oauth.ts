@@ -3,6 +3,7 @@ import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
+import CookieGuard from "../../middleware/cookieGuard.ts";
 
 export default class OAuthRoutes {
   #oauth: Router<TurquozeState>;
@@ -13,9 +14,22 @@ export default class OAuthRoutes {
       prefix: "/oauth",
     });
 
-    this.#oauth.get("/:id/authorize", (ctx) => {
+    this.#oauth.get("/:id/login", (ctx) => {
       try {
-        //TODO: is logged in
+        ctx.response.body =
+          `<html><head></head><body><div><h3>Login TODO</h3></div></body></html>`;
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#oauth.get("/:id/authorize", CookieGuard(container), (ctx) => {
+      try {
         ctx.response.body =
           `<html><head></head><body><div><form method="POST"><input type="submit" value="Approve"></form> </div></body></html>`;
       } catch (error) {
@@ -28,9 +42,8 @@ export default class OAuthRoutes {
       }
     });
 
-    this.#oauth.post("/:id/authorize", (ctx) => {
+    this.#oauth.post("/:id/authorize", CookieGuard(container), (ctx) => {
       try {
-        //TODO: is logged in
         const response_type = ctx?.params?.response_type;
 
         if (response_type == "code") {
@@ -60,7 +73,6 @@ export default class OAuthRoutes {
 
     this.#oauth.post("/token", (ctx) => {
       try {
-        //TODO: is logged in
         const grant_type = ctx?.params?.grant_type;
 
         if (grant_type == "authorization_code") {

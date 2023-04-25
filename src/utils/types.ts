@@ -333,3 +333,8 @@ export interface Plugin {
   shop: string;
   token: string;
 }
+
+export interface OauthToken {
+  shopId: string;
+  adminId: string;
+}
