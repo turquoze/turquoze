@@ -12,6 +12,7 @@ import categories from "./categories.ts";
 import products from "./products.ts";
 import auth from "./auth.ts";
 import dashboard from "./dashboard.ts";
+import OAuth from "./oauth.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
 import app from "../../app.ts";
 
@@ -19,6 +20,7 @@ const admin = new Router({
   prefix: "/admin",
 });
 
+admin.use(new OAuth(app.state.container).routes());
 admin.use(new auth(app.state.container).routes());
 admin.use(new dashboard(app.state.container).routes());
 
