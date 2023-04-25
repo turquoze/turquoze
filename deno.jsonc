@@ -21,5 +21,6 @@
     "db:pull": "deno run -A --unstable npm:prisma db pull",
     "db:init": "deno run --allow-net --allow-env --allow-read ./init/mod.ts",
     "deps:reload": "deno cache --lock=deno.lock --lock-write src/deps.ts"
-  }
+  },
+  "lock": true
 }
