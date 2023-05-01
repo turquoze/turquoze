@@ -114,7 +114,7 @@ export default class OAuthRoutes {
       }
     });
 
-    this.#oauth.post("/:id/authorize", CookieGuard(container), (ctx) => {
+    this.#oauth.post("/:id/authorize", CookieGuard(container), async (ctx) => {
       try {
         const response_type = ctx?.params?.response_type;
 
@@ -124,10 +124,32 @@ export default class OAuthRoutes {
           const _scope = ctx?.params?.scope;
           const state = ctx?.params?.state;
 
+          const plugin = await this.#Container.PluginService.Create({
+            data: {
+              id: 0,
+              public_id: "",
+              name: "test",
+              shop: ctx.params.id,
+              token: "_",
+              type: "PAYMENT", // check with client
+              url: redirect_uri!,
+            },
+          });
+
+          const token = await this.#Container.OauthService.Create({
+            data: {
+              id: 0,
+              public_id: "",
+              plugin: plugin.public_id,
+              token: "", // TODO: add refresh token
+              expires_at: null, // TODO: add expires at
+            },
+          });
+
           //TODO: redirect to redirect url
           const url = new URLSearchParams(redirect_uri!);
           url.set("state", state!);
-          url.set("code", "1111");
+          url.set("code", token.public_id);
 
           ctx.response.redirect(url.toString());
         }
