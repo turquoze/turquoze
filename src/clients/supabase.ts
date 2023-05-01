@@ -1,3 +1,4 @@
+/*
 import { createClient } from "../deps.ts";
 import { SUPABASE_KEY, SUPABASE_URL } from "../utils/secrets.ts";
 
@@ -10,3 +11,4 @@ const supabase = createClient(
 );
 
 export default supabase;
+*/

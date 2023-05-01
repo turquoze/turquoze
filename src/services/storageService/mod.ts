@@ -1,4 +1,4 @@
-import { SupabaseClient } from "../../deps.ts";
+/*import { SupabaseClient } from "../../deps.ts";
 import { Media } from "../../utils/types.ts";
 import IStorageService from "../interfaces/storageService.ts";
 
@@ -74,3 +74,4 @@ export default class StorageService implements IStorageService {
     }
   }
 }
+*/
