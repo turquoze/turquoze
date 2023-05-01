@@ -34,4 +34,6 @@ jobs:
 
       - run: deno lint
 
+      - run: deno cache --reload --lock=deno.lock src/deps.ts
+
       - run: deno task test
