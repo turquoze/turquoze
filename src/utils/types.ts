@@ -338,3 +338,12 @@ export interface OauthToken {
   shopId: string;
   adminId: string;
 }
+
+export interface Oauth {
+  id: number;
+  created_at?: number;
+  public_id: string;
+  token: string;
+  expires_at?: number;
+  plugin: string;
+}
