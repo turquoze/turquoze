@@ -344,6 +344,6 @@ export interface Oauth {
   created_at?: number;
   public_id: string;
   token: string;
-  expires_at?: number;
+  expires_at?: number | null;
   plugin: string;
 }

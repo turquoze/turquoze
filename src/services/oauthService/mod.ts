@@ -50,7 +50,7 @@ export default class OauthService implements IOauthService {
     }
   }
 
-  async GetByToken(params: { token: string; }): Promise<Oauth> {
+  async GetByToken(params: { token: string }): Promise<Oauth> {
     try {
       const client = await this.pool.connect();
 
