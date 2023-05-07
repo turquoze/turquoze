@@ -124,7 +124,7 @@ export default class OAuthRoutes {
           const scope = ctx?.params?.scope;
           const state = ctx?.params?.state;
           const tokenPlugin = ctx.params?.token;
-          const namePlugin = ctx.params?.name
+          const namePlugin = ctx.params?.name;
 
           const plugin = await this.#Container.PluginService.Create({
             data: {
@@ -169,15 +169,26 @@ export default class OAuthRoutes {
       }
     });
 
-    this.#oauth.post("/token", (ctx) => {
+    this.#oauth.post("/token", async (ctx) => {
       try {
         const grant_type = ctx?.params?.grant_type;
 
         if (grant_type == "authorization_code") {
           const _client_id = ctx?.params?.client_id;
           const _client_secret = ctx?.params?.client_secret;
-          const _redirect_uri = ctx?.params?.redirect_uri;
-          const _code = ctx?.params?.code;
+          const code = ctx?.params?.code;
+
+          if (code == undefined) {
+            throw new Error("No code in request");
+          }
+
+          const token = await this.#Container.OauthService.Get({
+            id: code,
+          });
+
+          const plugin = await this.#Container.PluginService.Get({
+            id: token.plugin,
+          });
 
           //TODO: generate token
           const tokenResponse = {
@@ -185,8 +196,8 @@ export default class OAuthRoutes {
             "expires_in": 86400,
             "access_token":
               "jnv3mENAYS1wGEdUQPvjzWgKv6K_xgVxw1CmyYNdWvBS44ezea9nescVpHo5SsVLnSpnelhP",
-            "scope": "photo offline_access",
-            "refresh_token": "gp8HUtNrVc0-pbwYsn3qmknW",
+            "scope": plugin.type,
+            "refresh_token": token.token,
           };
 
           ctx.response.body = stringifyJSON(tokenResponse);
