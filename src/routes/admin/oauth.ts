@@ -1,4 +1,4 @@
-import { jose, Router } from "../../deps.ts";
+import { jose, nanoid, Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
@@ -119,34 +119,38 @@ export default class OAuthRoutes {
         const response_type = ctx?.params?.response_type;
 
         if (response_type == "code") {
-          const _client_id = ctx?.params?.client_id;
+          const client_id = ctx?.params?.client_id;
           const redirect_uri = ctx?.params?.redirect_uri;
-          const _scope = ctx?.params?.scope;
+          const scope = ctx?.params?.scope;
           const state = ctx?.params?.state;
+          const tokenPlugin = ctx.params?.token;
+          const namePlugin = ctx.params?.name;
 
           const plugin = await this.#Container.PluginService.Create({
             data: {
               id: 0,
               public_id: "",
-              name: "test",
+              name: namePlugin ?? client_id ?? "_NO_NAME_",
               shop: ctx.params.id,
-              token: "_",
-              type: "PAYMENT", // check with client
+              token: tokenPlugin ?? "",
+              //@ts-expect-error not typed
+              type: scope ?? "MISC",
               url: redirect_uri!,
             },
           });
+
+          const refresh = nanoid.nanoid();
 
           const token = await this.#Container.OauthService.Create({
             data: {
               id: 0,
               public_id: "",
               plugin: plugin.public_id,
-              token: "", // TODO: add refresh token
-              expires_at: null, // TODO: add expires at
+              token: refresh,
+              expires_at: null, // TODO: null is never have to delete plugin from shop.
             },
           });
 
-          //TODO: redirect to redirect url
           const url = new URLSearchParams(redirect_uri!);
           url.set("state", state!);
           url.set("code", token.public_id);
@@ -165,15 +169,26 @@ export default class OAuthRoutes {
       }
     });
 
-    this.#oauth.post("/token", (ctx) => {
+    this.#oauth.post("/token", async (ctx) => {
       try {
         const grant_type = ctx?.params?.grant_type;
 
         if (grant_type == "authorization_code") {
           const _client_id = ctx?.params?.client_id;
           const _client_secret = ctx?.params?.client_secret;
-          const _redirect_uri = ctx?.params?.redirect_uri;
-          const _code = ctx?.params?.code;
+          const code = ctx?.params?.code;
+
+          if (code == undefined) {
+            throw new Error("No code in request");
+          }
+
+          const token = await this.#Container.OauthService.Get({
+            id: code,
+          });
+
+          const plugin = await this.#Container.PluginService.Get({
+            id: token.plugin,
+          });
 
           //TODO: generate token
           const tokenResponse = {
@@ -181,8 +196,8 @@ export default class OAuthRoutes {
             "expires_in": 86400,
             "access_token":
               "jnv3mENAYS1wGEdUQPvjzWgKv6K_xgVxw1CmyYNdWvBS44ezea9nescVpHo5SsVLnSpnelhP",
-            "scope": "photo offline_access",
-            "refresh_token": "gp8HUtNrVc0-pbwYsn3qmknW",
+            "scope": plugin.type,
+            "refresh_token": token.token,
           };
 
           ctx.response.body = stringifyJSON(tokenResponse);
