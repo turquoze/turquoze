@@ -1,4 +1,4 @@
-import { jose, Router } from "../../deps.ts";
+import { jose, nanoid, Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
@@ -119,34 +119,38 @@ export default class OAuthRoutes {
         const response_type = ctx?.params?.response_type;
 
         if (response_type == "code") {
-          const _client_id = ctx?.params?.client_id;
+          const client_id = ctx?.params?.client_id;
           const redirect_uri = ctx?.params?.redirect_uri;
-          const _scope = ctx?.params?.scope;
+          const scope = ctx?.params?.scope;
           const state = ctx?.params?.state;
+          const tokenPlugin = ctx.params?.token;
+          const namePlugin = ctx.params?.name
 
           const plugin = await this.#Container.PluginService.Create({
             data: {
               id: 0,
               public_id: "",
-              name: "test",
+              name: namePlugin ?? client_id ?? "_NO_NAME_",
               shop: ctx.params.id,
-              token: "_",
-              type: "PAYMENT", // check with client
+              token: tokenPlugin ?? "",
+              //@ts-expect-error not typed
+              type: scope ?? "MISC",
               url: redirect_uri!,
             },
           });
+
+          const refresh = nanoid.nanoid();
 
           const token = await this.#Container.OauthService.Create({
             data: {
               id: 0,
               public_id: "",
               plugin: plugin.public_id,
-              token: "", // TODO: add refresh token
-              expires_at: null, // TODO: add expires at
+              token: refresh,
+              expires_at: null, // TODO: null is never have to delete plugin from shop.
             },
           });
 
-          //TODO: redirect to redirect url
           const url = new URLSearchParams(redirect_uri!);
           url.set("state", state!);
           url.set("code", token.public_id);
