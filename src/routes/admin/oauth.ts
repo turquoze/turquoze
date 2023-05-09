@@ -190,12 +190,26 @@ export default class OAuthRoutes {
             id: token.plugin,
           });
 
-          //TODO: generate token
+          const iat = Math.floor(Date.now() / 1000);
+          const exp = iat + 15 * 60;
+          const nbf = iat;
+          const claims = {
+            iat,
+            exp,
+            nbf,
+            shopId: plugin.shop,
+            plugin: plugin.public_id,
+            type: plugin.type,
+          };
+
+          const jwt = await new jose.SignJWT(claims)
+            .setProtectedHeader({ typ: "JWT", alg: "HS256", kid: plugin.shop })
+            .sign(SHARED_SECRET_KEY);
+
           const tokenResponse = {
             "token_type": "Bearer",
-            "expires_in": 86400,
-            "access_token":
-              "jnv3mENAYS1wGEdUQPvjzWgKv6K_xgVxw1CmyYNdWvBS44ezea9nescVpHo5SsVLnSpnelhP",
+            "expires_in": exp,
+            "access_token": jwt,
             "scope": plugin.type,
             "refresh_token": token.token,
           };
