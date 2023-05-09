@@ -1,13 +1,9 @@
 {
   "lint": {
-    "files": {
-      "exclude": ["generated/", "cov_profile/"]
-    }
+    "exclude": ["generated/", "cov_profile/"]
   },
   "fmt": {
-    "files": {
-      "exclude": ["generated/", "cov_profile/"]
-    }
+    "exclude": ["generated/", "cov_profile/"]
   },
   "tasks": {
     "run": "deno run --allow-net --allow-env --allow-read src/mod.ts",
