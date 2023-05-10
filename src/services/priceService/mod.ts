@@ -50,17 +50,46 @@ export default class PriceService implements IPriceService {
     }
   }
 
-  async GetByProduct(params: { productId: string }): Promise<Price> {
+  async GetByProduct(
+    params: { productId: string; list?: string },
+  ): Promise<Price> {
     try {
+      if (params.list == undefined) {
+        params.list = "Default";
+      }
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Price>({
-        text: "SELECT * FROM prices WHERE product = $1 LIMIT 1",
-        args: [params.productId],
+        text: "SELECT * FROM prices WHERE product = $1 AND list = $2 LIMIT 1",
+        args: [params.productId, params.list],
       });
 
       client.release();
       return result.rows[0];
+    } catch (error) {
+      throw new DatabaseError("DB error", {
+        cause: error,
+      });
+    }
+  }
+
+  async GetManyByProduct(
+    params: { productId: string; offset?: string; limit?: number },
+  ): Promise<Price[]> {
+    try {
+      if (params.limit == null) {
+        params.limit = 10;
+      }
+
+      const client = await this.pool.connect();
+
+      const result = await client.queryObject<Price>({
+        text: "SELECT * FROM prices WHERE product = $1 LIMIT $2 OFFSET $3",
+        args: [params.productId, params.limit, params.offset],
+      });
+
+      client.release();
+      return result.rows;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

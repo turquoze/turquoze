@@ -207,6 +207,7 @@ export interface Price {
   amount: number;
   shop: string;
   product: string;
+  list?: string;
 }
 
 export interface DiscountCheck {
