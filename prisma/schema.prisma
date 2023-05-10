@@ -98,6 +98,7 @@ model prices {
   shop       String?   @db.Uuid
   product    String    @db.Uuid
   id         BigInt    @default(autoincrement())
+  list       String    @default("Default")
   products   products  @relation(fields: [product], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
   shops      shops?    @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
 }
