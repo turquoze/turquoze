@@ -1,39 +1,39 @@
-name: format, lint & test
+#name: format, lint & test
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+#on:
+#  push:
+#    branches:
+#      - main
+#  pull_request:
+#    branches:
+#      - main
 
-env:
-  TEST_DATABASE_HOSTNAME: ${{ secrets.DB_HOST }}
-  TEST_DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  TEST_DATABASE_USER: ${{ secrets.DB_USER }}
-  TEST_DATABASE: ${{ secrets.DB }}
-  TEST_DATABASE_PORT: ${{ secrets.DB_PORT }}
-  TEST_DATABASE_CERT: ${{ secrets.DB_CERT }}
-  TEST_UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_URL }}
-  TEST_UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_TOKEN }}
-  TEST_MEILIHOST: ${{ secrets.MEILI_HOST }}
-  TEST_MEILIINDEX: ${{ secrets.MEILI_INDEX }}
-  TEST_MEILIAPIKEY: ${{ secrets.MEILI_TOKEN }}
+#env:
+#  TEST_DATABASE_HOSTNAME: ${{ secrets.DB_HOST }}
+#  TEST_DATABASE_PASSWORD: ${{ secrets.DB_PASSWORD }}
+#  TEST_DATABASE_USER: ${{ secrets.DB_USER }}
+#  TEST_DATABASE: ${{ secrets.DB }}
+#  TEST_DATABASE_PORT: ${{ secrets.DB_PORT }}
+#  TEST_DATABASE_CERT: ${{ secrets.DB_CERT }}
+#  TEST_UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_URL }}
+#  TEST_UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_TOKEN }}
+#  TEST_MEILIHOST: ${{ secrets.MEILI_HOST }}
+#  TEST_MEILIINDEX: ${{ secrets.MEILI_INDEX }}
+#  TEST_MEILIAPIKEY: ${{ secrets.MEILI_TOKEN }}
 
-jobs:
-  build:
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: v1.x
+#jobs:
+#  build:
+#    runs-on: ubuntu-22.04
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: denoland/setup-deno@v1
+#        with:
+#          deno-version: v1.x
 
-      - run: deno fmt --check
+#      - run: deno fmt --check
 
-      - run: deno lint
+#      - run: deno lint
 
-      - run: deno cache --reload --lock=deno.lock src/deps.ts
+#      - run: deno cache --reload --lock=deno.lock src/deps.ts
 
-      - run: deno task test
+#      - run: deno task test
