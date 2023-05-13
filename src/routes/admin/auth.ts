@@ -17,10 +17,9 @@ export default class AuthRoutes {
 
     this.#auth.post("/login", async (ctx) => {
       try {
-        const form = await ctx.request.body({ type: "form" }).value;
-
-        const email = form.get("email");
-        const password = form.get("password");
+        const form = await ctx.request.body({ type: "form-data" }).value.read();
+        const email = form.fields["email"];
+        const password = form.fields["password"];
 
         if (email != null && password != null) {
           const admin = await this.#Container.AdminService.Login({
@@ -32,13 +31,19 @@ export default class AuthRoutes {
             id: admin.public_id,
           });
 
-          const KID = ctx.state.request_data.public_id;
+          const shopsClean = shops.map((shop) => {
+            return {
+              public_id: shop.public_id,
+              role: shop.role,
+            };
+          });
+
           const iat = Math.floor(Date.now() / 1000);
           const exp = iat + 15 * 60;
           const claims = {
             iat,
             exp,
-            shops,
+            shops: shopsClean,
             adminId: admin.public_id,
           };
 
@@ -51,17 +56,18 @@ export default class AuthRoutes {
           };
 
           const jwt = await new jose.SignJWT(claims)
-            .setProtectedHeader({ typ: "JWT", alg: "PS256", kid: KID })
+            .setProtectedHeader({ typ: "JWT", alg: "HS256" })
             .sign(SHARED_SECRET_KEY);
 
           const refresh = await new jose.SignJWT(claimsRefresh)
-            .setProtectedHeader({ typ: "JWT", alg: "PS256" })
+            .setProtectedHeader({ typ: "JWT", alg: "HS256" })
             .sign(SHARED_SECRET_KEY);
 
           ctx.response.body = stringifyJSON({
             token: jwt,
             refreshToken: refresh,
             expire: exp,
+            name: admin.name,
           });
           ctx.response.headers.set("content-type", "application/json");
         } else {

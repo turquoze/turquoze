@@ -8,6 +8,23 @@ import DBCloser from "./middleware/dbCloser.ts";
 import { stringifyJSON } from "./utils/utils.ts";
 import notFoundPage from "./pages/404.ts";
 
+app.use(async (ctx, next) => {
+  await next();
+  ctx.response.headers.append("Access-Control-Allow-Origin", "*");
+  ctx.response.headers.append(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS",
+  );
+  ctx.response.headers.append(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization",
+  );
+  ctx.response.headers.append(
+    "Access-Control-Allow-Credentials",
+    true.valueOf().toString(),
+  );
+});
+
 app.use(DBCloser);
 app.use(Logger);
 app.use(ResponseTimer);
