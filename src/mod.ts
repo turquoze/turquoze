@@ -9,20 +9,38 @@ import { stringifyJSON } from "./utils/utils.ts";
 import notFoundPage from "./pages/404.ts";
 
 app.use(async (ctx, next) => {
-  await next();
-  ctx.response.headers.append("Access-Control-Allow-Origin", "*");
-  ctx.response.headers.append(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, DELETE, OPTIONS",
-  );
-  ctx.response.headers.append(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization",
-  );
-  ctx.response.headers.append(
-    "Access-Control-Allow-Credentials",
-    true.valueOf().toString(),
-  );
+  if (ctx.request.method == "OPTIONS") {
+    ctx.response.headers.append("Access-Control-Allow-Origin", "*");
+    ctx.response.headers.append(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    ctx.response.headers.append(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Turquoze-ShopId",
+    );
+    ctx.response.headers.append(
+      "Access-Control-Allow-Credentials",
+      true.valueOf().toString(),
+    );
+
+    return ctx.response.status = 200;
+  } else {
+    await next();
+    ctx.response.headers.append("Access-Control-Allow-Origin", "*");
+    ctx.response.headers.append(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    ctx.response.headers.append(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Turquoze-ShopId",
+    );
+    ctx.response.headers.append(
+      "Access-Control-Allow-Credentials",
+      true.valueOf().toString(),
+    );
+  }
 });
 
 app.use(DBCloser);
