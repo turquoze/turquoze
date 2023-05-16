@@ -43,7 +43,7 @@ export default class AuthRoutes {
           const claims = {
             iat,
             exp,
-            shops: shopsClean,
+            shops: JSON.stringify(shopsClean),
             adminId: admin.public_id,
           };
 

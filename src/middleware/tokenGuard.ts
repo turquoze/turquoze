@@ -1,5 +1,7 @@
 import { Context, jose } from "../deps.ts";
+import { SHARED_SECRET } from "../utils/secrets.ts";
 import { TurquozeState } from "../utils/types.ts";
+const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export const TokenGuard =
   () => async (ctx: Context<TurquozeState>, next: () => Promise<unknown>) => {
@@ -11,7 +13,7 @@ export const TokenGuard =
 
         const result = await jose.jwtVerify(
           jwt,
-          ctx.state.request_data._signKey,
+          SHARED_SECRET_KEY,
         );
 
         ctx.state.adminId = result.payload.adminId as string;
