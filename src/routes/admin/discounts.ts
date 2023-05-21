@@ -57,7 +57,9 @@ export default class DiscountsRoutes {
       try {
         const data = await Get<Array<Discount>>(this.#Container, {
           id: `discountsGetMany-${10}-${undefined}`,
-          promise: this.#Container.DiscountService.GetMany({}),
+          promise: this.#Container.DiscountService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         ctx.response.body = stringifyJSON({

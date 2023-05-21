@@ -16,6 +16,7 @@ export default interface ICategoryService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Category>>;
 
   Update(params: {

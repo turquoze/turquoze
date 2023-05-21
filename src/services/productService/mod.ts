@@ -113,7 +113,7 @@ export default class ProductService implements IProductService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number },
+    params: { offset?: string; limit?: number; shop: string },
   ): Promise<Array<Product>> {
     try {
       if (params.limit == null) {
@@ -123,8 +123,8 @@ export default class ProductService implements IProductService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Product>({
-        text: "SELECT * FROM products LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM products WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

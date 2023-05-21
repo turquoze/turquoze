@@ -208,7 +208,9 @@ Deno.test("ProductService", {
   await t.step({
     name: "GetMany",
     fn: async () => {
-      const data = await product.GetMany({});
+      const data = await product.GetMany({
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+      });
       assert(data.length > 0);
     },
     sanitizeOps: false,
@@ -222,6 +224,7 @@ Deno.test("ProductService", {
       try {
         await product.GetMany({
           offset: "00000000-0000-0000-0000-000000000000",
+          shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
       } catch {

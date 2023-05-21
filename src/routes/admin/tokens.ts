@@ -20,7 +20,9 @@ export default class TokensRoutes {
 
     this.#tokens.get("/", async (ctx) => {
       try {
-        const data = await this.#Container.TokenService.GetMany({});
+        const data = await this.#Container.TokenService.GetMany({
+          shop: ctx.state.request_data.public_id,
+        });
 
         ctx.response.body = stringifyJSON({
           tokens: data,

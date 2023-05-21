@@ -72,7 +72,11 @@ export default class DiscountService implements IDiscountService {
   }
 
   async GetMany(
-    params: { offset?: string | undefined; limit?: number | undefined },
+    params: {
+      offset?: string | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
   ): Promise<Discount[]> {
     try {
       if (params.limit == null) {
@@ -82,8 +86,8 @@ export default class DiscountService implements IDiscountService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Discount>({
-        text: "SELECT * FROM discounts LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM discounts WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

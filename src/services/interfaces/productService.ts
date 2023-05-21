@@ -20,6 +20,7 @@ export default interface IProductService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Product>>;
 
   Update(params: {

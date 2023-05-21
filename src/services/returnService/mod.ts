@@ -77,7 +77,11 @@ export default class ReturnService implements IReturnService {
   }
 
   async GetMany(
-    params: { offset?: string | undefined; limit?: number | undefined },
+    params: {
+      offset?: string | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
   ): Promise<OrderReturn[]> {
     try {
       if (params.limit == null) {
@@ -87,8 +91,8 @@ export default class ReturnService implements IReturnService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<OrderReturn>({
-        text: "SELECT * FROM returns LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM returns WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

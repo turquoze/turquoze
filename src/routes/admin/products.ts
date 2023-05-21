@@ -20,7 +20,9 @@ export default class ProductsRoutes {
       try {
         const data = await Get<Array<Product>>(this.#Container, {
           id: `productsGetMany-${ctx.state.request_data.public_id}-${10}-${10}`,
-          promise: this.#Container.ProductService.GetMany({}),
+          promise: this.#Container.ProductService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         const products = data.map((product) => {

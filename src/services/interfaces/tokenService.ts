@@ -17,6 +17,7 @@ export default interface ITokenService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Token>>;
 
   Delete(params: {

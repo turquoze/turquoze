@@ -16,6 +16,7 @@ export default interface IOauthService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Oauth>>;
 
   Delete(params: {

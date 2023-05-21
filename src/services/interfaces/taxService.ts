@@ -12,6 +12,7 @@ export default interface ITaxService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Tax>>;
 
   Delete(params: {

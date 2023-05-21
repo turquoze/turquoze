@@ -69,7 +69,7 @@ export default class OauthService implements IOauthService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number },
+    params: { offset?: string; limit?: number; shop: string },
   ): Promise<Array<Oauth>> {
     try {
       if (params.limit == null) {
@@ -78,8 +78,8 @@ export default class OauthService implements IOauthService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Oauth>({
-        text: "SELECT * FROM oauth_tokens LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM oauth_tokens WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

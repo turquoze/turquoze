@@ -52,7 +52,11 @@ export default class CartService implements IOrderService {
   }
 
   async GetMany(
-    params: { offset?: string | undefined; limit?: number | undefined },
+    params: {
+      offset?: string | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
   ): Promise<Order[]> {
     try {
       if (params.limit == null) {
@@ -62,8 +66,8 @@ export default class CartService implements IOrderService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Order>({
-        text: "SELECT * FROM orders LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM orders WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

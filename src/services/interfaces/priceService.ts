@@ -21,6 +21,7 @@ export default interface IPriceService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Price>>;
 
   Update(params: {

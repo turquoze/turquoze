@@ -19,7 +19,9 @@ export default class UsersRoutes {
       try {
         const data = await Get<Array<User>>(this.#Container, {
           id: `usersGetMany-${10}-${undefined}`,
-          promise: this.#Container.UserService.GetMany({}),
+          promise: this.#Container.UserService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         ctx.response.body = stringifyJSON({

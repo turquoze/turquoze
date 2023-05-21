@@ -20,7 +20,9 @@ export default class WarehousesRoutes {
       try {
         const data = await Get<Array<Warehouse>>(this.#Container, {
           id: `warehousesGetMany-${10}-${undefined}`,
-          promise: this.#Container.WarehouseService.GetMany({}),
+          promise: this.#Container.WarehouseService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         ctx.response.body = stringifyJSON({
