@@ -19,6 +19,7 @@ export default class SettingsRoutes {
       try {
         const products = await this.#Container.ProductService.GetMany({
           limit: 99999, //TODO: get all products
+          shop: ctx.state.request_data.public_id,
         });
 
         const client = new MeiliSearch({

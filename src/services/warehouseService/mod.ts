@@ -76,7 +76,11 @@ export default class CartService implements IWarehouseService {
   }
 
   async GetMany(
-    params: { offset?: string | undefined; limit?: number | undefined },
+    params: {
+      offset?: string | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
   ): Promise<Warehouse[]> {
     try {
       if (params.limit == null) {
@@ -86,8 +90,8 @@ export default class CartService implements IWarehouseService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Warehouse>({
-        text: "SELECT * FROM warehouses LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM warehouses WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

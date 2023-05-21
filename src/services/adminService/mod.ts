@@ -97,7 +97,7 @@ export default class AdminService implements IAdminService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number },
+    params: { offset?: string; limit?: number; shop: string },
   ): Promise<Array<Admin>> {
     try {
       if (params.limit == null) {

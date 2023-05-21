@@ -12,6 +12,7 @@ export default interface IOrderService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Order>>;
 
   SetPaymentStatus(params: {

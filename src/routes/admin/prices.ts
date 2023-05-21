@@ -20,7 +20,9 @@ export default class PricesRoutes {
       try {
         const data = await Get(this.#Container, {
           id: `pricesGetMany-${10}-${undefined}`,
-          promise: this.#Container.PriceService.GetMany({}),
+          promise: this.#Container.PriceService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         ctx.response.body = stringifyJSON({

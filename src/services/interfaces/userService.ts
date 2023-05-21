@@ -24,6 +24,7 @@ export default interface IUserService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<User>>;
 
   Update(params: {

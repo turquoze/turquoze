@@ -98,7 +98,7 @@ export default class PriceService implements IPriceService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number },
+    params: { offset?: string; limit?: number; shop: string },
   ): Promise<Array<Price>> {
     try {
       if (params.limit == null) {
@@ -108,8 +108,8 @@ export default class PriceService implements IPriceService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Price>({
-        text: "SELECT * FROM prices LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM prices WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

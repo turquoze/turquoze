@@ -16,6 +16,7 @@ export default interface IWarehouseService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Warehouse>>;
 
   Delete(params: {

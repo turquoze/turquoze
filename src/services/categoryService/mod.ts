@@ -65,7 +65,7 @@ export default class CategoryService implements ICategoryService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number },
+    params: { offset?: string; limit?: number; shop: string },
   ): Promise<Array<Category>> {
     try {
       if (params.limit == null) {
@@ -75,8 +75,8 @@ export default class CategoryService implements ICategoryService {
       const client = await this.pool.connect();
 
       const result = await client.queryObject<Category>({
-        text: "SELECT * FROM categories LIMIT $1 OFFSET $2",
-        args: [params.limit, params.offset],
+        text: "SELECT * FROM categories WHERE shop = $1 LIMIT $2 OFFSET $3",
+        args: [params.shop, params.limit, params.offset],
       });
 
       client.release();

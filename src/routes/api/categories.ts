@@ -19,7 +19,9 @@ export default class CategoriesRoutes {
       try {
         const data = await Get<Array<Category>>(this.#Container, {
           id: `categoryGetMany-${ctx.state.request_data.public_id}-${10}-${10}`,
-          promise: this.#Container.CategoryService.GetMany({}),
+          promise: this.#Container.CategoryService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         ctx.response.body = stringifyJSON({

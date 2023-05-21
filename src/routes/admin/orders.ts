@@ -22,7 +22,9 @@ export default class OrdersRoutes {
       try {
         const data = await Get(this.#Container, {
           id: `ordersGetMany-${10}-${undefined}`,
-          promise: this.#Container.OrderService.GetMany({}),
+          promise: this.#Container.OrderService.GetMany({
+            shop: ctx.state.request_data.public_id,
+          }),
         });
 
         ctx.response.body = stringifyJSON({

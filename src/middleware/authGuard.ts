@@ -35,7 +35,9 @@ export const AuthGuard =
           SHARED_SECRET_KEY,
         );
 
-        const shops = JSON.parse(result.payload.shops as string) as Array<ShopLinkData>;
+        const shops = JSON.parse(result.payload.shops as string) as Array<
+          ShopLinkData
+        >;
 
         const match = shops.find((x) => x.public_id == shopId);
 

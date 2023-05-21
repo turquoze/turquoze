@@ -16,6 +16,7 @@ export default interface IDiscountService {
   GetMany(params: {
     offset?: string;
     limit?: number;
+    shop: string;
   }): Promise<Array<Discount>>;
 
   Delete(params: {
