@@ -9,8 +9,6 @@ let DATABASE: string | undefined;
 let DATABASE_PORT: string | undefined;
 let UPSTASH_REDIS_REST_URL: string | undefined;
 let UPSTASH_REDIS_REST_TOKEN: string | undefined;
-let SUPABASE_KEY: string | undefined;
-let SUPABASE_URL: string | undefined;
 let SHARED_SECRET: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
@@ -53,16 +51,6 @@ if (!UPSTASH_REDIS_REST_TOKEN) {
   throw new Error("environment variable UPSTASH_REDIS_REST_TOKEN not set");
 }
 
-SUPABASE_KEY = Deno.env.get("SUPABASE_KEY");
-if (!SUPABASE_KEY) {
-  throw new Error("environment variable SUPABASE_KEY not set");
-}
-
-SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-if (!SUPABASE_URL) {
-  throw new Error("environment variable SUPABASE_URL not set");
-}
-
 SHARED_SECRET = Deno.env.get("SHARED_SECRET");
 if (!SHARED_SECRET) {
   throw new Error("environment variable SHARED_SECRET not set");
@@ -76,8 +64,6 @@ export {
   DATABASE_PORT,
   DATABASE_USER,
   SHARED_SECRET,
-  SUPABASE_KEY,
-  SUPABASE_URL,
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,
 };
