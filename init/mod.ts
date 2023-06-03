@@ -1,4 +1,4 @@
-import { Container } from "../src/services/mod.ts";
+import Container from "../src/services/mod.ts";
 import { faker } from "npm:@faker-js/faker";
 import { Category, Product } from "../src/utils/types.ts";
 import { postgres } from "../src/deps.ts";
@@ -23,7 +23,8 @@ const pool = new postgres.Pool(
   },
   3,
 );
-const container = new Container(pool);
+// @ts-expect-error no redis
+const container = new Container(pool, null);
 
 console.log("Start - Demo init");
 

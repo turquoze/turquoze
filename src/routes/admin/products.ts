@@ -23,22 +23,14 @@ export default class ProductsRoutes {
         });
 
         const productsPromises = data.map(async (product) => {
-          product.price = Dinero({
-            amount: parseInt((product.price * 100).toString()),
-            currency: ctx.state.request_data.currency,
-          }).getAmount();
-
           const price = await this.#Container.PriceService.GetByProduct({
             productId: product.public_id!,
           });
 
-          //TODO: remove when we have prices
-          if (price != null && price.amount != null) {
-            product.price = Dinero({
-              amount: parseInt((price.amount * 100).toString()),
-              currency: ctx.state.request_data.currency,
-            }).getAmount();
-          }
+          product.price = Dinero({
+            amount: parseInt((price.amount).toString()),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
 
           return product;
         });
@@ -109,22 +101,14 @@ export default class ProductsRoutes {
           }),
         });
 
-        data.price = Dinero({
-          amount: parseInt((data.price * 100).toString()),
-          currency: ctx.state.request_data.currency,
-        }).getAmount();
-
         const price = await this.#Container.PriceService.GetByProduct({
           productId: ctx.params.id,
         });
 
-        //TODO: remove when we have prices
-        if (price != null && price.amount != null) {
-          data.price = Dinero({
-            amount: parseInt((price.amount * 100).toString()),
-            currency: ctx.state.request_data.currency,
-          }).getAmount();
-        }
+        data.price = Dinero({
+          amount: parseInt((price.amount).toString()),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
 
         ctx.response.body = stringifyJSON({
           products: data,

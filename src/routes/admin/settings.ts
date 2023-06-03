@@ -27,7 +27,13 @@ export default class SettingsRoutes {
           apiKey: this.#Container.Shop.settings.meilisearch.api_key,
         });
 
-        const productsMapped: Array<Product> = products.map((product) => {
+        const productsMappedPromises = products.map(async (product) => {
+          const price = await this.#Container.PriceService.GetByProduct({
+            productId: product.public_id!,
+          });
+
+          product.price = price.amount;
+
           const obj = {
             ...product,
             id: Number(product.id),
@@ -38,8 +44,12 @@ export default class SettingsRoutes {
           return obj;
         });
 
+        const productsMapped: Array<Product> = await Promise.all(
+          productsMappedPromises,
+        );
+
         await this.#Container.SearchService.ProductIndex({
-          index: "products",
+          index: this.#Container.Shop.settings.meilisearch.index,
           products: productsMapped,
         }, client);
 
