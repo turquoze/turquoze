@@ -18,11 +18,8 @@ export default class WarehousesRoutes {
 
     this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<Warehouse>>(this.#Container, {
-          id: `warehousesGetMany-${10}-${undefined}`,
-          promise: this.#Container.WarehouseService.GetMany({
-            shop: ctx.state.request_data.public_id,
-          }),
+        const data = await this.#Container.WarehouseService.GetMany({
+          shop: ctx.state.request_data.public_id,
         });
 
         ctx.response.body = stringifyJSON({

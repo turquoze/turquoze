@@ -55,11 +55,8 @@ export default class DiscountsRoutes {
 
     this.#discounts.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<Discount>>(this.#Container, {
-          id: `discountsGetMany-${10}-${undefined}`,
-          promise: this.#Container.DiscountService.GetMany({
-            shop: ctx.state.request_data.public_id,
-          }),
+        const data = await this.#Container.DiscountService.GetMany({
+          shop: ctx.state.request_data.public_id,
         });
 
         ctx.response.body = stringifyJSON({
