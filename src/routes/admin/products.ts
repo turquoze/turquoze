@@ -22,7 +22,7 @@ export default class ProductsRoutes {
           shop: ctx.state.request_data.public_id,
         });
 
-        const products = data.map(async (product) => {
+        const productsPromises = data.map(async (product) => {
           product.price = Dinero({
             amount: parseInt((product.price * 100).toString()),
             currency: ctx.state.request_data.currency,
@@ -42,6 +42,8 @@ export default class ProductsRoutes {
 
           return product;
         });
+
+        const products = await Promise.all(productsPromises);
 
         ctx.response.body = stringifyJSON({
           products,
