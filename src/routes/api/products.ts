@@ -22,11 +22,23 @@ export default class ProductsRoutes {
           shop: ctx.state.request_data.public_id,
         });
 
-        const products = data.map((product) => {
+        const products = data.map(async (product) => {
           product.price = Dinero({
             amount: parseInt((product.price * 100).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
+
+          const price = await this.#Container.PriceService.GetByProduct({
+            productId: product.public_id!,
+          });
+
+          //TODO: remove when we have prices
+          if (price != null && price.amount != null) {
+            product.price = Dinero({
+              amount: parseInt((price.amount * 100).toString()),
+              currency: ctx.state.request_data.currency,
+            }).getAmount();
+          }
 
           return product;
         });
@@ -117,11 +129,23 @@ export default class ProductsRoutes {
             );
           }
 
-          const data = products.map((product) => {
+          const data = products.map(async (product) => {
             product.price = Dinero({
               amount: parseInt((product.price * 100).toString()),
               currency: ctx.state.request_data.currency,
             }).getAmount();
+
+            const price = await this.#Container.PriceService.GetByProduct({
+              productId: product.public_id!,
+            });
+
+            //TODO: remove when we have prices
+            if (price != null && price.amount != null) {
+              product.price = Dinero({
+                amount: parseInt((price.amount * 100).toString()),
+                currency: ctx.state.request_data.currency,
+              }).getAmount();
+            }
 
             return product;
           });
@@ -156,6 +180,18 @@ export default class ProductsRoutes {
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
+        const price = await this.#Container.PriceService.GetByProduct({
+          productId: data.public_id!,
+        });
+
+        //TODO: remove when we have prices
+        if (price != null && price.amount != null) {
+          data.price = Dinero({
+            amount: parseInt((price.amount * 100).toString()),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+        }
+
         ctx.response.body = stringifyJSON({
           products: data,
         });
@@ -176,11 +212,23 @@ export default class ProductsRoutes {
           id: ctx.params.id,
         });
 
-        const dataWPrice = data.map((product) => {
+        const dataWPrice = data.map(async (product) => {
           product.price = Dinero({
             amount: parseInt((product.price * 100).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
+
+          const price = await this.#Container.PriceService.GetByProduct({
+            productId: product.public_id!,
+          });
+
+          //TODO: remove when we have prices
+          if (price != null && price.amount != null) {
+            product.price = Dinero({
+              amount: parseInt((price.amount * 100).toString()),
+              currency: ctx.state.request_data.currency,
+            }).getAmount();
+          }
 
           return product;
         });
@@ -258,10 +306,22 @@ export default class ProductsRoutes {
           }),
         });
 
+        const price = await this.#Container.PriceService.GetByProduct({
+          productId: ctx.params.id,
+        });
+
         data.price = Dinero({
           amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
+
+        //TODO: remove when we have prices
+        if (price != null && price.amount != null) {
+          data.price = Dinero({
+            amount: parseInt((price.amount * 100).toString()),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+        }
 
         ctx.response.body = stringifyJSON({
           products: data,
