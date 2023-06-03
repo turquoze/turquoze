@@ -284,18 +284,25 @@ export default class CartRoutes {
           ctx.params.id,
         );
 
-        const response = data.map((item) => {
+        const responsePromises = data.map(async (item) => {
+          const price = await this.#Container.PriceService.GetByProduct({
+            productId: item.product_id,
+          });
+
           item.price = Dinero({
-            amount: parseInt((item.price * 100).toString()),
+            amount: parseInt((price.amount).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
+
           item.totalPrice = Dinero({
-            amount: parseInt((item.price * 100).toString()),
+            amount: parseInt((price.amount).toString()),
             currency: ctx.state.request_data.currency,
           }).multiply(parseInt(item.quantity.toString())).getAmount();
 
           return item;
         });
+
+        const response = await Promise.all(responsePromises);
 
         ctx.response.body = stringifyJSON({
           carts: response,
@@ -326,25 +333,17 @@ export default class CartRoutes {
           ctx.params.product_id,
         );
 
-        data.price = Dinero({
-          amount: parseInt((data.price * 100).toString()),
-          currency: ctx.state.request_data.currency,
-        }).getAmount();
-
         const price = await this.#Container.PriceService.GetByProduct({
           productId: ctx.params.product_id,
         });
 
-        //TODO: remove when we have prices
-        if (price != null && price.amount != null) {
-          data.price = Dinero({
-            amount: parseInt((price.amount * 100).toString()),
-            currency: ctx.state.request_data.currency,
-          }).getAmount();
-        }
+        data.price = Dinero({
+          amount: parseInt((price.amount).toString()),
+          currency: ctx.state.request_data.currency,
+        }).getAmount();
 
         data.totalPrice = Dinero({
-          amount: parseInt((data.price * 100).toString()),
+          amount: parseInt((data.price).toString()),
           currency: ctx.state.request_data.currency,
         }).multiply(parseInt(data.quantity.toString())).getAmount();
 
