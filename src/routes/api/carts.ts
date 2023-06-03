@@ -330,6 +330,19 @@ export default class CartRoutes {
           amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
+
+        const price = await this.#Container.PriceService.GetByProduct({
+          productId: ctx.params.product_id,
+        });
+
+        //TODO: remove when we have prices
+        if (price != null && price.amount != null) {
+          data.price = Dinero({
+            amount: parseInt((price.amount * 100).toString()),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+        }
+
         data.totalPrice = Dinero({
           amount: parseInt((data.price * 100).toString()),
           currency: ctx.state.request_data.currency,
