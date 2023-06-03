@@ -22,11 +22,8 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<Category>>(this.#Container, {
-          id: `categoryGetMany-${10}-${10}`,
-          promise: this.#Container.CategoryService.GetMany({
-            shop: ctx.state.request_data.public_id,
-          }),
+        const data = await this.#Container.CategoryService.GetMany({
+          shop: ctx.state.request_data.public_id,
         });
 
         ctx.response.body = stringifyJSON({

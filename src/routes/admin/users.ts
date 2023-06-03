@@ -17,11 +17,8 @@ export default class UsersRoutes {
 
     this.#users.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get<Array<User>>(this.#Container, {
-          id: `usersGetMany-${10}-${undefined}`,
-          promise: this.#Container.UserService.GetMany({
-            shop: ctx.state.request_data.public_id,
-          }),
+        const data = await this.#Container.UserService.GetMany({
+          shop: ctx.state.request_data.public_id,
         });
 
         ctx.response.body = stringifyJSON({

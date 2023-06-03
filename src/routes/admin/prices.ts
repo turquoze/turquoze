@@ -18,11 +18,8 @@ export default class PricesRoutes {
 
     this.#prices.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        const data = await Get(this.#Container, {
-          id: `pricesGetMany-${10}-${undefined}`,
-          promise: this.#Container.PriceService.GetMany({
-            shop: ctx.state.request_data.public_id,
-          }),
+        const data = await this.#Container.PriceService.GetMany({
+          shop: ctx.state.request_data.public_id,
         });
 
         ctx.response.body = stringifyJSON({
