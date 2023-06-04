@@ -2,6 +2,7 @@ import { Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { Category, Product, TurquozeState } from "../../utils/types.ts";
+import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
@@ -73,8 +74,23 @@ export default class CategoriesRoutes {
           }),
         });
 
+        const productsPromises = data.map(async (product) => {
+          const price = await this.#Container.PriceService.GetByProduct({
+            productId: product.public_id!,
+          });
+
+          product.price = Dinero({
+            amount: parseInt((price.amount).toString()),
+            currency: ctx.state.request_data.currency,
+          }).getAmount();
+
+          return product;
+        });
+
+        const products = await Promise.all(productsPromises);
+
         ctx.response.body = stringifyJSON({
-          products: data,
+          products,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
