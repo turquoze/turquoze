@@ -348,3 +348,9 @@ export interface Oauth {
   expires_at?: number | null;
   plugin: string;
 }
+
+export interface Organization {
+  id: number;
+  public_id: string;
+  name: string;
+}
