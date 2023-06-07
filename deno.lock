@@ -494,5 +494,22 @@
     "https://esm.sh/v119/meilisearch@0.31.1/dist/types/types/index.d.ts": "a0e396a938a5e86b0a838c1f17311c703ff20e21095983a7523549fdb6a2a48f",
     "https://esm.sh/v119/meilisearch@0.31.1/dist/types/types/types.d.ts": "fef0cde710b493b4a3bb5a5283b7d6a75d62eb871efa31810ddd14117fc23b04",
     "https://esm.sh/v119/node.ns.d.ts": "0fb081f0cd2150931bd54baa04f31466abd9ca701fd9060d07931402cf8367ba"
+  },
+  "npm": {
+    "specifiers": {
+      "prisma": "prisma@4.6.1"
+    },
+    "packages": {
+      "@prisma/engines@4.6.1": {
+        "integrity": "sha512-3u2/XxvxB+Q7cMXHnKU0CpBiUK1QWqpgiBv28YDo1zOIJE3FCF8DI2vrp6vuwjGt5h0JGXDSvmSf4D4maVjJdw==",
+        "dependencies": {}
+      },
+      "prisma@4.6.1": {
+        "integrity": "sha512-BR4itMCuzrDV4tn3e2TF+nh1zIX/RVU0isKtKoN28ADeoJ9nYaMhiuRRkFd2TZN8+l/XfYzoRKyHzUFXLQhmBQ==",
+        "dependencies": {
+          "@prisma/engines": "@prisma/engines@4.6.1"
+        }
+      }
+    }
   }
 }
