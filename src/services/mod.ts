@@ -20,6 +20,7 @@ import DefaultAdminService from "./adminService/mod.ts";
 import DefaultShopLinkService from "./shopLinkService/mod.ts";
 import DefaultOauthService from "./oauthService/mod.ts";
 import DefaultOrganizationService from "./organizationService/mod.ts";
+import DefaultOrganizationLinkService from "./organizationLinkService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -43,6 +44,7 @@ import IAdminService from "./interfaces/adminService.ts";
 import IShopLinkService from "./interfaces/shopLinkService.ts";
 import IOauthService from "./interfaces/oauthService.ts";
 import IOrganizationService from "./interfaces/organizationService.ts";
+import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 
 import { Shop } from "../utils/types.ts";
 import { postgres, Redis } from "../deps.ts";
@@ -72,6 +74,7 @@ export default class Container {
   ShopLinkService: IShopLinkService;
   OauthService: IOauthService;
   OrganizationService: IOrganizationService;
+  OrganizationLinkService: IOrganizationLinkService;
 
   constructor(db: postgres.Pool, redis: Redis) {
     this.#pool = db;
@@ -105,6 +108,9 @@ export default class Container {
     this.ShopLinkService = new DefaultShopLinkService(this.#pool);
     this.OauthService = new DefaultOauthService(this.#pool);
     this.OrganizationService = new DefaultOrganizationService(this.#pool);
+    this.OrganizationLinkService = new DefaultOrganizationLinkService(
+      this.#pool,
+    );
   }
 
   Shop: Shop = {

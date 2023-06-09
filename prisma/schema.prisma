@@ -127,29 +127,30 @@ model products {
 }
 
 model shops {
-  public_id    String       @id(map: "regions_pkey") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  created_at   DateTime?    @default(now()) @db.Timestamptz(6)
-  regions      String[]
-  currency     String?
-  name         String?
-  id           BigInt       @default(autoincrement())
-  payment_id   String?      @db.Uuid
-  url          String?      @db.VarChar
-  search_index String?      @db.VarChar
-  secret       String       @default("test")
-  settings     Json?        @db.Json
-  shipping_id  String?      @db.VarChar
-  categories   categories[]
-  discounts    discounts[]
-  orders       orders[]
-  plugins      plugins[]
-  prices       prices[]
-  products     products[]
-  returns      returns[]
-  shopslink    shopslink[]
-  taxes        taxes[]
-  tokens       tokens[]
-  users        users[]
+  public_id         String              @id(map: "regions_pkey") @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  created_at        DateTime?           @default(now()) @db.Timestamptz(6)
+  regions           String[]
+  currency          String?
+  name              String?
+  id                BigInt              @default(autoincrement())
+  payment_id        String?             @db.Uuid
+  url               String?             @db.VarChar
+  search_index      String?             @db.VarChar
+  secret            String              @default("test")
+  settings          Json?               @db.Json
+  shipping_id       String?             @db.VarChar
+  categories        categories[]
+  discounts         discounts[]
+  orders            orders[]
+  organizationsLink organizationsLink[]
+  plugins           plugins[]
+  prices            prices[]
+  products          products[]
+  returns           returns[]
+  shopslink         shopslink[]
+  taxes             taxes[]
+  tokens            tokens[]
+  users             users[]
 }
 
 model taxes {
@@ -185,16 +186,17 @@ model tokens {
 }
 
 model users {
-  id         BigInt    @default(autoincrement())
-  created_at DateTime? @default(now()) @db.Timestamptz(6)
-  public_id  String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name       String?
-  email      String
-  not_active Boolean   @default(false)
-  shop       String?   @db.Uuid
-  password   String    @db.VarChar
-  role       String?   @db.VarChar
-  shops      shops?    @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
+  id                BigInt              @default(autoincrement())
+  created_at        DateTime?           @default(now()) @db.Timestamptz(6)
+  public_id         String              @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name              String?
+  email             String
+  not_active        Boolean             @default(false)
+  shop              String?             @db.Uuid
+  password          String              @db.VarChar
+  role              String?             @db.VarChar
+  shops             shops?              @relation(fields: [shop], references: [public_id], onDelete: NoAction, onUpdate: NoAction)
+  organizationsLink organizationsLink[]
 }
 
 model warehouses {
@@ -269,4 +271,16 @@ model organizations {
   created_at DateTime? @default(now()) @db.Timestamptz(6)
   public_id  String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name       String
+}
+
+model organizationsLink {
+  id         BigInt    @default(autoincrement())
+  created_at DateTime? @default(now()) @db.Timestamptz(6)
+  person     String    @db.Uuid
+  shop       String    @db.Uuid
+  role       String    @default("VIEWER")
+  users      users     @relation(fields: [person], references: [public_id], onDelete: Cascade, onUpdate: NoAction)
+  shops      shops     @relation(fields: [shop], references: [public_id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([person, shop])
 }

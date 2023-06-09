@@ -354,3 +354,11 @@ export interface Organization {
   public_id: string;
   name: string;
 }
+
+export interface OrganizationLink {
+  id: number;
+  person: string;
+  shop: string;
+  role: TurquozeRole;
+  created_at?: number;
+}
