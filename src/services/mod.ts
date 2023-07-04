@@ -88,13 +88,6 @@ export default class Container {
     this.CategoryLinkService = new DefaultCategoryLinkService(this.#pool);
     this.ShopService = new DefaultShopService(this.#pool);
     this.PluginService = new DefaultPluginService(this.#pool);
-    this.PaymentService = new DefaultPaymentService(
-      this.#pool,
-      this.CartService,
-      this.OrderService,
-      this.ProductService,
-      this.PluginService,
-    );
     this.DiscountService = new DefaultDiscountService(this.#pool);
     this.SearchService = new DefaultSearchService();
     this.WarehouseService = new DefaultWarehouseService(this.#pool);
@@ -110,6 +103,14 @@ export default class Container {
     this.OrganizationService = new DefaultOrganizationService(this.#pool);
     this.OrganizationLinkService = new DefaultOrganizationLinkService(
       this.#pool,
+    );
+    this.PaymentService = new DefaultPaymentService(
+      this.#pool,
+      this.CartService,
+      this.OrderService,
+      this.ProductService,
+      this.PluginService,
+      this.PriceService,
     );
   }
 

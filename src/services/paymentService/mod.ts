@@ -16,6 +16,7 @@ import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
 import { Pool } from "../../deps.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import IPriceService from "../interfaces/priceService.ts";
 
 export default class PaymentService implements IPaymentService {
   pool: Pool;
@@ -23,18 +24,21 @@ export default class PaymentService implements IPaymentService {
   #OrderService: IOrderService;
   #ProductService: IProductService;
   #PluginService: IPluginService;
+  #PriceService: IPriceService;
   constructor(
     pool: Pool,
     cartService: ICartService,
     orderService: IOrderService,
     productService: IProductService,
     pluginService: IPluginService,
+    priceService: IPriceService
   ) {
     this.pool = pool;
     this.#CartService = cartService;
     this.#OrderService = orderService;
     this.#ProductService = productService;
     this.#PluginService = pluginService;
+    this.#PriceService = priceService;
   }
 
   async Create(
@@ -63,10 +67,13 @@ export default class PaymentService implements IPaymentService {
 
       const payCartItemsPromises = cart.items.map(async (item) => {
         const product = await this.#ProductService.Get({ id: item.product_id });
+        const price = await this.#PriceService.GetByProduct({
+          productId: product.public_id!,
+        });
 
         return {
           name: product.title,
-          price: parseInt(product.price.toString()),
+          price: parseInt(price.amount.toString()),
           image_url: product.images[0],
           quantity: item.quantity,
         };
@@ -175,11 +182,11 @@ export default class PaymentService implements IPaymentService {
       const arr = Array<any>();
 
       await Promise.all(params.items.map(async (product) => {
-        const dbProduct = await this.#ProductService.Get({
-          id: product.product_id,
+        const dbProduct = await this.#PriceService.GetByProduct({
+          productId: product.product_id,
         });
-        // @ts-expect-error fake int
-        const productPrice = parseInt(dbProduct.price);
+
+        const productPrice = parseInt(dbProduct.amount.toString());
 
         const dineroObj = dollars(productPrice);
         arr.push(dineroObj);
