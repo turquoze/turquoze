@@ -32,10 +32,11 @@ export interface Cart {
 export interface CartItem {
   id: number;
   cart_id: string;
-  product_id: string;
+  item_id: string;
   price: number;
   quantity: number;
   totalPrice: number;
+  type: "PRODUCT" | "DISCOUNT";
 }
 
 export interface Order {

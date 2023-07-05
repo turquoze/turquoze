@@ -283,10 +283,10 @@ export default class CartRoutes {
         const data = await this.#Container.CartService.GetAllItems(
           ctx.params.id,
         );
-
+        
         const responsePromises = data.map(async (item) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: item.product_id,
+            productId: item.item_id,
           });
 
           item.price = Dinero({
