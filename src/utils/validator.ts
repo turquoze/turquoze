@@ -52,7 +52,7 @@ export const CartSchema = yup.object().shape({
 
 export const CartItemSchema = yup.object().shape({
   cart_id: yup.string().uuid().required(),
-  product_id: yup.string().uuid().required(),
+  item_id: yup.string().uuid().required(),
   price: yup.number().positive().integer().required(),
   quantity: yup.number().positive().integer().required(),
 });

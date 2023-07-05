@@ -32,8 +32,8 @@ export default class CartService implements ICartService {
 
       const hasItem = await client.queryObject<CartItem>({
         text:
-          "SELECT * FROM cartitems WHERE cart_id = $1 AND product_id = $2 LIMIT 1",
-        args: [params.data.cart_id, params.data.product_id],
+          "SELECT * FROM cartitems WHERE cart_id = $1 AND item_id = $2 LIMIT 1",
+        args: [params.data.cart_id, params.data.item_id],
       });
 
       if (hasItem.rows.length > 0) {
@@ -51,10 +51,10 @@ export default class CartService implements ICartService {
       } else {
         const result = await client.queryObject<CartItem>({
           text:
-            "INSERT INTO cartitems (cart_id, product_id, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id",
+            "INSERT INTO cartitems (cart_id, item_id, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id",
           args: [
             params.data.cart_id,
-            params.data.product_id,
+            params.data.item_id,
             params.data.price,
             params.data.quantity,
           ],
@@ -324,7 +324,7 @@ export default class CartService implements ICartService {
 
       const result = await client.queryObject<CartItem>({
         text:
-          "SELECT * FROM cartitems WHERE cart_id = $1 AND product_id = $2 LIMIT 1",
+          "SELECT * FROM cartitems WHERE cart_id = $1 AND item_id = $2 LIMIT 1",
         args: [cartId, productId],
       });
 
@@ -360,7 +360,7 @@ export default class CartService implements ICartService {
       const client = await this.pool.connect();
 
       await client.queryObject<CartItem>({
-        text: "DELETE FROM cartitems WHERE cart_id = $1 AND product_id = $2",
+        text: "DELETE FROM cartitems WHERE cart_id = $1 AND item_id = $2",
         args: [cartId, productId],
       });
 

@@ -31,7 +31,7 @@ export default class PaymentService implements IPaymentService {
     orderService: IOrderService,
     productService: IProductService,
     pluginService: IPluginService,
-    priceService: IPriceService
+    priceService: IPriceService,
   ) {
     this.pool = pool;
     this.#CartService = cartService;
@@ -66,7 +66,7 @@ export default class PaymentService implements IPaymentService {
       });
 
       const payCartItemsPromises = cart.items.map(async (item) => {
-        const product = await this.#ProductService.Get({ id: item.product_id });
+        const product = await this.#ProductService.Get({ id: item.item_id });
         const price = await this.#PriceService.GetByProduct({
           productId: product.public_id!,
         });
@@ -87,7 +87,7 @@ export default class PaymentService implements IPaymentService {
             currency: params.data.shop.currency,
             value: product.price,
           },
-          product: product.product_id,
+          product: product.item_id,
           quantity: product.quantity,
         };
       });
@@ -183,7 +183,7 @@ export default class PaymentService implements IPaymentService {
 
       await Promise.all(params.items.map(async (product) => {
         const dbProduct = await this.#PriceService.GetByProduct({
-          productId: product.product_id,
+          productId: product.item_id,
         });
 
         const productPrice = parseInt(dbProduct.amount.toString());
