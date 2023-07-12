@@ -1,5 +1,5 @@
 import ICartService from "../interfaces/cartService.ts";
-import { Cart, CartItem, Shipping } from "../../utils/types.ts";
+import { Cart, CartItem, Discount, Shipping } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { Pool } from "../../deps.ts";
 
@@ -186,16 +186,21 @@ export default class CartService implements ICartService {
     }
   }
 
-  async ApplyCoupon(params: { id: string; coupon: string }): Promise<Cart> {
+  async ApplyDiscount(
+    params: { id: string; discount: Discount },
+  ): Promise<CartItem> {
     try {
       const client = await this.pool.connect();
 
-      const result = await client.queryObject<Cart>({
+      const result = await client.queryObject<CartItem>({
         text:
-          "INSERT INTO carts (coupon) VALUES ($1) WHERE public_id = $2 RETURNING id",
+          "INSERT INTO cartitems (cart_id, item_id, price, quantity, type) VALUES ($1, $2, $3, $4, $5) RETURNING id",
         args: [
-          params.coupon,
           params.id,
+          params.discount.public_id,
+          0,
+          1,
+          "DISCOUNT",
         ],
       });
 
@@ -208,21 +213,19 @@ export default class CartService implements ICartService {
     }
   }
 
-  async ApplyGiftcard(params: { id: string; giftcard: string }): Promise<Cart> {
+  async RemoveDiscount(
+    params: { id: string; discountId: string },
+  ): Promise<void> {
     try {
       const client = await this.pool.connect();
 
-      const result = await client.queryObject<Cart>({
+      await client.queryObject<CartItem>({
         text:
-          "INSERT INTO carts (giftcard) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          params.giftcard,
-          params.id,
-        ],
+          "DELETE FROM cartitems WHERE cart_id = $1 AND item_id = $2 AND type = $3",
+        args: [params.id, params.discountId, "DISCOUNT"],
       });
 
       client.release();
-      return result.rows[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -259,50 +262,6 @@ export default class CartService implements ICartService {
       const result = await client.queryObject<Cart>({
         text:
           "INSERT INTO carts (comment) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          "",
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
-  }
-
-  async RemoveCoupon(params: { id: string }): Promise<Cart> {
-    try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (coupon) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          "",
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
-  }
-
-  async RemoveGiftcard(params: { id: string }): Promise<Cart> {
-    try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (giftcard) VALUES ($1) WHERE public_id = $2 RETURNING id",
         args: [
           "",
           params.id,

@@ -1,4 +1,4 @@
-import { Cart, CartItem, Shipping } from "../../utils/types.ts";
+import { Cart, CartItem, Discount, Shipping } from "../../utils/types.ts";
 
 export default interface ICartService {
   Create(params: {
@@ -34,28 +34,20 @@ export default interface ICartService {
     billing: Shipping;
   }): Promise<Cart>;
 
-  ApplyCoupon(params: {
+  ApplyDiscount(params: {
     id: string;
-    coupon: string;
-  }): Promise<Cart>;
-
-  ApplyGiftcard(params: {
-    id: string;
-    giftcard: string;
-  }): Promise<Cart>;
+    discount: Discount;
+  }): Promise<CartItem>;
 
   UpsertComment(params: {
     id: string;
     comment: string;
   }): Promise<Cart>;
 
-  RemoveCoupon(params: {
+  RemoveDiscount(params: {
     id: string;
-  }): Promise<Cart>;
-
-  RemoveGiftcard(params: {
-    id: string;
-  }): Promise<Cart>;
+    discountId: string;
+  }): Promise<void>;
 
   RemoveComment(params: {
     id: string;
