@@ -27,8 +27,6 @@ model carts {
   metadata   Json?       @db.Json
   shipping   Json?       @db.Json
   billing    Json?       @db.Json
-  coupon     String?     @db.VarChar
-  giftcard   String?     @db.VarChar
   comment    String?     @db.VarChar
   cartitems  cartitems[]
 }

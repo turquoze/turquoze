@@ -39,6 +39,10 @@ export interface CartItem {
   type: "PRODUCT" | "DISCOUNT";
 }
 
+export interface DiscountItem {
+  code: string;
+}
+
 export interface Order {
   public_id: string;
   id: number;

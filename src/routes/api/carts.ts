@@ -1,7 +1,13 @@
 import { Router } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Cart, CartItem, Shipping, TurquozeState } from "../../utils/types.ts";
+import {
+  Cart,
+  CartItem,
+  DiscountItem,
+  Shipping,
+  TurquozeState,
+} from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { stringifyJSON } from "../../utils/utils.ts";
@@ -9,6 +15,7 @@ import {
   CartItemSchema,
   CartSchema,
   CommentSchema,
+  DiscountItemSchema,
   MetadataSchema,
   ShippingSchema,
   UuidSchema,
@@ -283,7 +290,7 @@ export default class CartRoutes {
         const data = await this.#Container.CartService.GetAllItems(
           ctx.params.id,
         );
-        
+
         const responsePromises = data.map(async (item) => {
           const price = await this.#Container.PriceService.GetByProduct({
             productId: item.item_id,
@@ -420,6 +427,73 @@ export default class CartRoutes {
 
         await this.#Container.CartService.Delete({
           id: ctx.params.id,
+        });
+
+        ctx.response.status = 201;
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.post("/:id/discounts", async (ctx) => {
+      try {
+        if (!ctx.request.hasBody) {
+          throw new NoBodyError("No Body");
+        }
+
+        const body = ctx.request.body();
+        let item: DiscountItem;
+        if (body.type === "json") {
+          item = await body.value;
+        } else {
+          throw new NoBodyError("Wrong content-type");
+        }
+
+        await DiscountItemSchema.validate(item);
+        const posted: DiscountItem = await DiscountItemSchema.cast(item);
+
+        const discount = await this.#Container.DiscountService.GetByCode({
+          code: posted.code,
+        });
+
+        const data = await this.#Container.CartService.ApplyDiscount({
+          id: ctx.params.id,
+          discount: discount,
+        });
+
+        ctx.response.body = stringifyJSON({
+          carts: data,
+        });
+        ctx.response.headers.set("content-type", "application/json");
+      } catch (error) {
+        const data = ErrorHandler(error);
+        ctx.response.status = data.code;
+        ctx.response.headers.set("content-type", "application/json");
+        ctx.response.body = JSON.stringify({
+          message: data.message,
+        });
+      }
+    });
+
+    this.#carts.delete("/:id/discounts/:discount_id", async (ctx) => {
+      try {
+        await UuidSchema.validate({
+          id: ctx.params.id,
+        });
+
+        await UuidSchema.validate({
+          id: ctx.params.discount_id,
+        });
+
+        await this.#Container.CartService.RemoveDiscount({
+          id: ctx.params.id,
+          discountId: ctx.params.discount_id,
         });
 
         ctx.response.status = 201;

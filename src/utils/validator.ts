@@ -57,6 +57,10 @@ export const CartItemSchema = yup.object().shape({
   quantity: yup.number().positive().integer().required(),
 });
 
+export const DiscountItemSchema = yup.object().shape({
+  code: yup.string().uuid().required(),
+});
+
 export const SearchSchema = yup.object().shape({
   query: yup.string().nullable(true),
   options: yup.object().nullable(),
