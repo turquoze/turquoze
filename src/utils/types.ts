@@ -12,7 +12,7 @@ export interface Product {
   short_description: string;
   long_description: string;
   images: Array<string>;
-  price: number;
+  price?: number;
   shop: string;
 }
 
@@ -317,9 +317,24 @@ export interface ReturnProduct {
 }
 
 export type TurquozeEvent =
-  | "CREATED_PRODUCT"
-  | "UPDATED_PRODUCT"
-  | "DELETED_PRODUCT"
+  | "Order.Created"
+  | "Order.Done"
+  | "Order.Cancelled"
+  | "Product.Created"
+  | "Product.Updated"
+  | "Product.Deleted"
+  | "Category.Created"
+  | "Category.Updated"
+  | "Category.Deleted"
+  | "Discount.Created"
+  | "Discount.Updated"
+  | "Discount.Deleted"
+  | "Inventory.Created"
+  | "Inventory.Updated"
+  | "Inventory.Deleted"
+  | "Price.Created"
+  | "Price.Updated"
+  | "Price.Deleted"
   | "TEST_EVENT";
 
 export type TurquozeRole =

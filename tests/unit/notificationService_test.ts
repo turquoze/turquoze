@@ -9,12 +9,12 @@ Deno.test("NotificationService", async (t) => {
   await t.step({
     name: "Add + notify",
     fn: () => {
-      ID = notification.add(["CREATED_PRODUCT"], onEvent, "test123");
+      ID = notification.add(["Product.Created"], onEvent, "test123");
 
-      notification.notify("CREATED_PRODUCT", "123test");
+      notification.notify("Product.Created", "123test");
 
       function onEvent(event: TurquozeEvent, id: string) {
-        if (event == "CREATED_PRODUCT" && id == "123test") {
+        if (event == "Product.Created" && id == "123test") {
           assert(true);
         } else {
           assert(false);
