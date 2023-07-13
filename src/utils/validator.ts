@@ -8,7 +8,6 @@ export const ProductSchema = yup.object().shape({
   short_description: yup.string().min(3).required(),
   long_description: yup.string().min(3).required(),
   images: yup.array().of(yup.string()),
-  price: yup.number().required().positive().integer(),
   slug: yup.string().min(3).required(),
 });
 

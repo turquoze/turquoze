@@ -3,7 +3,7 @@ import { TurquozeEvent } from "./types.ts";
 
 export default function addEvents(container: Container) {
   container.NotificationService.add(
-    ["CREATED_PRODUCT", "UPDATED_PRODUCT"],
+    ["Product.Created", "Product.Updated"],
     (_event: TurquozeEvent, id: string) => {
       container.ProductService.Get({ id }).then((product) => {
         const index = container.Shop.search_index;
@@ -23,7 +23,7 @@ export default function addEvents(container: Container) {
   );
 
   container.NotificationService.add(
-    ["DELETED_PRODUCT"],
+    ["Product.Deleted"],
     (_event: TurquozeEvent, id: string) => {
       container.ProductService.Get({ id }).then((product) => {
         const index = container.Shop.search_index;

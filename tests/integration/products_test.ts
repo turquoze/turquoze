@@ -2,14 +2,17 @@ import { assert, assertEquals } from "../test_deps.ts";
 
 import ProductsRoutes from "../../src/routes/api/products.ts";
 import ProductsAdminRoutes from "../../src/routes/admin/products.ts";
-import { Product, Search } from "../../src/utils/types.ts";
+import PricesRoutes from "../../src/routes/admin/prices.ts";
+import { Price, Product, Search } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
 
 let ID = "";
+let PriceID = "";
 const SLUG = "test1";
 
 app.use(new ProductsRoutes(app.state.container).routes());
 app.use(new ProductsAdminRoutes(app.state.container).routes());
+app.use(new PricesRoutes(app.state.container).routes());
 
 Deno.test({
   name: "Products - Create | ok",
@@ -20,7 +23,6 @@ Deno.test({
     const data = JSON.stringify({
       active: true,
       images: [],
-      price: 203300,
       title: "test product",
       short_description: "test product",
       long_description: "test product long",
@@ -42,6 +44,27 @@ Deno.test({
 
     const { products }: { products: Product } = await response?.json();
     ID = products.public_id!;
+
+    const dataPrice = JSON.stringify({
+      amount: 203300,
+      product: products.public_id!,
+    });
+
+    const responsePrice = await app.handle(
+      new Request(`http://127.0.0.1/prices`, {
+        headers: new Headers({
+          "Content-Type": "application/json",
+          "Content-Length": `${JSON.stringify(dataPrice).length}`,
+        }),
+        method: "POST",
+        body: dataPrice,
+      }),
+    );
+
+    const { prices }: { prices: Price } = await responsePrice?.json();
+    PriceID = prices.public_id!;
+
+    assert(responsePrice?.ok);
   },
 });
 
@@ -106,7 +129,6 @@ Deno.test({
       id: ID,
       active: true,
       images: ["https://test.com"],
-      price: 203300,
       title: "Test product update",
       short_description: "test description update",
       long_description: "test description long update",
@@ -168,6 +190,14 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
+    const responsePrice = await app.handle(
+      new Request(`http://127.0.0.1/prices/${PriceID}`, {
+        method: "DELETE",
+      }),
+    );
+
+    assert(responsePrice?.ok);
+
     const response = await app.handle(
       new Request(`http://127.0.0.1/products/${ID}`, {
         method: "DELETE",
