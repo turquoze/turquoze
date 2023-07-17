@@ -4,8 +4,8 @@ import { TurquozeState } from "../../utils/types.ts";
 
 export default class PingRoutes {
   #ping: Router<TurquozeState>;
-  #Container: typeof Container;
-  constructor(container: typeof Container) {
+  #Container: Container;
+  constructor(container: Container) {
     this.#Container = container;
     this.#ping = new Router<TurquozeState>({
       prefix: "/ping",

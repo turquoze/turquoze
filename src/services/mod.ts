@@ -21,6 +21,7 @@ import DefaultShopLinkService from "./shopLinkService/mod.ts";
 import DefaultOauthService from "./oauthService/mod.ts";
 import DefaultOrganizationService from "./organizationService/mod.ts";
 import DefaultOrganizationLinkService from "./organizationLinkService/mod.ts";
+import DefaultPriceCalculatorService from "./priceCalculatorService/mod.ts";
 
 import IProductService from "./interfaces/productService.ts";
 import ICartService from "./interfaces/cartService.ts";
@@ -45,6 +46,7 @@ import IShopLinkService from "./interfaces/shopLinkService.ts";
 import IOauthService from "./interfaces/oauthService.ts";
 import IOrganizationService from "./interfaces/organizationService.ts";
 import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
+import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
 import { Shop } from "../utils/types.ts";
 import { postgres, Redis } from "../deps.ts";
@@ -75,6 +77,7 @@ export default class Container {
   OauthService: IOauthService;
   OrganizationService: IOrganizationService;
   OrganizationLinkService: IOrganizationLinkService;
+  PriceCalculatorService: IPriceCalculatorService;
 
   constructor(db: postgres.Pool, redis: Redis) {
     this.#pool = db;
@@ -104,6 +107,9 @@ export default class Container {
     this.OrganizationLinkService = new DefaultOrganizationLinkService(
       this.#pool,
     );
+    this.PriceCalculatorService = new DefaultPriceCalculatorService(
+      this.PriceService,
+    );
     this.PaymentService = new DefaultPaymentService(
       this.#pool,
       this.CartService,
@@ -111,6 +117,7 @@ export default class Container {
       this.ProductService,
       this.PluginService,
       this.PriceService,
+      this.PriceCalculatorService,
     );
   }
 
