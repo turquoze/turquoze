@@ -17,6 +17,7 @@ import IPluginService from "../interfaces/pluginService.ts";
 import { Pool } from "../../deps.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import IPriceService from "../interfaces/priceService.ts";
+import IPriceCalculatorService from "../interfaces/priceCalculatorService.ts";
 
 export default class PaymentService implements IPaymentService {
   pool: Pool;
@@ -25,6 +26,7 @@ export default class PaymentService implements IPaymentService {
   #ProductService: IProductService;
   #PluginService: IPluginService;
   #PriceService: IPriceService;
+  #PriceCalculatorService: IPriceCalculatorService;
   constructor(
     pool: Pool,
     cartService: ICartService,
@@ -32,6 +34,7 @@ export default class PaymentService implements IPaymentService {
     productService: IProductService,
     pluginService: IPluginService,
     priceService: IPriceService,
+    priceCalculatorService: IPriceCalculatorService,
   ) {
     this.pool = pool;
     this.#CartService = cartService;
@@ -39,6 +42,7 @@ export default class PaymentService implements IPaymentService {
     this.#ProductService = productService;
     this.#PluginService = pluginService;
     this.#PriceService = priceService;
+    this.#PriceCalculatorService = priceCalculatorService;
   }
 
   async Create(
