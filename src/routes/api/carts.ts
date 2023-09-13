@@ -297,12 +297,12 @@ export default class CartRoutes {
           });
 
           item.price = Dinero({
-            amount: parseInt((price.amount).toString()),
+            amount: parseInt(price.amount.toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
           item.totalPrice = Dinero({
-            amount: parseInt((price.amount).toString()),
+            amount: parseInt(price.amount.toString()),
             currency: ctx.state.request_data.currency,
           }).multiply(parseInt(item.quantity.toString())).getAmount();
 
@@ -345,12 +345,12 @@ export default class CartRoutes {
         });
 
         data.price = Dinero({
-          amount: parseInt((price.amount).toString()),
+          amount: parseInt(price.amount.toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
         data.totalPrice = Dinero({
-          amount: parseInt((data.price).toString()),
+          amount: parseInt(data.price.toString()),
           currency: ctx.state.request_data.currency,
         }).multiply(parseInt(data.quantity.toString())).getAmount();
 

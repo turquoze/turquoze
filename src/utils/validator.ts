@@ -39,14 +39,14 @@ export const DiscountSchema = yup.object().shape({
   public_id: yup.string().uuid(),
   type: yup.string().matches(/(FIXED|PERCENT)/).required(),
   value: yup.number().required().positive().integer(),
-  valid_to: yup.date().nullable(true),
-  valid_from: yup.date().nullable(true),
+  valid_to: yup.date().nullable(),
+  valid_from: yup.date().nullable(),
   shop: yup.string().uuid().nullable(true),
 });
 
 export const CartSchema = yup.object().shape({
   public_id: yup.string().uuid().nullable(true),
-  created_at: yup.date().nullable(true),
+  created_at: yup.date().nullable(),
 });
 
 export const CartItemSchema = yup.object().shape({
@@ -61,13 +61,13 @@ export const DiscountItemSchema = yup.object().shape({
 });
 
 export const SearchSchema = yup.object().shape({
-  query: yup.string().nullable(true),
+  query: yup.string().nullable(),
   options: yup.object().nullable(),
 });
 
 export const WarehouseSchema = yup.object().shape({
   public_id: yup.string().uuid().nullable(true),
-  created_at: yup.date().nullable(true),
+  created_at: yup.date().nullable(),
   shop: yup.string().uuid().required(),
   name: yup.string().min(3).required(),
   country: yup.string().min(2).required(),
@@ -76,7 +76,7 @@ export const WarehouseSchema = yup.object().shape({
 
 export const InventorySchema = yup.object().shape({
   public_id: yup.string().uuid().nullable(true),
-  created_at: yup.date().nullable(true),
+  created_at: yup.date().nullable(),
   warehouse: yup.string().uuid().required(),
   product: yup.string().uuid().required(),
   quantity: yup.number().positive().integer().required(),
@@ -84,7 +84,7 @@ export const InventorySchema = yup.object().shape({
 
 export const PriceSchema = yup.object().shape({
   public_id: yup.string().uuid(),
-  created_at: yup.date().nullable(true),
+  created_at: yup.date().nullable(),
   amount: yup.number().required().positive().integer(),
   shop: yup.string().uuid().required(),
   product: yup.string().uuid().required(),
@@ -97,7 +97,7 @@ export const DiscountCheckSchema = yup.object().shape({
 export const UserSchema = yup.object().shape({
   id: yup.number().positive().integer().nullable(true),
   public_id: yup.string().uuid().nullable(true),
-  created_at: yup.date().nullable(true),
+  created_at: yup.date().nullable(),
   name: yup.string().required().min(3),
   email: yup.string().email(),
   password: yup.string().required().min(6),
@@ -112,7 +112,7 @@ export const LoginSchema = yup.object().shape({
 });
 
 export const MetadataSchema = yup.object().shape({
-  metadata: yup.object().nullable(true),
+  metadata: yup.object().nullable(),
 });
 
 export const CommentSchema = yup.object().shape({
@@ -135,6 +135,6 @@ export const TokenSchema = yup.object().shape({
   name: yup.string().min(3).required(),
   secret: yup.string().min(3).required(),
   role: yup.string().min(3).required(),
-  created_at: yup.date().nullable(true),
+  created_at: yup.date().nullable(),
   shop: yup.string().uuid().required(),
 });

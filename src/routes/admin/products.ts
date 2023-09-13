@@ -28,7 +28,7 @@ export default class ProductsRoutes {
           });
 
           product.price = Dinero({
-            amount: parseInt((price.amount).toString()),
+            amount: parseInt(price.amount.toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
@@ -106,7 +106,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: parseInt((price.amount).toString()),
+          amount: parseInt(price.amount.toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 

@@ -80,7 +80,7 @@ export default class CategoriesRoutes {
           });
 
           product.price = Dinero({
-            amount: parseInt((price.amount).toString()),
+            amount: parseInt(price.amount.toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
