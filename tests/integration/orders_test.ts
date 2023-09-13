@@ -45,6 +45,6 @@ Deno.test({
     assert(response?.ok);
 
     const { orders }: { orders: Order } = await response?.json();
-    assertEquals(orders.id, ID);
+    assertEquals(orders.public_id, ID);
   },
 });
