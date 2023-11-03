@@ -10,6 +10,7 @@ let DATABASE_PORT: string | undefined;
 let UPSTASH_REDIS_REST_URL: string | undefined;
 let UPSTASH_REDIS_REST_TOKEN: string | undefined;
 let SHARED_SECRET: string | undefined;
+let DATABASE_URL: string | undefined;
 
 DATABASE_CERT = Deno.env.get("DATABASE_CERT");
 if (!DATABASE_CERT) {
@@ -56,12 +57,18 @@ if (!SHARED_SECRET) {
   throw new Error("environment variable SHARED_SECRET not set");
 }
 
+DATABASE_URL = Deno.env.get("DATABASE_URL");
+if (!DATABASE_URL) {
+  throw new Error("environment variable DATABASE_URL not set");
+}
+
 export {
   DATABASE,
   DATABASE_CERT,
   DATABASE_HOSTNAME,
   DATABASE_PASSWORD,
   DATABASE_PORT,
+  DATABASE_URL,
   DATABASE_USER,
   SHARED_SECRET,
   UPSTASH_REDIS_REST_TOKEN,

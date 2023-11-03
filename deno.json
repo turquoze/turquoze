@@ -19,5 +19,9 @@
     "deps:reload": "deno cache --lock=deno.lock --lock-write src/deps.ts",
     "deps:write": "deno cache --lock=deno.lock --lock-write src/deps.ts"
   },
-  "lock": true
+  "imports": {
+    "drizzle-orm": "npm:drizzle-orm",
+    "drizzle-orm/postgres-js": "npm:drizzle-orm/postgres-js",
+    "postgres": "npm:postgres"
+  }
 }
