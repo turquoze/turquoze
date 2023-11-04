@@ -49,10 +49,11 @@ import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
 import { Shop } from "../utils/types.ts";
-import { postgres, Redis } from "../deps.ts";
+import { Redis } from "../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export default class Container {
-  #pool: postgres.Pool;
+  #db: PostgresJsDatabase;
   #redis: Redis;
   CacheService: ICacheService;
   ProductService: IProductService;
@@ -79,39 +80,38 @@ export default class Container {
   OrganizationLinkService: IOrganizationLinkService;
   PriceCalculatorService: IPriceCalculatorService;
 
-  constructor(db: postgres.Pool, redis: Redis) {
-    this.#pool = db;
+  constructor(db: PostgresJsDatabase, redis: Redis) {
+    this.#db = db;
     this.#redis = redis;
 
     this.CacheService = new DefaultCacheService(this.#redis);
-    this.ProductService = new DefaultProductService(this.#pool);
-    this.CartService = new DefaultCartService(this.#pool);
-    this.OrderService = new DefaultOrderService(this.#pool);
-    this.CategoryService = new DefaultCategoryService(this.#pool);
-    this.CategoryLinkService = new DefaultCategoryLinkService(this.#pool);
-    this.ShopService = new DefaultShopService(this.#pool);
-    this.PluginService = new DefaultPluginService(this.#pool);
-    this.DiscountService = new DefaultDiscountService(this.#pool);
+    this.ProductService = new DefaultProductService(this.#db);
+    this.CartService = new DefaultCartService(this.#db);
+    this.OrderService = new DefaultOrderService(this.#db);
+    this.CategoryService = new DefaultCategoryService(this.#db);
+    this.CategoryLinkService = new DefaultCategoryLinkService(this.#db);
+    this.ShopService = new DefaultShopService(this.#db);
+    this.PluginService = new DefaultPluginService(this.#db);
+    this.DiscountService = new DefaultDiscountService(this.#db);
     this.SearchService = new DefaultSearchService();
-    this.WarehouseService = new DefaultWarehouseService(this.#pool);
-    this.InventoryService = new DefaultInventoryService(this.#pool);
-    this.PriceService = new DefaultPriceService(this.#pool);
-    this.UserService = new DefaultUserService(this.#pool);
-    this.AdminService = new DefaultAdminService(this.#pool);
-    this.TokenService = new DefaultTokenService(this.#pool);
+    this.WarehouseService = new DefaultWarehouseService(this.#db);
+    this.InventoryService = new DefaultInventoryService(this.#db);
+    this.PriceService = new DefaultPriceService(this.#db);
+    this.UserService = new DefaultUserService(this.#db);
+    this.AdminService = new DefaultAdminService(this.#db);
+    this.TokenService = new DefaultTokenService(this.#db);
     this.NotificationService = new DefaultNotificationService();
-    this.SettingsService = new DefaultSettingsService(this.#pool);
-    this.ShopLinkService = new DefaultShopLinkService(this.#pool);
-    this.OauthService = new DefaultOauthService(this.#pool);
-    this.OrganizationService = new DefaultOrganizationService(this.#pool);
+    this.SettingsService = new DefaultSettingsService(this.#db);
+    this.ShopLinkService = new DefaultShopLinkService(this.#db);
+    this.OauthService = new DefaultOauthService(this.#db);
+    this.OrganizationService = new DefaultOrganizationService(this.#db);
     this.OrganizationLinkService = new DefaultOrganizationLinkService(
-      this.#pool,
+      this.#db,
     );
     this.PriceCalculatorService = new DefaultPriceCalculatorService(
       this.PriceService,
     );
     this.PaymentService = new DefaultPaymentService(
-      this.#pool,
       this.CartService,
       this.OrderService,
       this.ProductService,
@@ -123,9 +123,9 @@ export default class Container {
 
   Shop: Shop = {
     id: 0,
-    public_id: "",
+    publicId: "",
     regions: [],
-    payment_id: "",
+    paymentId: "",
     currency: "",
     name: "",
     url: "",
@@ -140,6 +140,6 @@ export default class Container {
     },
     _signKey: new Uint8Array(),
     _role: "VIEWER",
-    shipping_id: "",
+    shippingId: "",
   };
 }

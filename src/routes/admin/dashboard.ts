@@ -26,7 +26,7 @@ export default class DashBoardRoutes {
 
         const shopLinks = shops.map((shop) => {
           return {
-            id: shop.public_id,
+            id: shop.publicId,
             title: shop.name,
           };
         });

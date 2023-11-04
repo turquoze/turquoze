@@ -19,7 +19,7 @@ export default class SettingsRoutes {
       try {
         const products = await this.#Container.ProductService.GetMany({
           limit: 99999, //TODO: get all products
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         const client = new MeiliSearch({
@@ -29,7 +29,7 @@ export default class SettingsRoutes {
 
         const productsMappedPromises = products.map(async (product) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: product.public_id!,
+            productId: product.publicId!,
           });
 
           product.price = price.amount;
@@ -39,7 +39,7 @@ export default class SettingsRoutes {
             id: Number(product.id),
           };
 
-          delete obj.public_id;
+          delete obj.publicId;
 
           return obj;
         });

@@ -19,12 +19,12 @@ export default class ProductsRoutes {
     this.#products.get("/", async (ctx) => {
       try {
         const data = await this.#Container.ProductService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         const productsPromises = data.map(async (product) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: product.public_id!,
+            productId: product.publicId!,
           });
 
           product.price = Dinero({
@@ -125,7 +125,7 @@ export default class ProductsRoutes {
 
           const productsPromises = products.map(async (product) => {
             const price = await this.#Container.PriceService.GetByProduct({
-              productId: product.public_id!,
+              productId: product.publicId!,
             });
 
             product.price = Dinero({
@@ -164,7 +164,7 @@ export default class ProductsRoutes {
         });
 
         const price = await this.#Container.PriceService.GetByProduct({
-          productId: data.public_id!,
+          productId: data.publicId!,
         });
 
         data.price = Dinero({
@@ -194,7 +194,7 @@ export default class ProductsRoutes {
 
         const dataWPrice = data.map(async (product) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: product.public_id!,
+            productId: product.publicId!,
           });
 
           product.price = Dinero({
@@ -272,7 +272,7 @@ export default class ProductsRoutes {
         });
 
         const data = await Get<Product>(this.#Container, {
-          id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
+          id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Get({
             id: ctx.params.id,
           }),

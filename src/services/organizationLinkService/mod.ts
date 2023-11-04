@@ -1,26 +1,27 @@
 import { OrganizationLink } from "../../utils/types.ts";
 import IOrganizationLinkService from "../interfaces/organizationLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { organizationsLink } from "../../utils/schema.ts";
+import { and, eq } from "drizzle-orm";
 
 export default class OrganizationLinkService
   implements IOrganizationLinkService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Link(params: { data: OrganizationLink }): Promise<OrganizationLink> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(organizationsLink).values({
+        person: params.data.person,
+        shop: params.data.shop,
+      }).returning();
 
-      const result = await client.queryObject<OrganizationLink>({
-        text: "INSERT INTO organizationsLink (person, shop) VALUES ($1, $2)",
-        args: [params.data.person, params.data.shop],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -30,14 +31,12 @@ export default class OrganizationLinkService
 
   async Delete(params: { data: OrganizationLink }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<OrganizationLink>({
-        text: "DELETE FROM organizationsLink WHERE (person = $1 AND shop = $2)",
-        args: [params.data.person, params.data.shop],
-      });
-
-      client.release();
+      await this.db.delete(organizationsLink).where(
+        and(
+          eq(organizationsLink.person, params.data.person),
+          eq(organizationsLink.shop, params.data.shop),
+        ),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -49,15 +48,11 @@ export default class OrganizationLinkService
     params: { personId: string },
   ): Promise<OrganizationLink[]> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<OrganizationLink>({
-        text: "SELECT * FROM organizationsLink WHERE person = $1",
-        args: [params.personId],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(organizationsLink).where(
+        eq(organizationsLink.person, params.personId),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

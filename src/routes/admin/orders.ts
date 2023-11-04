@@ -21,7 +21,7 @@ export default class OrdersRoutes {
     this.#orders.get("/", async (ctx) => {
       try {
         const data = await this.#Container.OrderService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         ctx.response.body = stringifyJSON({

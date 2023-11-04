@@ -1,31 +1,28 @@
 import IOrderService from "../interfaces/orderService.ts";
 import { Order } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { orders } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class CartService implements IOrderService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Order }): Promise<Order> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(orders).values({
+        paymentStatus: params.data.payment_status,
+        priceTotal: params.data.price_total,
+        products: params.data.products,
+        shop: params.data.shop,
+      }).returning();
 
-      const result = await client.queryObject<Order>({
-        text:
-          "INSERT INTO orders (payment_status, price_total, products, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
-        args: [
-          params.data.payment_status,
-          params.data.price_total,
-          params.data.products,
-          params.data.shop,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -35,15 +32,11 @@ export default class CartService implements IOrderService {
 
   async Get(params: { id: string }): Promise<Order> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Order>({
-        text: "SELECT * FROM orders WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(orders).where(
+        eq(orders.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -53,25 +46,25 @@ export default class CartService implements IOrderService {
 
   async GetMany(
     params: {
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
       shop: string;
     },
   ): Promise<Order[]> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<Order>({
-        text: "SELECT * FROM orders WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(orders).where(
+        eq(orders.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      // @ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -83,19 +76,15 @@ export default class CartService implements IOrderService {
     params: { id: string; status: "PAYED" | "WAITING" | "FAILED" },
   ): Promise<Order> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(orders)
+        .set({
+          paymentStatus: params.status,
+        })
+        .where(eq(orders.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Order>({
-        text:
-          "UPDATE orders SET payment_status = $1 WHERE public_id = $7 RETURNING public_id",
-        args: [
-          params.status,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -105,18 +94,15 @@ export default class CartService implements IOrderService {
 
   async SetOrderExported(params: { id: string }): Promise<Order> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(orders)
+        .set({
+          exported: true,
+        })
+        .where(eq(orders.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Order>({
-        text:
-          "UPDATE orders SET exported = true WHERE public_id = $7 RETURNING public_id",
-        args: [
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -64,7 +64,7 @@ export default class InventoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        inventory.public_id = ctx.params.id;
+        inventory.publicId = ctx.params.id;
 
         await InventorySchema.validate(inventory);
         const posted: Inventory = await InventorySchema.cast(inventory);

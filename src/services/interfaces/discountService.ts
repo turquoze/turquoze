@@ -14,7 +14,7 @@ export default interface IDiscountService {
   }): Promise<Discount>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<Discount>>;

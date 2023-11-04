@@ -39,7 +39,7 @@ export const AuthGuard =
           ShopLinkData
         >;
 
-        const match = shops.find((x) => x.public_id == shopId);
+        const match = shops.find((x) => x.publicId == shopId);
 
         if (match == undefined) {
           throw new Error("No match found for shop");
@@ -60,14 +60,14 @@ export const AuthGuard =
           currency: data.currency,
           id: data.id,
           name: data.name,
-          public_id: data.public_id,
+          publicId: data.publicId,
           regions: data.regions,
           search_index: data.search_index,
           secret: data.secret,
           settings: data.settings,
           url: data.url,
-          payment_id: data.payment_id,
-          shipping_id: data.shipping_id,
+          paymentId: data.paymentId,
+          shippingId: data.shippingId,
         };
 
         container.Shop = shop;

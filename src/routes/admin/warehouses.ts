@@ -19,7 +19,7 @@ export default class WarehousesRoutes {
     this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await this.#Container.WarehouseService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         ctx.response.body = stringifyJSON({
@@ -87,7 +87,7 @@ export default class WarehousesRoutes {
         }
 
         warehouse.shop = ctx.state.shop;
-        warehouse.public_id = ctx.params.id;
+        warehouse.publicId = ctx.params.id;
 
         await WarehouseSchema.validate(warehouse);
         const posted: Warehouse = await WarehouseSchema.cast(warehouse);

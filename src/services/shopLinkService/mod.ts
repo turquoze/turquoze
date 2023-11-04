@@ -1,25 +1,26 @@
 import { ShopLink, ShopLinkData } from "../../utils/types.ts";
 import IShopLinkService from "../interfaces/shopLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { shopslink } from "../../utils/schema.ts";
+import { and, eq, sql } from "drizzle-orm";
 
 export default class ShopLinkService implements IShopLinkService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Link(params: { data: ShopLink }): Promise<ShopLink> {
     try {
-      const client = await this.pool.connect();
+      // @ts-expect-error not on type
+      const result = await this.db.insert(shopslink).values({
+        admin: params.data.admin,
+        shop: params.data.shop,
+      }).returning();
 
-      const result = await client.queryObject<ShopLink>({
-        text: "INSERT INTO shopslink (admin, shop) VALUES ($1, $2)",
-        args: [params.data.admin, params.data.shop],
-      });
-
-      client.release();
-      return result.rows[0];
+      // @ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -30,25 +31,25 @@ export default class ShopLinkService implements IShopLinkService {
   async GetShops(
     params: {
       id: string;
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
     },
   ): Promise<ShopLinkData[]> {
     try {
-      const client = await this.pool.connect();
-
       if (params.limit == null) {
         params.limit = 10;
       }
 
-      const result = await client.queryObject<ShopLinkData>({
-        text:
-          "SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = $1 LIMIT $2 OFFSET $3",
-        args: [params.id, params.limit, params.offset],
-      });
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      client.release();
-      return result.rows;
+      const result = await this.db.execute(
+        sql`SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.publicId WHERE shopslink.admin = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
+      );
+
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -60,15 +61,15 @@ export default class ShopLinkService implements IShopLinkService {
     params: { shopId: string; adminId: string },
   ): Promise<ShopLink> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.select().from(shopslink).where(
+        and(
+          eq(shopslink.admin, params.adminId),
+          eq(shopslink.shop, params.shopId),
+        ),
+      );
 
-      const result = await client.queryObject<ShopLink>({
-        text: "SELECT * FROM shopslink WHERE admin = $1 AND shop = $2",
-        args: [params.adminId, params.shopId],
-      });
-
-      client.release();
-      return result.rows[0];
+      // @ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -78,14 +79,12 @@ export default class ShopLinkService implements IShopLinkService {
 
   async Delete(params: { data: ShopLink }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<ShopLink>({
-        text: "DELETE FROM shopslink WHERE (admin = $1 AND shop = $2)",
-        args: [params.data.admin, params.data.shop],
-      });
-
-      client.release();
+      await this.db.delete(shopslink).where(
+        and(
+          eq(shopslink.admin, params.data.admin),
+          eq(shopslink.shop, params.data.shop),
+        ),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

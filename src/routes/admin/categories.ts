@@ -23,7 +23,7 @@ export default class CategoriesRoutes {
     this.#categories.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await this.#Container.CategoryService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         ctx.response.body = stringifyJSON({
@@ -54,7 +54,7 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        category.shop = ctx.state.request_data.public_id;
+        category.shop = ctx.state.request_data.publicId;
 
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);
@@ -117,8 +117,8 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        category.public_id = ctx.params.id;
-        category.shop = ctx.state.request_data.public_id;
+        category.publicId = ctx.params.id;
+        category.shop = ctx.state.request_data.publicId;
 
         await CategorySchema.validate(category);
         const posted: Category = await CategorySchema.cast(category);

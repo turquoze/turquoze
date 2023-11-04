@@ -1,31 +1,28 @@
 import { Tax } from "../../utils/types.ts";
 import ITaxService from "../interfaces/taxService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { taxes } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class TaxService implements ITaxService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Tax }): Promise<Tax> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(taxes).values({
+        name: params.data.name,
+        type: params.data.type,
+        value: params.data.value,
+        shop: params.data.shop,
+      }).returning();
 
-      const result = await client.queryObject<Tax>({
-        text:
-          "INSERT INTO taxes (name, type, value, shop) VALUES ($1, $2, $3) RETURNING public_id",
-        args: [
-          params.data.name,
-          params.data.type,
-          params.data.value,
-          params.data.shop,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -35,15 +32,11 @@ export default class TaxService implements ITaxService {
 
   async Get(params: { id: string }): Promise<Tax> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Tax>({
-        text: "SELECT * FROM taxes WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(taxes).where(
+        eq(taxes.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -53,25 +46,25 @@ export default class TaxService implements ITaxService {
 
   async GetMany(
     params: {
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
       shop: string;
     },
   ): Promise<Tax[]> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<Tax>({
-        text: "SELECT * FROM taxes WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(taxes).where(
+        eq(taxes.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      // @ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -81,14 +74,7 @@ export default class TaxService implements ITaxService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Tax>({
-        text: "DELETE FROM taxes WHERE public_id = $1",
-        args: [params.id],
-      });
-
-      client.release();
+      await this.db.delete(taxes).where(eq(taxes.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

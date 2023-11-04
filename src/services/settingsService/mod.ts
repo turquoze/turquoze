@@ -1,29 +1,24 @@
 import ISettingsService from "../interfaces/settingsService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 //import container from "../mod.ts";
-import type { Pool } from "../../deps.ts";
-import type { Settings, Shop } from "../../utils/types.ts";
+import type { Settings } from "../../utils/types.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { shops } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class SettingsService implements ISettingsService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Upsert(params: { data: Settings; shopId: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Shop>({
-        text:
-          "UPDATE shops SET settings = $1 WHERE public_id = $2 RETURNING public_id",
-        args: [
-          params.data,
-          params.shopId,
-        ],
-      });
-
-      client.release();
+      await this.db.update(shops)
+        .set({
+          settings: params.data,
+        })
+        .where(eq(shops.publicId, params.shopId));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

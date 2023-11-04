@@ -10,7 +10,7 @@ export default interface ITaxService {
   }): Promise<Tax>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<Tax>>;

@@ -11,7 +11,7 @@ export default interface ICategoryLinkService {
 
   GetProducts(params: {
     id: string;
-    offset?: string;
+    offset?: number;
     limit?: number;
   }): Promise<Array<Product>>;
 }

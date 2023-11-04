@@ -1,24 +1,25 @@
 import ICartService from "../interfaces/cartService.ts";
 import { Cart, CartItem, Discount, Shipping } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { cartitems, carts } from "../../utils/schema.ts";
+import { and, eq } from "drizzle-orm";
 
 export default class CartService implements ICartService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(_params: { data: Cart }): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(carts).values({
+        comment: "",
+      }).returning();
 
-      const result = await client.queryObject<Cart>({
-        text: "INSERT INTO carts DEFAULT VALUES RETURNING public_id",
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -28,40 +29,31 @@ export default class CartService implements ICartService {
 
   async AddItem(params: { data: CartItem }): Promise<CartItem> {
     try {
-      const client = await this.pool.connect();
+      const hasItem = await this.db.select().from(cartitems).where(
+        and(
+          eq(cartitems.cartId, params.data.cartId),
+          eq(cartitems.itemId, params.data.itemId),
+        ),
+      );
 
-      const hasItem = await client.queryObject<CartItem>({
-        text:
-          "SELECT * FROM cartitems WHERE cart_id = $1 AND item_id = $2 LIMIT 1",
-        args: [params.data.cart_id, params.data.item_id],
-      });
+      if (hasItem.length > 0) {
+        const result = await this.db.update(cartitems).set({
+          price: params.data.price,
+          quantity: params.data.quantity + hasItem[0].quantity,
+        }).where(eq(cartitems.id, hasItem[0].id)).returning();
 
-      if (hasItem.rows.length > 0) {
-        const result = await client.queryObject<CartItem>({
-          text:
-            "UPDATE cartitems SET price = $1, quantity = $2 WHERE id = $3 RETURNING id",
-          args: [
-            params.data.price,
-            params.data.quantity + hasItem.rows[0].quantity,
-            hasItem.rows[0].id,
-          ],
-        });
-
-        return result.rows[0];
+        //@ts-expect-error not on type
+        return result[0];
       } else {
-        const result = await client.queryObject<CartItem>({
-          text:
-            "INSERT INTO cartitems (cart_id, item_id, price, quantity) VALUES ($1, $2, $3, $4) RETURNING id",
-          args: [
-            params.data.cart_id,
-            params.data.item_id,
-            params.data.price,
-            params.data.quantity,
-          ],
+        //@ts-expect-error not on type
+        const result = await this.db.insert(cartitems).values({
+          cartId: params.data.cartId,
+          itemId: params.data.itemId,
+          price: params.data.price,
+          quantity: params.data.quantity,
         });
 
-        client.release();
-        return result.rows[0];
+        return result[0];
       }
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -74,19 +66,13 @@ export default class CartService implements ICartService {
     params: { id: string; metadata: Record<string, unknown> },
   ): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(carts).set({
+        metadata: params.metadata,
+      }).where(eq(carts.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (metadata) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          params.metadata,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -96,19 +82,13 @@ export default class CartService implements ICartService {
 
   async AddShipping(params: { id: string; shipping: Shipping }): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(carts).set({
+        shipping: params.shipping,
+      }).where(eq(carts.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (shipping) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          params.shipping,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -118,19 +98,12 @@ export default class CartService implements ICartService {
 
   async AddBilling(params: { id: string; billing: Shipping }): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(carts).set({
+        billing: params.billing,
+      }).where(eq(carts.publicId, params.id)).returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (billing) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          params.billing,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -142,19 +115,13 @@ export default class CartService implements ICartService {
     params: { id: string; shipping: Shipping },
   ): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(carts).set({
+        shipping: params.shipping,
+      }).where(eq(carts.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "UPDATE carts SET shipping = $1 WHERE public_id = $2 RETURNING public_id",
-        args: [
-          params.shipping,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -166,19 +133,13 @@ export default class CartService implements ICartService {
     params: { id: string; billing: Shipping },
   ): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(carts).set({
+        billing: params.billing,
+      }).where(eq(carts.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "UPDATE carts SET billing = $1 WHERE public_id = $2 RETURNING public_id",
-        args: [
-          params.billing,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -190,22 +151,17 @@ export default class CartService implements ICartService {
     params: { id: string; discount: Discount },
   ): Promise<CartItem> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(cartitems).values({
+        cartId: params.id,
+        itemId: params.discount.publicId,
+        price: 0,
+        quantity: 1,
+        type: "DISCOUNT",
+      }).returning();
 
-      const result = await client.queryObject<CartItem>({
-        text:
-          "INSERT INTO cartitems (cart_id, item_id, price, quantity, type) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-        args: [
-          params.id,
-          params.discount.public_id,
-          0,
-          1,
-          "DISCOUNT",
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -217,15 +173,13 @@ export default class CartService implements ICartService {
     params: { id: string; discountId: string },
   ): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<CartItem>({
-        text:
-          "DELETE FROM cartitems WHERE cart_id = $1 AND item_id = $2 AND type = $3",
-        args: [params.id, params.discountId, "DISCOUNT"],
-      });
-
-      client.release();
+      await this.db.delete(cartitems).where(
+        and(
+          eq(cartitems.cartId, params.id),
+          eq(cartitems.itemId, params.discountId),
+          eq(cartitems.type, "DISCOUNT"),
+        ),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -235,19 +189,13 @@ export default class CartService implements ICartService {
 
   async UpsertComment(params: { id: string; comment: string }): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(carts).values({
+        comment: params.comment,
+      }).returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (comment) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          params.comment,
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -257,19 +205,13 @@ export default class CartService implements ICartService {
 
   async RemoveComment(params: { id: string }): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(carts).set({
+        comment: "",
+      }).where(eq(carts.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<Cart>({
-        text:
-          "INSERT INTO carts (comment) VALUES ($1) WHERE public_id = $2 RETURNING id",
-        args: [
-          "",
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -279,16 +221,14 @@ export default class CartService implements ICartService {
 
   async GetCartItem(cartId: string, productId: string): Promise<CartItem> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<CartItem>({
-        text:
-          "SELECT * FROM cartitems WHERE cart_id = $1 AND item_id = $2 LIMIT 1",
-        args: [cartId, productId],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(cartitems).where(
+        and(
+          eq(cartitems.cartId, cartId),
+          eq(cartitems.itemId, productId),
+        ),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -298,15 +238,11 @@ export default class CartService implements ICartService {
 
   async GetAllItems(cartId: string): Promise<CartItem[]> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<CartItem>({
-        text: "SELECT * FROM cartitems WHERE cart_id = $1",
-        args: [cartId],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(cartitems).where(
+        eq(cartitems.cartId, cartId),
+      );
+      //@ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -316,14 +252,12 @@ export default class CartService implements ICartService {
 
   async RemoveItem(cartId: string, productId: string): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<CartItem>({
-        text: "DELETE FROM cartitems WHERE cart_id = $1 AND item_id = $2",
-        args: [cartId, productId],
-      });
-
-      client.release();
+      await this.db.delete(cartitems).where(
+        and(
+          eq(cartitems.cartId, cartId),
+          eq(cartitems.itemId, productId),
+        ),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -333,15 +267,11 @@ export default class CartService implements ICartService {
 
   async Get(params: { id: string }): Promise<Cart> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Cart>({
-        text: "SELECT * FROM carts WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(carts).where(
+        eq(carts.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -351,13 +281,7 @@ export default class CartService implements ICartService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Cart>({
-        text: "DELETE FROM carts WHERE public_id = $1",
-        args: [params.id],
-      });
-      client.release();
+      await this.db.delete(carts).where(eq(carts.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -19,7 +19,7 @@ export default interface IPriceService {
   }): Promise<Array<Price>>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<Price>>;

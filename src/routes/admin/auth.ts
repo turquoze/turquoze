@@ -28,12 +28,12 @@ export default class AuthRoutes {
           });
 
           const shops = await this.#Container.ShopLinkService.GetShops({
-            id: admin.public_id,
+            id: admin.publicId,
           });
 
           const shopsClean = shops.map((shop) => {
             return {
-              public_id: shop.public_id,
+              publicId: shop.publicId,
               role: shop.role,
             };
           });
@@ -44,7 +44,7 @@ export default class AuthRoutes {
             iat,
             exp,
             shops: JSON.stringify(shopsClean),
-            adminId: admin.public_id,
+            adminId: admin.publicId,
           };
 
           const iatRefresh = Math.floor(Date.now() / 1000);
@@ -52,7 +52,7 @@ export default class AuthRoutes {
           const claimsRefresh = {
             iat: iatRefresh,
             exp: expRefresh,
-            adminId: admin.public_id,
+            adminId: admin.publicId,
           };
 
           const jwt = await new jose.SignJWT(claims)

@@ -6,12 +6,12 @@
     "exclude": ["generated/", "cov_profile/"]
   },
   "tasks": {
-    "run": "deno run --allow-net --allow-env --allow-read src/mod.ts",
-    "run:w": "deno run --allow-net --allow-env --allow-read --watch ./src/mod.ts",
-    "run:debug": "deno run --inspect-brk --allow-net --allow-env --allow-read src/mod.ts",
-    "test": "deno test --allow-net --allow-env --allow-read --no-check=remote --coverage=cov_profile",
+    "run": "deno run --env --allow-net --allow-env src/mod.ts",
+    "run:w": "deno run --env --allow-net --allow-env --watch ./src/mod.ts",
+    "run:debug": "deno run --env --inspect-brk --allow-net --allow-env --allow-read src/mod.ts",
+    "test": "deno test --env --allow-net --allow-env --coverage=cov_profile",
     "coverage": "deno coverage cov_profile",
-    "bench": "deno bench --unstable --allow-net --allow-env --allow-read",
+    "bench": "deno bench --allow-net --allow-env --allow-read",
     "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json",
     "db:push": "deno run -A --unstable npm:prisma db push",
     "db:pull": "deno run -A --unstable npm:prisma db pull",
@@ -22,6 +22,6 @@
   "imports": {
     "drizzle-orm": "npm:drizzle-orm",
     "drizzle-orm/postgres-js": "npm:drizzle-orm/postgres-js",
-    "postgres": "npm:postgres"
+    "postgres": "npm:postgres@3.4.3"
   }
 }

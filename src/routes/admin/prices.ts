@@ -19,7 +19,7 @@ export default class PricesRoutes {
     this.#prices.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await this.#Container.PriceService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         ctx.response.body = stringifyJSON({
@@ -86,7 +86,7 @@ export default class PricesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        price.public_id = ctx.params.id;
+        price.publicId = ctx.params.id;
         price.shop = ctx.state.shop;
 
         await PriceSchema.validate(price);

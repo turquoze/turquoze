@@ -10,7 +10,7 @@ export default interface IOrderService {
   }): Promise<Order>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<Order>>;

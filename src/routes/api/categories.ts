@@ -19,7 +19,7 @@ export default class CategoriesRoutes {
     this.#categories.get("/", async (ctx) => {
       try {
         const data = await this.#Container.CategoryService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         ctx.response.body = stringifyJSON({
@@ -40,7 +40,7 @@ export default class CategoriesRoutes {
       try {
         const data = await Get<Category>(this.#Container, {
           id:
-            `category_name_${ctx.state.request_data.public_id}-${ctx.params.name}`,
+            `category_name_${ctx.state.request_data.publicId}-${ctx.params.name}`,
           promise: this.#Container.CategoryService.GetByName({
             name: ctx.params.name,
           }),
@@ -68,7 +68,7 @@ export default class CategoriesRoutes {
 
         const data = await Get<Array<Product>>(this.#Container, {
           id:
-            `products_by_category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
+            `products_by_category_${ctx.state.request_data.publicId}-${ctx.params.id}`,
           promise: this.#Container.CategoryLinkService.GetProducts({
             id: ctx.params.id,
           }),
@@ -76,7 +76,7 @@ export default class CategoriesRoutes {
 
         const productsPromises = data.map(async (product) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: product.public_id!,
+            productId: product.publicId!,
           });
 
           product.price = Dinero({
@@ -110,7 +110,7 @@ export default class CategoriesRoutes {
         });
 
         const data = await Get<Category>(this.#Container, {
-          id: `category_${ctx.state.request_data.public_id}-${ctx.params.id}`,
+          id: `category_${ctx.state.request_data.publicId}-${ctx.params.id}`,
           promise: this.#Container.CategoryService.Get({
             id: ctx.params.id,
           }),

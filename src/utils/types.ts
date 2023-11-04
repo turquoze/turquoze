@@ -3,14 +3,14 @@ import Container from "../services/mod.ts";
 
 export interface Product {
   id: number;
-  public_id?: string;
-  created_at?: string;
+  publicId?: string;
+  createdAt?: string;
   slug: string;
   active: boolean;
   parent?: string;
   title: string;
-  short_description: string;
-  long_description: string;
+  shortDescription: string;
+  longDescription: string;
   images: Array<string>;
   price?: number;
   shop: string;
@@ -18,8 +18,8 @@ export interface Product {
 
 export interface Cart {
   id: number;
-  public_id: string;
-  created_at?: number;
+  publicId: string;
+  createdAt?: number;
   items: Array<CartItem>;
   metadata: Record<string, unknown>;
   shipping: Shipping;
@@ -31,8 +31,8 @@ export interface Cart {
 
 export interface CartItem {
   id: number;
-  cart_id: string;
-  item_id: string;
+  cartId: string;
+  itemId: string;
   price: number;
   quantity: number;
   totalPrice: number;
@@ -44,10 +44,10 @@ export interface DiscountItem {
 }
 
 export interface Order {
-  public_id: string;
+  publicId: string;
   id: number;
   shop: string;
-  created_at: number;
+  createdAt: number;
   products: Array<OrderProduct>;
   payment_status: "PAYED" | "WAITING" | "FAILED";
   price_total: number;
@@ -65,7 +65,7 @@ export interface OrderProduct {
 
 export interface Category {
   id: number;
-  public_id: string;
+  publicId: string;
   parent?: string;
   name: string;
   shop: string;
@@ -73,10 +73,10 @@ export interface Category {
 
 export interface Shop {
   id: number;
-  public_id: string;
+  publicId: string;
   regions: Array<string>;
-  payment_id?: string;
-  shipping_id?: string;
+  paymentId?: string;
+  shippingId?: string;
   currency: string;
   name: string;
   url: string;
@@ -109,7 +109,7 @@ export interface ShopLink {
   admin: string;
   shop: string;
   role: TurquozeRole;
-  created_at?: number;
+  createdAt?: number;
 }
 
 export interface TurquozeState {
@@ -154,11 +154,11 @@ export interface ErrorResponse {
 
 export interface Discount {
   id: number;
-  public_id: string;
+  publicId: string;
   type: "FIXED" | "PERCENT";
   value: number;
-  valid_to: number | null;
-  valid_from: number | null;
+  validTo: number | null;
+  validFrom: number | null;
   shop: string;
   code: string;
 }
@@ -181,9 +181,9 @@ export interface MeiliDelete {
 
 export interface Warehouse {
   id: number;
-  public_id: string;
+  publicId: string;
   shop: string;
-  created_at?: number;
+  createdAt?: number;
   country: string;
   address: string;
   name: string;
@@ -191,8 +191,8 @@ export interface Warehouse {
 
 export interface Inventory {
   id: number;
-  public_id: string;
-  created_at?: number;
+  publicId: string;
+  createdAt?: number;
   warehouse: string;
   product: string;
   quantity: number;
@@ -207,8 +207,8 @@ export interface PriceCalculation {
 
 export interface Price {
   id: number;
-  public_id: string;
-  created_at?: number;
+  publicId: string;
+  createdAt?: number;
   amount: number;
   shop: string;
   product: string;
@@ -221,8 +221,8 @@ export interface DiscountCheck {
 
 export interface User {
   id: number;
-  public_id: string;
-  created_at?: number;
+  publicId: string;
+  createdAt?: number;
   name: string;
   email: string;
   password: string;
@@ -233,8 +233,8 @@ export interface User {
 
 export interface Admin {
   id: number;
-  public_id: string;
-  created_at?: number;
+  publicId: string;
+  createdAt?: number;
   name: string;
   email: string;
   password: string;
@@ -257,14 +257,14 @@ export interface Token {
   name: string;
   secret: string;
   role: string;
-  created_at?: number;
+  createdAt?: number;
   shop: string;
 }
 
 export interface Tax {
   id: number;
-  public_id: string;
-  created_at?: number;
+  publicId: string;
+  createdAt?: number;
   type: "Inclusive" | "Exclusive";
   name: string;
   value: number;
@@ -272,9 +272,9 @@ export interface Tax {
 }
 
 export interface TaxProductLink {
-  tax_id: string;
+  taxId: string;
   country: string;
-  product_id: string;
+  productId: string;
 }
 
 export interface Media {
@@ -300,11 +300,11 @@ export interface LoginRequest {
 }
 
 export interface OrderReturn {
-  public_id: string;
+  publicId: string;
   id: number;
-  order_id: string;
+  orderId: string;
   shop: string;
-  created_at: number;
+  createdAt: number;
   items: Array<ReturnProduct>;
   status: "INIT" | "WAITING" | "RETURNED" | "FAILED";
   exported: boolean;
@@ -313,7 +313,7 @@ export interface OrderReturn {
 export interface ReturnProduct {
   quantity: number;
   quantity_returned: number;
-  product_id: string;
+  productId: string;
 }
 
 export type TurquozeEvent =
@@ -346,8 +346,8 @@ export type TurquozeRole =
 
 export interface Plugin {
   id: number;
-  public_id: string;
-  created_at?: string;
+  publicId: string;
+  createdAt?: string;
   name: string;
   url: string;
   type: "PAYMENT" | "SHIPPING" | "MISC";
@@ -362,16 +362,16 @@ export interface OauthToken {
 
 export interface Oauth {
   id: number;
-  created_at?: number;
-  public_id: string;
+  createdAt?: number;
+  publicId: string;
   token: string;
-  expires_at?: number | null;
+  expiresAt?: number | null;
   plugin: string;
 }
 
 export interface Organization {
   id: number;
-  public_id: string;
+  publicId: string;
   name: string;
 }
 
@@ -380,5 +380,5 @@ export interface OrganizationLink {
   person: string;
   shop: string;
   role: TurquozeRole;
-  created_at?: number;
+  createdAt?: number;
 }
