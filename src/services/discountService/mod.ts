@@ -1,33 +1,30 @@
 import IDiscountService from "../interfaces/discountService.ts";
 import { Discount } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { discounts } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class DiscountService implements IDiscountService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Discount }): Promise<Discount> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.insert(discounts).values({
+        //@ts-expect-error not in type
+        type: params.data.type,
+        value: params.data.value,
+        shop: params.data.shop,
+        validFrom: params.data.validFrom,
+        validTo: params.data.validTo,
+        code: params.data.code,
+      }).returning();
 
-      const result = await client.queryObject<Discount>({
-        text:
-          "INSERT INTO discounts (type, value, shop, valid_from, valid_to, code) VALUES ($1, $2, $3, $4, $5, $6) RETURNING public_id",
-        args: [
-          params.data.type,
-          params.data.value,
-          params.data.shop,
-          params.data.valid_from,
-          params.data.valid_to,
-          params.data.code,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -37,15 +34,11 @@ export default class DiscountService implements IDiscountService {
 
   async Get(params: { id: string }): Promise<Discount> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Discount>({
-        text: "SELECT * FROM discounts WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(discounts).where(
+        eq(discounts.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -55,15 +48,11 @@ export default class DiscountService implements IDiscountService {
 
   async GetByCode(params: { code: string }): Promise<Discount> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Discount>({
-        text: "SELECT * FROM discounts WHERE code = $1 LIMIT 1",
-        args: [params.code],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(discounts).where(
+        eq(discounts.code, params.code),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -73,25 +62,25 @@ export default class DiscountService implements IDiscountService {
 
   async GetMany(
     params: {
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
       shop: string;
     },
   ): Promise<Discount[]> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<Discount>({
-        text: "SELECT * FROM discounts WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(discounts).where(
+        eq(discounts.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      // @ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -101,14 +90,7 @@ export default class DiscountService implements IDiscountService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<void>({
-        text: "DELETE FROM discounts WHERE public_id = $1",
-        args: [params.id],
-      });
-
-      client.release();
+      await this.db.delete(discounts).where(eq(discounts.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -118,16 +100,12 @@ export default class DiscountService implements IDiscountService {
 
   async Validate(params: { code: string }): Promise<Discount | undefined> {
     try {
-      const client = await this.pool.connect();
-
-      const data = await client.queryObject<Discount>({
-        text: "SELECT * FROM discounts WHERE code = $1",
-        args: [params.code],
-      });
-
-      client.release();
-      if (data.rows.length > 0) {
-        return data.rows[0];
+      const result = await this.db.select().from(discounts).where(
+        eq(discounts.code, params.code),
+      );
+      if (result.length > 0) {
+        //@ts-expect-error not on type
+        return result[0];
       }
     } catch (error) {
       throw new DatabaseError("DB error", {

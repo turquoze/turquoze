@@ -108,3 +108,5 @@ bench_res.json
 
 package*.json
 generated/
+
+.env.*

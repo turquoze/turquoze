@@ -15,7 +15,7 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      public_id: "156e4529-8131-46bf-b0f7-03863a608214",
+      publicId: "156e4529-8131-46bf-b0f7-03863a608214",
       name: "test",
     });
 
@@ -33,7 +33,7 @@ Deno.test({
     assert(response?.ok);
 
     const { categories }: { categories: Category } = await response?.json();
-    ID = categories.public_id;
+    ID = categories.publicId;
   },
 });
 
@@ -68,7 +68,7 @@ Deno.test({
     assert(response?.ok);
 
     const { categories }: { categories: Category } = await response?.json();
-    assertEquals(categories.public_id, ID);
+    assertEquals(categories.publicId, ID);
   },
 });
 
@@ -88,7 +88,7 @@ Deno.test({
     assert(response?.ok);
 
     const { categories }: { categories: Category } = await response?.json();
-    assertEquals(categories.public_id, ID);
+    assertEquals(categories.publicId, ID);
   },
 });
 
@@ -99,7 +99,7 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      public_id: ID,
+      publicId: ID,
       name: "test update",
     });
 
@@ -117,7 +117,7 @@ Deno.test({
     assert(response?.ok);
 
     const { categories }: { categories: Category } = await response?.json();
-    assertEquals(categories.public_id, ID);
+    assertEquals(categories.publicId, ID);
   },
 });
 

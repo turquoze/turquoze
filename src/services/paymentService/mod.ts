@@ -14,13 +14,11 @@ import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError, NoCartError } from "../../utils/errors.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-import { Pool } from "../../deps.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import IPriceService from "../interfaces/priceService.ts";
 import IPriceCalculatorService from "../interfaces/priceCalculatorService.ts";
 
 export default class PaymentService implements IPaymentService {
-  pool: Pool;
   #CartService: ICartService;
   #OrderService: IOrderService;
   #ProductService: IProductService;
@@ -28,7 +26,6 @@ export default class PaymentService implements IPaymentService {
   #PriceService: IPriceService;
   #PriceCalculatorService: IPriceCalculatorService;
   constructor(
-    pool: Pool,
     cartService: ICartService,
     orderService: IOrderService,
     productService: IProductService,
@@ -36,7 +33,6 @@ export default class PaymentService implements IPaymentService {
     priceService: IPriceService,
     priceCalculatorService: IPriceCalculatorService,
   ) {
-    this.pool = pool;
     this.#CartService = cartService;
     this.#OrderService = orderService;
     this.#ProductService = productService;
@@ -61,18 +57,18 @@ export default class PaymentService implements IPaymentService {
 
       const price = await this.Price({
         items: cart.items,
-        cartId: cart.public_id,
+        cartId: cart.publicId,
         currency: params.data.shop.currency,
       });
 
       const paymentProvider = await this.#PluginService.Get({
-        id: params.data.shop.payment_id!,
+        id: params.data.shop.paymentId!,
       });
 
       const payCartItemsPromises = cart.items.map(async (item) => {
-        const product = await this.#ProductService.Get({ id: item.item_id });
+        const product = await this.#ProductService.Get({ id: item.itemId });
         const price = await this.#PriceService.GetByProduct({
-          productId: product.public_id!,
+          productId: product.publicId!,
         });
 
         return {
@@ -91,19 +87,19 @@ export default class PaymentService implements IPaymentService {
             currency: params.data.shop.currency,
             value: product.price,
           },
-          product: product.item_id,
+          product: product.itemId,
           quantity: product.quantity,
         };
       });
 
       const order = await this.#OrderService.Create({
         data: {
-          public_id: "",
+          publicId: "",
           id: 0,
           payment_status: "WAITING",
           price_total: parseInt(price.price.toString()),
-          created_at: 0,
-          shop: params.data.shop.public_id,
+          createdAt: 0,
+          shop: params.data.shop.publicId,
           // @ts-expect-error db is json
           products: JSON.stringify(orderProducts),
         },
@@ -111,7 +107,7 @@ export default class PaymentService implements IPaymentService {
 
       const payData = await this.#PaymentRequest({
         plugin: paymentProvider,
-        orderId: order.public_id,
+        orderId: order.publicId,
         items: payCartItems,
         shop: params.data.shop,
       });
@@ -124,7 +120,7 @@ export default class PaymentService implements IPaymentService {
           },
         },
         payment: payData,
-        id: order.public_id,
+        id: order.publicId,
       };
     } catch (error) {
       if (error instanceof NoCartError) {
@@ -187,7 +183,7 @@ export default class PaymentService implements IPaymentService {
 
       await Promise.all(params.items.map(async (product) => {
         const dbProduct = await this.#PriceService.GetByProduct({
-          productId: product.item_id,
+          productId: product.itemId,
         });
 
         const productPrice = parseInt(dbProduct.amount.toString());

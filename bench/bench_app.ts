@@ -1,11 +1,7 @@
 import { Application } from "../src/deps.ts";
 import type { TurquozeState } from "../src/utils/types.ts";
 import Container from "../src/services/mod.ts";
-import {
-  pool as dbClient,
-  redis as redisClient,
-  searchClient,
-} from "./bench_utils.ts";
+import { dbClient, redis as redisClient, searchClient } from "./bench_utils.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "./bench_secrets.ts";
 import SearchService from "../src/services/searchService/mod.ts";
 
@@ -19,9 +15,9 @@ app.use(async (ctx, next) => {
   ctx.state.shop = "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1";
   ctx.state.request_data = {
     id: 0,
-    public_id: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
+    publicId: "d9cf2573-56f5-4f02-b82d-3f9db43dd0f1",
     regions: ["SE"],
-    payment_id: "",
+    paymentId: "",
     currency: "SEK",
     name: "test",
     url: "https://example.com",
@@ -36,7 +32,7 @@ app.use(async (ctx, next) => {
       },
     },
     _role: "VIEWER",
-    shipping_id: "",
+    shippingId: "",
   };
   await next();
 });

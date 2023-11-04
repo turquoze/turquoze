@@ -1,31 +1,27 @@
 import IReturnService from "../interfaces/returnService.ts";
 import { OrderReturn } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { returns } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class ReturnService implements IReturnService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: OrderReturn }): Promise<OrderReturn> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.insert(returns).values({
+        orderId: params.data.orderId,
+        shop: params.data.shop,
+        items: params.data.items,
+        status: params.data.status,
+      }).returning();
 
-      const result = await client.queryObject<OrderReturn>({
-        text:
-          "INSERT INTO returns (order_id, shop, items, status) VALUES ($1, $2, $3, $4) RETURNING public_id",
-        args: [
-          params.data.order_id,
-          params.data.shop,
-          params.data.items,
-          params.data.status,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -35,22 +31,18 @@ export default class ReturnService implements IReturnService {
 
   async Update(params: { data: OrderReturn }): Promise<OrderReturn> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(returns)
+        .set({
+          orderId: params.data.orderId,
+          shop: params.data.shop,
+          items: params.data.items,
+          status: params.data.status,
+        })
+        .where(eq(returns.publicId, params.data.publicId))
+        .returning();
 
-      const result = await client.queryObject<OrderReturn>({
-        text:
-          "UPDATE returns SET order_id = $1, shop = $2, items = $3, status = $4 WHERE public_id = $5 RETURNING public_id",
-        args: [
-          params.data.order_id,
-          params.data.shop,
-          params.data.items,
-          params.data.status,
-          params.data.public_id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -60,15 +52,11 @@ export default class ReturnService implements IReturnService {
 
   async Get(params: { id: string }): Promise<OrderReturn> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<OrderReturn>({
-        text: "SELECT * FROM returns WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(returns).where(
+        eq(returns.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -78,25 +66,25 @@ export default class ReturnService implements IReturnService {
 
   async GetMany(
     params: {
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
       shop: string;
     },
   ): Promise<OrderReturn[]> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<OrderReturn>({
-        text: "SELECT * FROM returns WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(returns).where(
+        eq(returns.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      //@ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -106,18 +94,15 @@ export default class ReturnService implements IReturnService {
 
   async SetReturnExported(params: { id: string }): Promise<OrderReturn> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(returns)
+        .set({
+          exported: true,
+        })
+        .where(eq(returns.publicId, params.id))
+        .returning();
 
-      const result = await client.queryObject<OrderReturn>({
-        text:
-          "UPDATE returns SET exported = true WHERE public_id = $7 RETURNING public_id",
-        args: [
-          params.id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

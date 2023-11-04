@@ -1,30 +1,28 @@
 import IInventoryService from "../interfaces/inventoryService.ts";
 import { Inventory } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { sql } from "drizzle-orm";
+import { inventories } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class CartService implements IInventoryService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Inventory }): Promise<Inventory> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(inventories).values({
+        product: params.data.product,
+        quantity: params.data.quantity,
+        warehouse: params.data.warehouse,
+      }).returning();
 
-      const result = await client.queryObject<Inventory>({
-        text:
-          "INSERT INTO inventories (product, quantity, warehouse) VALUES ($1, $2, $3) RETURNING public_id",
-        args: [
-          params.data.product,
-          params.data.quantity,
-          params.data.warehouse,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -34,16 +32,15 @@ export default class CartService implements IInventoryService {
 
   async Update(params: { data: Inventory }): Promise<Inventory> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(inventories)
+        .set({
+          quantity: params.data.quantity,
+        })
+        .where(eq(inventories.publicId, params.data.publicId))
+        .returning();
 
-      const result = await client.queryObject<Inventory>({
-        text:
-          "UPDATE inventories SET quantity = $1 WHERE public_id = $2 RETURNING public_id",
-        args: [params.data.quantity, params.data.public_id],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -53,15 +50,11 @@ export default class CartService implements IInventoryService {
 
   async Get(params: { id: string }): Promise<Inventory> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Inventory>({
-        text: "SELECT * FROM inventories WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(inventories).where(
+        eq(inventories.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -73,16 +66,12 @@ export default class CartService implements IInventoryService {
     params: { id: string },
   ): Promise<Array<Inventory>> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.execute(
+        sql`SELECT inventories.*, warehouses.name AS warehouse_name FROM inventories INNER JOIN warehouses ON inventories.warehouse = warehouses.publicId WHERE inventories.product = ${params.id}`,
+      );
 
-      const result = await client.queryObject<Inventory>({
-        text:
-          "SELECT inventories.*, warehouses.name AS warehouse_name FROM inventories INNER JOIN warehouses ON inventories.warehouse = warehouses.public_id WHERE inventories.product = $1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows;
+      //@ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -92,14 +81,9 @@ export default class CartService implements IInventoryService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Inventory>({
-        text: "DELETE FROM inventories WHERE public_id = $1",
-        args: [params.id],
-      });
-
-      client.release();
+      await this.db.delete(inventories).where(
+        eq(inventories.publicId, params.id),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

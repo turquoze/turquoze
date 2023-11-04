@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import productService from "../../src/services/productService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const product = new productService(client);
+const product = new productService(dbClient);
 let ID = "";
 const SLUG = "test2";
 
@@ -18,18 +18,18 @@ Deno.test("ProductService", {
         const data = await product.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             active: true,
             images: [],
             title: "test product",
-            short_description: "test product",
-            long_description: "test product long",
+            shortDescription: "test product",
+            longDescription: "test product long",
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             slug: "test2",
           },
         });
 
-        ID = data.public_id!;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -47,7 +47,7 @@ Deno.test("ProductService", {
         await product.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -69,13 +69,13 @@ Deno.test("ProductService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
-        created_at: data.created_at,
+        publicId: ID,
+        createdAt: data.createdAt,
         active: true,
         images: [],
         title: "test product",
-        short_description: "test product",
-        long_description: "test product long",
+        shortDescription: "test product",
+        longDescription: "test product long",
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         slug: "test2",
       });
@@ -110,13 +110,13 @@ Deno.test("ProductService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
-        created_at: data.created_at,
+        publicId: ID,
+        createdAt: data.createdAt,
         active: true,
         images: [],
         title: "test product",
-        short_description: "test product",
-        long_description: "test product long",
+        shortDescription: "test product",
+        longDescription: "test product long",
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         slug: "test2",
       });
@@ -150,18 +150,18 @@ Deno.test("ProductService", {
         const data = await product.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             active: true,
             images: [],
             title: "test product update",
-            short_description: "test product update",
-            long_description: "test product long update",
+            shortDescription: "test product update",
+            longDescription: "test product long update",
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             slug: "test2",
           },
         });
 
-        ID = data.public_id!;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -179,12 +179,12 @@ Deno.test("ProductService", {
         await product.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             active: true,
             images: [],
             title: "test product update",
-            short_description: "test product update",
-            long_description: "test product long update",
+            shortDescription: "test product update",
+            longDescription: "test product long update",
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             slug: "test2",
           },
@@ -218,7 +218,7 @@ Deno.test("ProductService", {
     fn: async () => {
       try {
         await product.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

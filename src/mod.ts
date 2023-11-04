@@ -4,7 +4,6 @@ import api from "./routes/api/api.ts";
 import utils from "./routes/utils/utils.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
 import Logger from "./middleware/logger.ts";
-import DBCloser from "./middleware/dbCloser.ts";
 import { stringifyJSON } from "./utils/utils.ts";
 import notFoundPage from "./pages/404.ts";
 
@@ -43,7 +42,6 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(DBCloser);
 app.use(Logger);
 app.use(ResponseTimer);
 

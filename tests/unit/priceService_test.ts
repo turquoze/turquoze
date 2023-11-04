@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import priceService from "../../src/services/priceService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const price = new priceService(client);
+const price = new priceService(dbClient);
 let ID = "";
 
 Deno.test("PriceService", {
@@ -17,14 +17,14 @@ Deno.test("PriceService", {
         const data = await price.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             amount: 100,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -42,7 +42,7 @@ Deno.test("PriceService", {
         await price.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -64,8 +64,8 @@ Deno.test("PriceService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
-        created_at: data.created_at,
+        publicId: ID,
+        createdAt: data.createdAt,
         amount: 100,
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
@@ -100,14 +100,14 @@ Deno.test("PriceService", {
         const data = await price.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             amount: 200,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -125,7 +125,7 @@ Deno.test("PriceService", {
         await price.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             amount: 200,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             product: "00000000-0000-0000-0000-000000000000",
@@ -160,7 +160,7 @@ Deno.test("PriceService", {
     fn: async () => {
       try {
         await price.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

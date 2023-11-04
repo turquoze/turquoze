@@ -1,8 +1,8 @@
 import { assert } from "../test_deps.ts";
 import shopService from "../../src/services/shopService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const region = new shopService(client);
+const region = new shopService(dbClient);
 let ID = "";
 
 Deno.test("ShopService", {
@@ -17,7 +17,7 @@ Deno.test("ShopService", {
         const shop = await region.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             currency: "EUR",
             name: "TEST",
             regions: ["SE", "NO", "DK", "FI"],
@@ -36,7 +36,7 @@ Deno.test("ShopService", {
           },
         });
 
-        ID = shop.public_id;
+        ID = shop.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -54,7 +54,7 @@ Deno.test("ShopService", {
         await region.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -106,7 +106,7 @@ Deno.test("ShopService", {
         const data = await region.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
@@ -122,11 +122,11 @@ Deno.test("ShopService", {
               },
             },
             _role: "VIEWER",
-            shipping_id: "",
+            shippingId: "",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -144,7 +144,7 @@ Deno.test("ShopService", {
         await region.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
@@ -160,7 +160,7 @@ Deno.test("ShopService", {
               },
             },
             _role: "VIEWER",
-            shipping_id: "",
+            shippingId: "",
           },
         });
 

@@ -1,26 +1,27 @@
 import { Category } from "../../utils/types.ts";
 import ICategoryService from "../interfaces/categoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { categories } from "../../utils/schema.ts";
+import { and, eq } from "drizzle-orm";
 
 export default class CategoryService implements ICategoryService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Category }): Promise<Category> {
     try {
-      const client = await this.pool.connect();
+      //@ts-expect-error not on type
+      const result = await this.db.insert(categories).values({
+        name: params.data.name,
+        parent: params.data.parent,
+        shop: params.data.shop,
+      }).returning();
 
-      const result = await client.queryObject<Category>({
-        text:
-          "INSERT INTO categories (name, parent, shop) VALUES ($1, $2, $3) RETURNING public_id",
-        args: [params.data.name, params.data.parent, params.data.shop],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -30,15 +31,11 @@ export default class CategoryService implements ICategoryService {
 
   async Get(params: { id: string }): Promise<Category> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Category>({
-        text: "SELECT * FROM categories WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(categories).where(
+        eq(categories.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -46,17 +43,16 @@ export default class CategoryService implements ICategoryService {
     }
   }
 
-  async GetByName(params: { name: string }): Promise<Category> {
+  async GetByName(params: { name: string; shop: string }): Promise<Category> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Category>({
-        text: "SELECT * FROM categories WHERE name = $1 LIMIT 1",
-        args: [params.name],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(categories).where(
+        and(
+          eq(categories.shop, params.shop),
+          eq(categories.name, params.name),
+        ),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -65,22 +61,22 @@ export default class CategoryService implements ICategoryService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number; shop: string },
+    params: { offset?: number; limit?: number; shop: string },
   ): Promise<Array<Category>> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<Category>({
-        text: "SELECT * FROM categories WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(categories).where(
+        eq(categories.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      // @ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -90,16 +86,16 @@ export default class CategoryService implements ICategoryService {
 
   async Update(params: { data: Category }): Promise<Category> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(categories)
+        .set({
+          name: params.data.name,
+          parent: params.data.parent,
+        })
+        .where(eq(categories.publicId, params.data.publicId))
+        .returning();
 
-      const result = await client.queryObject<Category>({
-        text:
-          "UPDATE categories SET name = $1, parent = $2 WHERE public_id = $3 RETURNING public_id",
-        args: [params.data.name, params.data.parent, params.data.public_id],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -109,14 +105,9 @@ export default class CategoryService implements ICategoryService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Category>({
-        text: "DELETE FROM categories WHERE public_id = $1",
-        args: [params.id],
-      });
-
-      client.release();
+      await this.db.delete(categories).where(
+        eq(categories.publicId, params.id),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

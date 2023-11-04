@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import warehouseService from "../../src/services/warehouseService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const warehouse = new warehouseService(client);
+const warehouse = new warehouseService(dbClient);
 let ID = "";
 
 Deno.test("WarehouseService", {
@@ -17,7 +17,7 @@ Deno.test("WarehouseService", {
         const data = await warehouse.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             address: "Test 1B",
             country: "Sweden",
             name: "Sweden A",
@@ -25,7 +25,7 @@ Deno.test("WarehouseService", {
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -40,7 +40,7 @@ Deno.test("WarehouseService", {
         await warehouse.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -59,8 +59,8 @@ Deno.test("WarehouseService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
-        created_at: data.created_at,
+        publicId: ID,
+        createdAt: data.createdAt,
         address: "Test 1B",
         country: "Sweden",
         name: "Sweden A",
@@ -90,7 +90,7 @@ Deno.test("WarehouseService", {
         const data = await warehouse.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             address: "Test 1B - Update",
             country: "Sweden - Update",
             name: "Sweden A - Update",
@@ -98,7 +98,7 @@ Deno.test("WarehouseService", {
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -113,7 +113,7 @@ Deno.test("WarehouseService", {
         await warehouse.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             address: "Test 1B - Update",
             country: "Sweden - Update",
             name: "Sweden A - Update",
@@ -143,7 +143,7 @@ Deno.test("WarehouseService", {
     fn: async () => {
       try {
         await warehouse.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

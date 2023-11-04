@@ -34,7 +34,7 @@ Deno.test({
     assert(response?.ok);
 
     const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    ID = warehouses.public_id;
+    ID = warehouses.publicId;
   },
 });
 
@@ -69,7 +69,7 @@ Deno.test({
     assert(response?.ok);
 
     const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    assertEquals(warehouses.public_id, ID);
+    assertEquals(warehouses.publicId, ID);
   },
 });
 
@@ -99,7 +99,7 @@ Deno.test({
     assert(response?.ok);
 
     const { warehouses }: { warehouses: Warehouse } = await response?.json();
-    assertEquals(warehouses.public_id, ID);
+    assertEquals(warehouses.publicId, ID);
   },
 });
 

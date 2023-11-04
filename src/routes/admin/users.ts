@@ -18,7 +18,7 @@ export default class UsersRoutes {
     this.#users.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await this.#Container.UserService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         ctx.response.body = stringifyJSON({
@@ -49,7 +49,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        user.shop = ctx.state.request_data.public_id;
+        user.shop = ctx.state.request_data.publicId;
 
         await UserSchema.validate(user);
         const posted: User = await UserSchema.cast(user);
@@ -112,8 +112,8 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        user.public_id = ctx.params.id;
-        user.shop = ctx.state.request_data.public_id;
+        user.publicId = ctx.params.id;
+        user.shop = ctx.state.request_data.publicId;
         user.password = "_______";
 
         await UserSchema.validate(user);

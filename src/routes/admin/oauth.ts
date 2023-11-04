@@ -50,23 +50,23 @@ export default class OAuthRoutes {
           });
 
           const shops = await this.#Container.ShopLinkService.GetShops({
-            id: admin.public_id,
+            id: admin.publicId,
           });
 
-          const shop = shops.find((x) => x.public_id == ctx.params.id);
+          const shop = shops.find((x) => x.publicId == ctx.params.id);
 
           if (shop == undefined) {
             throw new Error("Not connected to shop");
           }
 
-          const KID = shop.public_id;
+          const KID = shop.publicId;
           const iat = Math.floor(Date.now() / 1000);
           const exp = iat + 15 * 60;
           const claims = {
             iat,
             exp,
-            shopId: shop.public_id,
-            adminId: admin.public_id,
+            shopId: shop.publicId,
+            adminId: admin.publicId,
           };
 
           const jwt = await new jose.SignJWT(claims)
@@ -129,7 +129,7 @@ export default class OAuthRoutes {
           const plugin = await this.#Container.PluginService.Create({
             data: {
               id: 0,
-              public_id: "",
+              publicId: "",
               name: namePlugin ?? client_id ?? "_NO_NAME_",
               shop: ctx.params.id,
               token: tokenPlugin ?? "",
@@ -144,8 +144,8 @@ export default class OAuthRoutes {
           const token = await this.#Container.OauthService.Create({
             data: {
               id: 0,
-              public_id: "",
-              plugin: plugin.public_id,
+              publicId: "",
+              plugin: plugin.publicId,
               token: refresh,
               expires_at: null, // TODO: null is never have to delete plugin from shop.
             },
@@ -153,7 +153,7 @@ export default class OAuthRoutes {
 
           const url = new URLSearchParams(redirect_uri!);
           url.set("state", state!);
-          url.set("code", token.public_id);
+          url.set("code", token.publicId);
 
           ctx.response.redirect(url.toString());
         }
@@ -198,7 +198,7 @@ export default class OAuthRoutes {
             exp,
             nbf,
             shopId: plugin.shop,
-            plugin: plugin.public_id,
+            plugin: plugin.publicId,
             type: plugin.type,
           };
 

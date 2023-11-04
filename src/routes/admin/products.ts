@@ -19,12 +19,12 @@ export default class ProductsRoutes {
     this.#products.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const data = await this.#Container.ProductService.GetMany({
-          shop: ctx.state.request_data.public_id,
+          shop: ctx.state.request_data.publicId,
         });
 
         const productsPromises = data.map(async (product) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: product.public_id!,
+            productId: product.publicId!,
           });
 
           product.price = Dinero({
@@ -95,7 +95,7 @@ export default class ProductsRoutes {
         });
 
         const data = await Get<Product>(this.#Container, {
-          id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
+          id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Get({
             id: ctx.params.id,
           }),
@@ -138,14 +138,14 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        product.public_id = ctx.params.id;
+        product.publicId = ctx.params.id;
         product.shop = ctx.state.shop;
 
         await ProductSchema.validate(product);
         const posted: Product = await ProductSchema.cast(product);
 
         const data = await Update<Product>(this.#Container, {
-          id: `product_${ctx.state.request_data.public_id}-${product.id}`,
+          id: `product_${ctx.state.request_data.publicId}-${product.id}`,
           promise: this.#Container.ProductService.Update({
             data: posted,
           }),
@@ -172,7 +172,7 @@ export default class ProductsRoutes {
         });
 
         await Delete(this.#Container, {
-          id: `product_${ctx.state.request_data.public_id}-${ctx.params.id}`,
+          id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
           promise: this.#Container.ProductService.Delete({ id: ctx.params.id }),
         });
 

@@ -22,7 +22,7 @@ export default interface IUserService {
   }): Promise<User>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<User>>;

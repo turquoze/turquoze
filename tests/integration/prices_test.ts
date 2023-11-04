@@ -33,7 +33,7 @@ Deno.test({
     assert(response?.ok);
 
     const { prices }: { prices: Price } = await response?.json();
-    ID = prices.public_id;
+    ID = prices.publicId;
   },
 });
 
@@ -68,7 +68,7 @@ Deno.test({
     assert(response?.ok);
 
     const { prices }: { prices: Price } = await response?.json();
-    assertEquals(prices.public_id, ID);
+    assertEquals(prices.publicId, ID);
   },
 });
 
@@ -97,7 +97,7 @@ Deno.test({
     assert(response?.ok);
 
     const { prices }: { prices: Price } = await response?.json();
-    assertEquals(prices.public_id, ID);
+    assertEquals(prices.publicId, ID);
   },
 });
 

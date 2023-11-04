@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import tokenService from "../../src/services/tokenService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const token = new tokenService(client);
+const token = new tokenService(dbClient);
 let ID = "";
 
 Deno.test("TokenService", {

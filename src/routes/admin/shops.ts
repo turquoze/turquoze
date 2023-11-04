@@ -94,7 +94,7 @@ export default class RegionsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        shop.public_id = ctx.params.id;
+        shop.publicId = ctx.params.id;
 
         await ShopSchema.validate(shop);
         const posted: Shop = await ShopSchema.cast(shop);

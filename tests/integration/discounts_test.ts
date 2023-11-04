@@ -36,7 +36,7 @@ Deno.test({
     assert(response?.ok);
 
     const { discounts }: { discounts: Discount } = await response?.json();
-    ID = discounts.public_id;
+    ID = discounts.publicId;
   },
 });
 
@@ -71,7 +71,7 @@ Deno.test({
     assert(response?.ok);
 
     const { discounts }: { discounts: Discount } = await response?.json();
-    assertEquals(discounts.public_id, ID);
+    assertEquals(discounts.publicId, ID);
   },
 });
 

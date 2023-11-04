@@ -21,7 +21,7 @@ export default class UsersRoutes {
           ctx.state.request_data._signKey,
         );
         //@ts-expect-error err
-        const id = result.payload.user.public_id;
+        const id = result.payload.user.publicId;
         const data = await this.#Container.UserService.Get({ id });
 
         ctx.response.body = stringifyJSON({
@@ -52,7 +52,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        login.shop = ctx.state.request_data.public_id;
+        login.shop = ctx.state.request_data.publicId;
 
         await LoginSchema.validate(login);
         const posted: LoginRequest = await LoginSchema.cast(login);
@@ -67,7 +67,7 @@ export default class UsersRoutes {
           "user": {
             email: data.email,
             name: data.name,
-            id: data.public_id,
+            id: data.publicId,
           },
         })
           .setProtectedHeader({ alg: "PS256" })
@@ -106,7 +106,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        login.shop = ctx.state.request_data.public_id;
+        login.shop = ctx.state.request_data.publicId;
 
         await LoginSchema.validate(login);
         const posted: LoginRequest = await LoginSchema.cast(login);

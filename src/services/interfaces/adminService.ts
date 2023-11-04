@@ -20,7 +20,7 @@ export default interface IAdminService {
   }): Promise<Admin>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<Admin>>;

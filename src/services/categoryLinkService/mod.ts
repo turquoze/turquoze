@@ -1,25 +1,24 @@
 import { CategoryLink, Product } from "../../utils/types.ts";
 import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { categorieslink } from "../../utils/schema.ts";
+import { and, eq, sql } from "drizzle-orm";
 
 export default class CategoryLinkService implements ICategoryLinkService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Link(params: { data: CategoryLink }): Promise<CategoryLink> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.insert(categorieslink).values({
+        category: params.data.category,
+        product: params.data.product,
+      }).returning();
 
-      const result = await client.queryObject<CategoryLink>({
-        text: "INSERT INTO categorieslink (category, product) VALUES ($1, $2)",
-        args: [params.data.category, params.data.product],
-      });
-
-      client.release();
-      return result.rows[0];
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -30,25 +29,25 @@ export default class CategoryLinkService implements ICategoryLinkService {
   async GetProducts(
     params: {
       id: string;
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
     },
   ): Promise<Product[]> {
     try {
-      const client = await this.pool.connect();
-
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const result = await client.queryObject<Product>({
-        text:
-          "SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.public_id WHERE categorieslink.category = $1 LIMIT $2 OFFSET $3",
-        args: [params.id, params.limit, params.offset],
-      });
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      client.release();
-      return result.rows;
+      const result = await this.db.execute(
+        sql`SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.publicId WHERE categorieslink.category = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
+      );
+
+      //@ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -58,15 +57,12 @@ export default class CategoryLinkService implements ICategoryLinkService {
 
   async Delete(params: { data: CategoryLink }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<CategoryLink>({
-        text:
-          "DELETE FROM categorieslink WHERE (category = $1 AND product = $2)",
-        args: [params.data.category, params.data.product],
-      });
-
-      client.release();
+      await this.db.delete(categorieslink).where(
+        and(
+          eq(categorieslink.category, params.data.category),
+          eq(categorieslink.product, params.data.product),
+        ),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

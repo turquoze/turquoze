@@ -1,54 +1,49 @@
 import { Product } from "../../utils/types.ts";
 import IProductService from "../interfaces/productService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { products } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class ProductService implements IProductService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Product }): Promise<Product> {
     try {
-      const client = await this.pool.connect();
-
       let result;
 
-      if (params.data.public_id == "") {
-        result = await client.queryObject<Product>({
-          text:
-            "INSERT INTO products (active, title, parent, short_description, long_description, images, shop, slug) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
-          args: [
-            params.data.active,
-            params.data.title,
-            params.data.parent,
-            params.data.short_description,
-            params.data.long_description,
-            params.data.images,
-            params.data.shop,
-            params.data.slug,
-          ],
-        });
+      if (params.data.publicId == "" || params.data.publicId == undefined) {
+        //@ts-expect-error not on type
+        result = await this.db.insert(products).values({
+          active: params.data.active,
+          title: params.data.title,
+          parent: params.data.parent,
+          shortDescription: params.data.shortDescription,
+          longDescription: params.data.longDescription,
+          images: params.data.images,
+          slug: params.data.slug,
+          shop: params.data.shop,
+        }).returning();
       } else {
-        result = await client.queryObject<Product>({
-          text:
-            "INSERT INTO products (active, title, parent, short_description, long_description, images, shop, slug) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING public_id",
-          args: [
-            params.data.active,
-            params.data.title,
-            params.data.parent,
-            params.data.short_description,
-            params.data.long_description,
-            params.data.images,
-            params.data.shop,
-            params.data.slug,
-          ],
-        });
+        result = await this.db.update(products).set({
+          active: params.data.active,
+          title: params.data.title,
+          parent: params.data.parent,
+          shortDescription: params.data.shortDescription,
+          longDescription: params.data.longDescription,
+          images: params.data.images,
+          slug: params.data.slug,
+          shop: params.data.shop,
+        })
+          .where(eq(products.publicId, params.data.publicId!))
+          .returning();
       }
 
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -58,15 +53,11 @@ export default class ProductService implements IProductService {
 
   async Get(params: { id: string }): Promise<Product> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Product>({
-        text: "SELECT * FROM products WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(products).where(
+        eq(products.publicId, params.id),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -76,15 +67,11 @@ export default class ProductService implements IProductService {
 
   async GetBySlug(params: { slug: string }): Promise<Product> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Product>({
-        text: "SELECT * FROM products WHERE slug = $1 LIMIT 1",
-        args: [params.slug],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(products).where(
+        eq(products.slug, params.slug),
+      );
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -94,15 +81,11 @@ export default class ProductService implements IProductService {
 
   async GetVariantsByParent(params: { id: string }): Promise<Product[]> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Product>({
-        text: "SELECT * FROM products WHERE parent = $1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(products).where(
+        eq(products.parent, params.id),
+      );
+      //@ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -111,22 +94,22 @@ export default class ProductService implements IProductService {
   }
 
   async GetMany(
-    params: { offset?: string; limit?: number; shop: string },
+    params: { offset?: number; limit?: number; shop: string },
   ): Promise<Array<Product>> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<Product>({
-        text: "SELECT * FROM products WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(products).where(
+        eq(products.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      //@ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -136,25 +119,22 @@ export default class ProductService implements IProductService {
 
   async Update(params: { data: Product }): Promise<Product> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(products)
+        .set({
+          title: params.data.title,
+          shortDescription: params.data.shortDescription,
+          longDescription: params.data.longDescription,
+          active: params.data.active,
+          parent: params.data.parent,
+          images: params.data.images,
+          slug: params.data.slug,
+          shop: params.data.shop,
+        })
+        .where(eq(products.publicId, params.data.publicId!))
+        .returning();
 
-      const result = await client.queryObject<Product>({
-        text:
-          "UPDATE products SET title = $1, short_description = $2, long_description = $3, active = $4, parent = $5, images = $6, slug = $7 WHERE public_id = $8 RETURNING public_id",
-        args: [
-          params.data.title,
-          params.data.short_description,
-          params.data.long_description,
-          params.data.active,
-          params.data.parent,
-          params.data.images,
-          params.data.slug,
-          params.data.public_id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      // @ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -164,14 +144,7 @@ export default class ProductService implements IProductService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Product>({
-        text: "DELETE FROM products WHERE public_id = $1",
-        args: [params.id],
-      });
-
-      client.release();
+      await this.db.delete(products).where(eq(products.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

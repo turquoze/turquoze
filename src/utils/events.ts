@@ -10,7 +10,7 @@ export default function addEvents(container: Container) {
         const productToIndex = {
           ...product,
         };
-        delete productToIndex.public_id;
+        delete productToIndex.publicId;
 
         container.SearchService.ProductIndex({
           index: index,

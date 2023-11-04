@@ -1,9 +1,10 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import discountService from "../../src/services/discountService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const discount = new discountService(client);
+const discount = new discountService(dbClient);
 let ID = "";
+const TEST_CODE = `TEST-${crypto.randomUUID()}`;
 
 Deno.test("DiscountService", {
   sanitizeOps: false,
@@ -17,17 +18,17 @@ Deno.test("DiscountService", {
         const data = await discount.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             type: "FIXED",
-            valid_from: null,
-            valid_to: null,
+            validFrom: null,
+            validTo: null,
             value: 20,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
-            code: "TEST",
+            code: TEST_CODE,
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -45,7 +46,7 @@ Deno.test("DiscountService", {
         await discount.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -67,13 +68,13 @@ Deno.test("DiscountService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
+        publicId: ID,
         type: "FIXED",
-        valid_from: null,
-        valid_to: null,
+        validFrom: null,
+        validTo: null,
         value: 20,
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
-        code: "TEST",
+        code: TEST_CODE,
       });
     },
     sanitizeOps: false,
@@ -102,17 +103,17 @@ Deno.test("DiscountService", {
     name: "GetByCode",
     fn: async () => {
       const data = await discount.GetByCode({
-        code: "TEST",
+        code: TEST_CODE,
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
+        publicId: ID,
         type: "FIXED",
-        valid_from: null,
-        valid_to: null,
+        validFrom: null,
+        validTo: null,
         value: 20,
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
-        code: "TEST",
+        code: TEST_CODE,
       });
     },
     sanitizeOps: false,
@@ -155,7 +156,7 @@ Deno.test("DiscountService", {
     fn: async () => {
       try {
         await discount.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

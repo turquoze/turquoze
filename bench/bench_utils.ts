@@ -1,35 +1,19 @@
-import { MeiliSearch, postgres, Redis } from "../src/deps.ts";
+import { MeiliSearch, Redis } from "../src/deps.ts";
 import {
-  DATABASE,
-  DATABASE_CERT,
-  DATABASE_HOSTNAME,
-  DATABASE_PASSWORD,
-  DATABASE_PORT,
-  DATABASE_USER,
+  DATABASE_URL,
   MEILIAPIKEY,
   MEILIHOST,
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,
 } from "./bench_secrets.ts";
 
-export const pool = new postgres.Pool(
-  {
-    hostname: DATABASE_HOSTNAME,
-    password: DATABASE_PASSWORD,
-    database: DATABASE,
-    user: DATABASE_USER,
-    port: DATABASE_PORT,
-    tls: {
-      caCertificates: [
-        DATABASE_CERT!,
-      ],
-      enabled: false,
-    },
-  },
-  3,
-);
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-export const postgresClient = postgres.PoolClient;
+const client = postgres(DATABASE_URL!);
+
+//@ts-ignore test
+export const dbClient = drizzle(client);
 
 export const searchClient = new MeiliSearch({
   host: MEILIHOST!,

@@ -16,7 +16,5 @@ export type {
   SearchParams,
   SearchResponse,
 } from "https://esm.sh/meilisearch@0.34.2";
-export * as postgres from "https://deno.land/x/postgres@v0.17.0/mod.ts";
-export type { Pool } from "https://deno.land/x/postgres@v0.17.0/mod.ts";
 export * as jose from "https://deno.land/x/jose@v4.14.6/index.ts";
 export * as nanoid from "https://deno.land/x/nanoid@v3.0.0/mod.ts";

@@ -14,7 +14,7 @@ export default interface IReturnService {
   }): Promise<OrderReturn>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<OrderReturn>>;

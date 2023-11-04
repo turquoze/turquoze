@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import cartService from "../../src/services/cartService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const cart = new cartService(client);
+const cart = new cartService(dbClient);
 let ID = "";
 
 Deno.test("CartService", {
@@ -16,7 +16,7 @@ Deno.test("CartService", {
       try {
         const data = await cart.Create({
           data: {
-            public_id: "",
+            publicId: "",
             id: 0,
             billing: {
               address1: "",
@@ -46,7 +46,7 @@ Deno.test("CartService", {
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -78,9 +78,9 @@ Deno.test("CartService", {
         await cart.AddItem({
           data: {
             id: 0,
-            cart_id: ID,
+            cartId: ID,
             price: 2000,
-            item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+            itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
             type: "PRODUCT",
             quantity: 2,
             totalPrice: 4000,
@@ -104,9 +104,9 @@ Deno.test("CartService", {
         await cart.AddItem({
           data: {
             id: 0,
-            cart_id: ID,
+            cartId: ID,
             price: 2000,
-            item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+            itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
             type: "PRODUCT",
             quantity: 3,
             totalPrice: 6000,
@@ -130,9 +130,9 @@ Deno.test("CartService", {
         await cart.AddItem({
           data: {
             id: 0,
-            cart_id: ID,
+            cartId: ID,
             price: 2000,
-            item_id: "00000000-0000-0000-0000-000000000000",
+            itemId: "00000000-0000-0000-0000-000000000000",
             type: "PRODUCT",
             quantity: 2,
             totalPrice: 4000,
@@ -159,8 +159,8 @@ Deno.test("CartService", {
 
       assertObjectMatch(data, {
         id: data.id,
-        cart_id: ID,
-        item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+        cartId: ID,
+        itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
         quantity: 5,
         price: 2000,
         type: data.type,
@@ -201,8 +201,8 @@ Deno.test("CartService", {
 
       assertObjectMatch(data[0], {
         id: data[0].id,
-        cart_id: ID,
-        item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+        cartId: ID,
+        itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
         quantity: 5,
         price: 2000,
         type: data[0].type,

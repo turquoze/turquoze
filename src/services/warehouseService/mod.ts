@@ -1,31 +1,28 @@
 import IWarehouseService from "../interfaces/warehouseService.ts";
 import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { warehouses } from "../../utils/schema.ts";
+import { eq } from "drizzle-orm";
 
 export default class CartService implements IWarehouseService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      const client = await this.pool.connect();
+      // @ts-expect-error not on type
+      const result = await this.db.insert(warehouses).values({
+        address: params.data.address,
+        country: params.data.country,
+        name: params.data.name,
+        shop: params.data.shop,
+      }).returning();
 
-      const result = await client.queryObject<Warehouse>({
-        text:
-          "INSERT INTO warehouses (address, country, name, shop) VALUES ($1, $2, $3, $4) RETURNING public_id",
-        args: [
-          params.data.address,
-          params.data.country,
-          params.data.name,
-          params.data.shop,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      // @ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -35,21 +32,17 @@ export default class CartService implements IWarehouseService {
 
   async Update(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.update(warehouses)
+        .set({
+          address: params.data.address,
+          country: params.data.country,
+          name: params.data.name,
+        })
+        .where(eq(warehouses.publicId, params.data.publicId))
+        .returning({ publicId: warehouses.publicId });
 
-      const result = await client.queryObject<Warehouse>({
-        text:
-          "UPDATE warehouses SET address = $1, country = $2, name = $3 WHERE public_id = $4 RETURNING public_id",
-        args: [
-          params.data.address,
-          params.data.country,
-          params.data.name,
-          params.data.public_id,
-        ],
-      });
-
-      client.release();
-      return result.rows[0];
+      // @ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -59,15 +52,11 @@ export default class CartService implements IWarehouseService {
 
   async Get(params: { id: string }): Promise<Warehouse> {
     try {
-      const client = await this.pool.connect();
-
-      const result = await client.queryObject<Warehouse>({
-        text: "SELECT * FROM warehouses WHERE public_id = $1 LIMIT 1",
-        args: [params.id],
-      });
-
-      client.release();
-      return result.rows[0];
+      const result = await this.db.select().from(warehouses).where(
+        eq(warehouses.publicId, params.id),
+      ).limit(1);
+      // @ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -77,25 +66,25 @@ export default class CartService implements IWarehouseService {
 
   async GetMany(
     params: {
-      offset?: string | undefined;
+      offset?: number | undefined;
       limit?: number | undefined;
       shop: string;
     },
   ): Promise<Warehouse[]> {
     try {
-      if (params.limit == null) {
+      if (params.limit == undefined) {
         params.limit = 10;
       }
 
-      const client = await this.pool.connect();
+      if (params.offset == undefined) {
+        params.offset = 0;
+      }
 
-      const result = await client.queryObject<Warehouse>({
-        text: "SELECT * FROM warehouses WHERE shop = $1 LIMIT $2 OFFSET $3",
-        args: [params.shop, params.limit, params.offset],
-      });
-
-      client.release();
-      return result.rows;
+      const result = await this.db.select().from(warehouses).where(
+        eq(warehouses.shop, params.shop),
+      ).limit(params.limit).offset(params.offset);
+      // @ts-expect-error not on type
+      return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -105,14 +94,9 @@ export default class CartService implements IWarehouseService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<Warehouse>({
-        text: "DELETE FROM warehouses WHERE public_id = $1",
-        args: [params.id],
-      });
-
-      client.release();
+      await this.db.delete(warehouses).where(
+        eq(warehouses.publicId, params.id),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

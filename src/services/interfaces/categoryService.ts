@@ -11,10 +11,11 @@ export default interface ICategoryService {
 
   GetByName(params: {
     name: string;
+    shop: string;
   }): Promise<Category>;
 
   GetMany(params: {
-    offset?: string;
+    offset?: number;
     limit?: number;
     shop: string;
   }): Promise<Array<Category>>;

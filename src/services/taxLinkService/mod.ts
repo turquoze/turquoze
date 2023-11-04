@@ -1,26 +1,26 @@
 import { Tax, TaxProductLink } from "../../utils/types.ts";
 import ITaxLinkService from "../interfaces/taxLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Pool } from "../../deps.ts";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { taxeslink } from "../../utils/schema.ts";
+import { and, eq, sql } from "drizzle-orm";
 
 export default class TaxLinkService implements ITaxLinkService {
-  pool: Pool;
-  constructor(pool: Pool) {
-    this.pool = pool;
+  db: PostgresJsDatabase;
+  constructor(db: PostgresJsDatabase) {
+    this.db = db;
   }
 
   async Create(params: { data: TaxProductLink }): Promise<TaxProductLink> {
     try {
-      const client = await this.pool.connect();
+      // @ts-expect-error not on type
+      const result = await this.db.insert(taxeslink).values({
+        productId: params.data.productId,
+        taxId: params.data.taxId,
+        country: params.data.country,
+      }).returning();
 
-      const result = await client.queryObject<TaxProductLink>({
-        text:
-          "INSERT INTO taxeslink (product_id, tax_id, country) VALUES ($1, $2, $3)",
-        args: [params.data.product_id, params.data.tax_id, params.data.country],
-      });
-
-      client.release();
-      return result.rows[0];
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -32,16 +32,12 @@ export default class TaxLinkService implements ITaxLinkService {
     params: { productId: string; country: string },
   ): Promise<Tax> {
     try {
-      const client = await this.pool.connect();
+      const result = await this.db.execute(
+        sql`SELECT taxes.* FROM taxeslink RIGHT JOIN taxes ON taxeslink.tax_id = taxes.publicId WHERE taxeslink.product_id = ${params.productId} AND taxeslink.country = ${params.country} LIMIT 1`,
+      );
 
-      const result = await client.queryObject<Tax>({
-        text:
-          "SELECT taxes.* FROM taxeslink RIGHT JOIN taxes ON taxeslink.tax_id = taxes.public_id WHERE taxeslink.product_id = $1 AND taxeslink.country = $2 LIMIT 1",
-        args: [params.productId, params.country],
-      });
-
-      client.release();
-      return result.rows[0];
+      //@ts-expect-error not on type
+      return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -53,15 +49,13 @@ export default class TaxLinkService implements ITaxLinkService {
     params: { productId: string; countryId: string; taxId: string },
   ): Promise<void> {
     try {
-      const client = await this.pool.connect();
-
-      await client.queryObject<TaxProductLink>({
-        text:
-          "DELETE FROM taxeslink WHERE (product_id = $1 AND tax_id = $2 AND country = $3)",
-        args: [params.productId, params.taxId, params.countryId],
-      });
-
-      client.release();
+      await this.db.delete(taxeslink).where(
+        and(
+          eq(taxeslink.productId, params.productId),
+          eq(taxeslink.taxId, params.taxId),
+          eq(taxeslink.country, params.countryId),
+        ),
+      );
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

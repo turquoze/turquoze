@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import categoryService from "../../src/services/categoryService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const category = new categoryService(client);
+const category = new categoryService(dbClient);
 let ID = "";
 
 Deno.test("CategoryService", {
@@ -17,13 +17,13 @@ Deno.test("CategoryService", {
         const data = await category.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             name: "test",
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -41,7 +41,7 @@ Deno.test("CategoryService", {
         await category.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -63,7 +63,7 @@ Deno.test("CategoryService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
+        publicId: ID,
         name: "test",
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
@@ -95,10 +95,11 @@ Deno.test("CategoryService", {
     fn: async () => {
       const data = await category.GetByName({
         name: "test",
+        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
+        publicId: ID,
         name: "test",
         shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
       });
@@ -114,6 +115,7 @@ Deno.test("CategoryService", {
       try {
         await category.GetByName({
           name: "",
+          shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
         });
         assert(false);
       } catch {
@@ -132,13 +134,13 @@ Deno.test("CategoryService", {
         const data = await category.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             name: "test update",
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -156,7 +158,7 @@ Deno.test("CategoryService", {
         await category.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             name: "test update",
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
           },
@@ -190,7 +192,7 @@ Deno.test("CategoryService", {
     fn: async () => {
       try {
         await category.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);
