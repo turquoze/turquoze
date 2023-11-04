@@ -1,46 +1,14 @@
 // deno-lint-ignore-file prefer-const
-import "https://deno.land/std@0.137.0/dotenv/load.ts";
-
-let DATABASE_CERT: string | undefined;
-let DATABASE_HOSTNAME: string | undefined;
-let DATABASE_PASSWORD: string | undefined;
-let DATABASE_USER: string | undefined;
-let DATABASE: string | undefined;
-let DATABASE_PORT: string | undefined;
+let DATABASE_URL: string | undefined;
 let MEILIHOST: string | undefined;
 let MEILIINDEX: string | undefined;
 let MEILIAPIKEY: string | undefined;
 let UPSTASH_REDIS_REST_URL: string | undefined;
 let UPSTASH_REDIS_REST_TOKEN: string | undefined;
 
-DATABASE_CERT = Deno.env.get("TEST_DATABASE_CERT");
-if (!DATABASE_CERT) {
-  throw new Error("environment variable TEST_DATABASE_CERT not set");
-}
-
-DATABASE_HOSTNAME = Deno.env.get("TEST_DATABASE_HOSTNAME");
-if (!DATABASE_HOSTNAME) {
-  throw new Error("environment variable TEST_DATABASE_HOSTNAME not set");
-}
-
-DATABASE_PASSWORD = Deno.env.get("TEST_DATABASE_PASSWORD");
-if (!DATABASE_PASSWORD) {
-  throw new Error("environment variable TEST_DATABASE_PASSWORD not set");
-}
-
-DATABASE_USER = Deno.env.get("TEST_DATABASE_USER");
-if (!DATABASE_USER) {
-  throw new Error("environment variable TEST_DATABASE_USER not set");
-}
-
-DATABASE = Deno.env.get("TEST_DATABASE");
-if (!DATABASE) {
-  throw new Error("environment variable TEST_DATABASE not set");
-}
-
-DATABASE_PORT = Deno.env.get("TEST_DATABASE_PORT");
-if (!DATABASE_PORT) {
-  throw new Error("environment variable TEST_DATABASE_PORT not set");
+DATABASE_URL = Deno.env.get("TEST_DATABASE_URL");
+if (!DATABASE_URL) {
+  throw new Error("environment variable TEST_DATABASE_URL not set");
 }
 
 MEILIHOST = Deno.env.get("TEST_MEILIHOST");
@@ -71,12 +39,7 @@ if (!UPSTASH_REDIS_REST_TOKEN) {
 }
 
 export {
-  DATABASE,
-  DATABASE_CERT,
-  DATABASE_HOSTNAME,
-  DATABASE_PASSWORD,
-  DATABASE_PORT,
-  DATABASE_USER,
+  DATABASE_URL,
   MEILIAPIKEY,
   MEILIHOST,
   MEILIINDEX,

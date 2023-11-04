@@ -24,8 +24,8 @@ Deno.test({
       active: true,
       images: [],
       title: "test product",
-      short_description: "test product",
-      long_description: "test product long",
+      shortDescription: "test product",
+      longDescription: "test product long",
       slug: "test1",
     });
 
@@ -43,11 +43,11 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    ID = products.public_id!;
+    ID = products.publicId!;
 
     const dataPrice = JSON.stringify({
       amount: 203300,
-      product: products.public_id!,
+      product: products.publicId!,
     });
 
     const responsePrice = await app.handle(
@@ -62,7 +62,7 @@ Deno.test({
     );
 
     const { prices }: { prices: Price } = await responsePrice?.json();
-    PriceID = prices.public_id!;
+    PriceID = prices.publicId!;
 
     assert(responsePrice?.ok);
   },
@@ -115,7 +115,7 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    assertEquals(products.public_id, ID);
+    assertEquals(products.publicId, ID);
   },
 });
 
@@ -130,8 +130,8 @@ Deno.test({
       active: true,
       images: ["https://test.com"],
       title: "Test product update",
-      short_description: "test description update",
-      long_description: "test description long update",
+      shortDescription: "test description update",
+      longDescription: "test description long update",
       slug: "test1",
     });
 
@@ -149,7 +149,7 @@ Deno.test({
     assert(response?.ok);
 
     const { products }: { products: Product } = await response?.json();
-    assertEquals(products.public_id, ID);
+    assertEquals(products.publicId, ID);
   },
 });
 

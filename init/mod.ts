@@ -1,42 +1,29 @@
 import Container from "../src/services/mod.ts";
 import { faker } from "npm:@faker-js/faker";
 import { Category, Product } from "../src/utils/types.ts";
-import { postgres } from "../src/deps.ts";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-const hostname = Deno.env.get("TEST_DATABASE_HOSTNAME")!;
-const password = Deno.env.get("TEST_DATABASE_PASSWORD")!;
-const database = Deno.env.get("TEST_DATABASE")!;
-const username = Deno.env.get("TEST_DATABASE_USER")!;
-const port = Deno.env.get("TEST_DATABASE_PORT")!;
+const DATABASE_URL = Deno.env.get("TEST_DATABASE_URL")!;
 
-const pool = new postgres.Pool(
-  {
-    hostname: hostname,
-    password: password,
-    database: database,
-    user: username,
-    port: port,
-    tls: {
-      enabled: false,
-      enforce: false,
-    },
-  },
-  3,
-);
+const client = postgres(DATABASE_URL!);
+//@ts-ignore test
+export const dbClient = drizzle(client);
+
 // @ts-expect-error no redis
-const container = new Container(pool, null);
+const container = new Container(dbClient, null);
 
 console.log("Start - Demo init");
 
 try {
   console.log("Creating Shop");
-  const { public_id } = await container.ShopService.Create({
+  const { publicId } = await container.ShopService.Create({
     data: {
       name: "Demo - Store",
       regions: ["SE"],
       url: "https://shop.example.com",
-      shipping_id: "",
-      payment_id: undefined,
+      shippingId: "",
+      paymentId: undefined,
       currency: "SEK",
       secret: "",
       settings: {
@@ -48,7 +35,7 @@ try {
       },
       search_index: "",
       id: 0,
-      public_id: crypto.randomUUID(),
+      publicId: crypto.randomUUID(),
       _role: "WEBSITE",
       _signKey: new Uint8Array(),
     },
@@ -58,7 +45,7 @@ try {
   const productArr: Array<Product> = [];
 
   for (let index = 0; index < 10; index++) {
-    categoryArr.push(GenerateCategory(public_id));
+    categoryArr.push(GenerateCategory(publicId));
   }
 
   const categoryPromises = categoryArr.map((category) => {
@@ -71,7 +58,7 @@ try {
   const categories = await Promise.all(categoryPromises);
 
   for (let index = 0; index < 100; index++) {
-    productArr.push(GenerateProduct(public_id));
+    productArr.push(GenerateProduct(publicId));
   }
 
   const productPromises = productArr.map((product) => {
@@ -88,16 +75,16 @@ try {
       address: faker.address.streetAddress(),
       country: faker.address.countryCode("alpha-2"),
       name: faker.address.cityName(),
-      shop: public_id,
+      shop: publicId,
       id: 0,
-      public_id: "",
+      publicId: "",
     },
   });
 
   const inventoryPromises = products.map((product) => {
     return GenerateInventoryItem(
-      warehouse.public_id,
-      product.public_id!,
+      warehouse.publicId,
+      product.publicId!,
       faker.datatype.number({ max: 800 }),
     );
   });
@@ -106,7 +93,7 @@ try {
   await Promise.all(inventoryPromises);
 
   const chunkSize = 10;
-  const result: Array<Array<{ public_id: string }>> = products.reduce(
+  const result: Array<Array<{ publicId: string }>> = products.reduce(
     (resultArray, item, index) => {
       const chunkIndex = Math.floor(index / chunkSize);
 
@@ -125,7 +112,7 @@ try {
 
   const categoryLinkPromises = result.map((arr, i) => {
     return arr.map((product) => {
-      return GenerateCategoryLink(product.public_id, categories[i].public_id);
+      return GenerateCategoryLink(product.publicId, categories[i].publicId);
     });
   });
 
@@ -154,7 +141,7 @@ async function GenerateInventoryItem(
   await container.InventoryService.Create({
     data: {
       id: 0,
-      public_id: "",
+      publicId: "",
       product: product,
       warehouse: warehouse,
       quantity: quantity,
@@ -165,7 +152,7 @@ async function GenerateInventoryItem(
 function GenerateCategory(shop: string): Category {
   return {
     id: 0,
-    public_id: "",
+    publicId: "",
     name: `${faker.commerce.department()} - ${faker.commerce.productName()}`,
     shop: shop,
   };
@@ -176,10 +163,10 @@ function GenerateProduct(shop: string): Product {
     id: 0,
     active: true,
     images: [faker.image.fashion()],
-    long_description: faker.commerce.productDescription(),
+    longDescription: faker.commerce.productDescription(),
     shop: shop,
     slug: faker.lorem.slug(),
-    short_description: faker.commerce.productDescription().slice(0, 20),
+    shortDescription: faker.commerce.productDescription().slice(0, 20),
     title: faker.commerce.productName(),
     price: parseInt(faker.commerce.price(10000, 99999900, 0, "")),
   };

@@ -1,8 +1,8 @@
 import { assert } from "../test_deps.ts";
 import orderService from "../../src/services/orderService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const order = new orderService(client);
+const order = new orderService(dbClient);
 let ID = "";
 
 Deno.test("OrderService", {
@@ -18,10 +18,10 @@ Deno.test("OrderService", {
         const data = await order.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             payment_status: "WAITING",
             price_total: 1050,
-            created_at: 0,
+            createdAt: 0,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             products: [
               {
@@ -37,7 +37,7 @@ Deno.test("OrderService", {
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -55,7 +55,7 @@ Deno.test("OrderService", {
         await order.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -120,7 +120,7 @@ Deno.test("OrderService", {
     fn: async () => {
       try {
         await order.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

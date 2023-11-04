@@ -24,7 +24,7 @@ Deno.test({
 
     const { orders }: { orders: Array<Order> } = await response?.json();
     if (orders.length > 0) {
-      ID = orders[0].public_id;
+      ID = orders[0].publicId;
     }
   },
 });
@@ -45,6 +45,6 @@ Deno.test({
     assert(response?.ok);
 
     const { orders }: { orders: Order } = await response?.json();
-    assertEquals(orders.public_id, ID);
+    assertEquals(orders.publicId, ID);
   },
 });

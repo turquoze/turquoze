@@ -1,8 +1,8 @@
 import { assert } from "../test_deps.ts";
 import categoryLinkService from "../../src/services/categoryLinkService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const categoryLink = new categoryLinkService(client);
+const categoryLink = new categoryLinkService(dbClient);
 
 Deno.test("CategoryLinkService", {
   sanitizeOps: false,

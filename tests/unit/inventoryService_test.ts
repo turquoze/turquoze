@@ -1,8 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import inventoryService from "../../src/services/inventoryService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const inventory = new inventoryService(client);
+const inventory = new inventoryService(dbClient);
 let ID = "";
 
 Deno.test("InventoryService", {
@@ -17,14 +17,14 @@ Deno.test("InventoryService", {
         const data = await inventory.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             product: "62e03261-c37d-4037-8f0b-b3dd1974f2c2",
             quantity: 2,
             warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -66,8 +66,8 @@ Deno.test("InventoryService", {
       });
       assertObjectMatch(data, {
         id: data.id,
-        public_id: ID,
-        created_at: data.created_at,
+        publicId: ID,
+        createdAt: data.createdAt,
         product: "62e03261-c37d-4037-8f0b-b3dd1974f2c2",
         quantity: 2,
         warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
@@ -102,14 +102,14 @@ Deno.test("InventoryService", {
         const data = await inventory.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             product: "62e03261-c37d-4037-8f0b-b3dd1974f2c2",
             quantity: 10,
             warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -127,7 +127,7 @@ Deno.test("InventoryService", {
         await inventory.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             product: "00000000-0000-0000-0000-000000000000",
             quantity: 0,
             warehouse: "00000000-0000-0000-0000-000000000000",

@@ -1,8 +1,8 @@
 import { assert } from "../test_deps.ts";
 import userService from "../../src/services/userService/mod.ts";
-import { pool as client } from "../test_utils.ts";
+import { dbClient } from "../test_utils.ts";
 
-const user = new userService(client);
+const user = new userService(dbClient);
 let ID = "";
 
 Deno.test("UserService", {
@@ -17,7 +17,7 @@ Deno.test("UserService", {
         await user.Create({
           // @ts-expect-error want to test
           data: {
-            public_id: "",
+            publicId: "",
           },
         });
 
@@ -38,7 +38,7 @@ Deno.test("UserService", {
         const data = await user.Create({
           data: {
             id: 0,
-            public_id: "",
+            publicId: "",
             email: "test@example.com",
             password: "test123",
             name: "test",
@@ -48,7 +48,7 @@ Deno.test("UserService", {
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -168,7 +168,7 @@ Deno.test("UserService", {
         const data = await user.Update({
           data: {
             id: 0,
-            public_id: ID,
+            publicId: ID,
             email: "test+test123@example.com",
             password: "",
             name: "test update",
@@ -178,7 +178,7 @@ Deno.test("UserService", {
           },
         });
 
-        ID = data.public_id;
+        ID = data.publicId;
         assert(true);
       } catch {
         assert(false);
@@ -196,7 +196,7 @@ Deno.test("UserService", {
         await user.Update({
           data: {
             id: 0,
-            public_id: "00000000-0000-0000-0000-000000000000",
+            publicId: "00000000-0000-0000-0000-000000000000",
             email: "test+fail@example.com",
             password: "",
             name: "test fail",
@@ -234,7 +234,7 @@ Deno.test("UserService", {
     fn: async () => {
       try {
         await user.GetMany({
-          offset: "00000000-0000-0000-0000-000000000000",
+          offset: 0,
           shop: "00000000-0000-0000-0000-000000000000",
         });
         assert(false);

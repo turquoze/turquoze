@@ -34,7 +34,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    ID = inventories.public_id;
+    ID = inventories.publicId;
   },
 });
 
@@ -53,7 +53,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    assertEquals(inventories.public_id, ID);
+    assertEquals(inventories.publicId, ID);
   },
 });
 
@@ -83,7 +83,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    assertEquals(inventories.public_id, ID);
+    assertEquals(inventories.publicId, ID);
   },
 });
 

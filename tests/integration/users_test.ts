@@ -35,7 +35,7 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    ID = users.public_id;
+    ID = users.publicId;
   },
 });
 
@@ -70,7 +70,7 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    assertEquals(users.public_id, ID);
+    assertEquals(users.publicId, ID);
   },
 });
 
@@ -82,7 +82,7 @@ Deno.test({
   async fn() {
     const data = JSON.stringify({
       id: 1,
-      public_id: "00000000-0000-0000-0000-000000000000",
+      publicId: "00000000-0000-0000-0000-000000000000",
       email: "test@example.com",
       name: "test update",
       not_active: false,
@@ -102,6 +102,6 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    assertEquals(users.public_id, ID);
+    assertEquals(users.publicId, ID);
   },
 });

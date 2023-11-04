@@ -30,7 +30,7 @@ Deno.test({
     assert(response?.ok);
 
     const { carts }: { carts: Cart } = await response?.json();
-    ID = carts.public_id;
+    ID = carts.publicId;
   },
 });
 
@@ -49,7 +49,7 @@ Deno.test({
     assert(response?.ok);
 
     const { carts }: { carts: Cart } = await response?.json();
-    assertEquals(carts.public_id, ID);
+    assertEquals(carts.publicId, ID);
   },
 });
 
@@ -60,9 +60,9 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      cart_id: ID,
+      cartId: ID,
       price: 2000,
-      item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
       quantity: 2,
     });
 
@@ -101,8 +101,8 @@ Deno.test({
 
     assertObjectMatch(carts[0], {
       id: carts[0].id,
-      cart_id: ID,
-      item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      cartId: ID,
+      itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
       quantity: 2,
       price: 200000,
     });
@@ -130,8 +130,8 @@ Deno.test({
 
     assertObjectMatch(carts, {
       id: carts.id,
-      cart_id: ID,
-      item_id: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      cartId: ID,
+      itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
       quantity: 2,
       price: 200000,
     });
