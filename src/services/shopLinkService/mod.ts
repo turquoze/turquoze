@@ -45,7 +45,7 @@ export default class ShopLinkService implements IShopLinkService {
       }
 
       const result = await this.db.execute(
-        sql`SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.publicId WHERE shopslink.admin = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
+        sql`SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
       );
 
       //@ts-expect-error not on type

@@ -147,7 +147,7 @@ export default class OAuthRoutes {
               publicId: "",
               plugin: plugin.publicId,
               token: refresh,
-              expires_at: null, // TODO: null is never have to delete plugin from shop.
+              expiresAt: null, // TODO: null is never have to delete plugin from shop.
             },
           });
 

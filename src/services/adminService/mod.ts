@@ -15,7 +15,7 @@ export default class AdminService implements IAdminService {
   async Create(params: { data: Admin }): Promise<Admin> {
     try {
       const result = await this.db.execute(
-        sql`INSERT INTO admins (email, name, not_active, password) VALUES (${params.data.email}, ${params.data.name}, ${params.data.not_active}, crypt(${params.data.password}, gen_salt('bf'))) RETURNING publicId`,
+        sql`INSERT INTO admins (email, name, not_active, password) VALUES (${params.data.email}, ${params.data.name}, ${params.data.not_active}, crypt(${params.data.password}, gen_salt('bf'))) RETURNING public_id`,
       );
 
       //@ts-expect-error not on type
@@ -63,7 +63,7 @@ export default class AdminService implements IAdminService {
   ): Promise<Admin> {
     try {
       const result = await this.db.execute(
-        sql`UPDATE admins SET password = crypt(${params.new_password}, gen_salt('bf')) WHERE email = ${params.email} RETURNING publicId`,
+        sql`UPDATE admins SET password = crypt(${params.new_password}, gen_salt('bf')) WHERE email = ${params.email} RETURNING public_id`,
       );
 
       //@ts-expect-error not on type
