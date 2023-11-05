@@ -1,10 +1,12 @@
-import { jose, nanoid, Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
 import { SHARED_SECRET } from "../../utils/secrets.ts";
+import { nanoid } from "nanoid";
+import * as jose from "jose";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class OAuthRoutes {
@@ -139,7 +141,7 @@ export default class OAuthRoutes {
             },
           });
 
-          const refresh = nanoid.nanoid();
+          const refresh = nanoid();
 
           const token = await this.#Container.OauthService.Create({
             data: {

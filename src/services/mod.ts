@@ -49,7 +49,7 @@ import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
 import { Shop } from "../utils/types.ts";
-import { Redis } from "../deps.ts";
+import { Redis } from "@upstash/redis";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export default class Container {

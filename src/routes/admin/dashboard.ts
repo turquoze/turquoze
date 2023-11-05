@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { stringifyJSON } from "../../utils/utils.ts";

@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import ping from "./ping.ts";
 import app from "../../app.ts";
 

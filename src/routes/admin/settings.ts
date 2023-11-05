@@ -1,8 +1,9 @@
-import { MeiliSearch, Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, TurquozeState } from "../../utils/types.ts";
+import { MeiliSearch } from "meilisearch";
 
 export default class SettingsRoutes {
   #settings: Router<TurquozeState>;

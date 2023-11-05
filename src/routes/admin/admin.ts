@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import settings from "./settings.ts";
 import tokens from "./tokens.ts";
 import discounts from "./discounts.ts";

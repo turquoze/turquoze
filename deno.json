@@ -23,6 +23,11 @@
     "drizzle-orm": "npm:drizzle-orm",
     "drizzle-orm/postgres-js": "npm:drizzle-orm/postgres-js",
     "drizzle-orm/pg-core": "npm:drizzle-orm/pg-core",
-    "postgres": "npm:postgres@3.4.3"
+    "postgres": "npm:postgres@3.4.3",
+    "nanoid": "https://deno.land/x/nanoid@v3.0.0/mod.ts",
+    "jose": "https://deno.land/x/jose@v5.1.0/index.ts",
+    "@upstash/redis": "https://esm.sh/@upstash/redis@1.24.3",
+    "meilisearch": "https://esm.sh/meilisearch@0.35.0",
+    "@oakserver/oak": "https://deno.land/x/oak@v12.6.1/mod.ts"
   }
 }
