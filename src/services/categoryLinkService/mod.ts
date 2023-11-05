@@ -43,7 +43,7 @@ export default class CategoryLinkService implements ICategoryLinkService {
       }
 
       const result = await this.db.execute(
-        sql`SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.publicId WHERE categorieslink.category = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
+        sql`SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.public_id WHERE categorieslink.category = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
       );
 
       //@ts-expect-error not on type

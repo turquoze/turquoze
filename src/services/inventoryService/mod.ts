@@ -67,7 +67,7 @@ export default class CartService implements IInventoryService {
   ): Promise<Array<Inventory>> {
     try {
       const result = await this.db.execute(
-        sql`SELECT inventories.*, warehouses.name AS warehouse_name FROM inventories INNER JOIN warehouses ON inventories.warehouse = warehouses.publicId WHERE inventories.product = ${params.id}`,
+        sql`SELECT inventories.*, warehouses.name AS warehouse_name FROM inventories INNER JOIN warehouses ON inventories.warehouse = warehouses.public_id WHERE inventories.product = ${params.id}`,
       );
 
       //@ts-expect-error not on type

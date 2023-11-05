@@ -33,7 +33,7 @@ export default class TaxLinkService implements ITaxLinkService {
   ): Promise<Tax> {
     try {
       const result = await this.db.execute(
-        sql`SELECT taxes.* FROM taxeslink RIGHT JOIN taxes ON taxeslink.tax_id = taxes.publicId WHERE taxeslink.product_id = ${params.productId} AND taxeslink.country = ${params.country} LIMIT 1`,
+        sql`SELECT taxes.* FROM taxeslink RIGHT JOIN taxes ON taxeslink.tax_id = taxes.public_id WHERE taxeslink.product_id = ${params.productId} AND taxeslink.country = ${params.country} LIMIT 1`,
       );
 
       //@ts-expect-error not on type

@@ -43,6 +43,7 @@ export default class CategoriesRoutes {
             `category_name_${ctx.state.request_data.publicId}-${ctx.params.name}`,
           promise: this.#Container.CategoryService.GetByName({
             name: ctx.params.name,
+            shop: ctx.state.request_data.publicId,
           }),
         });
 
