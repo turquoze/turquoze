@@ -38,3 +38,4 @@ jobs:
         with:
           project: turquoze-backend 
           entrypoint: ./src/mod.ts
+          import-map: deno.json
