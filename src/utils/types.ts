@@ -1,5 +1,6 @@
-import { jose, SearchParams } from "../deps.ts";
+import type { SearchParams } from "meilisearch";
 import Container from "../services/mod.ts";
+import * as jose from "jose";
 
 export interface Product {
   id: number;

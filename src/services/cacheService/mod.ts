@@ -1,5 +1,5 @@
 import ICacheService from "../interfaces/cacheService.ts";
-import { Redis } from "../../deps.ts";
+import { Redis } from "@upstash/redis";
 
 export default class CacheService implements ICacheService {
   #redis: Redis;

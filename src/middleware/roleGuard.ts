@@ -1,4 +1,4 @@
-import type { Context } from "../deps.ts";
+import type { Context } from "@oakserver/oak";
 import { TurquozeRole, TurquozeState } from "../utils/types.ts";
 
 export const RoleGuard =

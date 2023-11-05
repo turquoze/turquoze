@@ -1,8 +1,9 @@
-import { MeiliSearch, Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { Product, Search, TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import { MeiliSearch } from "meilisearch";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { SearchSchema, UuidSchema } from "../../utils/validator.ts";
@@ -18,8 +19,15 @@ export default class ProductsRoutes {
 
     this.#products.get("/", async (ctx) => {
       try {
+        const offset = parseInt(
+          ctx.request.url.searchParams.get("offset") ?? "",
+        );
+        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+
         const data = await this.#Container.ProductService.GetMany({
           shop: ctx.state.request_data.publicId,
+          limit: isNaN(limit) ? undefined : limit,
+          offset: isNaN(offset) ? undefined : offset,
         });
 
         const productsPromises = data.map(async (product) => {

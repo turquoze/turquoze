@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
@@ -18,8 +18,15 @@ export default class WarehousesRoutes {
 
     this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
+        const offset = parseInt(
+          ctx.request.url.searchParams.get("offset") ?? "",
+        );
+        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+
         const data = await this.#Container.WarehouseService.GetMany({
           shop: ctx.state.request_data.publicId,
+          limit: isNaN(limit) ? undefined : limit,
+          offset: isNaN(offset) ? undefined : offset,
         });
 
         ctx.response.body = stringifyJSON({

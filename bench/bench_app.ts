@@ -1,4 +1,4 @@
-import { Application } from "../src/deps.ts";
+import { Application } from "@oakserver/oak";
 import type { TurquozeState } from "../src/utils/types.ts";
 import Container from "../src/services/mod.ts";
 import { dbClient, redis as redisClient, searchClient } from "./bench_utils.ts";

@@ -1,9 +1,10 @@
-import { jose, Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 import { SHARED_SECRET } from "../../utils/secrets.ts";
+import * as jose from "jose";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class AuthRoutes {

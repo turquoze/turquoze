@@ -1,9 +1,10 @@
-import { jose, Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
 import { LoginRequest, TurquozeState } from "../../utils/types.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 import { LoginSchema } from "../../utils/validator.ts";
+import * as jose from "jose";
 
 export default class UsersRoutes {
   #users: Router<TurquozeState>;

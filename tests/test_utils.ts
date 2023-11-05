@@ -1,4 +1,5 @@
-import { MeiliSearch, Redis } from "../src/deps.ts";
+import { MeiliSearch } from "meilisearch";
+import { Redis } from "@upstash/redis";
 import {
   DATABASE_URL,
   MEILIAPIKEY,

@@ -1,4 +1,4 @@
-import { Redis } from "../deps.ts";
+import { Redis } from "@upstash/redis";
 import {
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,

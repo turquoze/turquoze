@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { Category, Product, TurquozeState } from "../../utils/types.ts";
@@ -18,8 +18,15 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/", async (ctx) => {
       try {
+        const offset = parseInt(
+          ctx.request.url.searchParams.get("offset") ?? "",
+        );
+        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+
         const data = await this.#Container.CategoryService.GetMany({
           shop: ctx.state.request_data.publicId,
+          limit: isNaN(limit) ? undefined : limit,
+          offset: isNaN(offset) ? undefined : offset,
         });
 
         ctx.response.body = stringifyJSON({

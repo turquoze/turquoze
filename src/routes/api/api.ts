@@ -1,4 +1,4 @@
-import { Router } from "../../deps.ts";
+import { Router } from "@oakserver/oak";
 import products from "./products.ts";
 import carts from "./carts.ts";
 import categories from "./categories.ts";
