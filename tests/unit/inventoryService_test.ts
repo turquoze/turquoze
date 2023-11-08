@@ -24,7 +24,7 @@ Deno.test("InventoryService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -40,7 +40,6 @@ Deno.test("InventoryService", {
     fn: async () => {
       try {
         await inventory.Create({
-          // @ts-expect-error want to test
           data: {
             product: "00000000-0000-0000-0000-000000000000",
             quantity: 0,
@@ -109,7 +108,7 @@ Deno.test("InventoryService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);

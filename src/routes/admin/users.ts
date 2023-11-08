@@ -2,9 +2,11 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { TurquozeState, User } from "../../utils/types.ts";
+import { TurquozeState } from "../../utils/types.ts";
 import { Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { UserSchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { insertUserSchema, User } from "../../utils/schema.ts";
 
 export default class UsersRoutes {
   #users: Router<TurquozeState>;
@@ -58,8 +60,7 @@ export default class UsersRoutes {
 
         user.shop = ctx.state.request_data.publicId;
 
-        await UserSchema.validate(user);
-        const posted: User = await UserSchema.cast(user);
+        const posted = parse(insertUserSchema, user);
 
         const data = await this.#Container.UserService.Create({
           data: posted,
@@ -80,7 +81,7 @@ export default class UsersRoutes {
 
     this.#users.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -123,8 +124,7 @@ export default class UsersRoutes {
         user.shop = ctx.state.request_data.publicId;
         user.password = "_______";
 
-        await UserSchema.validate(user);
-        const posted: User = await UserSchema.cast(user);
+        const posted = parse(insertUserSchema, user);
 
         const data = await Update<User>(this.#Container, {
           id: `user_${ctx.params.id}`,

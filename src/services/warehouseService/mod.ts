@@ -1,8 +1,8 @@
 import IWarehouseService from "../interfaces/warehouseService.ts";
-import { Warehouse } from "../../utils/types.ts";
+//import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { warehouses } from "../../utils/schema.ts";
+import { Warehouse, warehouses } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class CartService implements IWarehouseService {
@@ -21,7 +21,6 @@ export default class CartService implements IWarehouseService {
         shop: params.data.shop,
       }).returning();
 
-      // @ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -38,10 +37,9 @@ export default class CartService implements IWarehouseService {
           country: params.data.country,
           name: params.data.name,
         })
-        .where(eq(warehouses.publicId, params.data.publicId))
-        .returning({ publicId: warehouses.publicId });
+        .where(eq(warehouses.publicId, params.data.publicId!))
+        .returning();
 
-      // @ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -55,7 +53,7 @@ export default class CartService implements IWarehouseService {
       const result = await this.db.select().from(warehouses).where(
         eq(warehouses.publicId, params.id),
       ).limit(1);
-      // @ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -83,7 +81,7 @@ export default class CartService implements IWarehouseService {
       const result = await this.db.select().from(warehouses).where(
         eq(warehouses.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {

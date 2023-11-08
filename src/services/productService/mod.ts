@@ -1,8 +1,7 @@
-import { Product } from "../../utils/types.ts";
 import IProductService from "../interfaces/productService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { products } from "../../utils/schema.ts";
+import { DBProduct as Product, products } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class ProductService implements IProductService {
@@ -16,7 +15,7 @@ export default class ProductService implements IProductService {
       let result;
 
       if (params.data.publicId == "" || params.data.publicId == undefined) {
-        //@ts-expect-error not on type
+        //@ts-ignore not on type
         result = await this.db.insert(products).values({
           active: params.data.active,
           title: params.data.title,
@@ -42,7 +41,7 @@ export default class ProductService implements IProductService {
           .returning();
       }
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -56,7 +55,7 @@ export default class ProductService implements IProductService {
       const result = await this.db.select().from(products).where(
         eq(products.publicId, params.id),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -70,7 +69,7 @@ export default class ProductService implements IProductService {
       const result = await this.db.select().from(products).where(
         eq(products.slug, params.slug),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -84,7 +83,7 @@ export default class ProductService implements IProductService {
       const result = await this.db.select().from(products).where(
         eq(products.parent, params.id),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -108,7 +107,7 @@ export default class ProductService implements IProductService {
       const result = await this.db.select().from(products).where(
         eq(products.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -133,7 +132,7 @@ export default class ProductService implements IProductService {
         .where(eq(products.publicId, params.data.publicId!))
         .returning();
 
-      // @ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

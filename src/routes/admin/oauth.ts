@@ -52,7 +52,7 @@ export default class OAuthRoutes {
           });
 
           const shops = await this.#Container.ShopLinkService.GetShops({
-            id: admin.publicId,
+            id: admin.publicId!,
           });
 
           const shop = shops.find((x) => x.publicId == ctx.params.id);
@@ -135,7 +135,6 @@ export default class OAuthRoutes {
               name: namePlugin ?? client_id ?? "_NO_NAME_",
               shop: ctx.params.id,
               token: tokenPlugin ?? "",
-              //@ts-expect-error not typed
               type: scope ?? "MISC",
               url: redirect_uri!,
             },
@@ -147,7 +146,7 @@ export default class OAuthRoutes {
             data: {
               id: 0,
               publicId: "",
-              plugin: plugin.publicId,
+              plugin: plugin.publicId!,
               token: refresh,
               expiresAt: null, // TODO: null is never have to delete plugin from shop.
             },

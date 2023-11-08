@@ -1,8 +1,7 @@
 import { DatabaseError } from "../../utils/errors.ts";
-import type { Plugin } from "../../utils/types.ts";
 import IPluginService from "../interfaces/pluginService.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { plugins } from "../../utils/schema.ts";
+import { Plugin, plugins } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class PluginService implements IPluginService {
@@ -13,7 +12,7 @@ export default class PluginService implements IPluginService {
 
   async Create(params: { data: Plugin }): Promise<Plugin> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(plugins).values({
         name: params.data.name,
         shop: params.data.shop,
@@ -22,7 +21,6 @@ export default class PluginService implements IPluginService {
         url: params.data.url,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -36,7 +34,7 @@ export default class PluginService implements IPluginService {
       const result = await this.db.select().from(plugins).where(
         eq(plugins.publicId, params.id),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -53,10 +51,9 @@ export default class PluginService implements IPluginService {
           token: params.data.token,
           url: params.data.url,
         })
-        .where(eq(plugins.publicId, params.data.publicId))
+        .where(eq(plugins.publicId, params.data.publicId!))
         .returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

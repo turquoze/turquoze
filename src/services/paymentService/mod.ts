@@ -1,11 +1,9 @@
 import IPaymentService from "../interfaces/paymentService.ts";
 import {
-  CartItem,
   PaymentPluginResponse,
   PaymentRequest,
   PaymentRequestResponse,
   PaymentValidation,
-  Plugin,
   PriceCalculation,
   Shop,
 } from "../../utils/types.ts";
@@ -17,6 +15,7 @@ import IPluginService from "../interfaces/pluginService.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import IPriceService from "../interfaces/priceService.ts";
 import IPriceCalculatorService from "../interfaces/priceCalculatorService.ts";
+import { Cart, CartItem, Plugin } from "../../utils/schema.ts";
 
 export default class PaymentService implements IPaymentService {
   #CartService: ICartService;
@@ -47,17 +46,18 @@ export default class PaymentService implements IPaymentService {
     try {
       const cart = await this.#CartService.Get({
         id: params.data.cartId,
-      });
+      }) as Cart;
 
       if (cart == undefined || cart == null) {
         throw new NoCartError("No cart");
       }
 
+      //@ts-ignore not on type
       cart.items = await this.#CartService.GetAllItems(params.data.cartId);
 
       const price = await this.Price({
         items: cart.items,
-        cartId: cart.publicId,
+        cartId: cart.publicId!,
         currency: params.data.shop.currency,
       });
 
@@ -66,16 +66,18 @@ export default class PaymentService implements IPaymentService {
       });
 
       const payCartItemsPromises = cart.items.map(async (item) => {
-        const product = await this.#ProductService.Get({ id: item.itemId });
+        const product = await this.#ProductService.Get({ id: item.itemId! });
         const price = await this.#PriceService.GetByProduct({
           productId: product.publicId!,
         });
 
         return {
           name: product.title,
-          price: parseInt(price.amount.toString()),
-          image_url: product.images[0],
-          quantity: item.quantity,
+          price: parseInt((price.amount ?? 0).toString()),
+          image_url: product.images != undefined && product.images.length > 0
+            ? product.images[0]
+            : null,
+          quantity: item.quantity ?? 0,
         };
       });
 
@@ -96,18 +98,16 @@ export default class PaymentService implements IPaymentService {
         data: {
           publicId: "",
           id: 0,
-          payment_status: "WAITING",
-          price_total: parseInt(price.price.toString()),
-          createdAt: 0,
+          paymentStatus: "WAITING",
+          priceTotal: parseInt(price.price.toString()),
           shop: params.data.shop.publicId,
-          // @ts-expect-error db is json
           products: JSON.stringify(orderProducts),
         },
       });
 
       const payData = await this.#PaymentRequest({
         plugin: paymentProvider,
-        orderId: order.publicId,
+        orderId: order.publicId!,
         items: payCartItems,
         shop: params.data.shop,
       });
@@ -120,7 +120,7 @@ export default class PaymentService implements IPaymentService {
           },
         },
         payment: payData,
-        id: order.publicId,
+        id: order.publicId!,
       };
     } catch (error) {
       if (error instanceof NoCartError) {
@@ -136,7 +136,14 @@ export default class PaymentService implements IPaymentService {
   async #PaymentRequest(params: {
     plugin: Plugin;
     orderId: string;
-    items: Array<{ name: string; price: number; quantity: number }>;
+    items: Array<
+      {
+        name: string;
+        price: number;
+        quantity: number;
+        image_url: string | null;
+      }
+    >;
     shop: Shop;
   }) {
     const response = await fetch(
@@ -183,10 +190,10 @@ export default class PaymentService implements IPaymentService {
 
       await Promise.all(params.items.map(async (product) => {
         const dbProduct = await this.#PriceService.GetByProduct({
-          productId: product.itemId,
+          productId: product.itemId!,
         });
 
-        const productPrice = parseInt(dbProduct.amount.toString());
+        const productPrice = parseInt((dbProduct.amount ?? 0).toString());
 
         const dineroObj = dollars(productPrice);
         arr.push(dineroObj);

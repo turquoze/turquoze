@@ -1,8 +1,14 @@
 import ICartService from "../interfaces/cartService.ts";
-import { Cart, CartItem, Discount, Shipping } from "../../utils/types.ts";
+import { Shipping } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { cartitems, carts } from "../../utils/schema.ts";
+import {
+  cartitems,
+  carts,
+  DBCart as Cart,
+  DBCartItem as CartItem,
+  Discount,
+} from "../../utils/schema.ts";
 import { and, eq } from "drizzle-orm";
 
 export default class CartService implements ICartService {
@@ -13,12 +19,12 @@ export default class CartService implements ICartService {
 
   async Create(_params: { data: Cart }): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(carts).values({
         comment: "",
       }).returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -32,20 +38,19 @@ export default class CartService implements ICartService {
       const hasItem = await this.db.select().from(cartitems).where(
         and(
           eq(cartitems.cartId, params.data.cartId),
-          eq(cartitems.itemId, params.data.itemId),
+          eq(cartitems.itemId, params.data.itemId!),
         ),
       );
 
       if (hasItem.length > 0) {
         const result = await this.db.update(cartitems).set({
           price: params.data.price,
-          quantity: params.data.quantity + hasItem[0].quantity,
+          quantity: (params.data.quantity ?? 0) + hasItem[0].quantity,
         }).where(eq(cartitems.id, hasItem[0].id)).returning();
 
-        //@ts-expect-error not on type
         return result[0];
       } else {
-        //@ts-expect-error not on type
+        //@ts-ignore not on type
         const result = await this.db.insert(cartitems).values({
           cartId: params.data.cartId,
           itemId: params.data.itemId,
@@ -71,7 +76,7 @@ export default class CartService implements ICartService {
       }).where(eq(carts.publicId, params.id))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -87,7 +92,7 @@ export default class CartService implements ICartService {
       }).where(eq(carts.publicId, params.id))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -102,7 +107,7 @@ export default class CartService implements ICartService {
         billing: params.billing,
       }).where(eq(carts.publicId, params.id)).returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -120,7 +125,7 @@ export default class CartService implements ICartService {
       }).where(eq(carts.publicId, params.id))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -138,7 +143,7 @@ export default class CartService implements ICartService {
       }).where(eq(carts.publicId, params.id))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -151,7 +156,7 @@ export default class CartService implements ICartService {
     params: { id: string; discount: Discount },
   ): Promise<CartItem> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(cartitems).values({
         cartId: params.id,
         itemId: params.discount.publicId,
@@ -160,7 +165,6 @@ export default class CartService implements ICartService {
         type: "DISCOUNT",
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -189,12 +193,12 @@ export default class CartService implements ICartService {
 
   async UpsertComment(params: { id: string; comment: string }): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(carts).values({
         comment: params.comment,
       }).returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -210,7 +214,7 @@ export default class CartService implements ICartService {
       }).where(eq(carts.publicId, params.id))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -227,7 +231,7 @@ export default class CartService implements ICartService {
           eq(cartitems.itemId, productId),
         ),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -241,7 +245,7 @@ export default class CartService implements ICartService {
       const result = await this.db.select().from(cartitems).where(
         eq(cartitems.cartId, cartId),
       );
-      //@ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -270,7 +274,7 @@ export default class CartService implements ICartService {
       const result = await this.db.select().from(carts).where(
         eq(carts.publicId, params.id),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

@@ -1,8 +1,7 @@
-import { CategoryLink, Product } from "../../utils/types.ts";
 import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { categorieslink } from "../../utils/schema.ts";
+import { categorieslink, CategoryLink, Product } from "../../utils/schema.ts";
 import { and, eq, sql } from "drizzle-orm";
 
 export default class CategoryLinkService implements ICategoryLinkService {
@@ -46,7 +45,7 @@ export default class CategoryLinkService implements ICategoryLinkService {
         sql`SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.public_id WHERE categorieslink.category = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
       );
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {

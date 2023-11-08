@@ -1,9 +1,8 @@
-import { Admin } from "../../utils/types.ts";
 import IAdminService from "../interfaces/adminService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { sql } from "drizzle-orm";
-import { admins } from "../../utils/schema.ts";
+import { Admin, admins } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class AdminService implements IAdminService {
@@ -15,10 +14,10 @@ export default class AdminService implements IAdminService {
   async Create(params: { data: Admin }): Promise<Admin> {
     try {
       const result = await this.db.execute(
-        sql`INSERT INTO admins (email, name, not_active, password) VALUES (${params.data.email}, ${params.data.name}, ${params.data.not_active}, crypt(${params.data.password}, gen_salt('bf'))) RETURNING public_id`,
+        sql`INSERT INTO admins (email, name, not_active, password) VALUES (${params.data.email}, ${params.data.name}, ${params.data.notActive}, crypt(${params.data.password}, gen_salt('bf'))) RETURNING public_id`,
       );
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -31,8 +30,8 @@ export default class AdminService implements IAdminService {
     try {
       const result = await this.db.select().from(admins).where(
         eq(admins.publicId, params.id),
-      );
-      // @ts-expect-error not on type
+      ).limit(1);
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -49,7 +48,7 @@ export default class AdminService implements IAdminService {
         sql`SELECT * FROM admins WHERE email = ${params.email} AND password = crypt(${params.password}, password)`,
       );
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -66,7 +65,7 @@ export default class AdminService implements IAdminService {
         sql`UPDATE admins SET password = crypt(${params.new_password}, gen_salt('bf')) WHERE email = ${params.email} RETURNING public_id`,
       );
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -89,7 +88,7 @@ export default class AdminService implements IAdminService {
 
       const result = await this.db.select().from(admins).limit(params.limit)
         .offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -106,14 +105,11 @@ export default class AdminService implements IAdminService {
         .set({
           email: params.data.email,
           name: params.data.name,
-          notActive: params.data.not_active,
+          notActive: params.data.notActive,
         })
-        .where(eq(admins.publicId, params.data.publicId))
-        .returning({
-          publicId: admins.publicId,
-        });
+        .where(eq(admins.publicId, params.data.publicId!))
+        .returning();
 
-      // @ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

@@ -2,10 +2,11 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Discount } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
-import { DiscountSchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { Discount, insertDiscountSchema } from "../../utils/schema.ts";
 
 export default class DiscountsRoutes {
   #discounts: Router;
@@ -30,10 +31,9 @@ export default class DiscountsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        discount.shop = ctx.state.shop;
+        discount.shop = ctx.state.request_data.publicId;
 
-        await DiscountSchema.validate(discount);
-        const posted: Discount = await DiscountSchema.cast(discount);
+        const posted = parse(insertDiscountSchema, discount);
 
         const data = await this.#Container.DiscountService.Create({
           data: posted,
@@ -82,7 +82,7 @@ export default class DiscountsRoutes {
 
     this.#discounts.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -109,7 +109,7 @@ export default class DiscountsRoutes {
 
     this.#discounts.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

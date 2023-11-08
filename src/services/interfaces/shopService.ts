@@ -1,4 +1,4 @@
-import { Shop } from "../../utils/types.ts";
+import { Shop } from "../../utils/schema.ts";
 
 export default interface IShopService {
   Create(params: {

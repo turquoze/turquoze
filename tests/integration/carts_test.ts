@@ -1,8 +1,8 @@
 import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
 
 import CartsRoutes from "../../src/routes/api/carts.ts";
-import { Cart, CartItem } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Cart, CartItem } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -30,7 +30,7 @@ Deno.test({
     assert(response?.ok);
 
     const { carts }: { carts: Cart } = await response?.json();
-    ID = carts.publicId;
+    ID = carts.publicId!;
   },
 });
 

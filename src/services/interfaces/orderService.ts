@@ -1,4 +1,4 @@
-import { Order } from "../../utils/types.ts";
+import { Order } from "../../utils/schema.ts";
 
 export default interface IOrderService {
   Create(params: {

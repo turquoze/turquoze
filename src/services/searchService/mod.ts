@@ -1,7 +1,8 @@
 import ISearchService from "../interfaces/searchService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { MeiliDelete, MeiliIndex, Product, Search } from "../../utils/types.ts";
-import { EnqueuedTask, MeiliSearch, SearchResponse } from "../../deps.ts";
+import { MeiliDelete, MeiliIndex, Search } from "../../utils/types.ts";
+import type { EnqueuedTask, MeiliSearch, SearchResponse } from "meilisearch";
+import { Product } from "../../utils/schema.ts";
 
 export default class SearchService implements ISearchService {
   #client?: MeiliSearch;

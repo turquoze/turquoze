@@ -1,6 +1,6 @@
 import { Context } from "@oakserver/oak";
 import Container from "../services/mod.ts";
-import { OauthToken, TurquozeState } from "../utils/types.ts";
+import { Shop, TurquozeState } from "../utils/types.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
 import * as jose from "jose";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
@@ -23,13 +23,15 @@ export const CookieGuard =
           SHARED_SECRET_KEY,
         );
 
-        const payload = result.payload as unknown as OauthToken;
+        const payload = result.payload;
 
-        ctx.state.adminId = payload.adminId;
+        //@ts-ignore not on type
+        ctx.state.adminId = payload.adminId!;
 
         ctx.state.request_data = await container.ShopService.Get({
+          //@ts-ignore not on type
           id: payload.shopId,
-        });
+        }) as unknown as Shop;
 
         await next();
       } else {

@@ -1,8 +1,7 @@
-import { Category } from "../../utils/types.ts";
 import ICategoryService from "../interfaces/categoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { categories } from "../../utils/schema.ts";
+import { categories, Category } from "../../utils/schema.ts";
 import { and, eq } from "drizzle-orm";
 
 export default class CategoryService implements ICategoryService {
@@ -13,14 +12,13 @@ export default class CategoryService implements ICategoryService {
 
   async Create(params: { data: Category }): Promise<Category> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(categories).values({
         name: params.data.name,
         parent: params.data.parent,
         shop: params.data.shop,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -34,7 +32,7 @@ export default class CategoryService implements ICategoryService {
       const result = await this.db.select().from(categories).where(
         eq(categories.publicId, params.id),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -51,7 +49,7 @@ export default class CategoryService implements ICategoryService {
           eq(categories.name, params.name),
         ),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -75,7 +73,7 @@ export default class CategoryService implements ICategoryService {
       const result = await this.db.select().from(categories).where(
         eq(categories.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -91,10 +89,9 @@ export default class CategoryService implements ICategoryService {
           name: params.data.name,
           parent: params.data.parent,
         })
-        .where(eq(categories.publicId, params.data.publicId))
+        .where(eq(categories.publicId, params.data.publicId!))
         .returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

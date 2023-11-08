@@ -2,10 +2,11 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Warehouse } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { UuidSchema, WarehouseSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { insertWarehouseSchema, Warehouse } from "../../utils/schema.ts";
+import { parse } from "valibot";
 
 export default class WarehousesRoutes {
   #warehouses: Router;
@@ -43,7 +44,7 @@ export default class WarehousesRoutes {
       }
     });
 
-    this.#warehouses.post("/", RoleGuard("ADMIN"), async (ctx) => {
+    this.#warehouses.post("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
@@ -57,10 +58,9 @@ export default class WarehousesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        warehouse.shop = ctx.state.shop;
+        warehouse.shop = ctx.state.request_data.publicId;
 
-        await WarehouseSchema.validate(warehouse);
-        const posted: Warehouse = await WarehouseSchema.cast(warehouse);
+        const posted = parse(insertWarehouseSchema, warehouse);
 
         const data = await this.#Container.WarehouseService.Create({
           data: posted,
@@ -85,6 +85,10 @@ export default class WarehousesRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let warehouse: Warehouse;
         if (body.type === "json") {
@@ -93,11 +97,10 @@ export default class WarehousesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        warehouse.shop = ctx.state.shop;
+        warehouse.shop = ctx.state.request_data.publicId;
         warehouse.publicId = ctx.params.id;
 
-        await WarehouseSchema.validate(warehouse);
-        const posted: Warehouse = await WarehouseSchema.cast(warehouse);
+        const posted = parse(insertWarehouseSchema, warehouse);
 
         const data = await Update<Warehouse>(this.#Container, {
           id: `warehouse_${ctx.params.id}`,
@@ -122,7 +125,7 @@ export default class WarehousesRoutes {
 
     this.#warehouses.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -149,7 +152,7 @@ export default class WarehousesRoutes {
 
     this.#warehouses.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

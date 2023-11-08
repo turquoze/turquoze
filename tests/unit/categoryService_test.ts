@@ -23,7 +23,7 @@ Deno.test("CategoryService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -39,7 +39,7 @@ Deno.test("CategoryService", {
     fn: async () => {
       try {
         await category.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore not on type
           data: {
             publicId: "",
           },
@@ -140,7 +140,7 @@ Deno.test("CategoryService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);

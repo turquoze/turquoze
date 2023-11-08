@@ -1,8 +1,8 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import UsersRoutes from "../../src/routes/admin/users.ts";
-import { User } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { User } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -18,7 +18,7 @@ Deno.test({
       password: "test123",
       email: "test@example.com",
       name: "test",
-      not_active: false,
+      notActive: false,
     };
 
     const response = await app.handle(
@@ -35,7 +35,7 @@ Deno.test({
     assert(response?.ok);
 
     const { users }: { users: User } = await response?.json();
-    ID = users.publicId;
+    ID = users.publicId!;
   },
 });
 
@@ -85,7 +85,7 @@ Deno.test({
       publicId: "00000000-0000-0000-0000-000000000000",
       email: "test@example.com",
       name: "test update",
-      not_active: false,
+      notActive: false,
     });
 
     const response = await app.handle(

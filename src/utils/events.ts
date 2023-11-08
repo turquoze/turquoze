@@ -14,6 +14,7 @@ export default function addEvents(container: Container) {
 
         container.SearchService.ProductIndex({
           index: index,
+          //@ts-ignore not on type
           products: [productToIndex],
         }).then((task) => {
           console.info(task);
@@ -29,7 +30,7 @@ export default function addEvents(container: Container) {
         const index = container.Shop.search_index;
         container.SearchService.ProductRemove({
           index: index,
-          id: product.id.toString(),
+          id: product.publicId!.toString(),
         }).then((task) => {
           console.info(task);
         }).catch((error) => console.log(`could not finish event`, error));

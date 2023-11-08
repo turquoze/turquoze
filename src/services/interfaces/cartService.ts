@@ -1,4 +1,9 @@
-import { Cart, CartItem, Discount, Shipping } from "../../utils/types.ts";
+import {
+  DBCart as Cart,
+  DBCartItem as CartItem,
+  Discount,
+} from "../../utils/schema.ts";
+import { Shipping } from "../../utils/types.ts";
 
 export default interface ICartService {
   Create(params: {

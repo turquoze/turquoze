@@ -1,4 +1,4 @@
-import { Category } from "../../utils/types.ts";
+import { Category } from "../../utils/schema.ts";
 
 export default interface ICategoryService {
   Create(params: {

@@ -1,4 +1,5 @@
-import { Shop, Token, TurquozeRole } from "../../utils/types.ts";
+import { Token } from "../../utils/schema.ts";
+import { Shop, TurquozeRole } from "../../utils/types.ts";
 
 export default interface ITokenService {
   Create(params: {

@@ -13,14 +13,14 @@ export default class OauthService implements IOauthService {
 
   async Create(params: { data: Oauth }): Promise<Oauth> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(oauthTokens).values({
         token: params.data.token,
         expiresAt: params.data.expiresAt,
         plugin: params.data.plugin,
       }).returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -34,7 +34,7 @@ export default class OauthService implements IOauthService {
       const result = await this.db.select().from(oauthTokens).where(
         eq(oauthTokens.publicId, params.id),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -48,7 +48,7 @@ export default class OauthService implements IOauthService {
       const result = await this.db.select().from(oauthTokens).where(
         eq(oauthTokens.token, params.token),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

@@ -1,8 +1,8 @@
-import { ShopLink, ShopLinkData } from "../../utils/types.ts";
+import { ShopLinkData } from "../../utils/types.ts";
 import IShopLinkService from "../interfaces/shopLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { shopslink } from "../../utils/schema.ts";
+import { ShopLink, shopslink } from "../../utils/schema.ts";
 import { and, eq, sql } from "drizzle-orm";
 
 export default class ShopLinkService implements IShopLinkService {
@@ -19,7 +19,6 @@ export default class ShopLinkService implements IShopLinkService {
         shop: params.data.shop,
       }).returning();
 
-      // @ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -48,7 +47,7 @@ export default class ShopLinkService implements IShopLinkService {
         sql`SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
       );
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -68,7 +67,6 @@ export default class ShopLinkService implements IShopLinkService {
         ),
       );
 
-      // @ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

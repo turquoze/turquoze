@@ -1,12 +1,14 @@
 import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Product, Search, TurquozeState } from "../../utils/types.ts";
+import { Search, TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import { MeiliSearch } from "meilisearch";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { SearchSchema, UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { Product } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {
   #products: Router<TurquozeState>;
@@ -31,16 +33,20 @@ export default class ProductsRoutes {
         });
 
         const productsPromises = data.map(async (product) => {
+          const localProduct: Product = {
+            ...product,
+            price: 0,
+          };
           const price = await this.#Container.PriceService.GetByProduct({
             productId: product.publicId!,
           });
 
-          product.price = Dinero({
-            amount: parseInt(price.amount.toString()),
+          localProduct.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
-          return product;
+          return localProduct;
         });
 
         const products = await Promise.all(productsPromises);
@@ -127,6 +133,7 @@ export default class ProductsRoutes {
 
           for (const i in ids) {
             products.push(
+              //@ts-ignore not on type
               await this.#Container.ProductService.Get({ id: ids[i] }),
             );
           }
@@ -137,7 +144,7 @@ export default class ProductsRoutes {
             });
 
             product.price = Dinero({
-              amount: parseInt(price.amount.toString()),
+              amount: parseInt((price.amount ?? -1).toString()),
               currency: ctx.state.request_data.currency,
             }).getAmount();
 
@@ -171,17 +178,22 @@ export default class ProductsRoutes {
           slug: ctx.params.slug,
         });
 
+        const product: Product = {
+          ...data,
+          price: 0,
+        };
+
         const price = await this.#Container.PriceService.GetByProduct({
           productId: data.publicId!,
         });
 
-        data.price = Dinero({
-          amount: parseInt(price.amount.toString()),
+        product.price = Dinero({
+          amount: parseInt((price.amount ?? -1).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
         ctx.response.body = stringifyJSON({
-          products: data,
+          products: product,
         });
         ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
@@ -196,21 +208,29 @@ export default class ProductsRoutes {
 
     this.#products.get("/byparent/:id", async (ctx) => {
       try {
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.ProductService.GetVariantsByParent({
           id: ctx.params.id,
         });
 
         const dataWPrice = data.map(async (product) => {
+          const localProduct: Product = {
+            ...product,
+            price: 0,
+          };
           const price = await this.#Container.PriceService.GetByProduct({
             productId: product.publicId!,
           });
 
-          product.price = Dinero({
-            amount: parseInt(price.amount.toString()),
+          localProduct.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
-          return product;
+          return localProduct;
         });
 
         ctx.response.body = stringifyJSON({
@@ -229,6 +249,10 @@ export default class ProductsRoutes {
 
     this.#products.get("/inventory/:id", async (ctx) => {
       try {
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.InventoryService
           .GetInventoryByProduct({
             id: ctx.params.id,
@@ -250,12 +274,16 @@ export default class ProductsRoutes {
 
     this.#products.get("/price/:id", async (ctx) => {
       try {
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const data = await this.#Container.PriceService.GetByProduct({
           productId: ctx.params.id,
         });
 
         data.amount = Dinero({
-          amount: parseInt(data.amount.toString()),
+          amount: parseInt((data.amount ?? -1).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
@@ -275,12 +303,13 @@ export default class ProductsRoutes {
 
     this.#products.get("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
         const data = await Get<Product>(this.#Container, {
           id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
+          //@ts-ignore not on type
           promise: this.#Container.ProductService.Get({
             id: ctx.params.id,
           }),
@@ -291,7 +320,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: parseInt(price.amount.toString()),
+          amount: parseInt((price.amount ?? -1).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 

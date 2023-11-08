@@ -16,7 +16,6 @@ Deno.test("WarehouseService", {
       try {
         const data = await warehouse.Create({
           data: {
-            id: 0,
             publicId: "",
             address: "Test 1B",
             country: "Sweden",
@@ -25,7 +24,7 @@ Deno.test("WarehouseService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -38,9 +37,10 @@ Deno.test("WarehouseService", {
     fn: async () => {
       try {
         await warehouse.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore want this for test
           data: {
             publicId: "",
+            address: "",
           },
         });
 
@@ -89,7 +89,6 @@ Deno.test("WarehouseService", {
       try {
         const data = await warehouse.Update({
           data: {
-            id: 0,
             publicId: ID,
             address: "Test 1B - Update",
             country: "Sweden - Update",
@@ -98,7 +97,7 @@ Deno.test("WarehouseService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -112,7 +111,6 @@ Deno.test("WarehouseService", {
       try {
         await warehouse.Update({
           data: {
-            id: 0,
             publicId: "00000000-0000-0000-0000-000000000000",
             address: "Test 1B - Update",
             country: "Sweden - Update",

@@ -1,8 +1,8 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import DiscountsRoutes from "../../src/routes/admin/discounts.ts";
-import { Discount } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Discount } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -36,7 +36,7 @@ Deno.test({
     assert(response?.ok);
 
     const { discounts }: { discounts: Discount } = await response?.json();
-    ID = discounts.publicId;
+    ID = discounts.publicId!;
   },
 });
 

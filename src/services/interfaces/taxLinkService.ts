@@ -1,4 +1,4 @@
-import { Tax, TaxProductLink } from "../../utils/types.ts";
+import { Tax, TaxProductLink } from "../../utils/schema.ts";
 
 export default interface ITaxLinkService {
   Create(params: {

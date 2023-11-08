@@ -1,4 +1,4 @@
-import { CategoryLink, Product } from "../../utils/types.ts";
+import { CategoryLink, Product } from "../../utils/schema.ts";
 
 export default interface ICategoryLinkService {
   Link(params: {

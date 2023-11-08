@@ -45,7 +45,7 @@ Deno.test("ProductService", {
     fn: async () => {
       try {
         await product.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore not on type
           data: {
             publicId: "",
           },
