@@ -1,4 +1,4 @@
-import { Admin } from "../../utils/types.ts";
+import { Admin } from "../../utils/schema.ts";
 
 export default interface IAdminService {
   Create(params: {

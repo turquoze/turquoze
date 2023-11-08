@@ -1,4 +1,4 @@
-import { User } from "../../utils/types.ts";
+import { User } from "../../utils/schema.ts";
 
 export default interface IUserService {
   Create(params: {

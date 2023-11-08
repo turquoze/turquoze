@@ -25,10 +25,10 @@ export default class PriceCalculatorService implements IPriceCalculatorService {
       });
 
       //todo: add vat calculations
-      const total = price.amount * params.quantity;
+      const total = price.amount ?? 0 * params.quantity;
 
       return {
-        price: price.amount,
+        price: price.amount ?? 0,
         subtotal: total,
         vat: 20000,
       };

@@ -20,7 +20,7 @@ export default class ReturnService implements IReturnService {
         status: params.data.status,
       }).returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -41,7 +41,7 @@ export default class ReturnService implements IReturnService {
         .where(eq(returns.publicId, params.data.publicId))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -55,7 +55,7 @@ export default class ReturnService implements IReturnService {
       const result = await this.db.select().from(returns).where(
         eq(returns.publicId, params.id),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -83,7 +83,7 @@ export default class ReturnService implements IReturnService {
       const result = await this.db.select().from(returns).where(
         eq(returns.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -101,7 +101,7 @@ export default class ReturnService implements IReturnService {
         .where(eq(returns.publicId, params.id))
         .returning();
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

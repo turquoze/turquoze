@@ -1,11 +1,13 @@
 import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Category, Product, TurquozeState } from "../../utils/types.ts";
+import { TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { Category, Product } from "../../utils/schema.ts";
 
 export default class CategoriesRoutes {
   #categories: Router<TurquozeState>;
@@ -70,7 +72,7 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/:id/products", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -88,7 +90,7 @@ export default class CategoriesRoutes {
           });
 
           product.price = Dinero({
-            amount: parseInt(price.amount.toString()),
+            amount: parseInt((price.amount ?? -1).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
@@ -113,7 +115,7 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

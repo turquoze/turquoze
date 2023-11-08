@@ -1,4 +1,4 @@
-import { Inventory } from "../../utils/types.ts";
+import { Inventory } from "../../utils/schema.ts";
 
 export default interface IInventoryService {
   Create(params: {

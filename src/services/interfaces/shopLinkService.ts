@@ -1,4 +1,5 @@
-import { ShopLink, ShopLinkData } from "../../utils/types.ts";
+import { ShopLink } from "../../utils/schema.ts";
+import { ShopLinkData } from "../../utils/types.ts";
 
 export default interface IShopLinkService {
   Link(params: {

@@ -2,10 +2,12 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Price, TurquozeState } from "../../utils/types.ts";
+import { TurquozeState } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { PriceSchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { insertPriceSchema, Price } from "../../utils/schema.ts";
 
 export default class PricesRoutes {
   #prices: Router<TurquozeState>;
@@ -57,10 +59,9 @@ export default class PricesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        price.shop = ctx.state.shop;
+        price.shop = ctx.state.request_data.publicId;
 
-        await PriceSchema.validate(price);
-        const posted: Price = await PriceSchema.cast(price);
+        const posted = parse(insertPriceSchema, price);
 
         const data = await this.#Container.PriceService.Create({
           data: posted,
@@ -85,6 +86,10 @@ export default class PricesRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let price: Price;
         if (body.type === "json") {
@@ -94,10 +99,9 @@ export default class PricesRoutes {
         }
 
         price.publicId = ctx.params.id;
-        price.shop = ctx.state.shop;
+        price.shop = ctx.state.request_data.publicId;
 
-        await PriceSchema.validate(price);
-        const posted: Price = await PriceSchema.cast(price);
+        const posted = parse(insertPriceSchema, price);
 
         const data = await Update(this.#Container, {
           id: `price_${posted.id}`,
@@ -122,7 +126,7 @@ export default class PricesRoutes {
 
     this.#prices.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -149,7 +153,7 @@ export default class PricesRoutes {
 
     this.#prices.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

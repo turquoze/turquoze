@@ -1,4 +1,4 @@
-import { Tax } from "../../utils/types.ts";
+import { Tax } from "../../utils/schema.ts";
 
 export default interface ITaxService {
   Create(params: {

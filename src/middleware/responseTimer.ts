@@ -1,4 +1,4 @@
-import type { Context } from "../deps.ts";
+import type { Context } from "@oakserver/oak";
 
 export const ResponseTimer = async (
   ctx: Context,

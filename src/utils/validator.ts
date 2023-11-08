@@ -1,59 +1,8 @@
 import { yup } from "../deps.ts";
+import { object, string, uuid } from "valibot";
 
-export const ProductSchema = yup.object().shape({
-  publicId: yup.string().uuid(),
-  active: yup.bool().required(),
-  parent: yup.string().uuid(),
-  title: yup.string().min(3).required(),
-  shortDescription: yup.string().min(3).required(),
-  longDescription: yup.string().min(3).required(),
-  images: yup.array().of(yup.string()),
-  slug: yup.string().min(3).required(),
-});
-
-export const ShopSchema = yup.object().shape({
-  publicId: yup.string().uuid(),
-  name: yup.string().min(3).required(),
-  regions: yup.array().of(yup.string()),
-  paymentId: yup.string(),
-  shippingId: yup.string(),
-  currency: yup.string().required(),
-});
-
-export const CategorySchema = yup.object().shape({
-  publicId: yup.string().uuid(),
-  parent: yup.string().uuid(),
-  name: yup.string().min(3).required(),
-});
-
-export const CategoryLinkSchema = yup.object().shape({
-  category: yup.string().uuid().required(),
-  product: yup.string().uuid().required(),
-});
-
-export const UuidSchema = yup.object().shape({
-  id: yup.string().uuid().required(),
-});
-
-export const DiscountSchema = yup.object().shape({
-  publicId: yup.string().uuid(),
-  type: yup.string().matches(/(FIXED|PERCENT)/).required(),
-  value: yup.number().required().positive().integer(),
-  validTo: yup.date().nullable(),
-  validFrom: yup.date().nullable(),
-  shop: yup.string().uuid().nullable(true),
-});
-
-export const CartSchema = yup.object().shape({
-  publicId: yup.string().uuid().nullable(true),
-  createdAt: yup.date().nullable(),
-});
-
-export const CartItemSchema = yup.object().shape({
-  cartId: yup.string().uuid().required(),
-  itemId: yup.string().uuid().required(),
-  price: yup.number().positive().integer().required(),
-  quantity: yup.number().positive().integer().required(),
+export const UuidSchema = object({
+  id: string([uuid()]),
 });
 
 export const DiscountItemSchema = yup.object().shape({
@@ -63,46 +12,6 @@ export const DiscountItemSchema = yup.object().shape({
 export const SearchSchema = yup.object().shape({
   query: yup.string().nullable(),
   options: yup.object().nullable(),
-});
-
-export const WarehouseSchema = yup.object().shape({
-  publicId: yup.string().uuid().nullable(true),
-  createdAt: yup.date().nullable(),
-  shop: yup.string().uuid().required(),
-  name: yup.string().min(3).required(),
-  country: yup.string().min(2).required(),
-  address: yup.string().min(5).required(),
-});
-
-export const InventorySchema = yup.object().shape({
-  publicId: yup.string().uuid().nullable(true),
-  createdAt: yup.date().nullable(),
-  warehouse: yup.string().uuid().required(),
-  product: yup.string().uuid().required(),
-  quantity: yup.number().positive().integer().required(),
-});
-
-export const PriceSchema = yup.object().shape({
-  publicId: yup.string().uuid(),
-  createdAt: yup.date().nullable(),
-  amount: yup.number().required().positive().integer(),
-  shop: yup.string().uuid().required(),
-  product: yup.string().uuid().required(),
-});
-
-export const DiscountCheckSchema = yup.object().shape({
-  code: yup.string().min(3).required(),
-});
-
-export const UserSchema = yup.object().shape({
-  id: yup.number().positive().integer().nullable(true),
-  publicId: yup.string().uuid().nullable(true),
-  createdAt: yup.date().nullable(),
-  name: yup.string().required().min(3),
-  email: yup.string().email(),
-  password: yup.string().required().min(6),
-  not_active: yup.bool().default(false),
-  shop: yup.string().uuid().required(),
 });
 
 export const LoginSchema = yup.object().shape({
@@ -128,13 +37,4 @@ export const ShippingSchema = yup.object().shape({
   zip: yup.string().min(3).required(),
   country: yup.string().min(2).max(4).required(),
   phone: yup.string().min(5).nullable(),
-});
-
-export const TokenSchema = yup.object().shape({
-  id: yup.string().uuid(),
-  name: yup.string().min(3).required(),
-  secret: yup.string().min(3).required(),
-  role: yup.string().min(3).required(),
-  createdAt: yup.date().nullable(),
-  shop: yup.string().uuid().required(),
 });

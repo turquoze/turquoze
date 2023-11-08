@@ -1,4 +1,4 @@
-import { Price } from "../../utils/types.ts";
+import { Price } from "../../utils/schema.ts";
 
 export default interface IPriceService {
   Create(params: {

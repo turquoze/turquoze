@@ -19,9 +19,8 @@ Deno.test("OrderService", {
           data: {
             id: 0,
             publicId: "",
-            payment_status: "WAITING",
-            price_total: 1050,
-            createdAt: 0,
+            paymentStatus: "WAITING",
+            priceTotal: 1050,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             products: [
               {
@@ -37,7 +36,7 @@ Deno.test("OrderService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -53,7 +52,7 @@ Deno.test("OrderService", {
     fn: async () => {
       try {
         await order.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore not on type
           data: {
             publicId: "",
           },

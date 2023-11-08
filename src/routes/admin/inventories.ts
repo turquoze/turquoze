@@ -2,10 +2,11 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Inventory } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { InventorySchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { insertInventorySchema, Inventory } from "../../utils/schema.ts";
 
 export default class InventoriesRoutes {
   #inventories: Router;
@@ -30,8 +31,7 @@ export default class InventoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await InventorySchema.validate(inventory);
-        const posted: Inventory = await InventorySchema.cast(inventory);
+        const posted = parse(insertInventorySchema, inventory);
 
         const data = await this.#Container.InventoryService.Create({
           data: posted,
@@ -56,6 +56,10 @@ export default class InventoriesRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let inventory: Inventory;
         if (body.type === "json") {
@@ -66,8 +70,7 @@ export default class InventoriesRoutes {
 
         inventory.publicId = ctx.params.id;
 
-        await InventorySchema.validate(inventory);
-        const posted: Inventory = await InventorySchema.cast(inventory);
+        const posted = parse(insertInventorySchema, inventory);
 
         const data = await Update<Inventory>(this.#Container, {
           id: `inventory_${ctx.params.id}`,
@@ -92,7 +95,7 @@ export default class InventoriesRoutes {
 
     this.#inventories.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -119,7 +122,7 @@ export default class InventoriesRoutes {
 
     this.#inventories.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

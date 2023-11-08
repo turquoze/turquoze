@@ -16,6 +16,15 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-valibot";
+import {
+  array,
+  nullable,
+  number,
+  optional,
+  type Output,
+  string,
+} from "valibot";
 
 import { sql } from "drizzle-orm";
 export const keyStatus = pgEnum("key_status", [
@@ -61,6 +70,13 @@ export const carts = pgTable("carts", {
   comment: varchar("comment"),
 });
 
+//@ts-ignore TS2345
+export const insertCartSchema = createInsertSchema(carts, {
+  id: optional(number()),
+});
+export type DBCart = Output<typeof insertCartSchema>;
+export type Cart = DBCart & { items: Array<CartItem> };
+
 export const categories = pgTable("categories", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
@@ -81,6 +97,12 @@ export const categories = pgTable("categories", {
   };
 });
 
+//@ts-ignore TS2345
+export const insertCategorySchema = createInsertSchema(categories, {
+  id: optional(number()),
+});
+export type Category = Output<typeof insertCategorySchema>;
+
 export const discounts = pgTable("discounts", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
@@ -100,6 +122,12 @@ export const discounts = pgTable("discounts", {
   };
 });
 
+//@ts-ignore TS2345
+export const insertDiscountSchema = createInsertSchema(discounts, {
+  id: optional(number()),
+});
+export type Discount = Output<typeof insertDiscountSchema>;
+
 export const inventories = pgTable("inventories", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
@@ -110,6 +138,12 @@ export const inventories = pgTable("inventories", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint("id", { mode: "number" }).notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertInventorySchema = createInsertSchema(inventories, {
+  id: optional(number()),
+});
+export type Inventory = Output<typeof insertInventorySchema>;
 
 export const orders = pgTable("orders", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
@@ -124,6 +158,12 @@ export const orders = pgTable("orders", {
   priceTotal: integer("price_total"),
   exported: boolean("exported").default(false).notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertOrderSchema = createInsertSchema(orders, {
+  id: optional(number()),
+});
+export type Order = Output<typeof insertOrderSchema>;
 
 export const products = pgTable("products", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
@@ -150,6 +190,14 @@ export const products = pgTable("products", {
   };
 });
 
+//@ts-ignore TS2345
+export const insertProductSchema = createInsertSchema(products, {
+  id: optional(number()),
+  images: optional(array(string())),
+});
+export type DBProduct = Output<typeof insertProductSchema>;
+export type Product = DBProduct & { price: number };
+
 export const taxes = pgTable("taxes", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint("id", { mode: "number" }).notNull(),
@@ -163,6 +211,12 @@ export const taxes = pgTable("taxes", {
   shop: uuid("shop").notNull().references(() => shops.publicId),
 });
 
+//@ts-ignore TS2345
+export const insertTaxSchema = createInsertSchema(taxes, {
+  id: optional(number()),
+});
+export type Tax = Output<typeof insertTaxSchema>;
+
 export const taxeslink = pgTable("taxeslink", {
   createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
     .defaultNow(),
@@ -171,6 +225,12 @@ export const taxeslink = pgTable("taxeslink", {
   id: numeric("id").primaryKey().notNull(),
   taxId: uuid("tax_id").notNull().references(() => taxes.publicId),
 });
+
+//@ts-ignore TS2345
+export const insertTaxLinkSchema = createInsertSchema(taxeslink, {
+  id: optional(number()),
+});
+export type TaxProductLink = Output<typeof insertTaxLinkSchema>;
 
 export const tokens = pgTable("tokens", {
   id: varchar("id").primaryKey().notNull(),
@@ -181,6 +241,10 @@ export const tokens = pgTable("tokens", {
   secret: varchar("secret").notNull(),
   role: varchar("role").default("USER").notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertTokenSchema = createInsertSchema(tokens);
+export type Token = Output<typeof insertTokenSchema>;
 
 export const users = pgTable("users", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -197,6 +261,12 @@ export const users = pgTable("users", {
   role: varchar("role"),
 });
 
+//@ts-ignore TS2345
+export const insertUserSchema = createInsertSchema(users, {
+  id: optional(number()),
+});
+export type User = Output<typeof insertUserSchema>;
+
 export const warehouses = pgTable("warehouses", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
@@ -209,6 +279,12 @@ export const warehouses = pgTable("warehouses", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint("id", { mode: "number" }).notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertWarehouseSchema = createInsertSchema(warehouses, {
+  id: optional(number()),
+});
+export type Warehouse = Output<typeof insertWarehouseSchema>;
 
 export const admins = pgTable("admins", {
   id: bigserial("id", { mode: "bigint" }).notNull(),
@@ -225,6 +301,10 @@ export const admins = pgTable("admins", {
   password: varchar("password").notNull(),
 });
 
+//@ts-ignore TS2345
+export const insertAdminSchema = createInsertSchema(admins);
+export type Admin = Output<typeof insertAdminSchema>;
+
 export const shopslink = pgTable("shopslink", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint("id", { mode: "number" }).primaryKey().notNull(),
@@ -234,6 +314,12 @@ export const shopslink = pgTable("shopslink", {
   shop: uuid("shop").notNull().references(() => shops.publicId),
   role: varchar("role").default("VIEWER").notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertShopLinkSchema = createInsertSchema(shopslink, {
+  id: optional(number()),
+});
+export type ShopLink = Output<typeof insertShopLinkSchema>;
 
 export const plugins = pgTable("plugins", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -253,6 +339,12 @@ export const plugins = pgTable("plugins", {
     pluginsPublicIdKey: unique("plugins_public_id_key").on(table.publicId),
   };
 });
+
+//@ts-ignore TS2345
+export const insertPluginSchema = createInsertSchema(plugins, {
+  id: optional(number()),
+});
+export type Plugin = Output<typeof insertPluginSchema>;
 
 export const oauthTokens = pgTable("oauth_tokens", {
   id: bigserial("id", { mode: "bigint" }).notNull(),
@@ -277,6 +369,12 @@ export const oauthTokens = pgTable("oauth_tokens", {
   };
 });
 
+//@ts-ignore TS2345
+export const insertOauthTokenSchema = createInsertSchema(oauthTokens, {
+  id: optional(number()),
+});
+export type OauthToken = Output<typeof insertOauthTokenSchema>;
+
 export const prices = pgTable("prices", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
@@ -290,6 +388,12 @@ export const prices = pgTable("prices", {
   list: text("list").default("Default").notNull(),
 });
 
+//@ts-ignore TS2345
+export const insertPriceSchema = createInsertSchema(prices, {
+  id: optional(number()),
+});
+export type Price = Output<typeof insertPriceSchema>;
+
 export const organizations = pgTable("organizations", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
   id: bigint("id", { mode: "number" }).notNull(),
@@ -298,6 +402,12 @@ export const organizations = pgTable("organizations", {
   publicId: uuid("public_id").defaultRandom().primaryKey().notNull(),
   name: text("name").notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertOrganizationSchema = createInsertSchema(organizations, {
+  id: optional(nullable(number())),
+});
+export type Organization = Output<typeof insertOrganizationSchema>;
 
 export const cartitems = pgTable("cartitems", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -312,6 +422,13 @@ export const cartitems = pgTable("cartitems", {
   type: text("type").default("PRODUCT").notNull(),
   itemId: uuid("item_id"),
 });
+
+//@ts-ignore TS2345
+export const insertCartItemSchema = createInsertSchema(cartitems, {
+  id: optional(number()),
+});
+export type DBCartItem = Output<typeof insertCartItemSchema>;
+export type CartItem = DBCartItem & { totalPrice: number };
 
 export const returns = pgTable("returns", {
   id: bigserial("id", { mode: "bigint" }).notNull(),
@@ -328,6 +445,12 @@ export const returns = pgTable("returns", {
   status: varchar("status").default("INIT").notNull(),
   exported: boolean("exported").default(false).notNull(),
 });
+
+//@ts-ignore TS2345
+export const insertReturnSchema = createInsertSchema(returns, {
+  id: optional(number()),
+});
+export type Return = Output<typeof insertReturnSchema>;
 
 export const shops = pgTable("shops", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
@@ -347,6 +470,12 @@ export const shops = pgTable("shops", {
   shippingId: varchar("shipping_id"),
 });
 
+//@ts-ignore TS2345
+export const insertShopSchema = createInsertSchema(shops, {
+  id: optional(number()),
+});
+export type Shop = Output<typeof insertShopSchema>;
+
 export const categorieslink = pgTable("categorieslink", {
   category: uuid("category").notNull().references(() => categories.publicId),
   product: uuid("product").notNull().references(() => products.publicId),
@@ -355,6 +484,10 @@ export const categorieslink = pgTable("categorieslink", {
     categoriesLinkPkey: primaryKey(table.category, table.product),
   };
 });
+
+//@ts-ignore TS2345
+export const insertCategoryLinkSchema = createInsertSchema(categorieslink);
+export type CategoryLink = Output<typeof insertCategoryLinkSchema>;
 
 export const organizationsLink = pgTable("organizationsLink", {
   // You can use { mode: "bigint" } if numbers are exceeding js number limitations
@@ -373,3 +506,12 @@ export const organizationsLink = pgTable("organizationsLink", {
     organizationsLinkPkey: primaryKey(table.person, table.shop),
   };
 });
+
+export const insertOrganizationLinkSchema = createInsertSchema(
+  //@ts-ignore TS2345
+  organizationsLink,
+  {
+    id: optional(number()),
+  },
+);
+export type OrganizationLink = Output<typeof insertOrganizationLinkSchema>;

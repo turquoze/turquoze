@@ -1,8 +1,7 @@
-import { Price } from "../../utils/types.ts";
 import IPriceService from "../interfaces/priceService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { prices } from "../../utils/schema.ts";
+import { Price, prices } from "../../utils/schema.ts";
 import { and, eq } from "drizzle-orm";
 
 export default class PriceService implements IPriceService {
@@ -13,14 +12,13 @@ export default class PriceService implements IPriceService {
 
   async Create(params: { data: Price }): Promise<Price> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(prices).values({
         amount: params.data.amount,
         shop: params.data.shop,
         product: params.data.product,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -34,7 +32,7 @@ export default class PriceService implements IPriceService {
       const result = await this.db.select().from(prices).where(
         eq(prices.publicId, params.id),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -57,7 +55,6 @@ export default class PriceService implements IPriceService {
         ),
       );
 
-      //@ts-expect-error not on error
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -81,7 +78,7 @@ export default class PriceService implements IPriceService {
       const result = await this.db.select().from(prices).where(
         eq(prices.product, params.productId),
       ).limit(params.limit).offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -105,7 +102,7 @@ export default class PriceService implements IPriceService {
       const result = await this.db.select().from(prices).where(
         eq(prices.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -120,10 +117,9 @@ export default class PriceService implements IPriceService {
         .set({
           amount: params.data.amount,
         })
-        .where(eq(prices.publicId, params.data.publicId))
+        .where(eq(prices.publicId, params.data.publicId!))
         .returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

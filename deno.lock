@@ -7,10 +7,12 @@
       "npm:drizzle-kit@^0.19.13": "npm:drizzle-kit@0.19.13_esbuild@0.18.20",
       "npm:drizzle-orm": "npm:drizzle-orm@0.28.6_postgres@3.3.5",
       "npm:drizzle-orm@^0.28.6": "npm:drizzle-orm@0.28.6_postgres@3.3.5",
+      "npm:drizzle-valibot@0.1.1": "npm:drizzle-valibot@0.1.1_drizzle-orm@0.28.6__postgres@3.3.5_postgres@3.3.5",
       "npm:postgres": "npm:postgres@3.3.5",
       "npm:postgres@3.4.3": "npm:postgres@3.4.3",
       "npm:prisma": "npm:prisma@4.6.1",
-      "npm:prisma@^4.13.0": "npm:prisma@4.16.2"
+      "npm:prisma@^4.13.0": "npm:prisma@4.16.2",
+      "npm:valibot@0.20.1": "npm:valibot@0.20.1"
     },
     "npm": {
       "@drizzle-team/studio@0.0.5": {
@@ -224,6 +226,12 @@
         "integrity": "sha512-yBe+F9htrlYER7uXgDJUQsTHFoIrI5yMm5A0bg0GiZ/kY5jNXTWoEy4KQtg35cE27sw1VbgzoMWHAgCckUUUww==",
         "dependencies": {
           "postgres": "postgres@3.3.5"
+        }
+      },
+      "drizzle-valibot@0.1.1_drizzle-orm@0.28.6__postgres@3.3.5_postgres@3.3.5": {
+        "integrity": "sha512-xVEGIbZ+Ti5IkGJP1jaUV8kQ7b5RITaH5XYYPSDVOq0blxI3y65efZ0ZAUKSo6BhZ+VqfZfZn1ouPb3pR1hA6g==",
+        "dependencies": {
+          "drizzle-orm": "drizzle-orm@0.28.6_postgres@3.3.5"
         }
       },
       "es5-ext@0.10.62": {
@@ -460,6 +468,10 @@
       },
       "type@2.7.2": {
         "integrity": "sha512-dzlvlNlt6AXU7EBSfpAscydQ7gXB+pPGsPnfJnZpiNJBDj7IaJzQlBZYGdEi4R9HmPdBv2XmWJ6YUtoTa7lmCw==",
+        "dependencies": {}
+      },
+      "valibot@0.20.1": {
+        "integrity": "sha512-7lToTLG5wtK76u32gq8dUK0bAw7bknTGbeNSKRJunAC2soGVnNrKngg+38Jjt6FOwH+MshUONHoFz+LgmjeYKQ==",
         "dependencies": {}
       },
       "wordwrap@1.0.0": {

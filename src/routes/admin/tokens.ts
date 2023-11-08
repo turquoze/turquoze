@@ -2,10 +2,11 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Token } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
-import { TokenSchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { insertTokenSchema, Token } from "../../utils/schema.ts";
 
 export default class TokensRoutes {
   #tokens: Router;
@@ -59,10 +60,9 @@ export default class TokensRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        token.shop = ctx.state.shop;
+        token.shop = ctx.state.request_data.publicId;
 
-        await TokenSchema.validate(token);
-        const posted: Token = await TokenSchema.cast(token);
+        const posted = parse(insertTokenSchema, token);
 
         const data = await this.#Container.TokenService.Create({
           data: posted,
@@ -84,7 +84,7 @@ export default class TokensRoutes {
 
     this.#tokens.get("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -111,7 +111,7 @@ export default class TokensRoutes {
 
     this.#tokens.delete("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

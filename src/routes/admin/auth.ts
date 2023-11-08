@@ -29,7 +29,7 @@ export default class AuthRoutes {
           });
 
           const shops = await this.#Container.ShopLinkService.GetShops({
-            id: admin.publicId,
+            id: admin.publicId!,
           });
 
           const shopsClean = shops.map((shop) => {

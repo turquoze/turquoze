@@ -1,8 +1,7 @@
-import { OrganizationLink } from "../../utils/types.ts";
 import IOrganizationLinkService from "../interfaces/organizationLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { organizationsLink } from "../../utils/schema.ts";
+import { OrganizationLink, organizationsLink } from "../../utils/schema.ts";
 import { and, eq } from "drizzle-orm";
 
 export default class OrganizationLinkService
@@ -14,13 +13,12 @@ export default class OrganizationLinkService
 
   async Link(params: { data: OrganizationLink }): Promise<OrganizationLink> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(organizationsLink).values({
         person: params.data.person,
         shop: params.data.shop,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -51,7 +49,7 @@ export default class OrganizationLinkService
       const result = await this.db.select().from(organizationsLink).where(
         eq(organizationsLink.person, params.personId),
       );
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {

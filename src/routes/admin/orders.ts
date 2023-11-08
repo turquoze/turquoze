@@ -6,6 +6,7 @@ import { TurquozeState } from "../../utils/types.ts";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
 
 export default class OrdersRoutes {
   #orders: Router<TurquozeState>;
@@ -47,7 +48,7 @@ export default class OrdersRoutes {
 
     this.#orders.get("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

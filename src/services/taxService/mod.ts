@@ -1,8 +1,7 @@
-import { Tax } from "../../utils/types.ts";
 import ITaxService from "../interfaces/taxService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { taxes } from "../../utils/schema.ts";
+import { Tax, taxes } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class TaxService implements ITaxService {
@@ -13,7 +12,7 @@ export default class TaxService implements ITaxService {
 
   async Create(params: { data: Tax }): Promise<Tax> {
     try {
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       const result = await this.db.insert(taxes).values({
         name: params.data.name,
         type: params.data.type,
@@ -21,7 +20,6 @@ export default class TaxService implements ITaxService {
         shop: params.data.shop,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -35,7 +33,7 @@ export default class TaxService implements ITaxService {
       const result = await this.db.select().from(taxes).where(
         eq(taxes.publicId, params.id),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -63,7 +61,7 @@ export default class TaxService implements ITaxService {
       const result = await this.db.select().from(taxes).where(
         eq(taxes.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {

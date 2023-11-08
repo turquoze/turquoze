@@ -2,8 +2,9 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Product, TurquozeState } from "../../utils/types.ts";
+import { TurquozeState } from "../../utils/types.ts";
 import { MeiliSearch } from "meilisearch";
+import { Product } from "../../utils/schema.ts";
 
 export default class SettingsRoutes {
   #settings: Router<TurquozeState>;
@@ -29,14 +30,18 @@ export default class SettingsRoutes {
         });
 
         const productsMappedPromises = products.map(async (product) => {
+          const localProduct: Product = {
+            ...product,
+            price: 0,
+          };
           const price = await this.#Container.PriceService.GetByProduct({
             productId: product.publicId!,
           });
 
-          product.price = price.amount;
+          localProduct.price = price.amount ?? -1;
 
           const obj = {
-            ...product,
+            ...localProduct,
             id: Number(product.id),
           };
 

@@ -3,8 +3,9 @@ import { assert, assertEquals } from "../test_deps.ts";
 import ProductsRoutes from "../../src/routes/api/products.ts";
 import ProductsAdminRoutes from "../../src/routes/admin/products.ts";
 import PricesRoutes from "../../src/routes/admin/prices.ts";
-import { Price, Product, Search } from "../../src/utils/types.ts";
+import { Search } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Price, Product } from "../../src/utils/schema.ts";
 
 let ID = "";
 let PriceID = "";
@@ -126,7 +127,7 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      id: ID,
+      publicId: ID,
       active: true,
       images: ["https://test.com"],
       title: "Test product update",

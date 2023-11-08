@@ -40,7 +40,7 @@ Deno.test("TokenService", {
     fn: async () => {
       try {
         await token.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore not on type
           data: {
             shop: "00000000-0000-0000-0000-000000000000",
           },

@@ -17,7 +17,6 @@ container.Shop.settings.meilisearch = {
 app.state.container = container;
 
 app.use(async (ctx, next) => {
-  ctx.state.shop = "6d14431e-6d57-4ab5-842b-b6604e2038c7";
   ctx.state.request_data = {
     id: 0,
     publicId: "6d14431e-6d57-4ab5-842b-b6604e2038c7",

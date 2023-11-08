@@ -38,15 +38,12 @@ Deno.test("CartService", {
               state: "",
               zip: "",
             },
-            coupon: "",
-            giftcard: "",
             metadata: {},
-            items: [],
             comment: "",
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -83,7 +80,6 @@ Deno.test("CartService", {
             itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
             type: "PRODUCT",
             quantity: 2,
-            totalPrice: 4000,
           },
         });
 
@@ -109,7 +105,6 @@ Deno.test("CartService", {
             itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
             type: "PRODUCT",
             quantity: 3,
-            totalPrice: 6000,
           },
         });
 
@@ -135,7 +130,6 @@ Deno.test("CartService", {
             itemId: "00000000-0000-0000-0000-000000000000",
             type: "PRODUCT",
             quantity: 2,
-            totalPrice: 4000,
           },
         });
 

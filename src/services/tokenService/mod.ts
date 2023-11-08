@@ -1,9 +1,9 @@
-import { Shop, Token, TurquozeRole } from "../../utils/types.ts";
+import { Shop, TurquozeRole } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { sql } from "drizzle-orm";
-import { tokens } from "../../utils/schema.ts";
+import { Token, tokens } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class TokenService implements ITokenService {
@@ -18,7 +18,7 @@ export default class TokenService implements ITokenService {
         sql`INSERT INTO tokens (id, name, role, secret, shop) VALUES (${params.data.id}, ${params.data.name}, ${params.data.role}, crypt(${params.data.secret}, gen_salt('bf')), ${params.data.shop}) RETURNING id`,
       );
 
-      //@ts-expect-error not on type
+      //@ts-ignore not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -77,7 +77,7 @@ export default class TokenService implements ITokenService {
       const result = await this.db.select().from(tokens).where(
         eq(tokens.id, params.tokenId),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -101,7 +101,7 @@ export default class TokenService implements ITokenService {
       const result = await this.db.select().from(tokens).where(
         eq(tokens.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      //@ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {

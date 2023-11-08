@@ -15,7 +15,7 @@ Deno.test("UserService", {
     fn: async () => {
       try {
         await user.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore not on type
           data: {
             publicId: "",
           },
@@ -42,13 +42,13 @@ Deno.test("UserService", {
             email: "test@example.com",
             password: "test123",
             name: "test",
-            not_active: false,
+            notActive: false,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             role: "",
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -172,13 +172,13 @@ Deno.test("UserService", {
             email: "test+test123@example.com",
             password: "",
             name: "test update",
-            not_active: true,
+            notActive: true,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             role: "",
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -200,7 +200,7 @@ Deno.test("UserService", {
             email: "test+fail@example.com",
             password: "",
             name: "test fail",
-            not_active: true,
+            notActive: true,
             shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
             role: "",
           },

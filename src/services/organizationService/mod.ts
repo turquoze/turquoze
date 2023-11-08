@@ -1,8 +1,7 @@
 import IOrganizationService from "../interfaces/organizationService.ts";
-import { Organization } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { organizations } from "../../utils/schema.ts";
+import { Organization, organizations } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class OrganizationService implements IOrganizationService {
@@ -13,12 +12,11 @@ export default class OrganizationService implements IOrganizationService {
 
   async Create(params: { data: Organization }): Promise<Organization> {
     try {
-      //@ts-expect-error not on type
-      const result = await this.db.insert(prices).values({
+      //@ts-ignore not on type
+      const result = await this.db.insert(organizations).values({
         name: params.data.name,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -47,7 +45,7 @@ export default class OrganizationService implements IOrganizationService {
         .set({
           name: params.data.name,
         })
-        .where(eq(organizations.publicId, params.data.publicId))
+        .where(eq(organizations.publicId, params.data.publicId!))
         .returning();
 
       return result[0];

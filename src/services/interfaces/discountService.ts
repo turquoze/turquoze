@@ -1,4 +1,4 @@
-import { Discount } from "../../utils/types.ts";
+import { Discount } from "../../utils/schema.ts";
 
 export default interface IDiscountService {
   Create(params: {

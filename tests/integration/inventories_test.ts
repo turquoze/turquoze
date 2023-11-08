@@ -1,8 +1,8 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import InventoriesRoutes from "../../src/routes/admin/inventories.ts";
-import { Inventory } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Inventory } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -34,7 +34,7 @@ Deno.test({
     assert(response?.ok);
 
     const { inventories }: { inventories: Inventory } = await response?.json();
-    ID = inventories.publicId;
+    ID = inventories.publicId!;
   },
 });
 

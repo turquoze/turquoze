@@ -2,10 +2,12 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Product, TurquozeState } from "../../utils/types.ts";
+import { TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { ProductSchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { insertProductSchema, Product } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {
   #products: Router<TurquozeState>;
@@ -30,16 +32,20 @@ export default class ProductsRoutes {
         });
 
         const productsPromises = data.map(async (product) => {
+          const localProduct: Product = {
+            ...product,
+            price: 0,
+          };
           const price = await this.#Container.PriceService.GetByProduct({
             productId: product.publicId!,
           });
 
-          product.price = Dinero({
-            amount: parseInt(price.amount.toString()),
+          localProduct.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
-          return product;
+          return localProduct;
         });
 
         const products = await Promise.all(productsPromises);
@@ -72,10 +78,9 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        product.shop = ctx.state.shop;
+        product.shop = ctx.state.request_data.publicId;
 
-        await ProductSchema.validate(product);
-        const posted: Product = await ProductSchema.cast(product);
+        const posted = parse(insertProductSchema, product);
 
         const data = await this.#Container.ProductService.Create({
           data: posted,
@@ -97,12 +102,13 @@ export default class ProductsRoutes {
 
     this.#products.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
         const data = await Get<Product>(this.#Container, {
           id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
+          //@ts-ignore not on type
           promise: this.#Container.ProductService.Get({
             id: ctx.params.id,
           }),
@@ -113,7 +119,7 @@ export default class ProductsRoutes {
         });
 
         data.price = Dinero({
-          amount: parseInt(price.amount.toString()),
+          amount: parseInt((price.amount ?? -1).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
@@ -137,6 +143,10 @@ export default class ProductsRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let product: Product;
         if (body.type === "json") {
@@ -146,13 +156,13 @@ export default class ProductsRoutes {
         }
 
         product.publicId = ctx.params.id;
-        product.shop = ctx.state.shop;
+        product.shop = ctx.state.request_data.publicId;
 
-        await ProductSchema.validate(product);
-        const posted: Product = await ProductSchema.cast(product);
+        const posted = parse(insertProductSchema, product);
 
         const data = await Update<Product>(this.#Container, {
           id: `product_${ctx.state.request_data.publicId}-${product.id}`,
+          //@ts-ignore not on type
           promise: this.#Container.ProductService.Update({
             data: posted,
           }),
@@ -174,7 +184,7 @@ export default class ProductsRoutes {
 
     this.#products.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

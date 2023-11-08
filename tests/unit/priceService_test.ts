@@ -24,7 +24,7 @@ Deno.test("PriceService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -40,7 +40,7 @@ Deno.test("PriceService", {
     fn: async () => {
       try {
         await price.Create({
-          // @ts-expect-error want to test
+          //@ts-ignore not on type
           data: {
             publicId: "",
           },
@@ -107,7 +107,7 @@ Deno.test("PriceService", {
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);

@@ -1,4 +1,4 @@
-import { Plugin } from "../../utils/types.ts";
+import { Plugin } from "../../utils/schema.ts";
 
 export default interface IPluginService {
   Create(params: {

@@ -1,75 +1,10 @@
 import type { SearchParams } from "meilisearch";
 import Container from "../services/mod.ts";
 import * as jose from "jose";
-
-export interface Product {
-  id: number;
-  publicId?: string;
-  createdAt?: string;
-  slug: string;
-  active: boolean;
-  parent?: string;
-  title: string;
-  shortDescription: string;
-  longDescription: string;
-  images: Array<string>;
-  price?: number;
-  shop: string;
-}
-
-export interface Cart {
-  id: number;
-  publicId: string;
-  createdAt?: number;
-  items: Array<CartItem>;
-  metadata: Record<string, unknown>;
-  shipping: Shipping;
-  billing: Shipping;
-  coupon: string;
-  giftcard: string;
-  comment: string;
-}
-
-export interface CartItem {
-  id: number;
-  cartId: string;
-  itemId: string;
-  price: number;
-  quantity: number;
-  totalPrice: number;
-  type: "PRODUCT" | "DISCOUNT";
-}
+import { Product } from "./schema.ts";
 
 export interface DiscountItem {
   code: string;
-}
-
-export interface Order {
-  publicId: string;
-  id: number;
-  shop: string;
-  createdAt: number;
-  products: Array<OrderProduct>;
-  payment_status: "PAYED" | "WAITING" | "FAILED";
-  price_total: number;
-  exported: boolean;
-}
-
-export interface OrderProduct {
-  product: string;
-  quantity: number;
-  price: {
-    value: number;
-    currency: string;
-  };
-}
-
-export interface Category {
-  id: number;
-  publicId: string;
-  parent?: string;
-  name: string;
-  shop: string;
 }
 
 export interface Shop {
@@ -100,21 +35,7 @@ export interface Settings {
   };
 }
 
-export interface CategoryLink {
-  category: string;
-  product: string;
-}
-
-export interface ShopLink {
-  id: number;
-  admin: string;
-  shop: string;
-  role: TurquozeRole;
-  createdAt?: number;
-}
-
 export interface TurquozeState {
-  shop: string;
   request_data: Shop;
   container: Container;
   adminId?: string;
@@ -153,17 +74,6 @@ export interface ErrorResponse {
   message: string;
 }
 
-export interface Discount {
-  id: number;
-  publicId: string;
-  type: "FIXED" | "PERCENT";
-  value: number;
-  validTo: number | null;
-  validFrom: number | null;
-  shop: string;
-  code: string;
-}
-
 export interface Search {
   index: string;
   query: string;
@@ -180,66 +90,14 @@ export interface MeiliDelete {
   index: string;
 }
 
-export interface Warehouse {
-  id: number;
-  publicId: string;
-  shop: string;
-  createdAt?: number;
-  country: string;
-  address: string;
-  name: string;
-}
-
-export interface Inventory {
-  id: number;
-  publicId: string;
-  createdAt?: number;
-  warehouse: string;
-  product: string;
-  quantity: number;
-  warehouse_name?: string;
-}
-
 export interface PriceCalculation {
   vat: number;
   price: number;
   subtotal: number;
 }
 
-export interface Price {
-  id: number;
-  publicId: string;
-  createdAt?: number;
-  amount: number;
-  shop: string;
-  product: string;
-  list?: string;
-}
-
 export interface DiscountCheck {
   code: string;
-}
-
-export interface User {
-  id: number;
-  publicId: string;
-  createdAt?: number;
-  name: string;
-  email: string;
-  password: string;
-  not_active: boolean;
-  role: string;
-  shop: string;
-}
-
-export interface Admin {
-  id: number;
-  publicId: string;
-  createdAt?: number;
-  name: string;
-  email: string;
-  password: string;
-  not_active: boolean;
 }
 
 export interface Shipping {
@@ -251,31 +109,6 @@ export interface Shipping {
   zip: string;
   country: string;
   phone: string;
-}
-
-export interface Token {
-  id: string;
-  name: string;
-  secret: string;
-  role: string;
-  createdAt?: number;
-  shop: string;
-}
-
-export interface Tax {
-  id: number;
-  publicId: string;
-  createdAt?: number;
-  type: "Inclusive" | "Exclusive";
-  name: string;
-  value: number;
-  shop: string;
-}
-
-export interface TaxProductLink {
-  taxId: string;
-  country: string;
-  productId: string;
 }
 
 export interface Media {
@@ -345,22 +178,6 @@ export type TurquozeRole =
   | "VIEWER"
   | "USER";
 
-export interface Plugin {
-  id: number;
-  publicId: string;
-  createdAt?: string;
-  name: string;
-  url: string;
-  type: "PAYMENT" | "SHIPPING" | "MISC";
-  shop: string;
-  token: string;
-}
-
-export interface OauthToken {
-  shopId: string;
-  adminId: string;
-}
-
 export interface Oauth {
   id: number;
   createdAt?: number;
@@ -368,18 +185,4 @@ export interface Oauth {
   token: string;
   expiresAt?: number | null;
   plugin: string;
-}
-
-export interface Organization {
-  id: number;
-  publicId: string;
-  name: string;
-}
-
-export interface OrganizationLink {
-  id: number;
-  person: string;
-  shop: string;
-  role: TurquozeRole;
-  createdAt?: number;
 }

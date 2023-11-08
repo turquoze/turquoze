@@ -1,25 +1,24 @@
 import { Router } from "@oakserver/oak";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import {
-  Cart,
-  CartItem,
-  DiscountItem,
-  Shipping,
-  TurquozeState,
-} from "../../utils/types.ts";
+import { DiscountItem, Shipping, TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { stringifyJSON } from "../../utils/utils.ts";
 import {
-  CartItemSchema,
-  CartSchema,
   CommentSchema,
   DiscountItemSchema,
   MetadataSchema,
   ShippingSchema,
   UuidSchema,
 } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import {
+  Cart,
+  CartItem,
+  insertCartItemSchema,
+  insertCartSchema,
+} from "../../utils/schema.ts";
 
 export default class CartRoutes {
   #carts: Router<TurquozeState>;
@@ -44,8 +43,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await CartSchema.validate(cart);
-        const posted: Cart = await CartSchema.cast(cart);
+        const posted = parse(insertCartSchema, cart);
 
         const data = await this.#Container.CartService.Create({
           data: posted,
@@ -67,7 +65,7 @@ export default class CartRoutes {
 
     this.#carts.post("/:id/finalize", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -96,7 +94,7 @@ export default class CartRoutes {
 
     this.#carts.post("/:id/metadata", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -134,7 +132,7 @@ export default class CartRoutes {
 
     this.#carts.post("/:id/shipping", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -172,7 +170,7 @@ export default class CartRoutes {
 
     this.#carts.post("/:id/billing", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -214,6 +212,10 @@ export default class CartRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let item: CartItem;
         if (body.type === "json") {
@@ -222,8 +224,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await CartItemSchema.validate(item);
-        const posted: CartItem = await CartItemSchema.cast(item);
+        const posted = parse(insertCartItemSchema, item);
 
         const data = await this.#Container.CartService.AddItem({
           data: posted,
@@ -245,7 +246,7 @@ export default class CartRoutes {
 
     this.#carts.post("/:id/comment", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -283,28 +284,28 @@ export default class CartRoutes {
 
     this.#carts.get("/:id/items", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
         const data = await this.#Container.CartService.GetAllItems(
           ctx.params.id,
-        );
+        ) as Array<CartItem>;
 
         const responsePromises = data.map(async (item) => {
           const price = await this.#Container.PriceService.GetByProduct({
-            productId: item.itemId,
+            productId: item.itemId!,
           });
 
           item.price = Dinero({
-            amount: parseInt(price.amount.toString()),
+            amount: parseInt((price.amount ?? -1).toString()),
             currency: ctx.state.request_data.currency,
           }).getAmount();
 
           item.totalPrice = Dinero({
-            amount: parseInt(price.amount.toString()),
+            amount: parseInt((price.amount ?? -1).toString()),
             currency: ctx.state.request_data.currency,
-          }).multiply(parseInt(item.quantity.toString())).getAmount();
+          }).multiply(parseInt((item.quantity ?? 0).toString())).getAmount();
 
           return item;
         });
@@ -327,32 +328,32 @@ export default class CartRoutes {
 
     this.#carts.get("/:id/items/:product_id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.product_id,
         });
 
         const data = await this.#Container.CartService.GetCartItem(
           ctx.params.id,
           ctx.params.product_id,
-        );
+        ) as CartItem;
 
         const price = await this.#Container.PriceService.GetByProduct({
           productId: ctx.params.product_id,
         });
 
         data.price = Dinero({
-          amount: parseInt(price.amount.toString()),
+          amount: parseInt((price.amount ?? -1).toString()),
           currency: ctx.state.request_data.currency,
         }).getAmount();
 
         data.totalPrice = Dinero({
           amount: parseInt(data.price.toString()),
           currency: ctx.state.request_data.currency,
-        }).multiply(parseInt(data.quantity.toString())).getAmount();
+        }).multiply(parseInt((data.quantity ?? 0).toString())).getAmount();
 
         ctx.response.body = stringifyJSON({
           carts: data,
@@ -370,11 +371,11 @@ export default class CartRoutes {
 
     this.#carts.delete("/:id/items/:product_id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.product_id,
         });
 
@@ -397,7 +398,7 @@ export default class CartRoutes {
 
     this.#carts.get("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -421,7 +422,7 @@ export default class CartRoutes {
 
     this.#carts.delete("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -446,6 +447,10 @@ export default class CartRoutes {
         if (!ctx.request.hasBody) {
           throw new NoBodyError("No Body");
         }
+
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
 
         const body = ctx.request.body();
         let item: DiscountItem;
@@ -483,11 +488,11 @@ export default class CartRoutes {
 
     this.#carts.delete("/:id/discounts/:discount_id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.discount_id,
         });
 

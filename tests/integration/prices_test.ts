@@ -1,8 +1,8 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import PricesRoutes from "../../src/routes/admin/prices.ts";
-import { Price } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Price } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -33,7 +33,7 @@ Deno.test({
     assert(response?.ok);
 
     const { prices }: { prices: Price } = await response?.json();
-    ID = prices.publicId;
+    ID = prices.publicId!;
   },
 });
 

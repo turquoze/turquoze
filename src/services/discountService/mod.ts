@@ -1,8 +1,7 @@
 import IDiscountService from "../interfaces/discountService.ts";
-import { Discount } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { discounts } from "../../utils/schema.ts";
+import { Discount, discounts } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class DiscountService implements IDiscountService {
@@ -13,8 +12,8 @@ export default class DiscountService implements IDiscountService {
 
   async Create(params: { data: Discount }): Promise<Discount> {
     try {
+      //@ts-ignore not on type
       const result = await this.db.insert(discounts).values({
-        //@ts-expect-error not in type
         type: params.data.type,
         value: params.data.value,
         shop: params.data.shop,
@@ -23,7 +22,6 @@ export default class DiscountService implements IDiscountService {
         code: params.data.code,
       }).returning();
 
-      //@ts-expect-error not on type
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -37,7 +35,7 @@ export default class DiscountService implements IDiscountService {
       const result = await this.db.select().from(discounts).where(
         eq(discounts.publicId, params.id),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -51,7 +49,7 @@ export default class DiscountService implements IDiscountService {
       const result = await this.db.select().from(discounts).where(
         eq(discounts.code, params.code),
       );
-      //@ts-expect-error not on type
+
       return result[0];
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -79,7 +77,7 @@ export default class DiscountService implements IDiscountService {
       const result = await this.db.select().from(discounts).where(
         eq(discounts.shop, params.shop),
       ).limit(params.limit).offset(params.offset);
-      // @ts-expect-error not on type
+
       return result;
     } catch (error) {
       throw new DatabaseError("DB error", {
@@ -104,7 +102,6 @@ export default class DiscountService implements IDiscountService {
         eq(discounts.code, params.code),
       );
       if (result.length > 0) {
-        //@ts-expect-error not on type
         return result[0];
       }
     } catch (error) {

@@ -1,8 +1,8 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import OrdersRoutes from "../../src/routes/admin/orders.ts";
-import { Order } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Order } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -24,7 +24,7 @@ Deno.test({
 
     const { orders }: { orders: Array<Order> } = await response?.json();
     if (orders.length > 0) {
-      ID = orders[0].publicId;
+      ID = orders[0].publicId!;
     }
   },
 });

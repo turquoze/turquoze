@@ -2,14 +2,16 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Category, CategoryLink } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
 import {
-  CategoryLinkSchema,
-  CategorySchema,
-  UuidSchema,
-} from "../../utils/validator.ts";
+  Category,
+  CategoryLink,
+  insertCategoryLinkSchema,
+  insertCategorySchema,
+} from "../../utils/schema.ts";
 
 export default class CategoriesRoutes {
   #categories: Router;
@@ -63,8 +65,7 @@ export default class CategoriesRoutes {
 
         category.shop = ctx.state.request_data.publicId;
 
-        await CategorySchema.validate(category);
-        const posted: Category = await CategorySchema.cast(category);
+        const posted = parse(insertCategorySchema, category);
 
         const data = await this.#Container.CategoryService.Create({
           data: posted,
@@ -85,7 +86,7 @@ export default class CategoriesRoutes {
 
     this.#categories.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -116,6 +117,10 @@ export default class CategoriesRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let category: Category;
         if (body.type === "json") {
@@ -127,8 +132,7 @@ export default class CategoriesRoutes {
         category.publicId = ctx.params.id;
         category.shop = ctx.state.request_data.publicId;
 
-        await CategorySchema.validate(category);
-        const posted: Category = await CategorySchema.cast(category);
+        const posted = parse(insertCategorySchema, category);
 
         const data = await Update<Category>(this.#Container, {
           id: `category_${ctx.params.id}`,
@@ -165,10 +169,7 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await CategoryLinkSchema.validate(categoryLink);
-        const posted: CategoryLink = await CategoryLinkSchema.cast(
-          categoryLink,
-        );
+        const posted = parse(insertCategoryLinkSchema, categoryLink);
 
         await this.#Container.CategoryLinkService.Link({
           data: posted,
@@ -200,10 +201,7 @@ export default class CategoriesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await CategoryLinkSchema.validate(categoryLink);
-        const posted: CategoryLink = await CategoryLinkSchema.cast(
-          categoryLink,
-        );
+        const posted = parse(insertCategoryLinkSchema, categoryLink);
 
         await this.#Container.CategoryLinkService.Delete({
           data: posted,
@@ -223,7 +221,7 @@ export default class CategoriesRoutes {
 
     this.#categories.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 

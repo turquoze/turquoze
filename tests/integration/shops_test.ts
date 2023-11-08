@@ -69,7 +69,7 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      id: ID,
+      publicId: ID,
       name: "TEST-UPDATE",
       currency: "USD",
       regions: ["EU", "GB"],

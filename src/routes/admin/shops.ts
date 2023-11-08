@@ -2,10 +2,11 @@ import { Router } from "@oakserver/oak";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Shop } from "../../utils/types.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
-import { ShopSchema, UuidSchema } from "../../utils/validator.ts";
+import { UuidSchema } from "../../utils/validator.ts";
+import { parse } from "valibot";
+import { insertShopSchema, Shop } from "../../utils/schema.ts";
 
 export default class RegionsRoutes {
   #shops: Router;
@@ -32,8 +33,7 @@ export default class RegionsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await ShopSchema.validate(shop);
-        const posted: Shop = await ShopSchema.cast(shop);
+        const posted = parse(insertShopSchema, shop);
 
         const data = await this.#Container.ShopService.Create({
           data: posted,
@@ -55,7 +55,7 @@ export default class RegionsRoutes {
 
     this.#shops.get("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
@@ -86,6 +86,10 @@ export default class RegionsRoutes {
           throw new NoBodyError("No Body");
         }
 
+        parse(UuidSchema, {
+          id: ctx.params.id,
+        });
+
         const body = ctx.request.body();
         let shop: Shop;
         if (body.type === "json") {
@@ -96,8 +100,7 @@ export default class RegionsRoutes {
 
         shop.publicId = ctx.params.id;
 
-        await ShopSchema.validate(shop);
-        const posted: Shop = await ShopSchema.cast(shop);
+        const posted = parse(insertShopSchema, shop);
 
         const data = await Update<Shop>(this.#Container, {
           id: `shop_${ctx.params.id}`,
@@ -122,7 +125,7 @@ export default class RegionsRoutes {
 
     this.#shops.delete("/:id", async (ctx) => {
       try {
-        await UuidSchema.validate({
+        parse(UuidSchema, {
           id: ctx.params.id,
         });
 
