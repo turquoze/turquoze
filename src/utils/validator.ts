@@ -1,40 +1,49 @@
-import { yup } from "../deps.ts";
-import { object, string, uuid } from "valibot";
+import {
+  any,
+  email,
+  maxLength,
+  minLength,
+  nullable,
+  object,
+  string,
+  uuid,
+} from "valibot";
 
 export const UuidSchema = object({
   id: string([uuid()]),
 });
 
-export const DiscountItemSchema = yup.object().shape({
-  code: yup.string().uuid().required(),
+export const DiscountItemSchema = object({
+  code: string([uuid()]),
 });
 
-export const SearchSchema = yup.object().shape({
-  query: yup.string().nullable(),
-  options: yup.object().nullable(),
+export const SearchSchema = object({
+  index: string(),
+  query: string(),
+  options: nullable(any()),
 });
 
-export const LoginSchema = yup.object().shape({
-  email: yup.string().email(),
-  password: yup.string().required().min(6),
-  shop: yup.string().uuid().required(),
+export const LoginSchema = object({
+  email: string([email()]),
+  password: string([minLength(6)]),
+  shop: string([uuid()]),
 });
 
-export const MetadataSchema = yup.object().shape({
-  metadata: yup.object().nullable(),
+export const MetadataSchema = object({
+  metadata: string(),
 });
 
-export const CommentSchema = yup.object().shape({
-  comment: yup.string().required().min(2).nullable(false),
+export const CommentSchema = object({
+  comment: string([minLength(2)]),
 });
 
-export const ShippingSchema = yup.object().shape({
-  name: yup.string().min(3).required(),
-  address1: yup.string().min(3).required(),
-  address2: yup.string().min(3).nullable(),
-  city: yup.string().min(3).required(),
-  state: yup.string().min(3).nullable(),
-  zip: yup.string().min(3).required(),
-  country: yup.string().min(2).max(4).required(),
-  phone: yup.string().min(5).nullable(),
+export const ShippingSchema = object({
+  name: string([minLength(3)]),
+  address1: string([minLength(3)]),
+  address2: string([minLength(3)]),
+  city: string([minLength(3)]),
+  state: string([minLength(3)]),
+  zip: string([minLength(3)]),
+  country: string([minLength(2), maxLength(4)]),
+  phone: string([minLength(5)]),
 });

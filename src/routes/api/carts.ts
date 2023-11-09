@@ -106,10 +106,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await MetadataSchema.validate(metadata);
-        const posted: Record<string, unknown> = await MetadataSchema.cast(
-          metadata,
-        );
+        const posted = parse(MetadataSchema, metadata);
 
         await this.#Container.CartService.AddMetadata({
           id: ctx.params.id,
@@ -144,10 +141,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await ShippingSchema.validate(shipping);
-        const posted: Shipping = await ShippingSchema.cast(
-          shipping,
-        );
+        const posted = parse(ShippingSchema, shipping);
 
         const data = await this.#Container.CartService.AddShipping({
           id: ctx.params.id,
@@ -182,10 +176,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await ShippingSchema.validate(billing);
-        const posted: Shipping = await ShippingSchema.cast(
-          billing,
-        );
+        const posted = parse(ShippingSchema, billing);
 
         const data = await this.#Container.CartService.AddBilling({
           id: ctx.params.id,
@@ -258,10 +249,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await CommentSchema.validate(comment);
-        const posted: { comment: string } = await CommentSchema.cast(
-          comment,
-        );
+        const posted = parse(CommentSchema, comment);
 
         await this.#Container.CartService.UpsertComment({
           id: ctx.params.id,
@@ -460,8 +448,7 @@ export default class CartRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await DiscountItemSchema.validate(item);
-        const posted: DiscountItem = await DiscountItemSchema.cast(item);
+        const posted = parse(DiscountItemSchema, item);
 
         const discount = await this.#Container.DiscountService.GetByCode({
           code: posted.code,

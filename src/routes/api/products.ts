@@ -79,10 +79,8 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        await SearchSchema.validate(query);
-        const posted: Search = await SearchSchema.cast(query);
-
-        posted.index = ctx.state.request_data.settings.meilisearch.index;
+        query.index = ctx.state.request_data.settings.meilisearch.index;
+        const posted = parse(SearchSchema, query);
 
         const client = new MeiliSearch({
           host: this.#Container.Shop.settings.meilisearch.host,

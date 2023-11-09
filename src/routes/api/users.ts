@@ -5,6 +5,7 @@ import { LoginRequest, TurquozeState } from "../../utils/types.ts";
 import { stringifyJSON } from "../../utils/utils.ts";
 import { LoginSchema } from "../../utils/validator.ts";
 import * as jose from "jose";
+import { parse } from "valibot";
 
 export default class UsersRoutes {
   #users: Router<TurquozeState>;
@@ -55,8 +56,7 @@ export default class UsersRoutes {
 
         login.shop = ctx.state.request_data.publicId;
 
-        await LoginSchema.validate(login);
-        const posted: LoginRequest = await LoginSchema.cast(login);
+        const posted = parse(LoginSchema, login);
 
         const data = await this.#Container.UserService.Login({
           email: posted.email,
@@ -109,8 +109,7 @@ export default class UsersRoutes {
 
         login.shop = ctx.state.request_data.publicId;
 
-        await LoginSchema.validate(login);
-        const posted: LoginRequest = await LoginSchema.cast(login);
+        const posted = parse(LoginSchema, login);
 
         const data = await this.#Container.UserService.UpdatePassword({
           email: posted.email,

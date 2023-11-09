@@ -1,4 +1,3 @@
-import { yup } from "../../src/deps.ts";
 import {
   DatabaseError,
   ErrorHandler,
@@ -28,10 +27,6 @@ Deno.bench("ErrorHandler - NoBodyError", { group: "errors" }, () => {
 
 Deno.bench("ErrorHandler - NoCartError", { group: "errors" }, () => {
   ErrorHandler(new NoBodyError("test db error"));
-});
-
-Deno.bench("ErrorHandler - yup.ValidationError", { group: "errors" }, () => {
-  ErrorHandler(new yup.ValidationError());
 });
 
 Deno.bench("ErrorHandler - Error", { group: "errors" }, () => {
