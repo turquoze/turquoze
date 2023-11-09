@@ -1,8 +1,8 @@
 import Container from "../src/services/mod.ts";
 import { faker } from "npm:@faker-js/faker";
-import { Category, Product } from "../src/utils/types.ts";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { Category, Product } from "../src/utils/schema.ts";
 
 const DATABASE_URL = Deno.env.get("TEST_DATABASE_URL")!;
 
@@ -20,7 +20,7 @@ try {
   const { publicId } = await container.ShopService.Create({
     data: {
       name: "Demo - Store",
-      regions: ["SE"],
+      regions: "SE",
       url: "https://shop.example.com",
       shippingId: "",
       paymentId: undefined,
@@ -33,11 +33,9 @@ try {
           index: "products",
         },
       },
-      search_index: "",
+      searchIndex: "",
       id: 0,
       publicId: crypto.randomUUID(),
-      _role: "WEBSITE",
-      _signKey: new Uint8Array(),
     },
   });
 
@@ -45,7 +43,7 @@ try {
   const productArr: Array<Product> = [];
 
   for (let index = 0; index < 10; index++) {
-    categoryArr.push(GenerateCategory(publicId));
+    categoryArr.push(GenerateCategory(publicId!));
   }
 
   const categoryPromises = categoryArr.map((category) => {
@@ -58,7 +56,7 @@ try {
   const categories = await Promise.all(categoryPromises);
 
   for (let index = 0; index < 100; index++) {
-    productArr.push(GenerateProduct(publicId));
+    productArr.push(GenerateProduct(publicId!));
   }
 
   const productPromises = productArr.map((product) => {
@@ -75,7 +73,7 @@ try {
       address: faker.address.streetAddress(),
       country: faker.address.countryCode("alpha-2"),
       name: faker.address.cityName(),
-      shop: publicId,
+      shop: publicId!,
       id: 0,
       publicId: "",
     },
@@ -83,7 +81,7 @@ try {
 
   const inventoryPromises = products.map((product) => {
     return GenerateInventoryItem(
-      warehouse.publicId,
+      warehouse.publicId!,
       product.publicId!,
       faker.datatype.number({ max: 800 }),
     );
@@ -112,7 +110,7 @@ try {
 
   const categoryLinkPromises = result.map((arr, i) => {
     return arr.map((product) => {
-      return GenerateCategoryLink(product.publicId, categories[i].publicId);
+      return GenerateCategoryLink(product.publicId, categories[i].publicId!);
     });
   });
 

@@ -1,6 +1,5 @@
 import { assertObjectMatch } from "../test_deps.ts";
 import { DatabaseError, ErrorHandler } from "../../src/utils/errors.ts";
-import { yup } from "../../src/deps.ts";
 
 Deno.test("ErrorHandler", async (t) => {
   await t.step({
@@ -21,17 +20,6 @@ Deno.test("ErrorHandler", async (t) => {
       assertObjectMatch(data, {
         code: 500,
         message: "Error with your request on our side",
-      });
-    },
-  });
-
-  await t.step({
-    name: "ValidationError",
-    fn: () => {
-      const data = ErrorHandler(new yup.ValidationError());
-      assertObjectMatch(data, {
-        code: 400,
-        message: "Validation error",
       });
     },
   });

@@ -1,4 +1,4 @@
-import { yup } from "../deps.ts";
+import { flatten, ValiError } from "valibot";
 import { ErrorResponse } from "./types.ts";
 
 export class DatabaseError extends Error {
@@ -32,10 +32,11 @@ export function ErrorHandler(error: Error): ErrorResponse {
       code: 500,
       message: "Error with your request on our side",
     };
-  } else if (error instanceof yup.ValidationError) {
+  } else if (error instanceof ValiError) {
+    const errors = flatten(error);
     return {
       code: 400,
-      message: error.errors[0] ?? "Validation error",
+      message: JSON.stringify(errors) ?? "Validation error",
     };
   } else if (error instanceof NoBodyError) {
     return {
