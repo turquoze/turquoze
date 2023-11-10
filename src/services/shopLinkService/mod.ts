@@ -47,8 +47,38 @@ export default class ShopLinkService implements IShopLinkService {
         sql`SELECT shops.*, shopslink.role FROM shopslink RIGHT JOIN shops ON shopslink.shop = shops.public_id WHERE shopslink.admin = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
       );
 
-      //@ts-ignore not on type
-      return result[0];
+      const shopLinks = result.map((data) => {
+        const shopLink: ShopLinkData = {
+          //@ts-ignore TS2578
+          id: data.id,
+          //@ts-ignore TS2578
+          publicId: data.public_id,
+          //@ts-ignore TS2578
+          currency: data.currency,
+          //@ts-ignore TS2578
+          name: data.name,
+          //@ts-ignore TS2578
+          regions: data.regions,
+          //@ts-ignore TS2578
+          search_index: data.search_index,
+          //@ts-ignore TS2578
+          secret: data.secret,
+          //@ts-ignore TS2578
+          settings: data.settings,
+          //@ts-ignore TS2578
+          url: data.url,
+          //@ts-ignore TS2578
+          paymentId: data.payment_id,
+          //@ts-ignore TS2578
+          shippingId: data.shipping_id,
+          //@ts-ignore TS2578
+          role: data.role,
+        };
+
+        return shopLink;
+      });
+
+      return shopLinks;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

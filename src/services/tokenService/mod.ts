@@ -18,8 +18,15 @@ export default class TokenService implements ITokenService {
         sql`INSERT INTO tokens (id, name, role, secret, shop) VALUES (${params.data.id}, ${params.data.name}, ${params.data.role}, crypt(${params.data.secret}, gen_salt('bf')), ${params.data.shop}) RETURNING id`,
       );
 
-      //@ts-ignore not on type
-      return result[0];
+      const token: Token = {
+        //@ts-ignore TS2578
+        id: result[0].id,
+        name: "",
+        secret: "__REDACTED__",
+        shop: "",
+      };
+
+      return token;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

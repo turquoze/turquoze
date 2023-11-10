@@ -45,8 +45,24 @@ export default class CategoryLinkService implements ICategoryLinkService {
         sql`SELECT products.* FROM categorieslink RIGHT JOIN products ON categorieslink.product = products.public_id WHERE categorieslink.category = ${params.id} LIMIT ${params.limit} OFFSET ${params.offset}`,
       );
 
+      const products = result.map((product) => {
+        return {
+          publicId: product.public_id,
+          createdAt: product.created_at,
+          active: product.active,
+          parent: product.parent,
+          title: product.title,
+          shortDescription: product.short_description,
+          longDescription: product.longDescription,
+          images: product.images,
+          shop: product.shop,
+          id: product.id,
+          slug: product.slug,
+        };
+      });
+
       //@ts-ignore not on type
-      return result;
+      return products;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
