@@ -36,8 +36,22 @@ export default class TaxLinkService implements ITaxLinkService {
         sql`SELECT taxes.* FROM taxeslink RIGHT JOIN taxes ON taxeslink.tax_id = taxes.public_id WHERE taxeslink.product_id = ${params.productId} AND taxeslink.country = ${params.country} LIMIT 1`,
       );
 
-      //@ts-ignore not on type
-      return result[0];
+      const tax: Tax = {
+        //@ts-ignore TS2578
+        name: result[0].name,
+        //@ts-ignore TS2578
+        createdAt: result[0].created_at,
+        //@ts-ignore TS2578
+        publicId: result[0].public_id,
+        //@ts-ignore TS2578
+        value: result[0].value,
+        //@ts-ignore TS2578
+        shop: result[0].shop,
+        //@ts-ignore TS2578
+        type: result[0].type,
+      };
+
+      return tax;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

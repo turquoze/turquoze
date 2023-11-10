@@ -67,8 +67,25 @@ export default class CartService implements IInventoryService {
         sql`SELECT inventories.*, warehouses.name AS warehouse_name FROM inventories INNER JOIN warehouses ON inventories.warehouse = warehouses.public_id WHERE inventories.product = ${params.id}`,
       );
 
-      //@ts-ignore not on type
-      return result;
+      const inventories = result.map((data) => {
+        const inventory: Inventory = {
+          //@ts-ignore TS2578
+          product: data.product,
+          //@ts-ignore TS2578
+          warehouse: data.warehouse,
+          //@ts-ignore TS2578
+          quantity: data.quantity,
+          //@ts-ignore TS2578
+          publicId: data.public_id,
+          //@ts-ignore TS2578
+          createdAt: data.created_at,
+          warehouse_name: data.warehouse_name,
+        };
+
+        return inventory;
+      });
+
+      return inventories;
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
