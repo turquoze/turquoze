@@ -59,7 +59,7 @@ export default class RegionsRoutes {
           id: ctx.params.id,
         });
 
-        const data = await Get<Shop>(this.#Container, {
+        const data = await Get(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.ShopService.Get({
             id: ctx.params.id,
@@ -102,7 +102,7 @@ export default class RegionsRoutes {
 
         const posted = parse(insertShopSchema, shop);
 
-        const data = await Update<Shop>(this.#Container, {
+        const data = await Update(this.#Container, {
           id: `shop_${ctx.params.id}`,
           promise: this.#Container.ShopService.Update({
             data: posted,

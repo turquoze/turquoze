@@ -5,7 +5,6 @@ import {
   PaymentRequestResponse,
   PaymentValidation,
   PriceCalculation,
-  Shop,
 } from "../../utils/types.ts";
 import ICartService from "../interfaces/cartService.ts";
 import IOrderService from "../interfaces/orderService.ts";
@@ -15,7 +14,7 @@ import IPluginService from "../interfaces/pluginService.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import IPriceService from "../interfaces/priceService.ts";
 import IPriceCalculatorService from "../interfaces/priceCalculatorService.ts";
-import { Cart, CartItem, Plugin } from "../../utils/schema.ts";
+import { Cart, CartItem, Plugin, Shop } from "../../utils/schema.ts";
 
 export default class PaymentService implements IPaymentService {
   #CartService: ICartService;
@@ -58,7 +57,7 @@ export default class PaymentService implements IPaymentService {
       const price = await this.Price({
         items: cart.items,
         cartId: cart.publicId!,
-        currency: params.data.shop.currency,
+        currency: params.data.shop.currency!,
       });
 
       const paymentProvider = await this.#PluginService.Get({
@@ -100,7 +99,7 @@ export default class PaymentService implements IPaymentService {
           id: 0,
           paymentStatus: "WAITING",
           priceTotal: parseInt(price.price.toString()),
-          shop: params.data.shop.publicId,
+          shop: params.data.shop.publicId!,
           products: JSON.stringify(orderProducts),
         },
       });

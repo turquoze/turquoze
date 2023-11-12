@@ -1,26 +1,9 @@
 import type { SearchParams } from "meilisearch";
 import Container from "../services/mod.ts";
-import * as jose from "jose";
-import { Product } from "./schema.ts";
+import type { Product, Shop } from "./schema.ts";
 
 export interface DiscountItem {
   code: string;
-}
-
-export interface Shop {
-  id: number;
-  publicId: string;
-  regions: Array<string>;
-  paymentId?: string;
-  shippingId?: string;
-  currency: string;
-  name: string;
-  url: string;
-  search_index: string;
-  secret: string;
-  settings: Settings;
-  _signKey: Uint8Array | jose.KeyLike;
-  _role: TurquozeRole;
 }
 
 export interface ShopLinkData extends Shop {

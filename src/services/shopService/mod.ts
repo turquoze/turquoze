@@ -1,8 +1,7 @@
 import IShopService from "../interfaces/shopService.ts";
-import { Shop } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { shops } from "../../utils/schema.ts";
+import { DBShop as Shop, shops } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class ShopService implements IShopService {
@@ -21,7 +20,7 @@ export default class ShopService implements IShopService {
         paymentId: params.data.paymentId,
         shippingId: params.data.shippingId,
         url: params.data.url,
-        searchIndex: params.data.search_index,
+        searchIndex: params.data.searchIndex,
         settings: params.data.settings,
       }).returning();
 
@@ -58,10 +57,10 @@ export default class ShopService implements IShopService {
           paymentId: params.data.paymentId,
           shippingId: params.data.shippingId,
           url: params.data.url,
-          searchIndex: params.data.search_index,
+          searchIndex: params.data.searchIndex,
           settings: params.data.settings,
         })
-        .where(eq(shops.publicId, params.data.publicId))
+        .where(eq(shops.publicId, params.data.publicId!))
         .returning();
 
       //@ts-ignore not on type

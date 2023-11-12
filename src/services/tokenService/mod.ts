@@ -1,9 +1,9 @@
-import { Shop, TurquozeRole } from "../../utils/types.ts";
+import { TurquozeRole } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { sql } from "drizzle-orm";
-import { Token, tokens } from "../../utils/schema.ts";
+import { DBShop as Shop, Token, tokens } from "../../utils/schema.ts";
 import { eq } from "drizzle-orm";
 
 export default class TokenService implements ITokenService {
@@ -43,33 +43,33 @@ export default class TokenService implements ITokenService {
       );
 
       const shop: Shop = {
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         id: result[0].id,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         publicId: result[0].public_id,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         currency: result[0].currency,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         name: result[0].name,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         regions: result[0].regions,
-        // @ts-expect-error not on type
-        search_index: result[0].search_index,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
+        searchIndex: result[0].search_index,
+        //@ts-ignore not on type
         secret: result[0].secret,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         settings: result[0].settings,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         url: result[0].url,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         paymentId: result[0].payment_id,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         shippingId: result[0].shipping_id,
       };
 
       return {
         shop: shop,
-        // @ts-expect-error not on type
+        //@ts-ignore not on type
         role: result[0].role,
       };
     } catch (error) {

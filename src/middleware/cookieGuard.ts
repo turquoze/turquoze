@@ -1,8 +1,9 @@
 import { Context } from "@oakserver/oak";
 import Container from "../services/mod.ts";
-import { Shop, TurquozeState } from "../utils/types.ts";
+import { TurquozeState } from "../utils/types.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
 import * as jose from "jose";
+import { Shop } from "../utils/schema.ts";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export const CookieGuard =

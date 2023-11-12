@@ -54,7 +54,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        login.shop = ctx.state.request_data.publicId;
+        login.shop = ctx.state.request_data.publicId!;
 
         const posted = parse(LoginSchema, login);
 
@@ -107,7 +107,7 @@ export default class UsersRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        login.shop = ctx.state.request_data.publicId;
+        login.shop = ctx.state.request_data.publicId!;
 
         const posted = parse(LoginSchema, login);
 

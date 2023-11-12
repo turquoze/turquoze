@@ -27,6 +27,8 @@ import {
 } from "valibot";
 
 import { sql } from "drizzle-orm";
+import { TurquozeRole } from "./types.ts";
+import type { KeyLike } from "jose";
 export const keyStatus = pgEnum("key_status", [
   "expired",
   "invalid",
@@ -473,8 +475,13 @@ export const shops = pgTable("shops", {
 //@ts-ignore TS2345
 export const insertShopSchema = createInsertSchema(shops, {
   id: optional(number()),
+  regions: array(string())
 });
-export type Shop = Output<typeof insertShopSchema>;
+export type DBShop = Output<typeof insertShopSchema>;
+export type Shop = DBShop & {
+  _signKey: Uint8Array | KeyLike;
+  _role: TurquozeRole;
+};
 
 export const categorieslink = pgTable("categorieslink", {
   category: uuid("category").notNull().references(() => categories.publicId),

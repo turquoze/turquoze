@@ -6,14 +6,14 @@ export default function addEvents(container: Container) {
     ["Product.Created", "Product.Updated"],
     (_event: TurquozeEvent, id: string) => {
       container.ProductService.Get({ id }).then((product) => {
-        const index = container.Shop.search_index;
+        const index = container.Shop.searchIndex;
         const productToIndex = {
           ...product,
         };
         delete productToIndex.publicId;
 
         container.SearchService.ProductIndex({
-          index: index,
+          index: index!,
           //@ts-ignore not on type
           products: [productToIndex],
         }).then((task) => {
@@ -27,9 +27,9 @@ export default function addEvents(container: Container) {
     ["Product.Deleted"],
     (_event: TurquozeEvent, id: string) => {
       container.ProductService.Get({ id }).then((product) => {
-        const index = container.Shop.search_index;
+        const index = container.Shop.searchIndex;
         container.SearchService.ProductRemove({
-          index: index,
+          index: index!,
           id: product.publicId!.toString(),
         }).then((task) => {
           console.info(task);

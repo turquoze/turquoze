@@ -25,7 +25,7 @@ export default class UsersRoutes {
         const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
 
         const data = await this.#Container.UserService.GetMany({
-          shop: ctx.state.request_data.publicId,
+          shop: ctx.state.request_data.publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });

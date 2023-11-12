@@ -21,10 +21,9 @@ Deno.test("ShopService", {
             currency: "EUR",
             name: "TEST",
             regions: ["SE", "NO", "DK", "FI"],
-            search_index: "test",
+            searchIndex: "test",
             secret: "test",
             url: "https://example.com",
-            _signKey: new Uint8Array(),
             settings: {
               meilisearch: {
                 api_key: "",
@@ -32,11 +31,10 @@ Deno.test("ShopService", {
                 index: "",
               },
             },
-            _role: "VIEWER",
           },
         });
 
-        ID = shop.publicId;
+        ID = shop.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -52,7 +50,6 @@ Deno.test("ShopService", {
     fn: async () => {
       try {
         await region.Create({
-          // @ts-expect-error want to test
           data: {
             publicId: "",
           },
@@ -110,10 +107,9 @@ Deno.test("ShopService", {
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
-            search_index: "test",
+            searchIndex: "test",
             secret: "test",
             url: "https://example.com",
-            _signKey: new Uint8Array(),
             settings: {
               meilisearch: {
                 api_key: "",
@@ -121,12 +117,11 @@ Deno.test("ShopService", {
                 index: "",
               },
             },
-            _role: "VIEWER",
             shippingId: "",
           },
         });
 
-        ID = data.publicId;
+        ID = data.publicId!;
         assert(true);
       } catch {
         assert(false);
@@ -148,10 +143,9 @@ Deno.test("ShopService", {
             currency: "EUR",
             name: "TEST-Update",
             regions: ["SE"],
-            search_index: "test",
+            searchIndex: "test",
             secret: "test",
             url: "https://example.com",
-            _signKey: new Uint8Array(),
             settings: {
               meilisearch: {
                 api_key: "",
@@ -159,7 +153,6 @@ Deno.test("ShopService", {
                 index: "",
               },
             },
-            _role: "VIEWER",
             shippingId: "",
           },
         });
