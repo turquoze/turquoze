@@ -1,8 +1,9 @@
 import { Context } from "@oakserver/oak";
 import Container from "../services/mod.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
-import { Shop, ShopLinkData, TurquozeState } from "../utils/types.ts";
+import { ShopLinkData, TurquozeState } from "../utils/types.ts";
 import * as jose from "jose";
+import { Shop } from "../utils/schema.ts";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export const AuthGuard =
@@ -20,15 +21,18 @@ export const AuthGuard =
           tokenSecret,
         });
 
+        const shop = data.shop as Shop;
+
         const signKey = await jose.importJWK(
-          JSON.parse(data.shop.secret).pk,
+          JSON.parse(shop.secret!).pk,
           "PS256",
         );
-        data.shop._signKey = signKey;
-        data.shop._role = data.role;
-        container.Shop = data.shop;
 
-        ctx.state.request_data = data.shop;
+        shop._signKey = signKey;
+        shop._role = data.role;
+        container.Shop = shop;
+
+        ctx.state.request_data = shop;
         await next();
       } else if (authToken != null && shopId != null) {
         const result = await jose.jwtVerify(
@@ -51,19 +55,19 @@ export const AuthGuard =
         });
 
         const signKey = await jose.importJWK(
-          JSON.parse(data.secret).pk,
+          JSON.parse(data.secret!).pk,
           "PS256",
         );
 
         const shop: Shop = {
           _role: match.role,
           _signKey: signKey,
-          currency: data.currency,
+          currency: data.currency!,
           id: data.id,
           name: data.name,
           publicId: data.publicId,
           regions: data.regions,
-          search_index: data.search_index,
+          searchIndex: data.searchIndex,
           secret: data.secret,
           settings: data.settings,
           url: data.url,

@@ -25,7 +25,7 @@ export default class WarehousesRoutes {
         const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
 
         const data = await this.#Container.WarehouseService.GetMany({
-          shop: ctx.state.request_data.publicId,
+          shop: ctx.state.request_data.publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
@@ -58,7 +58,7 @@ export default class WarehousesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        warehouse.shop = ctx.state.request_data.publicId;
+        warehouse.shop = ctx.state.request_data.publicId!;
 
         const posted = parse(insertWarehouseSchema, warehouse);
 
@@ -97,7 +97,7 @@ export default class WarehousesRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        warehouse.shop = ctx.state.request_data.publicId;
+        warehouse.shop = ctx.state.request_data.publicId!;
         warehouse.publicId = ctx.params.id;
 
         const posted = parse(insertWarehouseSchema, warehouse);

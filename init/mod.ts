@@ -20,7 +20,7 @@ try {
   const { publicId } = await container.ShopService.Create({
     data: {
       name: "Demo - Store",
-      regions: "SE",
+      regions: ["SE"],
       url: "https://shop.example.com",
       shippingId: "",
       paymentId: undefined,

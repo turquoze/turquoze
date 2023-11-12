@@ -48,9 +48,9 @@ import IOrganizationService from "./interfaces/organizationService.ts";
 import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
-import { Shop } from "../utils/types.ts";
 import { Redis } from "@upstash/redis";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { Shop } from "../utils/schema.ts";
 
 export default class Container {
   #db: PostgresJsDatabase;
@@ -129,7 +129,7 @@ export default class Container {
     currency: "",
     name: "",
     url: "",
-    search_index: "",
+    searchIndex: "",
     secret: "",
     settings: {
       meilisearch: {

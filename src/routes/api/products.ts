@@ -27,7 +27,7 @@ export default class ProductsRoutes {
         const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
 
         const data = await this.#Container.ProductService.GetMany({
-          shop: ctx.state.request_data.publicId,
+          shop: ctx.state.request_data.publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
@@ -79,11 +79,14 @@ export default class ProductsRoutes {
           throw new NoBodyError("Wrong content-type");
         }
 
-        query.index = ctx.state.request_data.settings.meilisearch.index;
+        //@ts-ignore not on type
+        query.index = ctx.state.request_data.settings!.meilisearch.index;
         const posted = parse(SearchSchema, query);
 
         const client = new MeiliSearch({
+          //@ts-ignore not on type
           host: this.#Container.Shop.settings.meilisearch.host,
+          //@ts-ignore not on type
           apiKey: this.#Container.Shop.settings.meilisearch.api_key,
         });
 

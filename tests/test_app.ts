@@ -9,6 +9,7 @@ const container = new Container(dbClient, redisClient);
 container.SearchService = new SearchService(searchClient);
 
 const app = new Application<TurquozeState>();
+//@ts-ignore not on type
 container.Shop.settings.meilisearch = {
   api_key: MEILIAPIKEY!,
   host: MEILIHOST!,
@@ -25,7 +26,7 @@ app.use(async (ctx, next) => {
     currency: "SEK",
     name: "test",
     url: "https://example.com",
-    search_index: MEILIINDEX!,
+    searchIndex: MEILIINDEX!,
     secret: "test",
     _signKey: new Uint8Array(),
     settings: {

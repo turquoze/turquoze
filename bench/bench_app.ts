@@ -20,7 +20,7 @@ app.use(async (ctx, next) => {
     currency: "SEK",
     name: "test",
     url: "https://example.com",
-    search_index: MEILIINDEX!,
+    searchIndex: MEILIINDEX!,
     secret: "test",
     _signKey: new Uint8Array(),
     settings: {

@@ -1,8 +1,8 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import ShopsRoutes from "../../src/routes/admin/shops.ts";
-import { Shop } from "../../src/utils/types.ts";
 import app from "../test_app.ts";
+import { Shop } from "../../src/utils/schema.ts";
 
 let ID = "";
 
@@ -39,7 +39,7 @@ Deno.test({
     assert(response?.ok);
 
     const { regions }: { regions: Shop } = await response?.json();
-    ID = regions.publicId;
+    ID = regions.publicId!;
   },
 });
 
