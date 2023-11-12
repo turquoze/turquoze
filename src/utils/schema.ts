@@ -475,7 +475,7 @@ export const shops = pgTable("shops", {
 //@ts-ignore TS2345
 export const insertShopSchema = createInsertSchema(shops, {
   id: optional(number()),
-  regions: array(string())
+  regions: array(string()),
 });
 export type DBShop = Output<typeof insertShopSchema>;
 export type Shop = DBShop & {
