@@ -1,12 +1,12 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import PricesRoutes from "../../src/routes/admin/prices.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Price } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new PricesRoutes(app.state.container).routes());
+app.route("/prices", new PricesRoutes(container).routes());
 
 Deno.test({
   name: "Prices - Create | ok",
@@ -19,7 +19,7 @@ Deno.test({
       product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/prices`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -43,7 +43,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/prices`, {
         method: "GET",
       }),
@@ -59,7 +59,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/prices/${ID}`, {
         method: "GET",
       }),
@@ -83,7 +83,7 @@ Deno.test({
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/prices/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -107,7 +107,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/prices/${ID}`, {
         method: "DELETE",
       }),

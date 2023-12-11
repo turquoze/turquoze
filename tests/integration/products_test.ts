@@ -4,16 +4,16 @@ import ProductsRoutes from "../../src/routes/api/products.ts";
 import ProductsAdminRoutes from "../../src/routes/admin/products.ts";
 import PricesRoutes from "../../src/routes/admin/prices.ts";
 import { Search } from "../../src/utils/types.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Price, Product } from "../../src/utils/schema.ts";
 
 let ID = "";
 let PriceID = "";
 const SLUG = "test1";
 
-app.use(new ProductsRoutes(app.state.container).routes());
-app.use(new ProductsAdminRoutes(app.state.container).routes());
-app.use(new PricesRoutes(app.state.container).routes());
+app.route("/products", new ProductsRoutes(container).routes());
+app.route("/products", new ProductsAdminRoutes(container).routes());
+app.route("/prices", new PricesRoutes(container).routes());
 
 Deno.test({
   name: "Products - Create | ok",
@@ -30,7 +30,7 @@ Deno.test({
       slug: "test1",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -51,7 +51,7 @@ Deno.test({
       product: products.publicId!,
     });
 
-    const responsePrice = await app.handle(
+    const responsePrice = await app.request(
       new Request(`http://127.0.0.1/prices`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products`, {
         method: "GET",
       }),
@@ -91,7 +91,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products/byslug/${SLUG}`, {
         method: "GET",
       }),
@@ -107,7 +107,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products/${ID}`, {
         method: "GET",
       }),
@@ -136,7 +136,7 @@ Deno.test({
       slug: "test1",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -170,7 +170,7 @@ Deno.test({
 
     const data = JSON.stringify(body);
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products/search`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -191,7 +191,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const responsePrice = await app.handle(
+    const responsePrice = await app.request(
       new Request(`http://127.0.0.1/prices/${PriceID}`, {
         method: "DELETE",
       }),
@@ -199,7 +199,7 @@ Deno.test({
 
     assert(responsePrice?.ok);
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/products/${ID}`, {
         method: "DELETE",
       }),

@@ -1,12 +1,12 @@
 import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
 
 import CartsRoutes from "../../src/routes/api/carts.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Cart, CartItem } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new CartsRoutes(app.state.container).routes());
+app.route("/carts", new CartsRoutes(container).routes());
 
 Deno.test({
   name: "Carts - Create | ok",
@@ -16,7 +16,7 @@ Deno.test({
   async fn() {
     const data = JSON.stringify({});
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/carts`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -40,7 +40,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/carts/${ID}`, {
         method: "GET",
       }),
@@ -66,7 +66,7 @@ Deno.test({
       quantity: 2,
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/carts/${ID}/items`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -87,7 +87,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/carts/${ID}/items`, {
         method: "GET",
       }),
@@ -115,7 +115,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(
         `http://127.0.0.1/carts/${ID}/items/d72f032b-b91b-4dbf-811c-a01ab0938358`,
         {
@@ -144,7 +144,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(
         `http://127.0.0.1/carts/${ID}/items/00669ffc-bc13-47b1-aec6-f524611a657f`,
         {
@@ -163,7 +163,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/carts/${ID}`, {
         method: "DELETE",
       }),

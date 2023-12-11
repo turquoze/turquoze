@@ -1,12 +1,12 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import InventoriesRoutes from "../../src/routes/admin/inventories.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Inventory } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new InventoriesRoutes(app.state.container).routes());
+app.route("/inventories", new InventoriesRoutes(container).routes());
 
 Deno.test({
   name: "Inventories - Create | ok",
@@ -20,7 +20,7 @@ Deno.test({
       warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/inventories`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -44,7 +44,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/inventories/${ID}`, {
         method: "GET",
       }),
@@ -69,7 +69,7 @@ Deno.test({
       warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/inventories/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -93,7 +93,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/inventories/${ID}`, {
         method: "DELETE",
       }),

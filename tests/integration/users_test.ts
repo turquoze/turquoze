@@ -1,12 +1,12 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import UsersRoutes from "../../src/routes/admin/users.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { User } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new UsersRoutes(app.state.container).routes());
+app.route("/users", new UsersRoutes(container).routes());
 
 Deno.test({
   name: "Users - Create | ok",
@@ -21,7 +21,7 @@ Deno.test({
       notActive: false,
     };
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/users`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -45,7 +45,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/users`, {
         method: "GET",
       }),
@@ -61,7 +61,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/users/${ID}`, {
         method: "GET",
       }),
@@ -88,7 +88,7 @@ Deno.test({
       notActive: false,
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/users/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
