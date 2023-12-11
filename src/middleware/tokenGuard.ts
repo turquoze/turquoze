@@ -1,12 +1,11 @@
-import { Context } from "@oakserver/oak";
+import type { Context, Next } from "hono";
 import { SHARED_SECRET } from "../utils/secrets.ts";
-import { TurquozeState } from "../utils/types.ts";
 import * as jose from "jose";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
-export const TokenGuard =
-  () => async (ctx: Context<TurquozeState>, next: () => Promise<unknown>) => {
-    const authToken = ctx.request.headers.get("Authorization");
+export default function TokenGuard() {
+  return async (ctx: Context, next: Next) => {
+    const authToken = ctx.req.header("Authorization");
 
     try {
       if (authToken != undefined && authToken != null) {
@@ -17,24 +16,23 @@ export const TokenGuard =
           SHARED_SECRET_KEY,
         );
 
-        ctx.state.adminId = result.payload.adminId as string;
+        const adminId = result.payload.adminId as string;
+
+        ctx.set("adminId", adminId);
         await next();
       } else {
-        ctx.response.status = 401;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           msg: "Not allowed",
           error: "NO_TOKEN",
-        });
+        }, 401);
       }
     } catch (_error) {
-      ctx.response.status = 403;
-      ctx.response.headers.set("content-type", "application/json");
-      ctx.response.body = JSON.stringify({
+      ctx.res.headers.set("content-type", "application/json");
+      return ctx.json({
         msg: "Not allowed",
         error: "NO_PERMISSION",
-      });
+      }, 403);
     }
   };
-
-export default TokenGuard;
+}

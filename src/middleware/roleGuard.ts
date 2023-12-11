@@ -1,21 +1,20 @@
-import type { Context } from "@oakserver/oak";
-import { TurquozeRole, TurquozeState } from "../utils/types.ts";
+import { TurquozeRole } from "../utils/types.ts";
+import type { Context, Next } from "hono";
 
-export const RoleGuard =
-  (role: TurquozeRole) =>
-  async (ctx: Context<TurquozeState>, next: () => Promise<unknown>) => {
-    const userRole = ctx.state.request_data._role;
+export default function RoleGuard(role: TurquozeRole) {
+  return async (ctx: Context, next: Next) => {
+    const userRole = ctx.get("request_data")._role;
     if (isAllowed(role, userRole)) {
       await next();
     } else {
-      ctx.response.status = 403;
-      ctx.response.headers.set("content-type", "application/json");
-      ctx.response.body = JSON.stringify({
+      ctx.res.headers.set("content-type", "application/json");
+      return ctx.json({
         msg: "Not allowed",
         error: "NO_PERMISSION",
-      });
+      }, 403);
     }
   };
+}
 
 function isAllowed(role: TurquozeRole, userRole: TurquozeRole): boolean {
   if (role == "SUPERADMIN") {
@@ -55,5 +54,3 @@ function isAllowed(role: TurquozeRole, userRole: TurquozeRole): boolean {
 
   return false;
 }
-
-export default RoleGuard;

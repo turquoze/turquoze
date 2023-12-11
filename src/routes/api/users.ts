@@ -1,60 +1,49 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { LoginRequest, TurquozeState } from "../../utils/types.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 import { LoginSchema } from "../../utils/validator.ts";
 import * as jose from "jose";
 import { parse } from "valibot";
+import { Shop } from "../../utils/schema.ts";
 
 export default class UsersRoutes {
-  #users: Router<TurquozeState>;
+  #users: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#users = new Router({
-      prefix: "/users",
-    });
+    this.#users = new Hono();
 
     this.#users.get("/me", async (ctx) => {
       try {
         const result = await jose.jwtVerify(
+          //TODO: fix
           "",
-          ctx.state.request_data._signKey,
+          //@ts-expect-error not on type
+          ctx.get("request_data")._signKey,
         );
         //@ts-expect-error err
         const id = result.payload.user.publicId;
         const data = await this.#Container.UserService.Get({ id });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        ctx.json({
           users: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#users.post("/login", async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let login: LoginRequest;
-        if (body.type === "json") {
-          login = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        login.shop = ctx.state.request_data.publicId!;
+        const login = await ctx.req.json();
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
+        login.shop = request_data.publicId!;
 
         const posted = parse(LoginSchema, login);
 
@@ -77,37 +66,26 @@ export default class UsersRoutes {
           .setAudience("urn:turquoze:user")
           .setNotBefore("1s")
           .setExpirationTime("1h")
-          .sign(ctx.state.request_data._signKey);
+          .sign(request_data._signKey);
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           token: jwt,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#users.put("/update-password", async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let login: LoginRequest;
-        if (body.type === "json") {
-          login = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        login.shop = ctx.state.request_data.publicId!;
+        const login = await ctx.req.json();
+        //@ts-expect-error not on type
+        login.shop = ctx.get("request_data").publicId!;
 
         const posted = parse(LoginSchema, login);
 
@@ -117,22 +95,21 @@ export default class UsersRoutes {
           shop: posted.shop,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           users: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#users.routes();
+    return this.#users;
   }
 }

@@ -1,24 +1,23 @@
-import { Application } from "@oakserver/oak";
-import type { TurquozeState } from "../src/utils/types.ts";
 import Container from "../src/services/mod.ts";
 import { dbClient, redis as redisClient, searchClient } from "./test_utils.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "./test_secrets.ts";
 import SearchService from "../src/services/searchService/mod.ts";
+import { Hono } from "hono";
 
-const container = new Container(dbClient, redisClient);
-container.SearchService = new SearchService(searchClient);
+const localContainer = new Container(dbClient, redisClient);
+localContainer.SearchService = new SearchService(searchClient);
 
-const app = new Application<TurquozeState>();
+const app = new Hono();
 //@ts-ignore not on type
-container.Shop.settings.meilisearch = {
+localContainer.Shop.settings.meilisearch = {
   api_key: MEILIAPIKEY!,
   host: MEILIHOST!,
   index: MEILIINDEX!,
 };
-app.state.container = container;
+export const container = localContainer;
 
-app.use(async (ctx, next) => {
-  ctx.state.request_data = {
+app.use("*", async (ctx, next) => {
+  const shop = {
     id: 0,
     publicId: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
     regions: ["SE"],
@@ -39,6 +38,8 @@ app.use(async (ctx, next) => {
     _role: "SUPERADMIN",
     shippingId: "",
   };
+  //@ts-expect-error not on type
+  ctx.set("request_data", shop);
   await next();
 });
 

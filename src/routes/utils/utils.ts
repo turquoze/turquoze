@@ -1,11 +1,13 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import ping from "./ping.ts";
-import app from "../../app.ts";
+import Container from "../../services/mod.ts";
 
-const utils = new Router({
-  prefix: "/utils",
-});
+function utils(container: Container) {
+  const _utils = new Hono();
 
-utils.use(new ping(app.state.container).routes());
+  _utils.route("/ping", new ping(container).routes());
+
+  return _utils;
+}
 
 export default utils;

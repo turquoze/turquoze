@@ -1,12 +1,12 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import OrdersRoutes from "../../src/routes/admin/orders.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Order } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new OrdersRoutes(app.state.container).routes());
+app.route("/orders", new OrdersRoutes(container).routes());
 
 Deno.test({
   name: "Orders - Get Many | ok",
@@ -14,7 +14,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/orders`, {
         method: "Get",
       }),
@@ -36,7 +36,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/orders/${ID}`, {
         method: "GET",
       }),

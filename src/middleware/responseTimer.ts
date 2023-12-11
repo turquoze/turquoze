@@ -1,13 +1,10 @@
-import type { Context } from "@oakserver/oak";
+import type { Context, Next } from "hono";
 
-export const ResponseTimer = async (
-  ctx: Context,
-  next: () => Promise<unknown>,
-) => {
-  const start = Date.now();
-  await next();
-  const ms = Date.now() - start;
-  ctx.response.headers.set("X-Response-Time", `${ms}ms`);
-};
-
-export default ResponseTimer;
+export default function ResponseTimer() {
+  return async (ctx: Context, next: Next) => {
+    const start = Date.now();
+    await next();
+    const ms = Date.now() - start;
+    ctx.res.headers.set("X-Response-Time", `${ms}ms`);
+  };
+}

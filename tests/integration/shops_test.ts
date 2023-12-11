@@ -1,12 +1,12 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import ShopsRoutes from "../../src/routes/admin/shops.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Shop } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new ShopsRoutes(app.state.container).routes());
+app.route("/shops", new ShopsRoutes(container).routes());
 
 Deno.test({
   name: "Shops - Create | ok",
@@ -25,7 +25,7 @@ Deno.test({
       },
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/shops`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -49,7 +49,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/shops/${ID}`, {
         method: "GET",
       }),
@@ -75,7 +75,7 @@ Deno.test({
       regions: ["EU", "GB"],
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/shops/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/shops/${ID}`, {
         method: "DELETE",
       }),

@@ -1,24 +1,21 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import type Container from "../../services/mod.ts";
-import { TurquozeState } from "../../utils/types.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import TokenGuard from "../../middleware/tokenGuard.ts";
 
 export default class DashBoardRoutes {
-  #dashboard: Router<TurquozeState>;
+  #dashboard: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#dashboard = new Router<TurquozeState>({
-      prefix: "/dashboard",
-    });
+    this.#dashboard = new Hono();
 
     this.#dashboard.use(TokenGuard());
 
     this.#dashboard.get("/", async (ctx) => {
       try {
-        const adminId = ctx.state.adminId!;
+        //@ts-expect-error not on type
+        const adminId = ctx.get("adminId")!;
 
         const shops = await this.#Container.ShopLinkService.GetShops({
           id: adminId,
@@ -31,22 +28,21 @@ export default class DashBoardRoutes {
           };
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           shops: shopLinks,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#dashboard.routes();
+    return this.#dashboard;
   }
 }

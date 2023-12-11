@@ -1,12 +1,12 @@
 import { assert, assertEquals } from "../test_deps.ts";
 
 import CategoriesRoutes from "../../src/routes/admin/categories.ts";
-import app from "../test_app.ts";
+import app, { container } from "../test_app.ts";
 import { Category } from "../../src/utils/schema.ts";
 
 let ID = "";
 
-app.use(new CategoriesRoutes(app.state.container).routes());
+app.route("/categories", new CategoriesRoutes(container).routes());
 
 Deno.test({
   name: "Categories - Create | ok",
@@ -19,7 +19,7 @@ Deno.test({
       name: "test",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -43,7 +43,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories`, {
         method: "GET",
       }),
@@ -59,7 +59,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories/${ID}`, {
         method: "GET",
       }),
@@ -79,7 +79,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories/byname/test`, {
         method: "GET",
       }),
@@ -103,7 +103,7 @@ Deno.test({
       name: "test update",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories/${ID}`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -127,7 +127,7 @@ Deno.test({
   sanitizeResources: false,
   sanitizeExit: false,
   async fn() {
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories/${ID}`, {
         method: "DELETE",
       }),
@@ -149,7 +149,7 @@ Deno.test({
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories/link`, {
         headers: new Headers({
           "Content-Type": "application/json",
@@ -175,7 +175,7 @@ Deno.test({
       product: "00669ffc-bc13-47b1-aec6-f524611a657f",
     });
 
-    const response = await app.handle(
+    const response = await app.request(
       new Request(`http://127.0.0.1/categories/link`, {
         headers: new Headers({
           "Content-Type": "application/json",

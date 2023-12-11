@@ -1,86 +1,90 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { TurquozeState } from "../../utils/types.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
-import { Get, stringifyJSON } from "../../utils/utils.ts";
+import { Get } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { parse } from "valibot";
-import { Category, Product } from "../../utils/schema.ts";
+import { Category, Product, Shop } from "../../utils/schema.ts";
 
 export default class CategoriesRoutes {
-  #categories: Router<TurquozeState>;
+  #categories: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#categories = new Router<TurquozeState>({
-      prefix: "/categories",
-    });
+    this.#categories = new Hono();
 
     this.#categories.get("/", async (ctx) => {
       try {
         const offset = parseInt(
-          ctx.request.url.searchParams.get("offset") ?? "",
+          new URL(ctx.req.raw.url).searchParams.get("offset") ?? "",
         );
-        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+        const limit = parseInt(
+          new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
+        );
+
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
 
         const data = await this.#Container.CategoryService.GetMany({
-          shop: ctx.state.request_data.publicId!,
+          shop: request_data.publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.get("/byname/:name", async (ctx) => {
       try {
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
+
         const data = await Get<Category>(this.#Container, {
-          id:
-            `category_name_${ctx.state.request_data.publicId}-${ctx.params.name}`,
+          id: `category_name_${request_data.publicId}-${ctx.req.param("name")}`,
           promise: this.#Container.CategoryService.GetByName({
-            name: ctx.params.name,
-            shop: ctx.state.request_data.publicId!,
+            name: ctx.req.param("name"),
+            shop: request_data.publicId!,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.get("/:id/products", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
+
         const data = await Get<Array<Product>>(this.#Container, {
-          id:
-            `products_by_category_${ctx.state.request_data.publicId}-${ctx.params.id}`,
+          id: `products_by_category_${request_data.publicId}-${id}`,
           promise: this.#Container.CategoryLinkService.GetProducts({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
@@ -91,7 +95,7 @@ export default class CategoriesRoutes {
 
           product.price = Dinero({
             amount: parseInt((price.amount ?? -1).toString()),
-            currency: ctx.state.request_data.currency,
+            currency: request_data.currency,
           }).getAmount();
 
           return product;
@@ -99,49 +103,48 @@ export default class CategoriesRoutes {
 
         const products = await Promise.all(productsPromises);
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.get("/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get<Category>(this.#Container, {
-          id: `category_${ctx.state.request_data.publicId}-${ctx.params.id}`,
+          //@ts-expect-error not on type
+          id: `category_${ctx.get("request_data").publicId}-${id}`,
           promise: this.#Container.CategoryService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#categories.routes();
+    return this.#categories;
   }
 }

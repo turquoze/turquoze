@@ -1,4 +1,4 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import settings from "./settings.ts";
 import tokens from "./tokens.ts";
 import discounts from "./discounts.ts";
@@ -14,28 +14,30 @@ import auth from "./auth.ts";
 import dashboard from "./dashboard.ts";
 import OAuth from "./oauth.ts";
 import AuthGuard from "../../middleware/authGuard.ts";
-import app from "../../app.ts";
+import Container from "../../services/mod.ts";
 
-const admin = new Router({
-  prefix: "/admin",
-});
+function admin(container: Container) {
+  const _admin = new Hono();
 
-admin.use(new OAuth(app.state.container).routes());
-admin.use(new auth(app.state.container).routes());
-admin.use(new dashboard(app.state.container).routes());
+  _admin.route("/oauth", new OAuth(container).routes());
+  _admin.route("/auth", new auth(container).routes());
+  _admin.route("/dashboard", new dashboard(container).routes());
 
-admin.use(AuthGuard(app.state.container));
+  _admin.use(AuthGuard(container));
 
-admin.use(new settings(app.state.container).routes());
-admin.use(new tokens(app.state.container).routes());
-admin.use(new discounts(app.state.container).routes());
-admin.use(new shops(app.state.container).routes());
-admin.use(new warehouses(app.state.container).routes());
-admin.use(new inventories(app.state.container).routes());
-admin.use(new orders(app.state.container).routes());
-admin.use(new prices(app.state.container).routes());
-admin.use(new users(app.state.container).routes());
-admin.use(new categories(app.state.container).routes());
-admin.use(new products(app.state.container).routes());
+  _admin.route("/settings", new settings(container).routes());
+  _admin.route("/tokens", new tokens(container).routes());
+  _admin.route("/discounts", new discounts(container).routes());
+  _admin.route("/shops", new shops(container).routes());
+  _admin.route("/warehouses", new warehouses(container).routes());
+  _admin.route("/inventories", new inventories(container).routes());
+  _admin.route("/orders", new orders(container).routes());
+  _admin.route("/prices", new prices(container).routes());
+  _admin.route("/users", new users(container).routes());
+  _admin.route("/categories", new categories(container).routes());
+  _admin.route("/products", new products(container).routes());
+
+  return _admin;
+}
 
 export default admin;

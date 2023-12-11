@@ -1,173 +1,140 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 
 import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { parse } from "valibot";
 import {
   Category,
-  CategoryLink,
   insertCategoryLinkSchema,
   insertCategorySchema,
 } from "../../utils/schema.ts";
 
 export default class CategoriesRoutes {
-  #categories: Router;
+  #categories: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#categories = new Router({
-      prefix: "/categories",
-    });
+    this.#categories = new Hono();
 
     this.#categories.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const offset = parseInt(
-          ctx.request.url.searchParams.get("offset") ?? "",
+          new URL(ctx.req.raw.url).searchParams.get("offset") ?? "",
         );
-        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+        const limit = parseInt(
+          new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
+        );
 
         const data = await this.#Container.CategoryService.GetMany({
-          shop: ctx.state.request_data.publicId!,
+          //@ts-expect-error not on type
+          shop: ctx.get("request_data").publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let category: Category;
-        if (body.type === "json") {
-          category = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        category.shop = ctx.state.request_data.publicId;
+        const category = await ctx.req.json();
+        //@ts-expect-error not on type
+        category.shop = ctx.get("request_data").publicId;
 
         const posted = parse(insertCategorySchema, category);
 
         const data = await this.#Container.CategoryService.Create({
           data: posted,
         });
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get<Category>(this.#Container, {
-          id: `category_${ctx.params.id}`,
+          id: `category_${id}`,
           promise: this.#Container.CategoryService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
-        const body = ctx.request.body();
-        let category: Category;
-        if (body.type === "json") {
-          category = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
+        const category = await ctx.req.json();
 
-        category.publicId = ctx.params.id;
-        category.shop = ctx.state.request_data.publicId;
+        category.publicId = id;
+        //@ts-expect-error not on type
+        category.shop = ctx.get("request_data").publicId;
 
         const posted = parse(insertCategorySchema, category);
 
         const data = await Update<Category>(this.#Container, {
-          id: `category_${ctx.params.id}`,
+          id: `category_${id}`,
           promise: this.#Container.CategoryService.Update({
             data: posted,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           categories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.post("/link", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let categoryLink: CategoryLink;
-        if (body.type === "json") {
-          categoryLink = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
+        const categoryLink = await ctx.req.json();
 
         const posted = parse(insertCategoryLinkSchema, categoryLink);
 
@@ -175,79 +142,71 @@ export default class CategoriesRoutes {
           data: posted,
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.delete("/link", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let categoryLink: CategoryLink;
-        if (body.type === "json") {
-          categoryLink = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
+        const categoryLink = await ctx.req.json();
         const posted = parse(insertCategoryLinkSchema, categoryLink);
 
         await this.#Container.CategoryLinkService.Delete({
           data: posted,
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#categories.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Delete(this.#Container, {
-          id: `category_${ctx.params.id}`,
+          id: `category_${id}`,
           promise: this.#Container.CategoryService.Delete({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
-          categories: data,
-        });
-        ctx.response.headers.set("content-type", "application/json");
+        return new Response(
+          stringifyJSON({
+            categories: data,
+          }),
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          },
+        );
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#categories.routes();
+    return this.#categories;
   }
 }
