@@ -1,66 +1,56 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get, stringifyJSON } from "../../utils/utils.ts";
+import { Delete, Get } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { parse } from "valibot";
 import { insertTokenSchema, Token } from "../../utils/schema.ts";
 
 export default class TokensRoutes {
-  #tokens: Router;
+  #tokens: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#tokens = new Router({
-      prefix: "/tokens",
-    });
+    this.#tokens = new Hono();
 
     this.#tokens.use(RoleGuard("ADMIN"));
 
     this.#tokens.get("/", async (ctx) => {
       try {
         const offset = parseInt(
-          ctx.request.url.searchParams.get("offset") ?? "",
+          new URL(ctx.req.raw.url).searchParams.get("offset") ?? "",
         );
-        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+        const limit = parseInt(
+          new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
+        );
 
         const data = await this.#Container.TokenService.GetMany({
-          shop: ctx.state.request_data.publicId,
+          //@ts-expect-error not on type
+          shop: ctx.get("request_data").publicId,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           tokens: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#tokens.post("/", async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let token: Token;
-        if (body.type === "json") {
-          token = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        token.shop = ctx.state.request_data.publicId;
+        const token = await ctx.req.json();
+        //@ts-expect-error not on type
+        token.shop = ctx.get("request_data").publicId;
 
         const posted = parse(insertTokenSchema, token);
 
@@ -68,74 +58,71 @@ export default class TokensRoutes {
           data: posted,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           tokens: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#tokens.get("/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get<Token>(this.#Container, {
-          id: `shop_${ctx.params.id}`,
+          id: `shop_${id}`,
           promise: this.#Container.TokenService.Get({
-            tokenId: ctx.params.id,
+            tokenId: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           tokens: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#tokens.delete("/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         await Delete(this.#Container, {
-          id: `shop_${ctx.params.id}`,
+          id: `shop_${id}`,
           promise: this.#Container.TokenService.Delete({
-            tokenId: ctx.params.id,
+            tokenId: id,
           }),
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#tokens.routes();
+    return this.#tokens;
   }
 }

@@ -1,182 +1,158 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
+import { Delete, Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { insertWarehouseSchema, Warehouse } from "../../utils/schema.ts";
 import { parse } from "valibot";
 
 export default class WarehousesRoutes {
-  #warehouses: Router;
+  #warehouses: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#warehouses = new Router({
-      prefix: "/warehouses",
-    });
+    this.#warehouses = new Hono();
 
     this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const offset = parseInt(
-          ctx.request.url.searchParams.get("offset") ?? "",
+          new URL(ctx.req.raw.url).searchParams.get("offset") ?? "",
         );
-        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+        const limit = parseInt(
+          new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
+        );
 
         const data = await this.#Container.WarehouseService.GetMany({
-          shop: ctx.state.request_data.publicId!,
+          //@ts-expect-error not on type
+          shop: ctx.get("request_data").publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           warehouses: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#warehouses.post("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let warehouse: Warehouse;
-        if (body.type === "json") {
-          warehouse = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        warehouse.shop = ctx.state.request_data.publicId!;
+        const warehouse = await ctx.req.json();
+        //@ts-expect-error not on type
+        warehouse.shop = ctx.get("request_data").publicId!;
 
         const posted = parse(insertWarehouseSchema, warehouse);
 
         const data = await this.#Container.WarehouseService.Create({
           data: posted,
         });
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           warehouses: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#warehouses.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
-        const body = ctx.request.body();
-        let warehouse: Warehouse;
-        if (body.type === "json") {
-          warehouse = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        warehouse.shop = ctx.state.request_data.publicId!;
-        warehouse.publicId = ctx.params.id;
+        const warehouse = await ctx.req.json();
+        //@ts-expect-error not on type
+        warehouse.shop = ctx.get("request_data").publicId!;
+        warehouse.publicId = id;
 
         const posted = parse(insertWarehouseSchema, warehouse);
 
         const data = await Update<Warehouse>(this.#Container, {
-          id: `warehouse_${ctx.params.id}`,
+          id: `warehouse_${id}`,
           promise: this.#Container.WarehouseService.Update({
             data: posted,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           warehouses: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#warehouses.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get<Warehouse>(this.#Container, {
-          id: `warehouse_${ctx.params.id}`,
+          id: `warehouse_${id}`,
           promise: this.#Container.WarehouseService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           warehouses: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#warehouses.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         await Delete(this.#Container, {
-          id: `warehouse_${ctx.params.id}`,
+          id: `warehouse_${id}`,
           promise: this.#Container.WarehouseService.Delete({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#warehouses.routes();
+    return this.#warehouses;
   }
 }

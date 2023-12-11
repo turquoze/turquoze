@@ -1,22 +1,19 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import type Container from "../../services/mod.ts";
-import { TurquozeState } from "../../utils/types.ts";
 
 export default class PingRoutes {
-  #ping: Router<TurquozeState>;
+  #ping: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#ping = new Router<TurquozeState>({
-      prefix: "/ping",
-    });
+    this.#ping = new Hono();
 
     this.#ping.get("/", (ctx) => {
-      ctx.response.body = "Pong";
+      return ctx.text("Pong", 200);
     });
   }
 
   routes() {
-    return this.#ping.routes();
+    return this.#ping;
   }
 }

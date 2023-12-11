@@ -1,21 +1,20 @@
-import { Context } from "@oakserver/oak";
+import type { Context, Next } from "hono";
 import Container from "../services/mod.ts";
-import { TurquozeState } from "../utils/types.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
 import * as jose from "jose";
 import { Shop } from "../utils/schema.ts";
+import { getCookie } from "hono/cookie";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
-export const CookieGuard =
-  (container: Container) =>
-  async (ctx: Context<TurquozeState>, next: () => Promise<unknown>) => {
+export default function CookieGuard(container: Container) {
+  return async (ctx: Context, next: Next) => {
     const pattern = new URLPattern({ pathname: "/admin/oauth/:id/*" });
-    const match = pattern.exec(ctx.request.url.toString());
+    const match = pattern.exec(ctx.req.url.toString());
     const id = match?.pathname.groups.id;
-    const url = ctx.request.url.pathname + ctx.request.url.search;
+    const url = ctx.req.raw.url + ctx.req.url.search;
 
     try {
-      const authCookie = await ctx.cookies.get("TurquozeAuth");
+      const authCookie = getCookie(ctx, "TurquozeAuth");
       if (authCookie != undefined && authCookie != null) {
         const jwt = authCookie;
 
@@ -29,25 +28,25 @@ export const CookieGuard =
         //@ts-ignore not on type
         ctx.state.adminId = payload.adminId!;
 
-        ctx.state.request_data = await container.ShopService.Get({
+        const data = await container.ShopService.Get({
           //@ts-ignore not on type
           id: payload.shopId,
         }) as unknown as Shop;
 
+        ctx.set("request_data", data);
+
         await next();
       } else {
-        ctx.response.redirect(
+        return ctx.redirect(
           `/admin/oauth/${id}/login?redirect=${url.toString()}`,
         );
       }
     } catch (_error) {
-      ctx.response.status = 403;
-      ctx.response.headers.set("content-type", "application/json");
-      ctx.response.body = JSON.stringify({
+      ctx.res.headers.set("content-type", "application/json");
+      return ctx.json({
         msg: "Not allowed",
         error: "NO_PERMISSION",
-      });
+      }, 403);
     }
   };
-
-export default CookieGuard;
+}

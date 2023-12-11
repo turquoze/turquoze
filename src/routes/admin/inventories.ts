@@ -1,152 +1,124 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
+import { Delete, Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { parse } from "valibot";
 import { insertInventorySchema, Inventory } from "../../utils/schema.ts";
 
 export default class InventoriesRoutes {
-  #inventories: Router;
+  #inventories: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#inventories = new Router({
-      prefix: "/inventories",
-    });
+    this.#inventories = new Hono();
 
     this.#inventories.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let inventory: Inventory;
-        if (body.type === "json") {
-          inventory = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
+        const inventory = await ctx.req.json();
         const posted = parse(insertInventorySchema, inventory);
 
         const data = await this.#Container.InventoryService.Create({
           data: posted,
         });
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           inventories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#inventories.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
-        const body = ctx.request.body();
-        let inventory: Inventory;
-        if (body.type === "json") {
-          inventory = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        inventory.publicId = ctx.params.id;
+        const inventory = await ctx.req.json();
+        inventory.publicId = id;
 
         const posted = parse(insertInventorySchema, inventory);
 
         const data = await Update<Inventory>(this.#Container, {
-          id: `inventory_${ctx.params.id}`,
+          id: `inventory_${id}`,
           promise: this.#Container.InventoryService.Update({
             data: posted,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           inventories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#inventories.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get<Inventory>(this.#Container, {
-          id: `inventory_${ctx.params.id}`,
+          id: `inventory_${id}`,
           promise: this.#Container.InventoryService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           inventories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#inventories.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         await Delete(this.#Container, {
-          id: `inventory_${ctx.params.id}`,
+          id: `inventory_${id}`,
           promise: this.#Container.InventoryService.Delete({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#inventories.routes();
+    return this.#inventories;
   }
 }

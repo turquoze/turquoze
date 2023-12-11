@@ -1,37 +1,25 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
+import { Delete, Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { parse } from "valibot";
-import { insertShopSchema, Shop } from "../../utils/schema.ts";
+import { insertShopSchema } from "../../utils/schema.ts";
 
 export default class RegionsRoutes {
-  #shops: Router;
+  #shops: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#shops = new Router({
-      prefix: "/shops",
-    });
+    this.#shops = new Hono();
 
     this.#shops.use(RoleGuard("SUPERADMIN"));
 
     this.#shops.post("/", async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let shop: Shop;
-        if (body.type === "json") {
-          shop = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
+        const shop = await ctx.req.json();
 
         const posted = parse(insertShopSchema, shop);
 
@@ -39,115 +27,100 @@ export default class RegionsRoutes {
           data: posted,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           regions: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#shops.get("/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get(this.#Container, {
-          id: `shop_${ctx.params.id}`,
+          id: `shop_${id}`,
           promise: this.#Container.ShopService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           regions: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#shops.put("/:id", async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
-        const body = ctx.request.body();
-        let shop: Shop;
-        if (body.type === "json") {
-          shop = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        shop.publicId = ctx.params.id;
+        const shop = await ctx.req.json();
+        shop.publicId = id;
 
         const posted = parse(insertShopSchema, shop);
 
         const data = await Update(this.#Container, {
-          id: `shop_${ctx.params.id}`,
+          id: `shop_${id}`,
           promise: this.#Container.ShopService.Update({
             data: posted,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           regions: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#shops.delete("/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         await Delete(this.#Container, {
-          id: `shop_${ctx.params.id}`,
-          promise: this.#Container.ShopService.Delete({ id: ctx.params.id }),
+          id: `shop_${id}`,
+          promise: this.#Container.ShopService.Delete({ id: id }),
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#shops.routes();
+    return this.#shops;
   }
 }

@@ -1,49 +1,47 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import type Container from "../../services/mod.ts";
-import { TurquozeState } from "../../utils/types.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { stringifyJSON } from "../../utils/utils.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
 import { SHARED_SECRET } from "../../utils/secrets.ts";
 import { nanoid } from "nanoid";
 import * as jose from "jose";
+import { setCookie } from "hono/cookie";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class OAuthRoutes {
-  #oauth: Router<TurquozeState>;
+  #oauth: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#oauth = new Router<TurquozeState>({
-      prefix: "/oauth",
-    });
+    this.#oauth = new Hono();
 
     this.#oauth.get("/:id/login", (ctx) => {
       try {
-        ctx.response.body = `<html><head></head><body><div>
+        return ctx.html(`<html><head></head><body><div>
           <form method="POST">
-            <input type="hidden" name="redirect" value="${ctx.request.url.search}">
+            <input type="hidden" name="redirect" value="${
+          new URL(ctx.req.raw.url).search
+        }">
             <input type="email" name="email">
             <input type="password" name="password">
             <input type="submit" value="Login">
           </form>
-          </div></body></html>`;
+          </div></body></html>`);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#oauth.post("/:id/login", async (ctx) => {
       try {
-        const form = await ctx.request.body({ type: "form" }).value;
+        const form = await ctx.req.formData();
 
-        const email = form.get("email");
-        const password = form.get("password");
+        const email = form.get("email")?.toString();
+        const password = form.get("password")?.toString();
 
         if (email != null && password != null) {
           const admin = await this.#Container.AdminService.Login({
@@ -55,7 +53,7 @@ export default class OAuthRoutes {
             id: admin.publicId!,
           });
 
-          const shop = shops.find((x) => x.publicId == ctx.params.id);
+          const shop = shops.find((x) => x.publicId == ctx.req.param("id"));
 
           if (shop == undefined) {
             throw new Error("Not connected to shop");
@@ -75,65 +73,69 @@ export default class OAuthRoutes {
             .setProtectedHeader({ typ: "JWT", alg: "HS256", kid: KID })
             .sign(SHARED_SECRET_KEY);
 
-          ctx.cookies.set("TurquozeAuth", jwt, {
-            sameSite: "strict",
-            path: `/admin/oauth/${ctx.params.id}`,
+          setCookie(ctx, "TurquozeAuth", jwt, {
+            sameSite: "Strict",
+            path: `/admin/oauth/${ctx.req.param("id")}`,
           });
 
           const redirectData = form.get("redirect");
-          const redirect = redirectData?.replace("?redirect=", "");
+          const redirect = redirectData?.toString()?.replace("?redirect=", "");
 
-          ctx.response.redirect(redirect ?? "/admin/oauth/logout");
+          return ctx.redirect(redirect ?? "/admin/oauth/logout");
         } else {
           throw new Error("No username/passord");
         }
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.body = `<html><head></head><body><div>
+        return ctx.html(
+          `<html><head></head><body><div>
           <h3>Error: ${data.message}</h3>
           <form method="POST">
-            <input type="hidden" name="redirect" value="${ctx.request.url.search}">
+            <input type="hidden" name="redirect" value="${
+            new URL(ctx.req.raw.url).search
+          }">
             <input type="email" name="email">
             <input type="password" name="password">
             <input type="submit" value="Login">
           </form>
-          </div></body></html>`;
+          </div></body></html>`,
+          data.code,
+        );
       }
     });
 
     this.#oauth.get("/:id/authorize", CookieGuard(container), (ctx) => {
       try {
-        ctx.response.body =
-          `<html><head></head><body><div><form method="POST"><input type="submit" value="Approve"></form> </div></body></html>`;
+        return ctx.html(
+          `<html><head></head><body><div><form method="POST"><input type="submit" value="Approve"></form> </div></body></html>`,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#oauth.post("/:id/authorize", CookieGuard(container), async (ctx) => {
       try {
-        const response_type = ctx?.params?.response_type;
+        const response_type = ctx.req.query("response_type");
 
         if (response_type == "code") {
-          const client_id = ctx?.params?.client_id;
-          const redirect_uri = ctx?.params?.redirect_uri;
-          const scope = ctx?.params?.scope;
-          const state = ctx?.params?.state;
-          const tokenPlugin = ctx.params?.token;
-          const namePlugin = ctx.params?.name;
+          const client_id = ctx.req.query("client_id");
+          const redirect_uri = ctx.req.query("redirect_uri");
+          const scope = ctx.req.query("scope");
+          const state = ctx.req.query("state");
+          const tokenPlugin = ctx.req.query("token");
+          const namePlugin = ctx.req.query("name");
 
           const plugin = await this.#Container.PluginService.Create({
             data: {
               id: 0,
               publicId: "",
               name: namePlugin ?? client_id ?? "_NO_NAME_",
-              shop: ctx.params.id,
+              shop: ctx.req.param("id"),
               token: tokenPlugin ?? "",
               type: scope ?? "MISC",
               url: redirect_uri!,
@@ -156,28 +158,27 @@ export default class OAuthRoutes {
           url.set("state", state!);
           url.set("code", token.publicId);
 
-          ctx.response.redirect(url.toString());
+          ctx.redirect(url.toString());
         }
 
-        ctx.response.body = stringifyJSON({});
+        return ctx.json({});
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#oauth.post("/token", async (ctx) => {
       try {
-        const grant_type = ctx?.params?.grant_type;
+        const grant_type = ctx.req.query("grant_type");
 
         if (grant_type == "authorization_code") {
-          const _client_id = ctx?.params?.client_id;
-          const _client_secret = ctx?.params?.client_secret;
-          const code = ctx?.params?.code;
+          const _client_id = ctx.req.query("client_id");
+          const _client_secret = ctx.req.query("client_secret");
+          const code = ctx.req.query("code");
 
           if (code == undefined) {
             throw new Error("No code in request");
@@ -215,22 +216,21 @@ export default class OAuthRoutes {
             "refresh_token": token.token,
           };
 
-          ctx.response.body = stringifyJSON(tokenResponse);
+          return ctx.json(tokenResponse);
         }
 
-        ctx.response.body = stringifyJSON({});
+        return ctx.json({});
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#oauth.routes();
+    return this.#oauth;
   }
 }

@@ -1,7 +1,6 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { Search, TurquozeState } from "../../utils/types.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import { MeiliSearch } from "meilisearch";
 
@@ -11,23 +10,24 @@ import { parse } from "valibot";
 import { Product } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {
-  #products: Router<TurquozeState>;
+  #products: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#products = new Router<TurquozeState>({
-      prefix: "/products",
-    });
+    this.#products = new Hono();
 
     this.#products.get("/", async (ctx) => {
       try {
         const offset = parseInt(
-          ctx.request.url.searchParams.get("offset") ?? "",
+          new URL(ctx.req.raw.url).searchParams.get("offset") ?? "",
         );
-        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+        const limit = parseInt(
+          new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
+        );
 
         const data = await this.#Container.ProductService.GetMany({
-          shop: ctx.state.request_data.publicId!,
+          //@ts-expect-error not on type
+          shop: ctx.get("request_data").publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
@@ -43,7 +43,8 @@ export default class ProductsRoutes {
 
           localProduct.price = Dinero({
             amount: parseInt((price.amount ?? -1).toString()),
-            currency: ctx.state.request_data.currency,
+            //@ts-expect-error not on type
+            currency: ctx.get("request_data").currency,
           }).getAmount();
 
           return localProduct;
@@ -51,36 +52,25 @@ export default class ProductsRoutes {
 
         const products = await Promise.all(productsPromises);
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.post("/search", async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        const body = ctx.request.body();
-        let query: Search;
-        if (body.type === "json") {
-          query = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
+        const query = await ctx.req.json();
 
         //@ts-ignore not on type
-        query.index = ctx.state.request_data.settings!.meilisearch.index;
+        query.index = ctx.get("request_data").settings!.meilisearch.index;
         const posted = parse(SearchSchema, query);
 
         const client = new MeiliSearch({
@@ -95,7 +85,8 @@ export default class ProductsRoutes {
           client,
         );
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           info: {
             hits: data.estimatedTotalHits,
             offset: data.offset,
@@ -106,20 +97,18 @@ export default class ProductsRoutes {
           },
           products: data.hits,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/byids", async (ctx) => {
       try {
-        const params = (new URL(ctx.request.url)).searchParams;
+        const params = (new URL(ctx.req.raw.url)).searchParams;
         const id = params.get("ids");
 
         if (id != null && id.length > 35) {
@@ -146,7 +135,8 @@ export default class ProductsRoutes {
 
             product.price = Dinero({
               amount: parseInt((price.amount ?? -1).toString()),
-              currency: ctx.state.request_data.currency,
+              //@ts-expect-error not on type
+              currency: ctx.get("request_data").currency,
             }).getAmount();
 
             return product;
@@ -154,29 +144,28 @@ export default class ProductsRoutes {
 
           const data = await Promise.all(productsPromises);
 
-          ctx.response.body = stringifyJSON({
+          ctx.json({
             products: data,
           });
         } else {
-          return ctx.response.body = stringifyJSON({
+          return ctx.json({
             products: [],
           });
         }
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/byslug/:slug", async (ctx) => {
       try {
         const data = await this.#Container.ProductService.GetBySlug({
-          slug: ctx.params.slug,
+          slug: ctx.req.param("slug"),
         });
 
         const product: Product = {
@@ -190,31 +179,31 @@ export default class ProductsRoutes {
 
         product.price = Dinero({
           amount: parseInt((price.amount ?? -1).toString()),
-          currency: ctx.state.request_data.currency,
+          //@ts-expect-error not on type
+          currency: ctx.get("request_data").currency,
         }).getAmount();
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products: product,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/byparent/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await this.#Container.ProductService.GetVariantsByParent({
-          id: ctx.params.id,
+          id: id,
         });
 
         const dataWPrice = data.map(async (product) => {
@@ -228,119 +217,125 @@ export default class ProductsRoutes {
 
           localProduct.price = Dinero({
             amount: parseInt((price.amount ?? -1).toString()),
-            currency: ctx.state.request_data.currency,
+            //@ts-expect-error not on type
+            currency: ctx.get("request_data").currency,
           }).getAmount();
 
           return localProduct;
         });
 
-        ctx.response.body = stringifyJSON({
-          products: dataWPrice,
-        });
-        ctx.response.headers.set("content-type", "application/json");
+        return new Response(
+          stringifyJSON({
+            products: dataWPrice,
+          }),
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          },
+        );
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/inventory/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await this.#Container.InventoryService
           .GetInventoryByProduct({
-            id: ctx.params.id,
+            id: id,
           });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           inventories: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/price/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await this.#Container.PriceService.GetByProduct({
-          productId: ctx.params.id,
+          productId: id,
         });
 
         data.amount = Dinero({
           amount: parseInt((data.amount ?? -1).toString()),
-          currency: ctx.state.request_data.currency,
+          //@ts-expect-error not on type
+          currency: ctx.get("request_data").currency,
         }).getAmount();
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           price: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/:id", async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         const data = await Get<Product>(this.#Container, {
-          id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
+          //@ts-expect-error not on type
+          id: `product_${ctx.get("request_data").publicId}-${id}`,
           //@ts-ignore not on type
           promise: this.#Container.ProductService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
         const price = await this.#Container.PriceService.GetByProduct({
-          productId: ctx.params.id,
+          productId: id,
         });
 
         data.price = Dinero({
           amount: parseInt((price.amount ?? -1).toString()),
-          currency: ctx.state.request_data.currency,
+          //@ts-expect-error not on type
+          currency: ctx.get("request_data").currency,
         }).getAmount();
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#products.routes();
+    return this.#products;
   }
 }

@@ -1,19 +1,16 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { TurquozeState } from "../../utils/types.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 import { MeiliSearch } from "meilisearch";
 import { Product } from "../../utils/schema.ts";
 
 export default class SettingsRoutes {
-  #settings: Router<TurquozeState>;
+  #settings: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#settings = new Router<TurquozeState>({
-      prefix: "/settings",
-    });
+    this.#settings = new Hono();
 
     this.#settings.use(RoleGuard("ADMIN"));
 
@@ -21,12 +18,15 @@ export default class SettingsRoutes {
       try {
         const products = await this.#Container.ProductService.GetMany({
           limit: 99999, //TODO: get all products
-          shop: ctx.state.request_data.publicId,
+          //@ts-expect-error not on type
+          shop: ctx.get("request_data").publicId,
         });
 
         const client = new MeiliSearch({
-          host: this.#Container.Shop.settings.meilisearch.host,
-          apiKey: this.#Container.Shop.settings.meilisearch.api_key,
+          //@ts-ignore unkown type
+          host: this.#Container.Shop.settings!.meilisearch.host,
+          //@ts-ignore unkown type
+          apiKey: this.#Container.Shop.settings!.meilisearch.api_key,
         });
 
         const productsMappedPromises = products.map(async (product) => {
@@ -55,35 +55,31 @@ export default class SettingsRoutes {
         );
 
         await this.#Container.SearchService.ProductIndex({
-          index: this.#Container.Shop.settings.meilisearch.index,
+          //@ts-ignore unkown type
+          index: this.#Container.Shop.settings!.meilisearch.index,
           products: productsMapped,
         }, client);
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#settings.post("/filters", async (ctx) => {
       try {
-        const body = ctx.request.body();
-        let filters: Array<string>;
-        if (body.type === "json") {
-          filters = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
+        const filters = await ctx.req.json();
 
         const client = new MeiliSearch({
-          host: this.#Container.Shop.settings.meilisearch.host,
-          apiKey: this.#Container.Shop.settings.meilisearch.api_key,
+          //@ts-ignore unkown type
+          host: this.#Container.Shop.settings!.meilisearch.host,
+          //@ts-ignore unkown type
+          apiKey: this.#Container.Shop.settings!.meilisearch.api_key,
         });
 
         await this.#Container.SearchService.ProductFilterableAttributes(
@@ -92,20 +88,19 @@ export default class SettingsRoutes {
           client,
         );
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#settings.routes();
+    return this.#settings;
   }
 }

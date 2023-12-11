@@ -1,32 +1,34 @@
-import { Router } from "@oakserver/oak";
+import { Hono } from "hono";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
-import { ErrorHandler, NoBodyError } from "../../utils/errors.ts";
-import { TurquozeState } from "../../utils/types.ts";
+import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
-import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
+import { Delete, Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { parse } from "valibot";
-import { insertProductSchema, Product } from "../../utils/schema.ts";
+import { insertProductSchema, Product, Shop } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {
-  #products: Router<TurquozeState>;
+  #products: Hono;
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#products = new Router<TurquozeState>({
-      prefix: "/products",
-    });
+    this.#products = new Hono();
 
     this.#products.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
         const offset = parseInt(
-          ctx.request.url.searchParams.get("offset") ?? "",
+          new URL(ctx.req.raw.url).searchParams.get("offset") ?? "",
         );
-        const limit = parseInt(ctx.request.url.searchParams.get("limit") ?? "");
+        const limit = parseInt(
+          new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
+        );
+
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
 
         const data = await this.#Container.ProductService.GetMany({
-          shop: ctx.state.request_data.publicId,
+          shop: request_data.publicId!,
           limit: isNaN(limit) ? undefined : limit,
           offset: isNaN(offset) ? undefined : offset,
         });
@@ -42,7 +44,7 @@ export default class ProductsRoutes {
 
           localProduct.price = Dinero({
             amount: parseInt((price.amount ?? -1).toString()),
-            currency: ctx.state.request_data.currency,
+            currency: request_data.currency,
           }).getAmount();
 
           return localProduct;
@@ -50,35 +52,26 @@ export default class ProductsRoutes {
 
         const products = await Promise.all(productsPromises);
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
+        const product = await ctx.req.json();
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
 
-        const body = ctx.request.body();
-        let product: Product;
-        if (body.type === "json") {
-          product = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
-
-        product.shop = ctx.state.request_data.publicId;
+        product.shop = request_data.publicId!;
 
         const posted = parse(insertProductSchema, product);
 
@@ -86,127 +79,119 @@ export default class ProductsRoutes {
           data: posted,
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.get("/:id", RoleGuard("VIEWER"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
+
         const data = await Get<Product>(this.#Container, {
-          id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
+          id: `product_${request_data.publicId}-${id}`,
           //@ts-ignore not on type
           promise: this.#Container.ProductService.Get({
-            id: ctx.params.id,
+            id: id,
           }),
         });
 
         const price = await this.#Container.PriceService.GetByProduct({
-          productId: ctx.params.id,
+          productId: id,
         });
 
         data.price = Dinero({
           amount: parseInt((price.amount ?? -1).toString()),
-          currency: ctx.state.request_data.currency,
+          currency: request_data.currency,
         }).getAmount();
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.put("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        if (!ctx.request.hasBody) {
-          throw new NoBodyError("No Body");
-        }
-
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
-        const body = ctx.request.body();
-        let product: Product;
-        if (body.type === "json") {
-          product = await body.value;
-        } else {
-          throw new NoBodyError("Wrong content-type");
-        }
+        const product = await ctx.req.json();
+        //@ts-expect-error not on type
+        const request_data = ctx.get("request_data") as Shop;
 
-        product.publicId = ctx.params.id;
-        product.shop = ctx.state.request_data.publicId;
+        product.publicId = id;
+        product.shop = request_data.publicId!;
 
         const posted = parse(insertProductSchema, product);
 
         const data = await Update<Product>(this.#Container, {
-          id: `product_${ctx.state.request_data.publicId}-${product.id}`,
+          id: `product_${request_data.publicId}-${product.id}`,
           //@ts-ignore not on type
           promise: this.#Container.ProductService.Update({
             data: posted,
           }),
         });
 
-        ctx.response.body = stringifyJSON({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           products: data,
         });
-        ctx.response.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
 
     this.#products.delete("/:id", RoleGuard("ADMIN"), async (ctx) => {
       try {
-        parse(UuidSchema, {
-          id: ctx.params.id,
+        const { id } = parse(UuidSchema, {
+          id: ctx.req.param("id"),
         });
 
         await Delete(this.#Container, {
-          id: `product_${ctx.state.request_data.publicId}-${ctx.params.id}`,
-          promise: this.#Container.ProductService.Delete({ id: ctx.params.id }),
+          //@ts-expect-error not on type
+          id: `product_${ctx.get("request_data").publicId}-${id}`,
+          promise: this.#Container.ProductService.Delete({ id: id }),
         });
 
-        ctx.response.status = 201;
-        ctx.response.headers.set("content-type", "application/json");
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
-        ctx.response.status = data.code;
-        ctx.response.headers.set("content-type", "application/json");
-        ctx.response.body = JSON.stringify({
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({
           message: data.message,
-        });
+        }, data.code);
       }
     });
   }
 
   routes() {
-    return this.#products.routes();
+    return this.#products;
   }
 }
