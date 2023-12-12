@@ -144,7 +144,7 @@ export default class ProductsRoutes {
 
           const data = await Promise.all(productsPromises);
 
-          ctx.json({
+          return ctx.json({
             products: data,
           });
         } else {
@@ -152,11 +152,10 @@ export default class ProductsRoutes {
             products: [],
           });
         }
-        ctx.res.headers.set("content-type", "application/json");
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           message: data.message,
         }, data.code);
       }
@@ -190,7 +189,7 @@ export default class ProductsRoutes {
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           message: data.message,
         }, data.code);
       }
@@ -261,7 +260,7 @@ export default class ProductsRoutes {
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           message: data.message,
         }, data.code);
       }

@@ -41,7 +41,7 @@ export default class CartRoutes {
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           message: data.message,
         }, data.code);
       }
@@ -126,7 +126,7 @@ export default class CartRoutes {
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           message: data.message,
         }, data.code);
       }

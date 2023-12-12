@@ -26,13 +26,13 @@ export default class UsersRoutes {
         const data = await this.#Container.UserService.Get({ id });
 
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           users: data,
         });
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
-        ctx.json({
+        return ctx.json({
           message: data.message,
         }, data.code);
       }
