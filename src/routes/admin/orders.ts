@@ -12,7 +12,7 @@ export default class OrdersRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#orders = new Hono();
+    this.#orders = new Hono({ strict: false });
 
     this.#orders.use(RoleGuard("VIEWER"));
 

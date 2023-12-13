@@ -7,7 +7,7 @@ import { Hono } from "hono";
 const localContainer = new Container(dbClient, redisClient);
 localContainer.SearchService = new SearchService(searchClient);
 
-const app = new Hono();
+const app = new Hono({ strict: false });
 //@ts-ignore not on type
 localContainer.Shop.settings.meilisearch = {
   api_key: MEILIAPIKEY!,

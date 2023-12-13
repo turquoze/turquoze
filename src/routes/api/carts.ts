@@ -23,7 +23,7 @@ export default class CartRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#carts = new Hono();
+    this.#carts = new Hono({ strict: false });
 
     this.#carts.post("/", async (ctx) => {
       try {

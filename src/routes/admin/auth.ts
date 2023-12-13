@@ -10,7 +10,7 @@ export default class AuthRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#auth = new Hono();
+    this.#auth = new Hono({ strict: false });
 
     this.#auth.post("/login", async (ctx) => {
       try {

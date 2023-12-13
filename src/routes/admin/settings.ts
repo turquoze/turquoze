@@ -10,7 +10,7 @@ export default class SettingsRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#settings = new Hono();
+    this.#settings = new Hono({ strict: false });
 
     this.#settings.use(RoleGuard("ADMIN"));
 

@@ -13,7 +13,7 @@ export default class TokensRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#tokens = new Hono();
+    this.#tokens = new Hono({ strict: false });
 
     this.#tokens.use(RoleGuard("ADMIN"));
 

@@ -13,7 +13,7 @@ export default class ProductsRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#products = new Hono();
+    this.#products = new Hono({ strict: false });
 
     this.#products.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {

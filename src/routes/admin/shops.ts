@@ -13,7 +13,7 @@ export default class RegionsRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#shops = new Hono();
+    this.#shops = new Hono({ strict: false });
 
     this.#shops.use(RoleGuard("SUPERADMIN"));
 

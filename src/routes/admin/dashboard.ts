@@ -8,7 +8,7 @@ export default class DashBoardRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#dashboard = new Hono();
+    this.#dashboard = new Hono({ strict: false });
 
     this.#dashboard.use(TokenGuard());
 

@@ -12,7 +12,7 @@ export default class UsersRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#users = new Hono();
+    this.#users = new Hono({ strict: false });
 
     this.#users.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {

@@ -13,7 +13,7 @@ export default class DiscountsRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#discounts = new Hono();
+    this.#discounts = new Hono({ strict: false });
 
     this.#discounts.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {

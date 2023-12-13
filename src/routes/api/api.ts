@@ -8,7 +8,7 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import Container from "../../services/mod.ts";
 
 function api(container: Container) {
-  const _api = new Hono();
+  const _api = new Hono({ strict: false });
 
   _api.use("*", AuthGuard(container));
   _api.use("*", RoleGuard("WEBSITE"));

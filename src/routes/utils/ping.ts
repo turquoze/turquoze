@@ -6,7 +6,7 @@ export default class PingRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#ping = new Hono();
+    this.#ping = new Hono({ strict: false });
 
     this.#ping.get("/", (ctx) => {
       return ctx.text("Pong", 200);

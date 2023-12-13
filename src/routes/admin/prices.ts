@@ -13,7 +13,7 @@ export default class PricesRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#prices = new Hono();
+    this.#prices = new Hono({ strict: false });
 
     this.#prices.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {

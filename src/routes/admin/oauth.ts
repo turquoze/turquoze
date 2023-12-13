@@ -13,7 +13,7 @@ export default class OAuthRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#oauth = new Hono();
+    this.#oauth = new Hono({ strict: false });
 
     this.#oauth.get("/:id/login", (ctx) => {
       try {
