@@ -13,7 +13,7 @@ export default class InventoriesRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#inventories = new Hono();
+    this.#inventories = new Hono({ strict: false });
 
     this.#inventories.post("/", RoleGuard("ADMIN"), async (ctx) => {
       try {

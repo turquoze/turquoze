@@ -13,7 +13,7 @@ export default class CategoriesRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#categories = new Hono();
+    this.#categories = new Hono({ strict: false });
 
     this.#categories.get("/", async (ctx) => {
       try {

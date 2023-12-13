@@ -17,7 +17,7 @@ import AuthGuard from "../../middleware/authGuard.ts";
 import Container from "../../services/mod.ts";
 
 function admin(container: Container) {
-  const _admin = new Hono();
+  const _admin = new Hono({ strict: false });
 
   _admin.route("/oauth", new OAuth(container).routes());
   _admin.route("/auth", new auth(container).routes());

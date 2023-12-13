@@ -10,6 +10,7 @@ import admin from "./routes/admin/admin.ts";
 import api from "./routes/api/api.ts";
 import utils from "./routes/utils/utils.ts";
 import NotFound from "./pages/404.ts";
+import { ErrorHandler } from "./utils/errors.ts";
 
 export const container = new Container(dbClient, redisClient);
 
@@ -20,7 +21,7 @@ class App {
   #app: Hono;
   constructor(container: Container) {
     this.#container = container;
-    this.#app = new Hono();
+    this.#app = new Hono({ strict: false });
   }
 
   container() {
@@ -58,6 +59,14 @@ app.router().notFound((ctx) => {
       error: "NOT_FOUND",
     }, 404);
   }
+});
+
+app.router().onError((error, ctx) => {
+  const data = ErrorHandler(error);
+  ctx.res.headers.set("content-type", "application/json");
+  return ctx.json({
+    message: data.message,
+  }, data.code);
 });
 
 export default app;

@@ -13,7 +13,7 @@ export default class WarehousesRoutes {
   #Container: Container;
   constructor(container: Container) {
     this.#Container = container;
-    this.#warehouses = new Hono();
+    this.#warehouses = new Hono({ strict: false });
 
     this.#warehouses.get("/", RoleGuard("VIEWER"), async (ctx) => {
       try {
