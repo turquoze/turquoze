@@ -1,16 +1,47 @@
-MIT License
+For Sustainable Software License
 
 Copyright (c) 2022-2023 EduM22
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+of this software and associated documentation files (the "Software"), to use, 
+copy, modify, merge, publish, distribute, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  1. Redistribution
+
+    Redistributions of source code must retain the above copyright notice, 
+    this list of conditions and the following disclaimer.
+
+  2. Offering the Source as a Service / Program as a Service.
+
+    If you make the functionality of the Program or a modified version
+    available to third parties as a service, you must make the Service Source
+    Code available via network download to everyone at no charge, under the
+    terms of this License. Making the functionality of the Program or
+    modified version available to third parties as a service includes,
+    without limitation, enabling third parties to interact with the
+    functionality of the Program or modified version remotely through a
+    computer network, offering a service the value of which entirely or
+    primarily derives from the value of the Program or modified version, or
+    offering a service that accomplishes for users the primary purpose of the
+    Program or modified version.
+  
+    “Service Source Code” means the Corresponding Source for the Program or
+    the modified version, and the Corresponding Source for all programs that
+    you use to make the Program or modified version available as a service,
+    including, without limitation, management software, user interfaces,
+    application program interfaces, automation software, monitoring software,
+    backup software, storage software and hosting software, all such that a
+    user could run an instance of the service using the Service Source Code
+    you make available.
+
+  3. Promotion / Endorsement
+
+    Neither the name of the copyright holder nor the names of its contributors
+    may be used to endorse or promote products derived from this software 
+    without specific prior written permission.
+
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
