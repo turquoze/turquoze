@@ -3,6 +3,7 @@ let UPSTASH_REDIS_REST_URL: string | undefined;
 let UPSTASH_REDIS_REST_TOKEN: string | undefined;
 let SHARED_SECRET: string | undefined;
 let DATABASE_URL: string | undefined;
+let RUN_DB_MIGRATION: string | undefined;
 
 UPSTASH_REDIS_REST_URL = Deno.env.get("UPSTASH_REDIS_REST_URL");
 if (!UPSTASH_REDIS_REST_URL) {
@@ -24,8 +25,11 @@ if (!DATABASE_URL) {
   throw new Error("environment variable DATABASE_URL not set");
 }
 
+RUN_DB_MIGRATION = Deno.env.get("RUN_DB_MIGRATION");
+
 export {
   DATABASE_URL,
+  RUN_DB_MIGRATION,
   SHARED_SECRET,
   UPSTASH_REDIS_REST_TOKEN,
   UPSTASH_REDIS_REST_URL,

@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import dbClient from "./clients/db.ts";
+import dbClient, { migrationConnection } from "./clients/db.ts";
 import redisClient from "./clients/redis.ts";
 import Cors from "./middleware/cors.ts";
 import Logger from "./middleware/logger.ts";
@@ -11,6 +11,9 @@ import api from "./routes/api/api.ts";
 import utils from "./routes/utils/utils.ts";
 import NotFound from "./pages/404.ts";
 import { ErrorHandler } from "./utils/errors.ts";
+import { RUN_DB_MIGRATION } from "./utils/secrets.ts";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 
 export const container = new Container(dbClient, redisClient);
 
@@ -28,12 +31,25 @@ class App {
     return this.#container;
   }
 
+  async migrate() {
+    if (
+      RUN_DB_MIGRATION != undefined && RUN_DB_MIGRATION.toLowerCase() == "true"
+    ) {
+      await migrate(drizzle(migrationConnection), {
+        migrationsFolder: "drizzle",
+      });
+      await migrationConnection.end();
+    }
+  }
+
   router() {
     return this.#app;
   }
 }
 
 const app = new App(container);
+
+await app.migrate();
 
 app.router().use("*", Cors());
 app.router().use("*", Logger());
