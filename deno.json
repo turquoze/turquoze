@@ -6,8 +6,8 @@
     "exclude": ["generated/", "cov_profile/"]
   },
   "tasks": {
-    "run": "deno run --env --allow-net --allow-env src/mod.ts",
-    "run:w": "deno run --env --allow-net --allow-env --watch ./src/mod.ts",
+    "run": "deno run --env --allow-read=drizzle --allow-net --allow-env src/mod.ts",
+    "run:w": "deno run --env --allow-read=drizzle --allow-net --allow-env --watch ./src/mod.ts",
     "run:debug": "deno run --env --inspect-brk --allow-net --allow-env --allow-read src/mod.ts",
     "test": "deno test --env --allow-net --allow-env --coverage=cov_profile",
     "coverage": "deno coverage cov_profile",
@@ -20,9 +20,10 @@
     "deps:write": "deno cache --lock=deno.lock --lock-write src/deps.ts"
   },
   "imports": {
-    "drizzle-orm": "npm:drizzle-orm",
-    "drizzle-orm/postgres-js": "npm:drizzle-orm/postgres-js",
-    "drizzle-orm/pg-core": "npm:drizzle-orm/pg-core",
+    "drizzle-orm": "npm:drizzle-orm@0.29.1",
+    "drizzle-orm/postgres-js": "npm:drizzle-orm@0.29.1/postgres-js",
+    "drizzle-orm/postgres-js/migrator": "npm:drizzle-orm@0.29.1/postgres-js/migrator",
+    "drizzle-orm/pg-core": "npm:drizzle-orm@0.29.1/pg-core",
     "postgres": "npm:postgres@3.4.3",
     "nanoid": "https://deno.land/x/nanoid@v3.0.0/mod.ts",
     "jose": "https://deno.land/x/jose@v5.1.0/index.ts",

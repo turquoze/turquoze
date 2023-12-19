@@ -1,6 +1,6 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
+
 DO $$ BEGIN
  CREATE TYPE "key_status" AS ENUM('expired', 'invalid', 'valid', 'default');
 EXCEPTION
@@ -424,5 +424,3 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
-
-*/
