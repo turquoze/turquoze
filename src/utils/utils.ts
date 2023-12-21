@@ -27,9 +27,7 @@ export async function Get<T>(
     let data;
     try {
       data = await Promise.any([
-        container.CacheService.get<T>(
-          `${container.Shop.publicId}-${params.id}`,
-        ),
+        container.CacheService.get<T>(container.Shop.publicId!, params.id),
         params.promise,
       ]);
     } catch (_error) {
@@ -37,9 +35,10 @@ export async function Get<T>(
     }
 
     await container.CacheService.set({
-      id: `${container.Shop.publicId}-${params.id}`,
-      data: stringifyJSON(data),
+      key: params.id,
+      data: data,
       expire: (60 * 10),
+      shop: container.Shop.publicId!,
     });
 
     return data;
@@ -61,9 +60,10 @@ export async function Update<T>(
     const data = await params.promise;
 
     await container.CacheService.set({
-      id: `${container.Shop.publicId}-${params.id}`,
-      data: stringifyJSON(data),
+      key: params.id,
+      data: data,
       expire: (60 * 10),
+      shop: container.Shop.publicId!,
     });
 
     return data;
@@ -79,9 +79,7 @@ export async function Delete(container: Container, params: {
   try {
     await params.promise;
 
-    await container.CacheService.delete(
-      `${container.Shop.publicId}-${params.id}`,
-    );
+    await container.CacheService.delete(container.Shop.publicId!, params.id);
   } catch (error) {
     throw new Error("Could not get any data", {
       cause: error,

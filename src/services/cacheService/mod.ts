@@ -1,44 +1,55 @@
 import ICacheService from "../interfaces/cacheService.ts";
-import { Redis } from "@upstash/redis";
 
 export default class CacheService implements ICacheService {
-  #redis: Redis;
+  #cache: Array<{ shop: string; key: string; data: string; expired: number }>;
 
-  constructor(redis: Redis) {
-    this.#redis = redis;
+  constructor() {
+    this.#cache = [];
   }
 
-  async get<T>(id: string): Promise<T> {
+  async get<T>(shop: string, key: string): Promise<T> {
     try {
-      const data = await this.#redis.get<T>(id);
-      if (data == null) {
+      const data = this.#cache.find((x) =>
+        x.key == key && x.shop == shop && x.expired < Date.now()
+      );
+      if (data == undefined) {
         throw new Error("Not in cache");
       }
-      return data;
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      return JSON.parse(data.data);
     } catch (error) {
       throw error;
     }
   }
 
-  async set(
+  async set<T>(
     params: {
-      id: string;
-      data: string;
-      expire: number;
+      shop: string;
+      key: string;
+      data: T;
+      expire?: number;
     },
   ): Promise<void> {
     try {
-      await this.#redis.set(params.id, params.data, {
-        ex: params.expire,
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      this.#cache.push({
+        data: JSON.stringify(params.data),
+        expired: params.expire ?? 9999999999,
+        key: params.key,
+        shop: params.shop,
       });
     } catch (error) {
       throw error;
     }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(shop: string, key: string): Promise<void> {
     try {
-      await this.#redis.del(id);
+      await new Promise((resolve) => setTimeout(resolve, 5));
+      const i = this.#cache.findIndex((x) => x.key == key && x.shop == shop);
+      if (i > -1) {
+        this.#cache.splice(i, 1);
+      }
     } catch (error) {
       throw error;
     }

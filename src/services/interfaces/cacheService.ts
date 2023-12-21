@@ -1,11 +1,12 @@
 export default interface ICacheService {
-  get<T>(id: string): Promise<T>;
+  get<T>(shop: string, key: string): Promise<T>;
 
-  set(params: {
-    id: string;
-    data: string;
-    expire: number;
+  set<T>(params: {
+    shop: string;
+    key: string;
+    data: T;
+    expire?: number;
   }): Promise<void>;
 
-  delete(id: string): Promise<void>;
+  delete(shop: string, key: string): Promise<void>;
 }

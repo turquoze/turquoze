@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import Container from "../src/services/mod.ts";
-import { dbClient, redis as redisClient, searchClient } from "./bench_utils.ts";
+import { dbClient, searchClient } from "./bench_utils.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "./bench_secrets.ts";
 import SearchService from "../src/services/searchService/mod.ts";
 
-const localContainer = new Container(dbClient, redisClient);
+const localContainer = new Container(dbClient);
 localContainer.SearchService = new SearchService(searchClient);
 
 const app = new Hono({ strict: false });

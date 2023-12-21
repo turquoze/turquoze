@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import dbClient, { migrationConnection } from "./clients/db.ts";
-import redisClient from "./clients/redis.ts";
 import Cors from "./middleware/cors.ts";
 import Logger from "./middleware/logger.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
@@ -15,7 +14,7 @@ import { RUN_DB_MIGRATION } from "./utils/secrets.ts";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 
-export const container = new Container(dbClient, redisClient);
+export const container = new Container(dbClient);
 
 addEvents(container);
 

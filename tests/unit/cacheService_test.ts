@@ -1,9 +1,7 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import cacheService from "../../src/services/cacheService/mod.ts";
-import { stringifyJSON } from "../../src/utils/utils.ts";
-import { redis } from "../test_utils.ts";
 
-const cache = new cacheService(redis);
+const cache = new cacheService();
 
 Deno.test("CacheService", {
   sanitizeOps: false,
@@ -15,11 +13,12 @@ Deno.test("CacheService", {
     fn: async () => {
       try {
         await cache.set({
-          data: stringifyJSON({
+          data: {
             test: "1",
-          }),
-          id: "test",
+          },
+          key: "test",
           expire: 60,
+          shop: "123",
         });
         assert(true);
       } catch {
@@ -33,11 +32,12 @@ Deno.test("CacheService", {
     fn: async () => {
       try {
         await cache.set({
-          data: stringifyJSON({
+          data: {
             test: "1",
-          }),
-          id: "test-expire",
+          },
+          key: "test-expire",
           expire: 1,
+          shop: "123",
         });
         assert(true);
       } catch {
@@ -49,7 +49,10 @@ Deno.test("CacheService", {
   await t.step({
     name: "Get",
     fn: async () => {
-      const data: Record<string, unknown> | null = await cache.get("test");
+      const data: Record<string, unknown> | null = await cache.get(
+        "123",
+        "test",
+      );
       assertObjectMatch(data!, {
         test: "1",
       });
@@ -60,7 +63,7 @@ Deno.test("CacheService", {
     name: "Get No object",
     fn: async () => {
       try {
-        await cache.get("test-no");
+        await cache.get("123", "test-no");
         assert(false);
       } catch (_error) {
         assert(true);
@@ -72,9 +75,7 @@ Deno.test("CacheService", {
     name: "Get Expired",
     fn: async () => {
       try {
-        await cache.get(
-          "test-expire",
-        );
+        await cache.get("123", "test-expire");
         assert(false);
       } catch (_error) {
         assert(true);
@@ -86,7 +87,7 @@ Deno.test("CacheService", {
     name: "Delete",
     fn: async () => {
       try {
-        await cache.delete("test");
+        await cache.delete("123", "test");
         assert(true);
       } catch {
         assert(false);
@@ -98,7 +99,7 @@ Deno.test("CacheService", {
     name: "Null cache",
     fn: async () => {
       try {
-        await cache.get("test");
+        await cache.get("123", "test");
         assert(false);
       } catch (_error) {
         assert(true);
