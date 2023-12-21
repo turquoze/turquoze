@@ -48,13 +48,11 @@ import IOrganizationService from "./interfaces/organizationService.ts";
 import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
-import { Redis } from "@upstash/redis";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { Shop } from "../utils/schema.ts";
 
 export default class Container {
   #db: PostgresJsDatabase;
-  #redis: Redis;
   CacheService: ICacheService;
   ProductService: IProductService;
   CartService: ICartService;
@@ -80,11 +78,10 @@ export default class Container {
   OrganizationLinkService: IOrganizationLinkService;
   PriceCalculatorService: IPriceCalculatorService;
 
-  constructor(db: PostgresJsDatabase, redis: Redis) {
+  constructor(db: PostgresJsDatabase) {
     this.#db = db;
-    this.#redis = redis;
 
-    this.CacheService = new DefaultCacheService(this.#redis);
+    this.CacheService = new DefaultCacheService();
     this.ProductService = new DefaultProductService(this.#db);
     this.CartService = new DefaultCartService(this.#db);
     this.OrderService = new DefaultOrderService(this.#db);

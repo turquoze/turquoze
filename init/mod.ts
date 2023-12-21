@@ -10,8 +10,7 @@ const client = postgres(DATABASE_URL!);
 //@ts-ignore test
 export const dbClient = drizzle(client);
 
-// @ts-expect-error no redis
-const container = new Container(dbClient, null);
+const container = new Container(dbClient);
 
 console.log("Start - Demo init");
 
