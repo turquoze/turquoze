@@ -1,10 +1,15 @@
 import { TurquozeEvent } from "../../utils/types.ts";
 
 export default interface INotificationService {
-  // deno-lint-ignore ban-types
-  add(events: Array<TurquozeEvent>, fn: Function, id?: string): string;
+  addListener(
+    callback: EventListenerOrEventListenerObject,
+    event: TurquozeEvent,
+  ): void;
 
-  notify(event: TurquozeEvent, id: string): void;
+  notify(event: TurquozeEvent, data: Record<string, unknown>): void;
 
-  remove(id: string): boolean;
+  removeListener(
+    callback: EventListenerOrEventListenerObject,
+    event: TurquozeEvent,
+  ): void;
 }

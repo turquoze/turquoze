@@ -1,47 +1,31 @@
-import Container from "../services/mod.ts";
-import { TurquozeEvent } from "./types.ts";
+import type Container from "../services/mod.ts";
 
-export default function addEvents(container: Container) {
-  container.NotificationService.add(
-    ["Product.Created", "Product.Updated"],
-    (_event: TurquozeEvent, id: string) => {
-      container.ProductService.Get({ id }).then((product) => {
-        const index = container.Shop.searchIndex;
-        const productToIndex = {
-          ...product,
-        };
-        delete productToIndex.publicId;
+export function reIndex(id: string, container: Container) {
+  container.ProductService.Get({ id }).then((product) => {
+    const index = container.Shop.searchIndex;
+    const productToIndex = {
+      ...product,
+    };
+    delete productToIndex.publicId;
 
-        container.SearchService.ProductIndex({
-          index: index!,
-          //@ts-ignore not on type
-          products: [productToIndex],
-        }).then((task) => {
-          console.info(task);
-        }).catch((error) => console.log(`could not finish event`, error));
-      }).catch((error) => console.log(`could not finish event`, error));
-    },
-  );
+    container.SearchService.ProductIndex({
+      index: index!,
+      //@ts-ignore not on type
+      products: [productToIndex],
+    }).then((task) => {
+      console.info(task);
+    }).catch((error) => console.log(`could not finish event`, error));
+  }).catch((error) => console.log(`could not finish event`, error));
+}
 
-  container.NotificationService.add(
-    ["Product.Deleted"],
-    (_event: TurquozeEvent, id: string) => {
-      container.ProductService.Get({ id }).then((product) => {
-        const index = container.Shop.searchIndex;
-        container.SearchService.ProductRemove({
-          index: index!,
-          id: product.publicId!.toString(),
-        }).then((task) => {
-          console.info(task);
-        }).catch((error) => console.log(`could not finish event`, error));
-      }).catch((error) => console.log(`could not finish event`, error));
-    },
-  );
-
-  container.NotificationService.add(
-    ["TEST_EVENT"],
-    (_event: TurquozeEvent, id: string) => {
-      console.log(`NOTIFIED: ${id}`);
-    },
-  );
+export function removeProduct(id: string, container: Container) {
+  container.ProductService.Get({ id }).then((product) => {
+    const index = container.Shop.searchIndex;
+    container.SearchService.ProductRemove({
+      index: index!,
+      id: product.publicId!.toString(),
+    }).then((task) => {
+      console.info(task);
+    }).catch((error) => console.log(`could not finish event`, error));
+  }).catch((error) => console.log(`could not finish event`, error));
 }
