@@ -23,7 +23,7 @@ function admin(container: Container) {
   _admin.route("/auth", new auth(container).routes());
   _admin.route("/dashboard", new dashboard(container).routes());
 
-  _admin.use(AuthGuard(container));
+  _admin.use("*", AuthGuard(container));
 
   _admin.route("/settings", new settings(container).routes());
   _admin.route("/tokens", new tokens(container).routes());
