@@ -12,12 +12,7 @@
     "test": "deno test --env --allow-net --allow-env --coverage=cov_profile",
     "coverage": "deno coverage cov_profile",
     "bench": "deno bench --allow-net --allow-env --allow-read",
-    "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json",
-    "db:push": "deno run -A --unstable npm:prisma db push",
-    "db:pull": "deno run -A --unstable npm:prisma db pull",
-    "db:init": "deno run --allow-net --allow-env --allow-read ./init/mod.ts",
-    "deps:reload": "deno cache --lock=deno.lock --lock-write src/deps.ts",
-    "deps:write": "deno cache --lock=deno.lock --lock-write src/deps.ts"
+    "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json"
   },
   "imports": {
     "drizzle-orm": "npm:drizzle-orm@0.29.1",
@@ -27,7 +22,6 @@
     "postgres": "npm:postgres@3.4.3",
     "nanoid": "https://deno.land/x/nanoid@v3.0.0/mod.ts",
     "jose": "https://deno.land/x/jose@v5.1.0/index.ts",
-    "@upstash/redis": "https://esm.sh/@upstash/redis@1.24.3",
     "meilisearch": "https://esm.sh/meilisearch@0.35.0",
     "valibot": "npm:valibot@0.20.1",
     "drizzle-valibot": "npm:drizzle-valibot@0.1.1",
