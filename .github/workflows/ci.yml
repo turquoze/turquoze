@@ -35,6 +35,11 @@ jobs:
       - run: deno cache ./src/mod.ts
       
       - run: deno task test-ci
+        env:
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+          TEST_MEILIHOST: ${{ secrets.TEST_MEILIHOST }}
+          TEST_MEILIINDEX: ${{ secrets.TEST_MEILIINDEX }}
+          TEST_MEILIAPIKEY: ${{ secrets.TEST_MEILIAPIKEY }}
 
   deploy:
     needs: test
