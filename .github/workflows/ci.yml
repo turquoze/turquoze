@@ -1,4 +1,4 @@
-name: Format, Lint & Deploy
+name: Format, Lint, Test & Deploy
 
 on:
   push:
@@ -21,8 +21,21 @@ jobs:
       - run: deno fmt --check
       
       - run: deno lint
+  
+  test:
+    needs: FormatAndLint
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      
+      - run: deno task test 
 
   deploy:
+    needs: test
     runs-on: ubuntu-latest
 
     permissions:
