@@ -94,22 +94,6 @@ export interface Shipping {
   phone: string;
 }
 
-export interface Media {
-  file:
-    | ArrayBuffer
-    | ArrayBufferView
-    | Blob
-    | Buffer
-    | File
-    | FormData
-    | ReadableStream
-    | ReadableStream
-    | URLSearchParams
-    | string;
-  name: string;
-  public: boolean;
-}
-
 export interface LoginRequest {
   email: string;
   password: string;
