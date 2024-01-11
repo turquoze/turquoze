@@ -62,20 +62,20 @@ app.router().route("/utils", utils(container));
 
 app.event("Product.Created", (event) => {
   //@ts-expect-error not on type
-  const { id } = event.detail;
-  reIndex(id, app.container());
+  const { id, shop } = event.detail;
+  reIndex(id, shop, app.container());
 });
 
 app.event("Product.Updated", (event) => {
   //@ts-expect-error not on type
-  const { id } = event.detail;
-  reIndex(id, app.container());
+  const { id, shop } = event.detail;
+  reIndex(id, shop, app.container());
 });
 
 app.event("Product.Deleted", (event) => {
   //@ts-expect-error not on type
-  const { id } = event.detail;
-  removeProduct(id, app.container());
+  const { id, shop } = event.detail;
+  removeProduct(id, shop, app.container());
 });
 
 app.router().notFound((ctx) => {
