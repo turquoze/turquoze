@@ -1,5 +1,12 @@
-import app from "./app.ts";
+import App from "./app.ts";
 import { stringifyJSON } from "./utils/utils.ts";
+import dbClient from "./clients/db.ts";
+import Container from "./services/mod.ts";
+
+export const container = new Container(dbClient);
+const app = new App(container);
+
+await app.migrate();
 
 if (import.meta.main) {
   Deno.serve({
