@@ -8,7 +8,7 @@ const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default function AuthGuard(container: Container) {
   return async (ctx: Context, next: Next) => {
-    const tokenId = ctx.req.headers.get("X-Turquoze-Id");
+    const tokenId = ctx.req.header("X-Turquoze-Id");
     const tokenSecret = ctx.req.header("X-Turquoze-Secret");
 
     const authToken = ctx.req.header("Authorization");
