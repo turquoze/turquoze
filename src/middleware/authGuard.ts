@@ -1,9 +1,10 @@
 import type { Context, Next } from "hono";
 import Container from "../services/mod.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
-import { ShopLinkData } from "../utils/types.ts";
+import { ShopLinkData, TurquozeRole } from "../utils/types.ts";
 import * as jose from "jose";
-import { Shop } from "../utils/schema.ts";
+import { DBShop, Shop } from "../utils/schema.ts";
+import { Get } from "../utils/utils.ts";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default function AuthGuard(container: Container) {
@@ -15,10 +16,23 @@ export default function AuthGuard(container: Container) {
     const shopId = ctx.req.header("X-Turquoze-ShopId");
     try {
       if (tokenId != null && tokenSecret != null) {
-        const data = await container.TokenService.GetShopByToken({
-          tokenId,
-          tokenSecret,
-        });
+        const msgUint8 = new TextEncoder().encode(tokenSecret);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+
+        const data = await Get<{ shop: DBShop; role: TurquozeRole }>(
+          container,
+          {
+            id: `${tokenId}-${hashHex}-get-shop`,
+            promise: container.TokenService.GetShopByToken({
+              tokenId,
+              tokenSecret,
+            }),
+          },
+        );
 
         const shop = data.shop as Shop;
 
@@ -49,8 +63,18 @@ export default function AuthGuard(container: Container) {
           throw new Error("No match found for shop");
         }
 
-        const data = await container.ShopService.Get({
-          id: shopId,
+        const msgUint8 = new TextEncoder().encode(shopId);
+        const hashBuffer = await crypto.subtle.digest("SHA-256", msgUint8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+
+        const data = await Get<DBShop>(container, {
+          id: `shop-by-id-${hashHex}`,
+          promise: container.ShopService.Get({
+            id: shopId,
+          }),
         });
 
         const signKey = await jose.importJWK(
