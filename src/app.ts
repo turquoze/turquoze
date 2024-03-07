@@ -14,6 +14,7 @@ import { RUN_DB_MIGRATION } from "./utils/secrets.ts";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { TurquozeEvent } from "./utils/types.ts";
+import type ICacheService from "./services/interfaces/cacheService.ts";
 
 class App {
   #container: Container;
@@ -24,9 +25,9 @@ class App {
     this.#app.use("*", Cors());
     this.#app.use("*", Logger());
     this.#app.use("*", ResponseTimer());
-    this.#app.route("/admin", admin(container));
-    this.#app.route("/api", api(container));
-    this.#app.route("/utils", utils(container));
+    this.#app.route("/admin", admin(this.#container));
+    this.#app.route("/api", api(this.#container));
+    this.#app.route("/utils", utils(this.#container));
 
     this.#app.notFound((ctx) => {
       const acceptHeader = ctx.req.header("Accept");
@@ -95,6 +96,10 @@ class App {
 
   router() {
     return this.#app;
+  }
+
+  addCache(cache: ICacheService) {
+    this.#container.CacheService = cache;
   }
 }
 
