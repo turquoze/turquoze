@@ -1,6 +1,6 @@
-import type { Context, Next } from "hono";
+import type { Context, Next } from "../deps.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
-import * as jose from "jose";
+import { jose } from "../deps.ts";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default function TokenGuard() {

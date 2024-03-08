@@ -1,9 +1,7 @@
-import { Hono } from "hono";
+import { Hono, jose, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { LoginSchema } from "../../utils/validator.ts";
-import * as jose from "jose";
-import { parse } from "valibot";
 import { Shop } from "../../utils/schema.ts";
 
 export default class UsersRoutes {

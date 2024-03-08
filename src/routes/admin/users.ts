@@ -1,10 +1,9 @@
-import { Hono } from "hono";
+import { Hono, parse } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import { insertUserSchema, User } from "../../utils/schema.ts";
 
 export default class UsersRoutes {

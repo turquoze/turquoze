@@ -1,4 +1,4 @@
-import { flatten, ValiError } from "valibot";
+import { flatten, ValiError } from "../deps.ts";
 import { ErrorResponse } from "./types.ts";
 
 export class DatabaseError extends Error {

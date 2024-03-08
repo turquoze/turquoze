@@ -1,8 +1,7 @@
 import ICategoryService from "../interfaces/categoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { categories, Category } from "../../utils/schema.ts";
-import { and, eq } from "drizzle-orm";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class CategoryService implements ICategoryService {
   db: PostgresJsDatabase;

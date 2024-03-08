@@ -1,9 +1,7 @@
 import IAdminService from "../interfaces/adminService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { sql } from "drizzle-orm";
+import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 import { Admin, admins } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
 
 export default class AdminService implements IAdminService {
   db: PostgresJsDatabase;

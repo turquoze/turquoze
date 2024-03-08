@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, parse } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
@@ -6,7 +6,6 @@ import { ErrorHandler } from "../../utils/errors.ts";
 import { Delete, Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { insertWarehouseSchema, Warehouse } from "../../utils/schema.ts";
-import { parse } from "valibot";
 
 export default class WarehousesRoutes {
   #warehouses: Hono;

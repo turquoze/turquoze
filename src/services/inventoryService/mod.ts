@@ -1,9 +1,7 @@
 import IInventoryService from "../interfaces/inventoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { sql } from "drizzle-orm";
 import { inventories, Inventory } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class CartService implements IInventoryService {
   db: PostgresJsDatabase;

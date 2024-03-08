@@ -1,10 +1,8 @@
 import ISettingsService from "../interfaces/settingsService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-//import container from "../mod.ts";
 import type { Settings } from "../../utils/types.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { shops } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class SettingsService implements ISettingsService {
   db: PostgresJsDatabase;

@@ -1,8 +1,7 @@
 import { DatabaseError } from "../../utils/errors.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { Plugin, plugins } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class PluginService implements IPluginService {
   db: PostgresJsDatabase;

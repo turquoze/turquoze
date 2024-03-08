@@ -1,8 +1,7 @@
 import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { categorieslink, CategoryLink, Product } from "../../utils/schema.ts";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class CategoryLinkService implements ICategoryLinkService {
   db: PostgresJsDatabase;

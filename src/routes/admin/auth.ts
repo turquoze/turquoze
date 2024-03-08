@@ -1,8 +1,7 @@
-import { Hono } from "hono";
+import { Hono, jose } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { SHARED_SECRET } from "../../utils/secrets.ts";
-import * as jose from "jose";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class AuthRoutes {

@@ -1,12 +1,10 @@
-import { Hono } from "hono";
+import { Hono, MeiliSearch, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
-import { MeiliSearch } from "meilisearch";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { SearchSchema, UuidSchema } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import { Product } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {

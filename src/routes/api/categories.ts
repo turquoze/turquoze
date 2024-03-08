@@ -1,11 +1,10 @@
-import { Hono } from "hono";
+import { Hono, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { Get } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import { Category, Product, Shop } from "../../utils/schema.ts";
 
 export default class CategoriesRoutes {

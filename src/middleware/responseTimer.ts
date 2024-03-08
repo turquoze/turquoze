@@ -1,4 +1,4 @@
-import type { Context, Next } from "hono";
+import type { Context, Next } from "../deps.ts";
 
 export default function ResponseTimer() {
   return async (ctx: Context, next: Next) => {

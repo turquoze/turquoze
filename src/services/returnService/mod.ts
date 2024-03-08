@@ -1,9 +1,8 @@
 import IReturnService from "../interfaces/returnService.ts";
 import { OrderReturn } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { returns } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ReturnService implements IReturnService {
   db: PostgresJsDatabase;

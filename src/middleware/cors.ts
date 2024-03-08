@@ -1,4 +1,4 @@
-import type { Context, Next } from "hono";
+import type { Context, Next } from "../deps.ts";
 
 export default function Cors() {
   return async (ctx: Context, next: Next) => {

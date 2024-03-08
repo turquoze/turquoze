@@ -1,9 +1,8 @@
 import { Oauth } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import IOauthService from "../interfaces/oauthService.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { oauthTokens } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class OauthService implements IOauthService {
   db: PostgresJsDatabase;
