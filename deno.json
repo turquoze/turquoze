@@ -14,19 +14,5 @@
     "coverage": "deno coverage cov_profile",
     "bench": "deno bench --allow-net --allow-env --allow-read",
     "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json"
-  },
-  "imports": {
-    "drizzle-orm": "npm:drizzle-orm@0.29.4",
-    "drizzle-orm/postgres-js": "npm:drizzle-orm@0.29.4/postgres-js",
-    "drizzle-orm/postgres-js/migrator": "npm:drizzle-orm@0.29.4/postgres-js/migrator",
-    "drizzle-orm/pg-core": "npm:drizzle-orm@0.29.4/pg-core",
-    "postgres": "npm:postgres@3.4.3",
-    "nanoid": "https://deno.land/x/nanoid@v3.0.0/mod.ts",
-    "jose": "https://deno.land/x/jose@v5.2.2/index.ts",
-    "meilisearch": "npm:meilisearch@0.37.0",
-    "valibot": "npm:valibot@0.29.0",
-    "drizzle-valibot": "npm:drizzle-valibot@0.1.1",
-    "hono": "https://deno.land/x/hono@v4.0.10/mod.ts",
-    "hono/cookie": "https://deno.land/x/hono@v4.0.10/helper.ts"
   }
 }

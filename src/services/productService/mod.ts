@@ -1,8 +1,7 @@
 import IProductService from "../interfaces/productService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { DBProduct as Product, products } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ProductService implements IProductService {
   db: PostgresJsDatabase;

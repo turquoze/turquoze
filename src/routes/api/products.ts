@@ -1,12 +1,10 @@
-import { Hono } from "hono";
+import { Hono, MeiliSearch, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
-import { MeiliSearch } from "meilisearch";
 
 import { Get, stringifyJSON } from "../../utils/utils.ts";
 import { SearchSchema, UuidSchema } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import { Product } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {
@@ -41,11 +39,13 @@ export default class ProductsRoutes {
             productId: product.publicId!,
           });
 
-          localProduct.price = Dinero({
-            amount: parseInt((price.amount ?? -1).toString()),
-            //@ts-expect-error not on type
-            currency: ctx.get("request_data").currency,
-          }).getAmount();
+          if (price != null || price != undefined) {
+            localProduct.price = Dinero({
+              amount: parseInt((price.amount ?? -1).toString()),
+              //@ts-expect-error not on type
+              currency: ctx.get("request_data").currency,
+            }).getAmount();
+          }
 
           return localProduct;
         });
@@ -133,11 +133,13 @@ export default class ProductsRoutes {
               productId: product.publicId!,
             });
 
-            product.price = Dinero({
-              amount: parseInt((price.amount ?? -1).toString()),
-              //@ts-expect-error not on type
-              currency: ctx.get("request_data").currency,
-            }).getAmount();
+            if (price != null || price != undefined) {
+              product.price = Dinero({
+                amount: parseInt((price.amount ?? -1).toString()),
+                //@ts-expect-error not on type
+                currency: ctx.get("request_data").currency,
+              }).getAmount();
+            }
 
             return product;
           });
@@ -176,11 +178,13 @@ export default class ProductsRoutes {
           productId: data.publicId!,
         });
 
-        product.price = Dinero({
-          amount: parseInt((price.amount ?? -1).toString()),
-          //@ts-expect-error not on type
-          currency: ctx.get("request_data").currency,
-        }).getAmount();
+        if (price != null || price != undefined) {
+          product.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
+            //@ts-expect-error not on type
+            currency: ctx.get("request_data").currency,
+          }).getAmount();
+        }
 
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
@@ -214,11 +218,13 @@ export default class ProductsRoutes {
             productId: product.publicId!,
           });
 
-          localProduct.price = Dinero({
-            amount: parseInt((price.amount ?? -1).toString()),
-            //@ts-expect-error not on type
-            currency: ctx.get("request_data").currency,
-          }).getAmount();
+          if (price != null || price != undefined) {
+            localProduct.price = Dinero({
+              amount: parseInt((price.amount ?? -1).toString()),
+              //@ts-expect-error not on type
+              currency: ctx.get("request_data").currency,
+            }).getAmount();
+          }
 
           return localProduct;
         });
@@ -276,11 +282,13 @@ export default class ProductsRoutes {
           productId: id,
         });
 
-        data.amount = Dinero({
-          amount: parseInt((data.amount ?? -1).toString()),
-          //@ts-expect-error not on type
-          currency: ctx.get("request_data").currency,
-        }).getAmount();
+        if (data != null || data != undefined) {
+          data.amount = Dinero({
+            amount: parseInt((data.amount ?? -1).toString()),
+            //@ts-expect-error not on type
+            currency: ctx.get("request_data").currency,
+          }).getAmount();
+        }
 
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
@@ -314,11 +322,13 @@ export default class ProductsRoutes {
           productId: id,
         });
 
-        data.price = Dinero({
-          amount: parseInt((price.amount ?? -1).toString()),
-          //@ts-expect-error not on type
-          currency: ctx.get("request_data").currency,
-        }).getAmount();
+        if (price != null || price != undefined) {
+          data.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
+            //@ts-expect-error not on type
+            currency: ctx.get("request_data").currency,
+          }).getAmount();
+        }
 
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({

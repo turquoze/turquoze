@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
@@ -10,7 +10,6 @@ import {
   ShippingSchema,
   UuidSchema,
 } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import {
   CartItem,
   insertCartItemSchema,

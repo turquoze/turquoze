@@ -1,10 +1,8 @@
 import { TurquozeRole } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { sql } from "drizzle-orm";
 import { DBShop as Shop, Token, tokens } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class TokenService implements ITokenService {
   db: PostgresJsDatabase;

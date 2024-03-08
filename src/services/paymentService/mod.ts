@@ -11,10 +11,10 @@ import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError, NoCartError } from "../../utils/errors.ts";
 import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import IPriceService from "../interfaces/priceService.ts";
 import IPriceCalculatorService from "../interfaces/priceCalculatorService.ts";
 import { Cart, CartItem, Plugin, Shop } from "../../utils/schema.ts";
+import { Dinero } from "../../deps.ts";
 
 export default class PaymentService implements IPaymentService {
   #CartService: ICartService;

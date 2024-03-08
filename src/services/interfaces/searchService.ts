@@ -1,4 +1,4 @@
-import type { EnqueuedTask, MeiliSearch, SearchResponse } from "meilisearch";
+import type { EnqueuedTask, MeiliSearch, SearchResponse } from "../../deps.ts";
 import { MeiliDelete, MeiliIndex, Search } from "../../utils/types.ts";
 import { Product } from "../../utils/schema.ts";
 

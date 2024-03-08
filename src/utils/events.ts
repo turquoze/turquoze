@@ -1,4 +1,4 @@
-import { MeiliSearch } from "meilisearch";
+import { MeiliSearch } from "../deps.ts";
 import type Container from "../services/mod.ts";
 import { Shop } from "./schema.ts";
 

@@ -1,8 +1,7 @@
 import IShopService from "../interfaces/shopService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { DBShop as Shop, shops } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ShopService implements IShopService {
   db: PostgresJsDatabase;

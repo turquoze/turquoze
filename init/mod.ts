@@ -1,8 +1,7 @@
 import Container from "../src/services/mod.ts";
 import { faker } from "npm:@faker-js/faker";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
-import { Category, Product } from "../src/utils/schema.ts";
+import { Category, DBProduct as Product } from "../src/utils/schema.ts";
+import { drizzle, postgres } from "../src/deps.ts";
 
 const DATABASE_URL = Deno.env.get("TEST_DATABASE_URL")!;
 
@@ -159,12 +158,13 @@ function GenerateProduct(shop: string): Product {
   return {
     id: 0,
     active: true,
-    images: [faker.image.fashion()],
+    images: [faker.image.fashion(800, 600, true)],
     longDescription: faker.commerce.productDescription(),
     shop: shop,
     slug: faker.lorem.slug(),
     shortDescription: faker.commerce.productDescription().slice(0, 20),
     title: faker.commerce.productName(),
-    price: parseInt(faker.commerce.price(10000, 99999900, 0, "")),
+    //TODO: add insert price also
+    //price: parseInt(faker.commerce.price(10000, 99999900, 0, "")),
   };
 }

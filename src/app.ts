@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { drizzle, Hono, migrate } from "./deps.ts";
 import { migrationConnection } from "./clients/db.ts";
 import Cors from "./middleware/cors.ts";
 import Logger from "./middleware/logger.ts";
@@ -11,8 +11,6 @@ import utils from "./routes/utils/utils.ts";
 import NotFound from "./pages/404.ts";
 import { ErrorHandler } from "./utils/errors.ts";
 import { RUN_DB_MIGRATION } from "./utils/secrets.ts";
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { TurquozeEvent } from "./utils/types.ts";
 import type ICacheService from "./services/interfaces/cacheService.ts";
 

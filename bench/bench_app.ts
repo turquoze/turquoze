@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "../src/deps.ts";
 import Container from "../src/services/mod.ts";
 import { dbClient, searchClient } from "./bench_utils.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "./bench_secrets.ts";

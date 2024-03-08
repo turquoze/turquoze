@@ -1,8 +1,7 @@
 import IOrganizationLinkService from "../interfaces/organizationLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { OrganizationLink, organizationsLink } from "../../utils/schema.ts";
-import { and, eq } from "drizzle-orm";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class OrganizationLinkService
   implements IOrganizationLinkService {

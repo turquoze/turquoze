@@ -1,11 +1,10 @@
-import { Hono } from "hono";
+import { Hono, parse } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 import { Delete, Get, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import { insertProductSchema, Product, Shop } from "../../utils/schema.ts";
 
 export default class ProductsRoutes {
@@ -42,10 +41,12 @@ export default class ProductsRoutes {
             productId: product.publicId!,
           });
 
-          localProduct.price = Dinero({
-            amount: parseInt((price.amount ?? -1).toString()),
-            currency: request_data.currency,
-          }).getAmount();
+          if (price != null || price != undefined) {
+            localProduct.price = Dinero({
+              amount: parseInt((price.amount ?? -1).toString()),
+              currency: request_data.currency,
+            }).getAmount();
+          }
 
           return localProduct;
         });
@@ -113,10 +114,12 @@ export default class ProductsRoutes {
           productId: id,
         });
 
-        data.price = Dinero({
-          amount: parseInt((price.amount ?? -1).toString()),
-          currency: request_data.currency,
-        }).getAmount();
+        if (price != null || price != undefined) {
+          data.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
+            currency: request_data.currency,
+          }).getAmount();
+        }
 
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({

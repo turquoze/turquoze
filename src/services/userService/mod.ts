@@ -1,9 +1,7 @@
 import IUserService from "../interfaces/userService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { sql } from "drizzle-orm";
 import { User, users } from "../../utils/schema.ts";
-import { eq } from "drizzle-orm";
+import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class UserService implements IUserService {
   db: PostgresJsDatabase;

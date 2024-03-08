@@ -1,8 +1,7 @@
-import { Hono } from "hono";
+import { Hono, MeiliSearch } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { MeiliSearch } from "meilisearch";
 import { Product } from "../../utils/schema.ts";
 
 export default class SettingsRoutes {

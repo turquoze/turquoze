@@ -1,11 +1,10 @@
-import { Hono } from "hono";
+import { Hono, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 
 import { Get } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { parse } from "valibot";
 import { Category, Product, Shop } from "../../utils/schema.ts";
 
 export default class CategoriesRoutes {
@@ -93,10 +92,12 @@ export default class CategoriesRoutes {
             productId: product.publicId!,
           });
 
-          product.price = Dinero({
-            amount: parseInt((price.amount ?? -1).toString()),
-            currency: request_data.currency,
-          }).getAmount();
+          if (price != null || price != undefined) {
+            product.price = Dinero({
+              amount: parseInt((price.amount ?? -1).toString()),
+              currency: request_data.currency,
+            }).getAmount();
+          }
 
           return product;
         });

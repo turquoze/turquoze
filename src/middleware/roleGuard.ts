@@ -1,5 +1,5 @@
 import { TurquozeRole } from "../utils/types.ts";
-import type { Context, Next } from "hono";
+import type { Context, Next } from "../deps.ts";
 
 export default function RoleGuard(role: TurquozeRole) {
   return async (ctx: Context, next: Next) => {

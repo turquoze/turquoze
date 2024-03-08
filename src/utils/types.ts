@@ -1,7 +1,6 @@
-import type { SearchParams } from "meilisearch";
+import type { SearchParams, StatusCode } from "../deps.ts";
 import Container from "../services/mod.ts";
 import type { Product, Shop } from "./schema.ts";
-import { StatusCode } from "https://deno.land/x/hono@v4.0.10/utils/http-status.ts";
 
 export interface DiscountItem {
   code: string;

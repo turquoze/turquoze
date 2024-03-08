@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "../../deps.ts";
 import products from "./products.ts";
 import carts from "./carts.ts";
 import categories from "./categories.ts";

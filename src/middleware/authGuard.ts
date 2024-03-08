@@ -1,8 +1,8 @@
-import type { Context, Next } from "hono";
+import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
 import { SHARED_SECRET } from "../utils/secrets.ts";
 import { ShopLinkData, TurquozeRole } from "../utils/types.ts";
-import * as jose from "jose";
+import { jose } from "../deps.ts";
 import { DBShop, Shop } from "../utils/schema.ts";
 import { Get } from "../utils/utils.ts";
 const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);

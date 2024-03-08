@@ -1,34 +1,32 @@
 import {
+  array,
   bigint,
   bigserial,
   boolean,
+  createInsertSchema,
   foreignKey,
   integer,
   json,
+  type KeyLike,
+  nullable,
+  number,
   numeric,
+  optional,
+  type Output,
   pgEnum,
   pgTable,
   primaryKey,
+  sql,
+  string,
   text,
   timestamp,
   unique,
   uniqueIndex,
   uuid,
   varchar,
-} from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-valibot";
-import {
-  array,
-  nullable,
-  number,
-  optional,
-  type Output,
-  string,
-} from "valibot";
+} from "../deps.ts";
 
-import { sql } from "drizzle-orm";
 import { TurquozeRole } from "./types.ts";
-import type { KeyLike } from "jose";
 export const keyStatus = pgEnum("key_status", [
   "expired",
   "invalid",
@@ -477,6 +475,7 @@ export const insertShopSchema = createInsertSchema(shops, {
   id: optional(number()),
   regions: array(string()),
 });
+insertShopSchema._types?.input.regions;
 export type DBShop = Output<typeof insertShopSchema>;
 export type Shop = DBShop & {
   _signKey: Uint8Array | KeyLike;

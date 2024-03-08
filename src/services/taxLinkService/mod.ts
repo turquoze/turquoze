@@ -1,8 +1,7 @@
 import ITaxLinkService from "../interfaces/taxLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { Tax, taxeslink, TaxProductLink } from "../../utils/schema.ts";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class TaxLinkService implements ITaxLinkService {
   db: PostgresJsDatabase;

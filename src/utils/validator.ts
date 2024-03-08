@@ -6,8 +6,8 @@ import {
   nullable,
   object,
   string,
-  uuid,
-} from "valibot";
+  valibot_uuid as uuid,
+} from "../deps.ts";
 
 export const UuidSchema = object({
   id: string([uuid()]),

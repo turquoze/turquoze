@@ -1,8 +1,5 @@
-import { MeiliSearch } from "meilisearch";
+import { drizzle, MeiliSearch, postgres } from "../src/deps.ts";
 import { DATABASE_URL, MEILIAPIKEY, MEILIHOST } from "./bench_secrets.ts";
-
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 
 const client = postgres(DATABASE_URL!);
 

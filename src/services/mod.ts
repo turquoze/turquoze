@@ -48,7 +48,7 @@ import IOrganizationService from "./interfaces/organizationService.ts";
 import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { PostgresJsDatabase } from "../deps.ts";
 import { Shop } from "../utils/schema.ts";
 
 export default class Container {

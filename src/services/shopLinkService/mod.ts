@@ -1,9 +1,8 @@
 import { ShopLinkData } from "../../utils/types.ts";
 import IShopLinkService from "../interfaces/shopLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { ShopLink, shopslink } from "../../utils/schema.ts";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class ShopLinkService implements IShopLinkService {
   db: PostgresJsDatabase;

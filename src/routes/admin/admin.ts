@@ -1,4 +1,4 @@
-import { Hono } from "hono";
+import { Hono } from "../../deps.ts";
 import settings from "./settings.ts";
 import tokens from "./tokens.ts";
 import discounts from "./discounts.ts";
