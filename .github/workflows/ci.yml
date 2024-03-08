@@ -40,22 +40,3 @@ jobs:
           TEST_MEILIHOST: ${{ secrets.TEST_MEILIHOST }}
           TEST_MEILIINDEX: ${{ secrets.TEST_MEILIINDEX }}
           TEST_MEILIAPIKEY: ${{ secrets.TEST_MEILIAPIKEY }}
-
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v3
-
-      - name: Deploy to Deno Deploy
-        uses: denoland/deployctl@v1
-        with:
-          project: turquoze-backend 
-          entrypoint: ./src/mod.ts
-          import-map: deno.json
