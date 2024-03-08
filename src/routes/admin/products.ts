@@ -41,10 +41,12 @@ export default class ProductsRoutes {
             productId: product.publicId!,
           });
 
-          localProduct.price = Dinero({
-            amount: parseInt((price.amount ?? -1).toString()),
-            currency: request_data.currency,
-          }).getAmount();
+          if (price != null || price != undefined) {
+            localProduct.price = Dinero({
+              amount: parseInt((price.amount ?? -1).toString()),
+              currency: request_data.currency,
+            }).getAmount();
+          }
 
           return localProduct;
         });
@@ -112,10 +114,12 @@ export default class ProductsRoutes {
           productId: id,
         });
 
-        data.price = Dinero({
-          amount: parseInt((price.amount ?? -1).toString()),
-          currency: request_data.currency,
-        }).getAmount();
+        if (price != null || price != undefined) {
+          data.price = Dinero({
+            amount: parseInt((price.amount ?? -1).toString()),
+            currency: request_data.currency,
+          }).getAmount();
+        }
 
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({

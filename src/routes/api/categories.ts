@@ -92,10 +92,12 @@ export default class CategoriesRoutes {
             productId: product.publicId!,
           });
 
-          product.price = Dinero({
-            amount: parseInt((price.amount ?? -1).toString()),
-            currency: request_data.currency,
-          }).getAmount();
+          if (price != null || price != undefined) {
+            product.price = Dinero({
+              amount: parseInt((price.amount ?? -1).toString()),
+              currency: request_data.currency,
+            }).getAmount();
+          }
 
           return product;
         });
