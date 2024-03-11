@@ -34,11 +34,13 @@ export async function Get<T>(
       data = await params.promise;
     }
 
-    await container.CacheService.set({
+    container.CacheService.set({
       key: params.id,
       data: data,
       expire: (60 * 10),
       shop: container.Shop.publicId!,
+    }).then().catch((error) => {
+      console.error(`CacheService set error: ${JSON.stringify(error)}`);
     });
 
     return data;
@@ -59,11 +61,13 @@ export async function Update<T>(
   try {
     const data = await params.promise;
 
-    await container.CacheService.set({
+    container.CacheService.set({
       key: params.id,
       data: data,
       expire: (60 * 10),
       shop: container.Shop.publicId!,
+    }).then().catch((error) => {
+      console.error(`CacheService set error: ${JSON.stringify(error)}`);
     });
 
     return data;
@@ -79,7 +83,10 @@ export async function Delete(container: Container, params: {
   try {
     await params.promise;
 
-    await container.CacheService.delete(container.Shop.publicId!, params.id);
+    container.CacheService.delete(container.Shop.publicId!, params.id).then()
+      .catch((error) => {
+        console.error(`CacheService delete error: ${JSON.stringify(error)}`);
+      });
   } catch (error) {
     throw new Error("Could not get any data", {
       cause: error,
