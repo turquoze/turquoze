@@ -1,8 +1,6 @@
 import { Hono, jose } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { SHARED_SECRET } from "../../utils/secrets.ts";
-const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class AuthRoutes {
   #auth: Hono;
@@ -50,6 +48,10 @@ export default class AuthRoutes {
             exp: expRefresh,
             adminId: admin.publicId,
           };
+
+          //@ts-expect-error not on type
+          const SECRET_KEY = ctx.get("key_sign_key");
+          const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
           const jwt = await new jose.SignJWT(claims)
             .setProtectedHeader({ typ: "JWT", alg: "HS256" })

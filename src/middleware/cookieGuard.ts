@@ -1,9 +1,7 @@
 import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
-import { SHARED_SECRET } from "../utils/secrets.ts";
 import { getCookie, jose } from "../deps.ts";
 import { Shop } from "../utils/schema.ts";
-const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default function CookieGuard(container: Container) {
   return async (ctx: Context, next: Next) => {
@@ -16,6 +14,9 @@ export default function CookieGuard(container: Container) {
       const authCookie = getCookie(ctx, "TurquozeAuth");
       if (authCookie != undefined && authCookie != null) {
         const jwt = authCookie;
+
+        const SECRET_KEY = ctx.get("key_sign_key");
+        const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
         const result = await jose.jwtVerify(
           jwt,

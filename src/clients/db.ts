@@ -1,7 +1,16 @@
-import { drizzle, postgres } from "../deps.ts";
-import { DATABASE_URL } from "../utils/secrets.ts";
+import { drizzle, postgres, PostgresJsDatabase, Sql } from "../deps.ts";
 
-const client = postgres(DATABASE_URL!);
-export const migrationConnection = postgres(DATABASE_URL!, { max: 1 });
-const db = drizzle(client);
-export default db;
+export function getDBClients(databasUrl: string): {
+  migrationConnection: Sql;
+  db: PostgresJsDatabase<Record<string, never>>;
+} {
+  const client = postgres(databasUrl);
+  const db = drizzle(client);
+
+  const migrationConnection = postgres(databasUrl, { max: 1 });
+
+  return {
+    migrationConnection,
+    db,
+  };
+}

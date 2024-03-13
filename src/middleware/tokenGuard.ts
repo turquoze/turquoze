@@ -1,7 +1,5 @@
 import type { Context, Next } from "../deps.ts";
-import { SHARED_SECRET } from "../utils/secrets.ts";
 import { jose } from "../deps.ts";
-const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default function TokenGuard() {
   return async (ctx: Context, next: Next) => {
@@ -10,6 +8,9 @@ export default function TokenGuard() {
     try {
       if (authToken != undefined && authToken != null) {
         const jwt = authToken.split(" ")[1];
+
+        const SECRET_KEY = ctx.get("key_sign_key");
+        const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
         const result = await jose.jwtVerify(
           jwt,
