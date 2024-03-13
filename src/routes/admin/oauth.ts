@@ -2,8 +2,6 @@ import { Hono, jose, nanoid, setCookie } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
-import { SHARED_SECRET } from "../../utils/secrets.ts";
-const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default class OAuthRoutes {
   #oauth: Hono;
@@ -65,6 +63,10 @@ export default class OAuthRoutes {
             shopId: shop.publicId,
             adminId: admin.publicId,
           };
+
+          //@ts-expect-error not on type
+          const SECRET_KEY = ctx.get("key_sign_key");
+          const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
           const jwt = await new jose.SignJWT(claims)
             .setProtectedHeader({ typ: "JWT", alg: "HS256", kid: KID })
@@ -200,6 +202,10 @@ export default class OAuthRoutes {
             plugin: plugin.publicId,
             type: plugin.type,
           };
+
+          //@ts-expect-error not on type
+          const SECRET_KEY = ctx.get("key_sign_key");
+          const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
           const jwt = await new jose.SignJWT(claims)
             .setProtectedHeader({ typ: "JWT", alg: "HS256", kid: plugin.shop })

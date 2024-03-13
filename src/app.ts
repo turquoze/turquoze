@@ -1,5 +1,5 @@
 import { drizzle, Hono, migrate } from "./deps.ts";
-import { migrationConnection } from "./clients/db.ts";
+import { getDBClients } from "./clients/db.ts";
 import Cors from "./middleware/cors.ts";
 import Logger from "./middleware/logger.ts";
 import ResponseTimer from "./middleware/responseTimer.ts";
@@ -10,16 +10,32 @@ import api from "./routes/api/api.ts";
 import utils from "./routes/utils/utils.ts";
 import NotFound from "./pages/404.ts";
 import { ErrorHandler } from "./utils/errors.ts";
-import { RUN_DB_MIGRATION } from "./utils/secrets.ts";
 import { TurquozeEvent } from "./utils/types.ts";
 import type ICacheService from "./services/interfaces/cacheService.ts";
+import { Sql } from "./deps.ts";
 
 class App {
   #container: Container;
   #app: Hono;
-  constructor(container: Container) {
+  #migrationConnection: Sql;
+  #RUN_DB_MIGRATION: boolean;
+  constructor(databasUrl: string, params: {
+    allowRunMigration?: boolean;
+    sharedSecret: string;
+  }) {
+    this.#RUN_DB_MIGRATION = params.allowRunMigration ?? false;
+
+    const { db, migrationConnection } = getDBClients(databasUrl);
+    const container = new Container(db);
+    this.#migrationConnection = migrationConnection;
+
     this.#container = container;
     this.#app = new Hono({ strict: false });
+    this.#app.use("*", async (ctx, next) => {
+      //@ts-expect-error not on type
+      ctx.set("key_sign_key", params.sharedSecret);
+      await next();
+    });
     this.#app.use("*", Cors());
     this.#app.use("*", Logger());
     this.#app.use("*", ResponseTimer());
@@ -78,13 +94,11 @@ class App {
   }
 
   async migrate() {
-    if (
-      RUN_DB_MIGRATION != undefined && RUN_DB_MIGRATION.toLowerCase() == "true"
-    ) {
-      await migrate(drizzle(migrationConnection), {
+    if (this.#RUN_DB_MIGRATION != undefined && this.#RUN_DB_MIGRATION) {
+      await migrate(drizzle(this.#migrationConnection), {
         migrationsFolder: "drizzle",
       });
-      await migrationConnection.end();
+      await this.#migrationConnection.end();
     }
   }
 

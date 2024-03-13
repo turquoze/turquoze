@@ -1,10 +1,9 @@
-import App from "./app.ts";
-import { stringifyJSON } from "./utils/utils.ts";
-import dbClient from "./clients/db.ts";
-import Container from "./services/mod.ts";
+import App from "../src/app.ts";
+import { stringifyJSON } from "../src/utils/utils.ts";
 
-export const container = new Container(dbClient);
-const app = new App(container);
+const app = new App(Deno.env.get("DATABASE_URL")!, {
+  sharedSecret: Deno.env.get("SHARED_SECRET")!,
+});
 
 await app.migrate();
 

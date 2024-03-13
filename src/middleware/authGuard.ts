@@ -1,11 +1,9 @@
 import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
-import { SHARED_SECRET } from "../utils/secrets.ts";
 import { ShopLinkData, TurquozeRole } from "../utils/types.ts";
 import { jose } from "../deps.ts";
 import { DBShop, Shop } from "../utils/schema.ts";
 import { Get } from "../utils/utils.ts";
-const SHARED_SECRET_KEY = new TextEncoder().encode(SHARED_SECRET);
 
 export default function AuthGuard(container: Container) {
   return async (ctx: Context, next: Next) => {
@@ -48,6 +46,9 @@ export default function AuthGuard(container: Container) {
         ctx.set("request_data", shop);
         await next();
       } else if (authToken != null && shopId != null) {
+        const SECRET_KEY = ctx.get("key_sign_key");
+        const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
+
         const result = await jose.jwtVerify(
           authToken.split(" ")[1],
           SHARED_SECRET_KEY,

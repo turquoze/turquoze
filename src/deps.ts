@@ -31,8 +31,9 @@ export {
   uuid,
   varchar,
 } from "npm:drizzle-orm@0.29.4/pg-core";
-import postgres from "npm:postgres@3.4.3";
+import postgres, { Sql } from "npm:postgres@3.4.3";
 export { postgres };
+export type { Sql };
 export { nanoid } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
 export {
   type EnqueuedTask,
