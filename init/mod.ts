@@ -88,6 +88,16 @@ try {
   console.log("Creating Inventory");
   await Promise.all(inventoryPromises);
 
+  const pricePromises = products.map((product) => {
+    return GeneratePricItem(
+      publicId!,
+      product.publicId!,
+    );
+  });
+
+  console.log("Creating Prices");
+  await Promise.all(pricePromises);
+
   const chunkSize = 10;
   const result: Array<Array<{ publicId: string }>> = products.reduce(
     (resultArray, item, index) => {
@@ -164,7 +174,18 @@ function GenerateProduct(shop: string): Product {
     slug: faker.lorem.slug(),
     shortDescription: faker.commerce.productDescription().slice(0, 20),
     title: faker.commerce.productName(),
-    //TODO: add insert price also
-    //price: parseInt(faker.commerce.price(10000, 99999900, 0, "")),
   };
+}
+
+async function GeneratePricItem(
+  shop: string,
+  product: string,
+) {
+  await container.PriceService.Create({
+    data: {
+      product: product,
+      shop: shop,
+      amount: parseInt(faker.commerce.price(10000, 99999900, 0, "")),
+    },
+  });
 }
