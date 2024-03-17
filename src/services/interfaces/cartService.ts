@@ -2,7 +2,7 @@ import {
   DBCart as Cart,
   DBCartItem as CartItem,
   Discount,
-} from "../../utils/schema.ts";
+} from "../../utils/validator.ts";
 import { Shipping } from "../../utils/types.ts";
 
 export default interface ICartService {

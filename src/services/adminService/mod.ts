@@ -1,7 +1,8 @@
 import IAdminService from "../interfaces/adminService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
-import { Admin, admins } from "../../utils/schema.ts";
+import { admins } from "../../utils/schema.ts";
+import { Admin } from "../../utils/validator.ts";
 
 export default class AdminService implements IAdminService {
   db: PostgresJsDatabase;

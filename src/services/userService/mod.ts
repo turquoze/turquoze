@@ -1,7 +1,8 @@
 import IUserService from "../interfaces/userService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { User, users } from "../../utils/schema.ts";
+import { users } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { User } from "../../utils/validator.ts";
 
 export default class UserService implements IUserService {
   db: PostgresJsDatabase;

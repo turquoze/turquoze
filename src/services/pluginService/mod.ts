@@ -1,7 +1,8 @@
 import { DatabaseError } from "../../utils/errors.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-import { Plugin, plugins } from "../../utils/schema.ts";
+import { plugins } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Plugin } from "../../utils/validator.ts";
 
 export default class PluginService implements IPluginService {
   db: PostgresJsDatabase;

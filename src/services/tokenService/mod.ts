@@ -1,7 +1,8 @@
 import { TurquozeRole } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { DBShop as Shop, Token, tokens } from "../../utils/schema.ts";
+import { tokens } from "../../utils/schema.ts";
+import { DBShop as Shop, Token } from "../../utils/validator.ts";
 import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class TokenService implements ITokenService {

@@ -1,4 +1,4 @@
-import { DBShop as Shop, Token } from "../../utils/schema.ts";
+import { DBShop as Shop, Token } from "../../utils/validator.ts";
 import { TurquozeRole } from "../../utils/types.ts";
 
 export default interface ITokenService {

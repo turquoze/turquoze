@@ -1,9 +1,140 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "prevId": "",
+  "id": "7041e4ee-dd78-4c05-915b-79e06c14296f",
+  "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "5",
   "dialect": "pg",
   "tables": {
+    "admins": {
+      "name": "admins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(6) with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "not_active": {
+          "name": "not_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "cartitems": {
+      "name": "cartitems",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "cart_id": {
+          "name": "cart_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "quantity": {
+          "name": "quantity",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 1
+        },
+        "price": {
+          "name": "price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PRODUCT'"
+        },
+        "item_id": {
+          "name": "item_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cartitems_cart_id_carts_public_id_fk": {
+          "name": "cartitems_cart_id_carts_public_id_fk",
+          "tableFrom": "cartitems",
+          "tableTo": "carts",
+          "columnsFrom": [
+            "cart_id"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "carts": {
       "name": "carts",
       "schema": "",
@@ -24,7 +155,7 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
         },
@@ -96,19 +227,26 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "categories_parent_fkey": {
-          "name": "categories_parent_fkey",
+        "categories_shop_shops_public_id_fk": {
+          "name": "categories_shop_shops_public_id_fk",
           "tableFrom": "categories",
-          "tableTo": "categories",
+          "tableTo": "shops",
           "columnsFrom": [
-            "parent"
+            "shop"
           ],
           "columnsTo": [
             "public_id"
@@ -116,12 +254,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "categories_shop_fkey": {
-          "name": "categories_shop_fkey",
+        "categories_parent_categories_public_id_fk": {
+          "name": "categories_parent_categories_public_id_fk",
           "tableFrom": "categories",
-          "tableTo": "shops",
+          "tableTo": "categories",
           "columnsFrom": [
-            "shop"
+            "parent"
           ],
           "columnsTo": [
             "public_id"
@@ -133,13 +271,70 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "categories_name_key": {
+          "name": "categories_name_key",
+          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ],
-          "nullsNotDistinct": false,
-          "name": "categories_name_key"
+          ]
         }
       }
+    },
+    "categorieslink": {
+      "name": "categorieslink",
+      "schema": "",
+      "columns": {
+        "category": {
+          "name": "category",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product": {
+          "name": "product",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "categorieslink_category_categories_public_id_fk": {
+          "name": "categorieslink_category_categories_public_id_fk",
+          "tableFrom": "categorieslink",
+          "tableTo": "categories",
+          "columnsFrom": [
+            "category"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "categorieslink_product_products_public_id_fk": {
+          "name": "categorieslink_product_products_public_id_fk",
+          "tableFrom": "categorieslink",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "categoriesLink_pkey": {
+          "name": "categoriesLink_pkey",
+          "columns": [
+            "category",
+            "product"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
     },
     "discounts": {
       "name": "discounts",
@@ -197,15 +392,22 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "discounts_shop_fkey": {
-          "name": "discounts_shop_fkey",
+        "discounts_shop_shops_public_id_fk": {
+          "name": "discounts_shop_shops_public_id_fk",
           "tableFrom": "discounts",
           "tableTo": "shops",
           "columnsFrom": [
@@ -221,11 +423,11 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "discounts_code_key": {
+          "name": "discounts_code_key",
+          "nullsNotDistinct": false,
           "columns": [
             "code"
-          ],
-          "nullsNotDistinct": false,
-          "name": "discounts_code_key"
+          ]
         }
       }
     },
@@ -245,7 +447,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
-          "default": "(now() AT TIME ZONE 'utc'::text)"
+          "default": "now()"
         },
         "warehouse": {
           "name": "warehouse",
@@ -268,28 +470,22 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "inventories_product_fkey": {
-          "name": "inventories_product_fkey",
-          "tableFrom": "inventories",
-          "tableTo": "products",
-          "columnsFrom": [
-            "product"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "inventories_warehouse_fkey": {
-          "name": "inventories_warehouse_fkey",
+        "inventories_warehouse_warehouses_public_id_fk": {
+          "name": "inventories_warehouse_warehouses_public_id_fk",
           "tableFrom": "inventories",
           "tableTo": "warehouses",
           "columnsFrom": [
@@ -300,10 +496,102 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        },
+        "inventories_product_products_public_id_fk": {
+          "name": "inventories_product_products_public_id_fk",
+          "tableFrom": "inventories",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
+    },
+    "oauth_tokens": {
+      "name": "oauth_tokens",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(6) with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp(6)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "plugin": {
+          "name": "plugin",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "oauth_tokens_token_key": {
+          "name": "oauth_tokens_token_key",
+          "columns": [
+            "token"
+          ],
+          "isUnique": true
+        }
+      },
+      "foreignKeys": {
+        "oauth_tokens_plugin_plugins_public_id_fk": {
+          "name": "oauth_tokens_plugin_plugins_public_id_fk",
+          "tableFrom": "oauth_tokens",
+          "tableTo": "plugins",
+          "columnsFrom": [
+            "plugin"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "oauth_tokens_plugin_key": {
+          "name": "oauth_tokens_plugin_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "plugin"
+          ]
+        }
+      }
     },
     "orders": {
       "name": "orders",
@@ -344,7 +632,7 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
         },
@@ -360,16 +648,322 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "orders_shop_fkey": {
-          "name": "orders_shop_fkey",
+        "orders_shop_shops_public_id_fk": {
+          "name": "orders_shop_shops_public_id_fk",
           "tableFrom": "orders",
           "tableTo": "shops",
           "columnsFrom": [
             "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "organizations": {
+      "name": "organizations",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "organizationsLink": {
+      "name": "organizationsLink",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "person": {
+          "name": "person",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shop": {
+          "name": "shop",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'VIEWER'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "organizationsLink_person_users_public_id_fk": {
+          "name": "organizationsLink_person_users_public_id_fk",
+          "tableFrom": "organizationsLink",
+          "tableTo": "users",
+          "columnsFrom": [
+            "person"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "organizationsLink_shop_shops_public_id_fk": {
+          "name": "organizationsLink_shop_shops_public_id_fk",
+          "tableFrom": "organizationsLink",
+          "tableTo": "shops",
+          "columnsFrom": [
+            "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "organizationsLink_pkey": {
+          "name": "organizationsLink_pkey",
+          "columns": [
+            "person",
+            "shop"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    },
+    "plugins": {
+      "name": "plugins",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shop": {
+          "name": "shop",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "name": "token",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "plugins_shop_shops_public_id_fk": {
+          "name": "plugins_shop_shops_public_id_fk",
+          "tableFrom": "plugins",
+          "tableTo": "shops",
+          "columnsFrom": [
+            "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "plugins_public_id_key": {
+          "name": "plugins_public_id_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "public_id"
+          ]
+        }
+      }
+    },
+    "prices": {
+      "name": "prices",
+      "schema": "",
+      "columns": {
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "shop": {
+          "name": "shop",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "product": {
+          "name": "product",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "list": {
+          "name": "list",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'Default'"
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "prices_shop_shops_public_id_fk": {
+          "name": "prices_shop_shops_public_id_fk",
+          "tableFrom": "prices",
+          "tableTo": "shops",
+          "columnsFrom": [
+            "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "prices_product_products_public_id_fk": {
+          "name": "prices_product_products_public_id_fk",
+          "tableFrom": "prices",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product"
           ],
           "columnsTo": [
             "public_id"
@@ -397,7 +991,7 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true,
-          "default": "(now() AT TIME ZONE 'utc'::text)"
+          "default": "now()"
         },
         "active": {
           "name": "active",
@@ -444,7 +1038,7 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
         },
@@ -454,12 +1048,32 @@
           "primaryKey": false,
           "notNull": true,
           "default": "''"
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "products_parent_fkey": {
-          "name": "products_parent_fkey",
+        "products_shop_shops_public_id_fk": {
+          "name": "products_shop_shops_public_id_fk",
+          "tableFrom": "products",
+          "tableTo": "shops",
+          "columnsFrom": [
+            "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "products_parent_products_public_id_fk": {
+          "name": "products_parent_products_public_id_fk",
           "tableFrom": "products",
           "tableTo": "products",
           "columnsFrom": [
@@ -470,10 +1084,88 @@
           ],
           "onDelete": "no action",
           "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "products_slug_key": {
+          "name": "products_slug_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        }
+      }
+    },
+    "returns": {
+      "name": "returns",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
         },
-        "products_shop_fkey": {
-          "name": "products_shop_fkey",
-          "tableFrom": "products",
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp(6) with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "shop": {
+          "name": "shop",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "items": {
+          "name": "items",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'INIT'"
+        },
+        "exported": {
+          "name": "exported",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "returns_shop_shops_public_id_fk": {
+          "name": "returns_shop_shops_public_id_fk",
+          "tableFrom": "returns",
           "tableTo": "shops",
           "columnsFrom": [
             "shop"
@@ -486,15 +1178,168 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "products_slug_key": {
-          "columns": [
-            "slug"
-          ],
-          "nullsNotDistinct": false,
-          "name": "products_slug_key"
+      "uniqueConstraints": {}
+    },
+    "shops": {
+      "name": "shops",
+      "schema": "",
+      "columns": {
+        "public_id": {
+          "name": "public_id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "uuid_generate_v4()"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "regions": {
+          "name": "regions",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_id": {
+          "name": "payment_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "url": {
+          "name": "url",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "search_index": {
+          "name": "search_index",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "secret": {
+          "name": "secret",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'test'"
+        },
+        "settings": {
+          "name": "settings",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "shipping_id": {
+          "name": "shipping_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
-      }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "shopslink": {
+      "name": "shopslink",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "admin": {
+          "name": "admin",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shop": {
+          "name": "shop",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'VIEWER'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "shopslink_admin_admins_public_id_fk": {
+          "name": "shopslink_admin_admins_public_id_fk",
+          "tableFrom": "shopslink",
+          "tableTo": "admins",
+          "columnsFrom": [
+            "admin"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "shopslink_shop_shops_public_id_fk": {
+          "name": "shopslink_shop_shops_public_id_fk",
+          "tableFrom": "shopslink",
+          "tableTo": "shops",
+          "columnsFrom": [
+            "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
     },
     "taxes": {
       "name": "taxes",
@@ -502,7 +1347,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
         },
@@ -539,6 +1384,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "shop": {
           "name": "shop",
           "type": "uuid",
@@ -548,8 +1400,8 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "taxes_shop_fkey": {
-          "name": "taxes_shop_fkey",
+        "taxes_shop_shops_public_id_fk": {
+          "name": "taxes_shop_shops_public_id_fk",
           "tableFrom": "taxes",
           "tableTo": "shops",
           "columnsFrom": [
@@ -603,8 +1455,8 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "taxeslink_product_id_fkey": {
-          "name": "taxeslink_product_id_fkey",
+        "taxeslink_product_id_products_public_id_fk": {
+          "name": "taxeslink_product_id_products_public_id_fk",
           "tableFrom": "taxeslink",
           "tableTo": "products",
           "columnsFrom": [
@@ -616,8 +1468,8 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "taxeslink_tax_id_fkey": {
-          "name": "taxeslink_tax_id_fkey",
+        "taxeslink_tax_id_taxes_public_id_fk": {
+          "name": "taxeslink_tax_id_taxes_public_id_fk",
           "tableFrom": "taxeslink",
           "tableTo": "taxes",
           "columnsFrom": [
@@ -674,12 +1526,19 @@
           "primaryKey": false,
           "notNull": true,
           "default": "'USER'"
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "tokens_shop_fkey": {
-          "name": "tokens_shop_fkey",
+        "tokens_shop_shops_public_id_fk": {
+          "name": "tokens_shop_shops_public_id_fk",
           "tableFrom": "tokens",
           "tableTo": "shops",
           "columnsFrom": [
@@ -701,7 +1560,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "bigint",
+          "type": "bigserial",
           "primaryKey": false,
           "notNull": true
         },
@@ -755,12 +1614,19 @@
           "type": "varchar",
           "primaryKey": false,
           "notNull": false
+        },
+        "deleted": {
+          "name": "deleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "users_shop_fkey": {
-          "name": "users_shop_fkey",
+        "users_shop_shops_public_id_fk": {
+          "name": "users_shop_shops_public_id_fk",
           "tableFrom": "users",
           "tableTo": "shops",
           "columnsFrom": [
@@ -820,540 +1686,12 @@
         },
         "id": {
           "name": "id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "admins": {
-      "name": "admins",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
           "type": "bigserial",
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(6) with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "uuid_generate_v4()"
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "not_active": {
-          "name": "not_active",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "password": {
-          "name": "password",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "shopslink": {
-      "name": "shopslink",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "admin": {
-          "name": "admin",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "shop": {
-          "name": "shop",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "role": {
-          "name": "role",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'VIEWER'"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "shopslink_admin_fkey": {
-          "name": "shopslink_admin_fkey",
-          "tableFrom": "shopslink",
-          "tableTo": "admins",
-          "columnsFrom": [
-            "admin"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "shopslink_shop_fkey": {
-          "name": "shopslink_shop_fkey",
-          "tableFrom": "shopslink",
-          "tableTo": "shops",
-          "columnsFrom": [
-            "shop"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "plugins": {
-      "name": "plugins",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "uuid_generate_v4()"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "shop": {
-          "name": "shop",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "token": {
-          "name": "token",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "plugins_shop_fkey": {
-          "name": "plugins_shop_fkey",
-          "tableFrom": "plugins",
-          "tableTo": "shops",
-          "columnsFrom": [
-            "shop"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "plugins_public_id_key": {
-          "columns": [
-            "public_id"
-          ],
-          "nullsNotDistinct": false,
-          "name": "plugins_public_id_key"
-        }
-      }
-    },
-    "oauth_tokens": {
-      "name": "oauth_tokens",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigserial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(6) with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "uuid_generate_v4()"
-        },
-        "token": {
-          "name": "token",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "timestamp(6)",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "(now() AT TIME ZONE 'utc'::text)"
-        },
-        "plugin": {
-          "name": "plugin",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {
-        "oauth_tokens_token_key": {
-          "name": "oauth_tokens_token_key",
-          "columns": [
-            "token"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {
-        "oauth_tokens_plugin_fkey": {
-          "name": "oauth_tokens_plugin_fkey",
-          "tableFrom": "oauth_tokens",
-          "tableTo": "plugins",
-          "columnsFrom": [
-            "plugin"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "oauth_tokens_plugin_key": {
-          "columns": [
-            "plugin"
-          ],
-          "nullsNotDistinct": false,
-          "name": "oauth_tokens_plugin_key"
-        }
-      }
-    },
-    "prices": {
-      "name": "prices",
-      "schema": "",
-      "columns": {
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "uuid_generate_v4()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "amount": {
-          "name": "amount",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
-        "shop": {
-          "name": "shop",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "product": {
-          "name": "product",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "list": {
-          "name": "list",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'Default'"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "prices_product_fkey": {
-          "name": "prices_product_fkey",
-          "tableFrom": "prices",
-          "tableTo": "products",
-          "columnsFrom": [
-            "product"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "prices_shop_fkey": {
-          "name": "prices_shop_fkey",
-          "tableFrom": "prices",
-          "tableTo": "shops",
-          "columnsFrom": [
-            "shop"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "organizations": {
-      "name": "organizations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "cartitems": {
-      "name": "cartitems",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "cart_id": {
-          "name": "cart_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "quantity": {
-          "name": "quantity",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 1
-        },
-        "price": {
-          "name": "price",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'PRODUCT'"
-        },
-        "item_id": {
-          "name": "item_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "cartitems_cart_id_fkey": {
-          "name": "cartitems_cart_id_fkey",
-          "tableFrom": "cartitems",
-          "tableTo": "carts",
-          "columnsFrom": [
-            "cart_id"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "returns": {
-      "name": "returns",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigserial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "uuid_generate_v4()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp(6) with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "CURRENT_TIMESTAMP"
-        },
-        "shop": {
-          "name": "shop",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "order_id": {
-          "name": "order_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "items": {
-          "name": "items",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "status": {
-          "name": "status",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'INIT'"
-        },
-        "exported": {
-          "name": "exported",
+        "deleted": {
+          "name": "deleted",
           "type": "boolean",
           "primaryKey": false,
           "notNull": true,
@@ -1361,259 +1699,18 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {
-        "returns_shop_fkey": {
-          "name": "returns_shop_fkey",
-          "tableFrom": "returns",
-          "tableTo": "shops",
-          "columnsFrom": [
-            "shop"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "shops": {
-      "name": "shops",
-      "schema": "",
-      "columns": {
-        "public_id": {
-          "name": "public_id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "uuid_generate_v4()"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "regions": {
-          "name": "regions",
-          "type": "text[]",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency": {
-          "name": "currency",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "payment_id": {
-          "name": "payment_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "url": {
-          "name": "url",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "search_index": {
-          "name": "search_index",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "secret": {
-          "name": "secret",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'test'"
-        },
-        "settings": {
-          "name": "settings",
-          "type": "json",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "shipping_id": {
-          "name": "shipping_id",
-          "type": "varchar",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "categorieslink": {
-      "name": "categorieslink",
-      "schema": "",
-      "columns": {
-        "category": {
-          "name": "category",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "product": {
-          "name": "product",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "categoriesLink_category_fkey": {
-          "name": "categoriesLink_category_fkey",
-          "tableFrom": "categorieslink",
-          "tableTo": "categories",
-          "columnsFrom": [
-            "category"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "categoriesLink_product_fkey": {
-          "name": "categoriesLink_product_fkey",
-          "tableFrom": "categorieslink",
-          "tableTo": "products",
-          "columnsFrom": [
-            "product"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "categorieslink_category_product": {
-          "name": "categoriesLink_pkey",
-          "columns": [
-            "category",
-            "product"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "organizationsLink": {
-      "name": "organizationsLink",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "bigint",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "person": {
-          "name": "person",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "shop": {
-          "name": "shop",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "role": {
-          "name": "role",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "'VIEWER'"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "organizationsLink_person_fkey": {
-          "name": "organizationsLink_person_fkey",
-          "tableFrom": "organizationsLink",
-          "tableTo": "users",
-          "columnsFrom": [
-            "person"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "organizationsLink_shop_fkey": {
-          "name": "organizationsLink_shop_fkey",
-          "tableFrom": "organizationsLink",
-          "tableTo": "shops",
-          "columnsFrom": [
-            "shop"
-          ],
-          "columnsTo": [
-            "public_id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "organizationsLink_person_shop": {
-          "name": "organizationsLink_pkey",
-          "columns": [
-            "person",
-            "shop"
-          ]
-        }
-      },
       "uniqueConstraints": {}
     }
   },
   "enums": {
-    "key_status": {
-      "name": "key_status",
+    "aal_level": {
+      "name": "aal_level",
       "values": {
-        "expired": "expired",
-        "invalid": "invalid",
-        "valid": "valid",
-        "default": "default"
-      }
-    },
-    "key_type": {
-      "name": "key_type",
-      "values": {
-        "aead-det": "aead-det",
-        "aead-ietf": "aead-ietf"
+        "aal3": "aal3",
+        "aal2": "aal2",
+        "aal1": "aal1"
       }
     },
     "action": {
@@ -1626,6 +1723,13 @@
         "INSERT": "INSERT"
       }
     },
+    "code_challenge_method": {
+      "name": "code_challenge_method",
+      "values": {
+        "plain": "plain",
+        "s256": "s256"
+      }
+    },
     "equality_op": {
       "name": "equality_op",
       "values": {
@@ -1635,14 +1739,6 @@
         "lt": "lt",
         "neq": "neq",
         "eq": "eq"
-      }
-    },
-    "aal_level": {
-      "name": "aal_level",
-      "values": {
-        "aal3": "aal3",
-        "aal2": "aal2",
-        "aal1": "aal1"
       }
     },
     "factor_status": {
@@ -1659,18 +1755,27 @@
         "totp": "totp"
       }
     },
-    "code_challenge_method": {
-      "name": "code_challenge_method",
+    "key_status": {
+      "name": "key_status",
       "values": {
-        "plain": "plain",
-        "s256": "s256"
+        "expired": "expired",
+        "invalid": "invalid",
+        "valid": "valid",
+        "default": "default"
+      }
+    },
+    "key_type": {
+      "name": "key_type",
+      "values": {
+        "aead-det": "aead-det",
+        "aead-ietf": "aead-ietf"
       }
     }
   },
   "schemas": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
+    "tables": {}
   }
 }

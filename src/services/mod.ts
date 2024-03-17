@@ -49,7 +49,7 @@ import IOrganizationLinkService from "./interfaces/organizationLinkService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 
 import type { PostgresJsDatabase } from "../deps.ts";
-import { Shop } from "../utils/schema.ts";
+import { Shop } from "../utils/validator.ts";
 
 export default class Container {
   #db: PostgresJsDatabase;

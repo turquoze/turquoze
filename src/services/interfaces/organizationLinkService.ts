@@ -1,4 +1,4 @@
-import { OrganizationLink } from "../../utils/schema.ts";
+import { OrganizationLink } from "../../utils/validator.ts";
 
 export default interface IOrganizationLinkService {
   Link(params: {

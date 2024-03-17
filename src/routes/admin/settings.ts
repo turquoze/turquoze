@@ -2,7 +2,7 @@ import { Hono, MeiliSearch } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Product } from "../../utils/schema.ts";
+import { Product } from "../../utils/validator.ts";
 
 export default class SettingsRoutes {
   #settings: Hono;
@@ -41,7 +41,7 @@ export default class SettingsRoutes {
 
           const obj = {
             ...localProduct,
-            id: Number(product.id),
+            id: product.id!,
           };
 
           delete obj.publicId;

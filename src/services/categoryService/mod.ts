@@ -1,7 +1,8 @@
 import ICategoryService from "../interfaces/categoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { categories, Category } from "../../utils/schema.ts";
+import { categories } from "../../utils/schema.ts";
 import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Category } from "../../utils/validator.ts";
 
 export default class CategoryService implements ICategoryService {
   db: PostgresJsDatabase;

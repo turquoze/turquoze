@@ -15,7 +15,8 @@ import {
   insertCartItemSchema,
   insertCartSchema,
   Shop,
-} from "../../utils/schema.ts";
+} from "../../utils/validator.ts";
+import { jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 
 export default class CartRoutes {
   #carts: Hono;
@@ -33,10 +34,12 @@ export default class CartRoutes {
           data: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -61,11 +64,13 @@ export default class CartRoutes {
           },
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          order: order.id,
-          payment: order.payment,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            order: order.id,
+            payment: order.payment,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -90,10 +95,12 @@ export default class CartRoutes {
           metadata: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          metadata: posted,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            metadata: posted,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -118,10 +125,12 @@ export default class CartRoutes {
           shipping: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -146,10 +155,12 @@ export default class CartRoutes {
           billing: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -173,10 +184,12 @@ export default class CartRoutes {
           data: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -201,10 +214,12 @@ export default class CartRoutes {
           comment: posted.comment,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          comment: posted,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            comment: posted,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -247,10 +262,12 @@ export default class CartRoutes {
 
         const response = await Promise.all(responsePromises);
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: response,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: response,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -292,10 +309,12 @@ export default class CartRoutes {
           currency: request_data.currency,
         }).multiply(parseInt((data.quantity ?? 0).toString())).getAmount();
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -341,10 +360,12 @@ export default class CartRoutes {
           id: id,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -393,10 +414,12 @@ export default class CartRoutes {
           discount: discount,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          carts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            carts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

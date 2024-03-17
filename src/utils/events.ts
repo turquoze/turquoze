@@ -1,6 +1,6 @@
 import { MeiliSearch } from "../deps.ts";
 import type Container from "../services/mod.ts";
-import { Shop } from "./schema.ts";
+import { Shop } from "./validator.ts";
 
 export function reIndex(id: string, shop: Shop, container: Container) {
   container.ProductService.Get({ id }).then((product) => {

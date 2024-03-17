@@ -1,7 +1,8 @@
 import IPriceService from "../interfaces/priceService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Price, prices } from "../../utils/schema.ts";
+import { prices } from "../../utils/schema.ts";
 import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Price } from "../../utils/validator.ts";
 
 export default class PriceService implements IPriceService {
   db: PostgresJsDatabase;

@@ -3,9 +3,9 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get } from "../../utils/utils.ts";
+import { Delete, Get, jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { insertTokenSchema, Token } from "../../utils/schema.ts";
+import { insertTokenSchema, Token } from "../../utils/validator.ts";
 
 export default class TokensRoutes {
   #tokens: Hono;
@@ -32,10 +32,12 @@ export default class TokensRoutes {
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          tokens: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            tokens: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -57,10 +59,12 @@ export default class TokensRoutes {
           data: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          tokens: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            tokens: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -83,10 +87,12 @@ export default class TokensRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          tokens: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            tokens: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

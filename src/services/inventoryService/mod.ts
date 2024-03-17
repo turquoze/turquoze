@@ -1,7 +1,8 @@
 import IInventoryService from "../interfaces/inventoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { inventories, Inventory } from "../../utils/schema.ts";
+import { inventories } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { Inventory } from "../../utils/validator.ts";
 
 export default class CartService implements IInventoryService {
   db: PostgresJsDatabase;

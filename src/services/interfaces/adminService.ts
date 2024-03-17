@@ -1,4 +1,4 @@
-import { Admin } from "../../utils/schema.ts";
+import { Admin } from "../../utils/validator.ts";
 
 export default interface IAdminService {
   Create(params: {

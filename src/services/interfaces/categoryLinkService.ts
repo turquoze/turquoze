@@ -1,4 +1,4 @@
-import { CategoryLink, Product } from "../../utils/schema.ts";
+import { CategoryLink, Product } from "../../utils/validator.ts";
 
 export default interface ICategoryLinkService {
   Link(params: {

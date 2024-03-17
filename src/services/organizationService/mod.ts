@@ -1,7 +1,8 @@
 import IOrganizationService from "../interfaces/organizationService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Organization, organizations } from "../../utils/schema.ts";
+import { organizations } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Organization } from "../../utils/validator.ts";
 
 export default class OrganizationService implements IOrganizationService {
   db: PostgresJsDatabase;

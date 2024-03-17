@@ -1,4 +1,4 @@
-import { Category } from "../../utils/schema.ts";
+import { Category } from "../../utils/validator.ts";
 
 export default interface ICategoryService {
   Create(params: {

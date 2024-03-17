@@ -3,7 +3,7 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Get } from "../../utils/utils.ts";
+import { Get, jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 
 export default class OrdersRoutes {
@@ -31,10 +31,12 @@ export default class OrdersRoutes {
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          orders: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            orders: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -57,10 +59,12 @@ export default class OrdersRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          orders: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            orders: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

@@ -1,7 +1,8 @@
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Order, orders } from "../../utils/schema.ts";
+import { orders } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Order } from "../../utils/validator.ts";
 
 export default class CartService implements IOrderService {
   db: PostgresJsDatabase;

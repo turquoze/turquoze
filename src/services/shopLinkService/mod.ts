@@ -1,8 +1,9 @@
 import { ShopLinkData } from "../../utils/types.ts";
 import IShopLinkService from "../interfaces/shopLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { ShopLink, shopslink } from "../../utils/schema.ts";
+import { shopslink } from "../../utils/schema.ts";
 import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { ShopLink } from "../../utils/validator.ts";
 
 export default class ShopLinkService implements IShopLinkService {
   db: PostgresJsDatabase;
@@ -12,7 +13,6 @@ export default class ShopLinkService implements IShopLinkService {
 
   async Link(params: { data: ShopLink }): Promise<ShopLink> {
     try {
-      // @ts-expect-error not on type
       const result = await this.db.insert(shopslink).values({
         admin: params.data.admin,
         shop: params.data.shop,

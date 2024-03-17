@@ -1,8 +1,9 @@
 import IWarehouseService from "../interfaces/warehouseService.ts";
 //import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Warehouse, warehouses } from "../../utils/schema.ts";
+import { warehouses } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Warehouse } from "../../utils/validator.ts";
 
 export default class CartService implements IWarehouseService {
   db: PostgresJsDatabase;
@@ -12,7 +13,6 @@ export default class CartService implements IWarehouseService {
 
   async Create(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      // @ts-expect-error not on type
       const result = await this.db.insert(warehouses).values({
         address: params.data.address,
         country: params.data.country,

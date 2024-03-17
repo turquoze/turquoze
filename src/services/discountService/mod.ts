@@ -1,7 +1,8 @@
 import IDiscountService from "../interfaces/discountService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Discount, discounts } from "../../utils/schema.ts";
+import { discounts } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Discount } from "../../utils/validator.ts";
 
 export default class DiscountService implements IDiscountService {
   db: PostgresJsDatabase;

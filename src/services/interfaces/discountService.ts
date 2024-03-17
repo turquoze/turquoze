@@ -1,4 +1,4 @@
-import { Discount } from "../../utils/schema.ts";
+import { Discount } from "../../utils/validator.ts";
 
 export default interface IDiscountService {
   Create(params: {

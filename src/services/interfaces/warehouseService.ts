@@ -1,5 +1,5 @@
 //import { Warehouse } from "../../utils/types.ts";
-import { Warehouse } from "../../utils/schema.ts";
+import { Warehouse } from "../../utils/validator.ts";
 
 export default interface IWarehouseService {
   Create(params: {

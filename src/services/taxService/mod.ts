@@ -1,7 +1,8 @@
 import ITaxService from "../interfaces/taxService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Tax, taxes } from "../../utils/schema.ts";
+import { taxes } from "../../utils/schema.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Tax } from "../../utils/validator.ts";
 
 export default class TaxService implements ITaxService {
   db: PostgresJsDatabase;

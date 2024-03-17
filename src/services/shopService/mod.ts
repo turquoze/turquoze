@@ -1,6 +1,7 @@
 import IShopService from "../interfaces/shopService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { DBShop as Shop, shops } from "../../utils/schema.ts";
+import { shops } from "../../utils/schema.ts";
+import { DBShop as Shop } from "../../utils/validator.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ShopService implements IShopService {

@@ -3,6 +3,7 @@ import { stringifyJSON } from "../src/utils/utils.ts";
 
 const app = new App(Deno.env.get("DATABASE_URL")!, {
   sharedSecret: Deno.env.get("SHARED_SECRET")!,
+  allowRunMigration: false,
 });
 
 await app.migrate();

@@ -1,6 +1,7 @@
 import IProductService from "../interfaces/productService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { DBProduct as Product, products } from "../../utils/schema.ts";
+import { products } from "../../utils/schema.ts";
+import { DBProduct as Product } from "../../utils/validator.ts";
 import { eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ProductService implements IProductService {

@@ -14,5 +14,8 @@
     "coverage": "deno coverage cov_profile",
     "bench": "deno bench --allow-net --allow-env --allow-read",
     "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json"
+  },
+  "imports": {
+    "drizzle-orm": "npm:drizzle-orm@0.30.2"
   }
 }

@@ -3,9 +3,15 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
-import { Delete, Get, Update } from "../../utils/utils.ts";
+import {
+  Delete,
+  Get,
+  jsonResponse,
+  stringifyJSON,
+  Update,
+} from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { insertProductSchema, Product, Shop } from "../../utils/schema.ts";
+import { insertProductSchema, Product, Shop } from "../../utils/validator.ts";
 
 export default class ProductsRoutes {
   #products: Hono;
@@ -53,10 +59,12 @@ export default class ProductsRoutes {
 
         const products = await Promise.all(productsPromises);
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          products,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            products,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -80,10 +88,12 @@ export default class ProductsRoutes {
           data: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          products: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            products: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -121,10 +131,12 @@ export default class ProductsRoutes {
           }).getAmount();
         }
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          products: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            products: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -157,10 +169,12 @@ export default class ProductsRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          products: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            products: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
