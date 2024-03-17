@@ -1,6 +1,6 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import tokenService from "../../src/services/tokenService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { dbClient, SHOP_ID } from "../test_utils.ts";
 
 const token = new tokenService(dbClient);
 let ID = "";
@@ -17,7 +17,7 @@ Deno.test("TokenService", {
         const data = await token.Create({
           data: {
             name: "Test - 123",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             id: "test12345",
             secret: "test",
             role: "WEBSITE",
@@ -64,7 +64,7 @@ Deno.test("TokenService", {
       });
       assertObjectMatch(data, {
         name: "Test - 123",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
         secret: data.secret,
         id: "test12345",
         role: "WEBSITE",

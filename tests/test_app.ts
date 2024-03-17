@@ -3,6 +3,7 @@ import { dbClient, searchClient } from "./test_utils.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "./test_secrets.ts";
 import SearchService from "../src/services/searchService/mod.ts";
 import { Hono } from "../src/deps.ts";
+import { SHOP_ID } from "./test_utils.ts";
 
 const localContainer = new Container(dbClient);
 localContainer.SearchService = new SearchService(searchClient);
@@ -19,7 +20,7 @@ export const container = localContainer;
 app.use("*", async (ctx, next) => {
   const shop = {
     id: 0,
-    publicId: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+    publicId: SHOP_ID,
     regions: ["SE"],
     paymentId: "",
     currency: "SEK",

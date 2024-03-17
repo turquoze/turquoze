@@ -2,7 +2,8 @@ import { assert, assertEquals } from "../test_deps.ts";
 
 import CategoriesRoutes from "../../src/routes/admin/categories.ts";
 import app, { container } from "../test_app.ts";
-import { Category } from "../../src/utils/schema.ts";
+import { Category } from "../../src/utils/validator.ts";
+import { PRODUCT_ID } from "../test_utils.ts";
 
 let ID = "";
 
@@ -122,22 +123,6 @@ Deno.test({
 });
 
 Deno.test({
-  name: "Categories - Delete | ok",
-  sanitizeOps: false,
-  sanitizeResources: false,
-  sanitizeExit: false,
-  async fn() {
-    const response = await app.request(
-      new Request(`http://127.0.0.1/categories/${ID}`, {
-        method: "DELETE",
-      }),
-    );
-
-    assert(response?.ok);
-  },
-});
-
-Deno.test({
   name: "Categories Link - Post | ok",
   ignore: true,
   sanitizeOps: false,
@@ -145,8 +130,8 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      category: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
-      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+      category: ID,
+      product: PRODUCT_ID,
     });
 
     const response = await app.request(
@@ -171,8 +156,8 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      category: "05820ab4-6661-4fba-95ab-b5ca40b43da5",
-      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+      category: ID,
+      product: PRODUCT_ID,
     });
 
     const response = await app.request(
@@ -183,6 +168,22 @@ Deno.test({
         }),
         method: "DELETE",
         body: data,
+      }),
+    );
+
+    assert(response?.ok);
+  },
+});
+
+Deno.test({
+  name: "Categories - Delete | ok",
+  sanitizeOps: false,
+  sanitizeResources: false,
+  sanitizeExit: false,
+  async fn() {
+    const response = await app.request(
+      new Request(`http://127.0.0.1/categories/${ID}`, {
+        method: "DELETE",
       }),
     );
 

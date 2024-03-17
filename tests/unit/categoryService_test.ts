@@ -1,6 +1,7 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import categoryService from "../../src/services/categoryService/mod.ts";
 import { dbClient } from "../test_utils.ts";
+import { SHOP_ID } from "../test_utils.ts";
 
 const category = new categoryService(dbClient);
 let ID = "";
@@ -16,10 +17,9 @@ Deno.test("CategoryService", {
       try {
         const data = await category.Create({
           data: {
-            id: 0,
             publicId: "",
             name: "test",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
           },
         });
 
@@ -65,7 +65,7 @@ Deno.test("CategoryService", {
         id: data.id,
         publicId: ID,
         name: "test",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
     },
     sanitizeOps: false,
@@ -95,13 +95,13 @@ Deno.test("CategoryService", {
     fn: async () => {
       const data = await category.GetByName({
         name: "test",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assertObjectMatch(data, {
         id: data.id,
         publicId: ID,
         name: "test",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
     },
     sanitizeOps: false,
@@ -115,7 +115,7 @@ Deno.test("CategoryService", {
       try {
         await category.GetByName({
           name: "",
-          shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+          shop: SHOP_ID,
         });
         assert(false);
       } catch {
@@ -133,10 +133,9 @@ Deno.test("CategoryService", {
       try {
         const data = await category.Update({
           data: {
-            id: 0,
             publicId: ID,
             name: "test update",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
           },
         });
 
@@ -157,10 +156,9 @@ Deno.test("CategoryService", {
       try {
         await category.Update({
           data: {
-            id: 0,
             publicId: "00000000-0000-0000-0000-000000000000",
             name: "test update",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
           },
         });
 
@@ -178,7 +176,7 @@ Deno.test("CategoryService", {
     name: "GetMany",
     fn: async () => {
       const data = await category.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },

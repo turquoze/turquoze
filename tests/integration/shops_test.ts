@@ -2,7 +2,7 @@ import { assert, assertEquals } from "../test_deps.ts";
 
 import ShopsRoutes from "../../src/routes/admin/shops.ts";
 import app, { container } from "../test_app.ts";
-import { Shop } from "../../src/utils/schema.ts";
+import { Shop } from "../../src/utils/validator.ts";
 
 let ID = "";
 

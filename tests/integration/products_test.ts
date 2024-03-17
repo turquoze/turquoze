@@ -5,8 +5,7 @@ import ProductsAdminRoutes from "../../src/routes/admin/products.ts";
 import PricesRoutes from "../../src/routes/admin/prices.ts";
 import { Search } from "../../src/utils/types.ts";
 import app, { container } from "../test_app.ts";
-import { Price, Product } from "../../src/utils/schema.ts";
-
+import { Price, Product } from "../../src/utils/validator.ts";
 let ID = "";
 let PriceID = "";
 const SLUG = "test1";

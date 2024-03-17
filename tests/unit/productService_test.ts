@@ -1,6 +1,6 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import productService from "../../src/services/productService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { dbClient, SHOP_ID } from "../test_utils.ts";
 
 const product = new productService(dbClient);
 let ID = "";
@@ -17,14 +17,13 @@ Deno.test("ProductService", {
       try {
         const data = await product.Create({
           data: {
-            id: 0,
             publicId: "",
             active: true,
             images: [],
             title: "test product",
             shortDescription: "test product",
             longDescription: "test product long",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             slug: "test2",
           },
         });
@@ -76,7 +75,7 @@ Deno.test("ProductService", {
         title: "test product",
         shortDescription: "test product",
         longDescription: "test product long",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
         slug: "test2",
       });
     },
@@ -117,7 +116,7 @@ Deno.test("ProductService", {
         title: "test product",
         shortDescription: "test product",
         longDescription: "test product long",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
         slug: "test2",
       });
     },
@@ -149,14 +148,13 @@ Deno.test("ProductService", {
       try {
         const data = await product.Update({
           data: {
-            id: 0,
             publicId: ID,
             active: true,
             images: [],
             title: "test product update",
             shortDescription: "test product update",
             longDescription: "test product long update",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             slug: "test2",
           },
         });
@@ -178,14 +176,13 @@ Deno.test("ProductService", {
       try {
         await product.Update({
           data: {
-            id: 0,
             publicId: "00000000-0000-0000-0000-000000000000",
             active: true,
             images: [],
             title: "test product update",
             shortDescription: "test product update",
             longDescription: "test product long update",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             slug: "test2",
           },
         });
@@ -204,7 +201,7 @@ Deno.test("ProductService", {
     name: "GetMany",
     fn: async () => {
       const data = await product.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },

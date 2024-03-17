@@ -1,6 +1,7 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import warehouseService from "../../src/services/warehouseService/mod.ts";
 import { dbClient } from "../test_utils.ts";
+import { SHOP_ID } from "../test_utils.ts";
 
 const warehouse = new warehouseService(dbClient);
 let ID = "";
@@ -20,7 +21,7 @@ Deno.test("WarehouseService", {
             address: "Test 1B",
             country: "Sweden",
             name: "Sweden A",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
           },
         });
 
@@ -64,7 +65,7 @@ Deno.test("WarehouseService", {
         address: "Test 1B",
         country: "Sweden",
         name: "Sweden A",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
     },
   });
@@ -93,7 +94,7 @@ Deno.test("WarehouseService", {
             address: "Test 1B - Update",
             country: "Sweden - Update",
             name: "Sweden A - Update",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
           },
         });
 
@@ -115,7 +116,7 @@ Deno.test("WarehouseService", {
             address: "Test 1B - Update",
             country: "Sweden - Update",
             name: "Sweden A - Update",
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
           },
         });
 
@@ -130,7 +131,7 @@ Deno.test("WarehouseService", {
     name: "GetMany",
     fn: async () => {
       const data = await warehouse.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },
