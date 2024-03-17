@@ -1,7 +1,7 @@
 import IUserService from "../interfaces/userService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { users } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 import { User } from "../../utils/validator.ts";
 
 export default class UserService implements IUserService {
@@ -37,7 +37,10 @@ export default class UserService implements IUserService {
   async Get(params: { id: string }): Promise<User> {
     try {
       const result = await this.db.select().from(users).where(
-        eq(users.publicId, params.id),
+        and(
+          eq(users.deleted, false),
+          eq(users.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -119,7 +122,10 @@ export default class UserService implements IUserService {
       }
 
       const result = await this.db.select().from(users).where(
-        eq(users.shop, params.shop),
+        and(
+          eq(users.deleted, false),
+          eq(users.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;

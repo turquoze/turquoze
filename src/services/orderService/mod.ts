@@ -1,7 +1,7 @@
 import IOrderService from "../interfaces/orderService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { orders } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 import { Order } from "../../utils/validator.ts";
 
 export default class CartService implements IOrderService {
@@ -32,7 +32,10 @@ export default class CartService implements IOrderService {
   async Get(params: { id: string }): Promise<Order> {
     try {
       const result = await this.db.select().from(orders).where(
-        eq(orders.publicId, params.id),
+        and(
+          eq(orders.deleted, false),
+          eq(orders.publicId, params.id),
+        ),
       );
       //@ts-ignore not on type
       return result[0];
@@ -60,7 +63,10 @@ export default class CartService implements IOrderService {
       }
 
       const result = await this.db.select().from(orders).where(
-        eq(orders.shop, params.shop),
+        and(
+          eq(orders.deleted, false),
+          eq(orders.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       //@ts-ignore not on type

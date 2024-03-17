@@ -2,7 +2,7 @@ import IReturnService from "../interfaces/returnService.ts";
 import { OrderReturn } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { returns } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ReturnService implements IReturnService {
   db: PostgresJsDatabase;
@@ -52,7 +52,10 @@ export default class ReturnService implements IReturnService {
   async Get(params: { id: string }): Promise<OrderReturn> {
     try {
       const result = await this.db.select().from(returns).where(
-        eq(returns.publicId, params.id),
+        and(
+          eq(returns.deleted, false),
+          eq(returns.publicId, params.id),
+        ),
       );
       //@ts-ignore not on type
       return result[0];
@@ -80,7 +83,10 @@ export default class ReturnService implements IReturnService {
       }
 
       const result = await this.db.select().from(returns).where(
-        eq(returns.shop, params.shop),
+        and(
+          eq(returns.deleted, false),
+          eq(returns.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
       //@ts-ignore not on type
       return result;

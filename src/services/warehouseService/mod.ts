@@ -2,7 +2,7 @@ import IWarehouseService from "../interfaces/warehouseService.ts";
 //import { Warehouse } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { warehouses } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 import { Warehouse } from "../../utils/validator.ts";
 
 export default class CartService implements IWarehouseService {
@@ -50,7 +50,10 @@ export default class CartService implements IWarehouseService {
   async Get(params: { id: string }): Promise<Warehouse> {
     try {
       const result = await this.db.select().from(warehouses).where(
-        eq(warehouses.publicId, params.id),
+        and(
+          eq(warehouses.deleted, false),
+          eq(warehouses.publicId, params.id),
+        ),
       ).limit(1);
 
       return result[0];
@@ -78,7 +81,10 @@ export default class CartService implements IWarehouseService {
       }
 
       const result = await this.db.select().from(warehouses).where(
-        eq(warehouses.shop, params.shop),
+        and(
+          eq(warehouses.deleted, false),
+          eq(warehouses.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;

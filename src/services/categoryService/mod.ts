@@ -30,7 +30,10 @@ export default class CategoryService implements ICategoryService {
   async Get(params: { id: string }): Promise<Category> {
     try {
       const result = await this.db.select().from(categories).where(
-        eq(categories.publicId, params.id),
+        and(
+          eq(categories.deleted, false),
+          eq(categories.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -45,6 +48,7 @@ export default class CategoryService implements ICategoryService {
     try {
       const result = await this.db.select().from(categories).where(
         and(
+          eq(categories.deleted, false),
           eq(categories.shop, params.shop),
           eq(categories.name, params.name),
         ),
@@ -71,7 +75,10 @@ export default class CategoryService implements ICategoryService {
       }
 
       const result = await this.db.select().from(categories).where(
-        eq(categories.shop, params.shop),
+        and(
+          eq(categories.deleted, false),
+          eq(categories.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;

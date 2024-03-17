@@ -3,7 +3,7 @@ import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { tokens } from "../../utils/schema.ts";
 import { DBShop as Shop, Token } from "../../utils/validator.ts";
-import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class TokenService implements ITokenService {
   db: PostgresJsDatabase;
@@ -81,7 +81,10 @@ export default class TokenService implements ITokenService {
   async Get(params: { tokenId: string }): Promise<Token> {
     try {
       const result = await this.db.select().from(tokens).where(
-        eq(tokens.id, params.tokenId),
+        and(
+          eq(tokens.deleted, false),
+          eq(tokens.id, params.tokenId),
+        ),
       );
 
       return result[0];
@@ -105,7 +108,10 @@ export default class TokenService implements ITokenService {
       }
 
       const result = await this.db.select().from(tokens).where(
-        eq(tokens.shop, params.shop),
+        and(
+          eq(tokens.deleted, false),
+          eq(tokens.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;

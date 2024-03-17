@@ -1,7 +1,7 @@
 import IDiscountService from "../interfaces/discountService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { discounts } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 import { Discount } from "../../utils/validator.ts";
 
 export default class DiscountService implements IDiscountService {
@@ -33,7 +33,10 @@ export default class DiscountService implements IDiscountService {
   async Get(params: { id: string }): Promise<Discount> {
     try {
       const result = await this.db.select().from(discounts).where(
-        eq(discounts.publicId, params.id),
+        and(
+          eq(discounts.deleted, false),
+          eq(discounts.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -47,7 +50,10 @@ export default class DiscountService implements IDiscountService {
   async GetByCode(params: { code: string }): Promise<Discount> {
     try {
       const result = await this.db.select().from(discounts).where(
-        eq(discounts.code, params.code),
+        and(
+          eq(discounts.deleted, false),
+          eq(discounts.code, params.code),
+        ),
       );
 
       return result[0];
@@ -75,7 +81,10 @@ export default class DiscountService implements IDiscountService {
       }
 
       const result = await this.db.select().from(discounts).where(
-        eq(discounts.shop, params.shop),
+        and(
+          eq(discounts.deleted, false),
+          eq(discounts.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;

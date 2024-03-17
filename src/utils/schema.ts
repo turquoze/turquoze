@@ -224,6 +224,7 @@ export const admins = pgTable("admins", {
   notActive: boolean("not_active").default(false).notNull(),
   password: varchar("password").notNull(),
   deleted: boolean("deleted").default(false).notNull(),
+  shop: uuid("shop").references(() => shops.publicId),
 });
 
 export const shopslink = pgTable("shopslink", {

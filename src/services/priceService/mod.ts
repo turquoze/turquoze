@@ -30,7 +30,10 @@ export default class PriceService implements IPriceService {
   async Get(params: { id: string }): Promise<Price> {
     try {
       const result = await this.db.select().from(prices).where(
-        eq(prices.publicId, params.id),
+        and(
+          eq(prices.deleted, false),
+          eq(prices.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -50,6 +53,7 @@ export default class PriceService implements IPriceService {
       }
       const result = await this.db.select().from(prices).where(
         and(
+          eq(prices.deleted, false),
           eq(prices.product, params.productId),
           eq(prices.list, params.list),
         ),
@@ -76,7 +80,10 @@ export default class PriceService implements IPriceService {
       }
 
       const result = await this.db.select().from(prices).where(
-        eq(prices.product, params.productId),
+        and(
+          eq(prices.deleted, false),
+          eq(prices.product, params.productId),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;
@@ -100,7 +107,10 @@ export default class PriceService implements IPriceService {
       }
 
       const result = await this.db.select().from(prices).where(
-        eq(prices.shop, params.shop),
+        and(
+          eq(prices.deleted, false),
+          eq(prices.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;

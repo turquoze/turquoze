@@ -1,3 +1,4 @@
+import { stringifyJSON } from "../../utils/utils.ts";
 import ICacheService from "../interfaces/cacheService.ts";
 
 export default class CacheService implements ICacheService {
@@ -33,7 +34,7 @@ export default class CacheService implements ICacheService {
     try {
       await new Promise((resolve) => setTimeout(resolve, 5));
       this.#cache.push({
-        data: JSON.stringify(params.data),
+        data: stringifyJSON(params.data),
         expired: params.expire ?? 9999999999,
         key: params.key,
         shop: params.shop,

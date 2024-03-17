@@ -2,7 +2,7 @@ import IProductService from "../interfaces/productService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
 import { products } from "../../utils/schema.ts";
 import { DBProduct as Product } from "../../utils/validator.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ProductService implements IProductService {
   db: PostgresJsDatabase;
@@ -53,7 +53,10 @@ export default class ProductService implements IProductService {
   async Get(params: { id: string }): Promise<Product> {
     try {
       const result = await this.db.select().from(products).where(
-        eq(products.publicId, params.id),
+        and(
+          eq(products.deleted, false),
+          eq(products.publicId, params.id),
+        ),
       );
       //@ts-ignore not on type
       return result[0];
@@ -105,7 +108,10 @@ export default class ProductService implements IProductService {
       }
 
       const result = await this.db.select().from(products).where(
-        eq(products.shop, params.shop),
+        and(
+          eq(products.deleted, false),
+          eq(products.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
       //@ts-ignore not on type
       return result;
