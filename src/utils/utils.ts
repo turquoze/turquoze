@@ -1,5 +1,14 @@
 import Container from "../services/mod.ts";
 
+export function jsonResponse(data: string, status: number): Response {
+  return new Response(data, {
+    headers: {
+      "content-type": "application/json",
+    },
+    status: status,
+  });
+}
+
 /**
  * Returns a string.
  * @param {Record<string, unknown} data
@@ -40,6 +49,7 @@ export async function Get<T>(
       expire: (60 * 10),
       shop: container.Shop.publicId!,
     }).then().catch((error) => {
+      console.error(error);
       console.error(`CacheService set error: ${JSON.stringify(error)}`);
     });
 

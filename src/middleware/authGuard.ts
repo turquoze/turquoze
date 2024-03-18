@@ -2,7 +2,7 @@ import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
 import { ShopLinkData, TurquozeRole } from "../utils/types.ts";
 import { jose } from "../deps.ts";
-import { DBShop, Shop } from "../utils/schema.ts";
+import { DBShop, Shop } from "../utils/validator.ts";
 import { Get } from "../utils/utils.ts";
 
 export default function AuthGuard(container: Container) {

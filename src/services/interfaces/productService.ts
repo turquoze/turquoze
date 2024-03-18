@@ -1,4 +1,4 @@
-import { DBProduct as Product } from "../../utils/schema.ts";
+import { DBProduct as Product } from "../../utils/validator.ts";
 
 export default interface IProductService {
   Create(params: {

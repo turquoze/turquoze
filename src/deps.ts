@@ -7,30 +7,12 @@ export {
   getCookie,
   setCookie,
 } from "https://deno.land/x/hono@v4.0.10/helper.ts";
-export { and, eq, sql } from "npm:drizzle-orm@0.29.4";
+export { and, eq, sql } from "npm:drizzle-orm@0.30.2";
 export {
   drizzle,
   type PostgresJsDatabase,
-} from "npm:drizzle-orm@0.29.4/postgres-js";
-export { migrate } from "npm:drizzle-orm@0.29.4/postgres-js/migrator";
-export {
-  bigint,
-  bigserial,
-  boolean,
-  foreignKey,
-  integer,
-  json,
-  numeric,
-  pgEnum,
-  pgTable,
-  primaryKey,
-  text,
-  timestamp,
-  unique,
-  uniqueIndex,
-  uuid,
-  varchar,
-} from "npm:drizzle-orm@0.29.4/pg-core";
+} from "npm:drizzle-orm@0.30.2/postgres-js";
+export { migrate } from "npm:drizzle-orm@0.30.2/postgres-js/migrator";
 import postgres, { Sql } from "npm:postgres@3.4.3";
 export { postgres };
 export type { Sql };
@@ -57,7 +39,7 @@ export {
   string,
   uuid as valibot_uuid,
   ValiError,
-} from "npm:valibot@0.29.0";
-export { createInsertSchema } from "npm:drizzle-valibot@0.1.1";
+} from "npm:valibot@0.30.0";
+export { createInsertSchema } from "npm:drizzle-valibot@0.2.0";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 export { Dinero };

@@ -2,7 +2,7 @@ import { assert, assertEquals } from "../test_deps.ts";
 
 import UsersRoutes from "../../src/routes/admin/users.ts";
 import app, { container } from "../test_app.ts";
-import { User } from "../../src/utils/schema.ts";
+import { User } from "../../src/utils/validator.ts";
 
 let ID = "";
 
@@ -81,7 +81,6 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      id: 1,
       publicId: "00000000-0000-0000-0000-000000000000",
       email: "test@example.com",
       name: "test update",

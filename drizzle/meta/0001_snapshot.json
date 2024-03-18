@@ -1,6 +1,6 @@
 {
-  "id": "7041e4ee-dd78-4c05-915b-79e06c14296f",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "3f245085-5390-4af9-a48f-4890dafc0880",
+  "prevId": "7041e4ee-dd78-4c05-915b-79e06c14296f",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -59,10 +59,30 @@
           "primaryKey": false,
           "notNull": true,
           "default": false
+        },
+        "shop": {
+          "name": "shop",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
-      "foreignKeys": {},
+      "foreignKeys": {
+        "admins_shop_shops_public_id_fk": {
+          "name": "admins_shop_shops_public_id_fk",
+          "tableFrom": "admins",
+          "tableTo": "shops",
+          "columnsFrom": [
+            "shop"
+          ],
+          "columnsTo": [
+            "public_id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },

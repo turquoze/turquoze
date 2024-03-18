@@ -1,13 +1,12 @@
 import ICartService from "../interfaces/cartService.ts";
 import { Shipping } from "../../utils/types.ts";
 import { DatabaseError } from "../../utils/errors.ts";
+import { cartitems, carts } from "../../utils/schema.ts";
 import {
-  cartitems,
-  carts,
   DBCart as Cart,
   DBCartItem as CartItem,
   Discount,
-} from "../../utils/schema.ts";
+} from "../../utils/validator.ts";
 import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class CartService implements ICartService {

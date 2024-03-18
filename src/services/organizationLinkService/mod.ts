@@ -1,7 +1,8 @@
 import IOrganizationLinkService from "../interfaces/organizationLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { OrganizationLink, organizationsLink } from "../../utils/schema.ts";
+import { organizationsLink } from "../../utils/schema.ts";
 import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { OrganizationLink } from "../../utils/validator.ts";
 
 export default class OrganizationLinkService
   implements IOrganizationLinkService {

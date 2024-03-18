@@ -1,7 +1,8 @@
 import IOrganizationService from "../interfaces/organizationService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Organization, organizations } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { organizations } from "../../utils/schema.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Organization } from "../../utils/validator.ts";
 
 export default class OrganizationService implements IOrganizationService {
   db: PostgresJsDatabase;
@@ -27,7 +28,10 @@ export default class OrganizationService implements IOrganizationService {
   async Get(params: { id: string }): Promise<Organization> {
     try {
       const result = await this.db.select().from(organizations).where(
-        eq(organizations.publicId, params.id),
+        and(
+          eq(organizations.deleted, false),
+          eq(organizations.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -57,7 +61,9 @@ export default class OrganizationService implements IOrganizationService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(organizations).where(
+      await this.db.update(organizations).set({
+        deleted: true,
+      }).where(
         eq(organizations.publicId, params.id),
       );
     } catch (error) {

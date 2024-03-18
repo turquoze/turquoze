@@ -2,7 +2,11 @@ import { assert, assertEquals } from "../test_deps.ts";
 
 import InventoriesRoutes from "../../src/routes/admin/inventories.ts";
 import app, { container } from "../test_app.ts";
-import { Inventory } from "../../src/utils/schema.ts";
+import { Inventory } from "../../src/utils/validator.ts";
+import { dbClient, PRODUCT_ID } from "../test_utils.ts";
+import { WAREHOUSE_ID } from "../test_utils.ts";
+import { inventories } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 let ID = "";
 
@@ -15,9 +19,9 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      product: PRODUCT_ID,
       quantity: 2,
-      warehouse: "5690efcf-07a6-4e93-a162-01d45a376dbe",
+      warehouse: WAREHOUSE_ID,
     });
 
     const response = await app.request(
@@ -64,9 +68,9 @@ Deno.test({
   sanitizeExit: false,
   async fn() {
     const data = JSON.stringify({
-      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+      product: PRODUCT_ID,
       quantity: 10,
-      warehouse: "f87bfb4f-985b-4965-9f6c-844b80d591ab",
+      warehouse: WAREHOUSE_ID,
     });
 
     const response = await app.request(
@@ -100,5 +104,6 @@ Deno.test({
     );
 
     assert(response?.ok);
+    await dbClient.delete(inventories).where(eq(inventories.publicId, ID));
   },
 });

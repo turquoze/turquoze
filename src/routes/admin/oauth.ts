@@ -131,7 +131,6 @@ export default class OAuthRoutes {
 
           const plugin = await this.#Container.PluginService.Create({
             data: {
-              id: 0,
               publicId: "",
               name: namePlugin ?? client_id ?? "_NO_NAME_",
               shop: ctx.req.param("id"),

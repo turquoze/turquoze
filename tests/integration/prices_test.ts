@@ -2,7 +2,10 @@ import { assert, assertEquals } from "../test_deps.ts";
 
 import PricesRoutes from "../../src/routes/admin/prices.ts";
 import app, { container } from "../test_app.ts";
-import { Price } from "../../src/utils/schema.ts";
+import { Price } from "../../src/utils/validator.ts";
+import { dbClient, PRODUCT_ID } from "../test_utils.ts";
+import { prices } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 let ID = "";
 
@@ -16,7 +19,7 @@ Deno.test({
   async fn() {
     const data = JSON.stringify({
       amount: 100,
-      product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      product: PRODUCT_ID,
     });
 
     const response = await app.request(
@@ -80,7 +83,7 @@ Deno.test({
   async fn() {
     const data = JSON.stringify({
       amount: 200,
-      product: "00669ffc-bc13-47b1-aec6-f524611a657f",
+      product: PRODUCT_ID,
     });
 
     const response = await app.request(
@@ -114,5 +117,6 @@ Deno.test({
     );
 
     assert(response?.ok);
+    await dbClient.delete(prices).where(eq(prices.publicId, ID));
   },
 });

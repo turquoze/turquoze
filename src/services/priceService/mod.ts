@@ -1,7 +1,8 @@
 import IPriceService from "../interfaces/priceService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Price, prices } from "../../utils/schema.ts";
+import { prices } from "../../utils/schema.ts";
 import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Price } from "../../utils/validator.ts";
 
 export default class PriceService implements IPriceService {
   db: PostgresJsDatabase;
@@ -29,7 +30,10 @@ export default class PriceService implements IPriceService {
   async Get(params: { id: string }): Promise<Price> {
     try {
       const result = await this.db.select().from(prices).where(
-        eq(prices.publicId, params.id),
+        and(
+          eq(prices.deleted, false),
+          eq(prices.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -49,6 +53,7 @@ export default class PriceService implements IPriceService {
       }
       const result = await this.db.select().from(prices).where(
         and(
+          eq(prices.deleted, false),
           eq(prices.product, params.productId),
           eq(prices.list, params.list),
         ),
@@ -75,7 +80,10 @@ export default class PriceService implements IPriceService {
       }
 
       const result = await this.db.select().from(prices).where(
-        eq(prices.product, params.productId),
+        and(
+          eq(prices.deleted, false),
+          eq(prices.product, params.productId),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;
@@ -99,7 +107,10 @@ export default class PriceService implements IPriceService {
       }
 
       const result = await this.db.select().from(prices).where(
-        eq(prices.shop, params.shop),
+        and(
+          eq(prices.deleted, false),
+          eq(prices.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;
@@ -129,7 +140,9 @@ export default class PriceService implements IPriceService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(prices).where(eq(prices.publicId, params.id));
+      await this.db.update(prices).set({
+        deleted: true,
+      }).where(eq(prices.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

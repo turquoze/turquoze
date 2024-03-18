@@ -3,9 +3,9 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get } from "../../utils/utils.ts";
+import { Delete, Get, jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { Discount, insertDiscountSchema } from "../../utils/schema.ts";
+import { Discount, insertDiscountSchema } from "../../utils/validator.ts";
 
 export default class DiscountsRoutes {
   #discounts: Hono;
@@ -26,10 +26,12 @@ export default class DiscountsRoutes {
           data: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          discounts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            discounts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -55,10 +57,12 @@ export default class DiscountsRoutes {
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          discounts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            discounts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -81,10 +85,12 @@ export default class DiscountsRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          discounts: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            discounts: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

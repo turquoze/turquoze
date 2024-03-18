@@ -1,8 +1,9 @@
 import { TurquozeRole } from "../../utils/types.ts";
 import ITokenService from "../interfaces/tokenService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { DBShop as Shop, Token, tokens } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { tokens } from "../../utils/schema.ts";
+import { DBShop as Shop, Token } from "../../utils/validator.ts";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class TokenService implements ITokenService {
   db: PostgresJsDatabase;
@@ -80,7 +81,10 @@ export default class TokenService implements ITokenService {
   async Get(params: { tokenId: string }): Promise<Token> {
     try {
       const result = await this.db.select().from(tokens).where(
-        eq(tokens.id, params.tokenId),
+        and(
+          eq(tokens.deleted, false),
+          eq(tokens.id, params.tokenId),
+        ),
       );
 
       return result[0];
@@ -104,7 +108,10 @@ export default class TokenService implements ITokenService {
       }
 
       const result = await this.db.select().from(tokens).where(
-        eq(tokens.shop, params.shop),
+        and(
+          eq(tokens.deleted, false),
+          eq(tokens.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;
@@ -117,7 +124,9 @@ export default class TokenService implements ITokenService {
 
   async Delete(params: { tokenId: string }): Promise<void> {
     try {
-      await this.db.delete(tokens).where(eq(tokens.id, params.tokenId));
+      await this.db.update(tokens).set({
+        deleted: true,
+      }).where(eq(tokens.id, params.tokenId));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

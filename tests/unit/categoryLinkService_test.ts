@@ -1,6 +1,7 @@
 import { assert } from "../test_deps.ts";
 import categoryLinkService from "../../src/services/categoryLinkService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { CATEGORY_ID, dbClient } from "../test_utils.ts";
+import { PRODUCT_ID } from "../test_utils.ts";
 
 const categoryLink = new categoryLinkService(dbClient);
 
@@ -15,8 +16,8 @@ Deno.test("CategoryLinkService", {
       try {
         await categoryLink.Link({
           data: {
-            category: "c150e5b3-c203-46a3-8f87-56af2c220bfe",
-            product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+            category: CATEGORY_ID,
+            product: PRODUCT_ID,
           },
         });
 
@@ -36,7 +37,7 @@ Deno.test("CategoryLinkService", {
     fn: async () => {
       try {
         const data = await categoryLink.GetProducts({
-          id: "c150e5b3-c203-46a3-8f87-56af2c220bfe",
+          id: CATEGORY_ID,
         });
 
         assert(data.length > 0);
@@ -55,8 +56,8 @@ Deno.test("CategoryLinkService", {
       try {
         await categoryLink.Delete({
           data: {
-            category: "c150e5b3-c203-46a3-8f87-56af2c220bfe",
-            product: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+            category: CATEGORY_ID,
+            product: PRODUCT_ID,
           },
         });
 

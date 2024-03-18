@@ -1,8 +1,9 @@
 import { Hono, jose, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
+import { jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 import { LoginSchema } from "../../utils/validator.ts";
-import { Shop } from "../../utils/schema.ts";
+import { Shop } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
   #users: Hono;
@@ -23,10 +24,12 @@ export default class UsersRoutes {
         const id = result.payload.user.publicId;
         const data = await this.#Container.UserService.Get({ id });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          users: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            users: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -93,10 +96,12 @@ export default class UsersRoutes {
           shop: posted.shop,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          users: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            users: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

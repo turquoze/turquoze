@@ -1,4 +1,4 @@
-import { Organization } from "../../utils/schema.ts";
+import { Organization } from "../../utils/validator.ts";
 
 export default interface IOrganizationService {
   Create(params: {

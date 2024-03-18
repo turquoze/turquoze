@@ -1,7 +1,8 @@
 import IAdminService from "../interfaces/adminService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { eq, type PostgresJsDatabase, sql } from "../../deps.ts";
-import { Admin, admins } from "../../utils/schema.ts";
+import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import { admins } from "../../utils/schema.ts";
+import { Admin } from "../../utils/validator.ts";
 
 export default class AdminService implements IAdminService {
   db: PostgresJsDatabase;
@@ -36,7 +37,10 @@ export default class AdminService implements IAdminService {
   async Get(params: { id: string }): Promise<Admin> {
     try {
       const result = await this.db.select().from(admins).where(
-        eq(admins.publicId, params.id),
+        and(
+          eq(admins.deleted, false),
+          eq(admins.publicId, params.id),
+        ),
       ).limit(1);
 
       return result[0];
@@ -115,7 +119,12 @@ export default class AdminService implements IAdminService {
         params.offset = 0;
       }
 
-      const result = await this.db.select().from(admins).limit(params.limit)
+      const result = await this.db.select().from(admins).where(
+        and(
+          eq(admins.deleted, false),
+          eq(admins.shop, params.shop),
+        ),
+      ).limit(params.limit)
         .offset(params.offset);
 
       return result;
@@ -149,7 +158,9 @@ export default class AdminService implements IAdminService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(admins).where(eq(admins.publicId, params.id));
+      await this.db.update(admins).set({
+        deleted: true,
+      }).where(eq(admins.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

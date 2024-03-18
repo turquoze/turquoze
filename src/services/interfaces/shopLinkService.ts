@@ -1,4 +1,4 @@
-import { ShopLink } from "../../utils/schema.ts";
+import { ShopLink } from "../../utils/validator.ts";
 import { ShopLinkData } from "../../utils/types.ts";
 
 export default interface IShopLinkService {

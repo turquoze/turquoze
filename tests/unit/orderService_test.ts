@@ -1,6 +1,6 @@
 import { assert } from "../test_deps.ts";
 import orderService from "../../src/services/orderService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { dbClient, SHOP_ID } from "../test_utils.ts";
 
 const order = new orderService(dbClient);
 let ID = "";
@@ -17,11 +17,10 @@ Deno.test("OrderService", {
       try {
         const data = await order.Create({
           data: {
-            id: 0,
             publicId: "",
             paymentStatus: "WAITING",
             priceTotal: 1050,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             products: [
               {
                 price: {
@@ -105,7 +104,7 @@ Deno.test("OrderService", {
     ignore: true,
     fn: async () => {
       const data = await order.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },

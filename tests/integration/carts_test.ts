@@ -2,7 +2,8 @@ import { assert, assertEquals, assertObjectMatch } from "../test_deps.ts";
 
 import CartsRoutes from "../../src/routes/api/carts.ts";
 import app, { container } from "../test_app.ts";
-import { Cart, CartItem } from "../../src/utils/schema.ts";
+import { Cart, CartItem } from "../../src/utils/validator.ts";
+import { PRODUCT_ID } from "../test_utils.ts";
 
 let ID = "";
 
@@ -62,7 +63,7 @@ Deno.test({
     const data = JSON.stringify({
       cartId: ID,
       price: 2000,
-      itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      itemId: PRODUCT_ID,
       quantity: 2,
     });
 
@@ -102,9 +103,9 @@ Deno.test({
     assertObjectMatch(carts[0], {
       id: carts[0].id,
       cartId: ID,
-      itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      itemId: PRODUCT_ID,
       quantity: 2,
-      price: 200000,
+      price: 28390,
     });
   },
 });
@@ -117,7 +118,7 @@ Deno.test({
   async fn() {
     const response = await app.request(
       new Request(
-        `http://127.0.0.1/carts/${ID}/items/d72f032b-b91b-4dbf-811c-a01ab0938358`,
+        `http://127.0.0.1/carts/${ID}/items/${PRODUCT_ID}`,
         {
           method: "GET",
         },
@@ -131,9 +132,9 @@ Deno.test({
     assertObjectMatch(carts, {
       id: carts.id,
       cartId: ID,
-      itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+      itemId: PRODUCT_ID,
       quantity: 2,
-      price: 200000,
+      price: 28390,
     });
   },
 });
@@ -146,7 +147,7 @@ Deno.test({
   async fn() {
     const response = await app.request(
       new Request(
-        `http://127.0.0.1/carts/${ID}/items/00669ffc-bc13-47b1-aec6-f524611a657f`,
+        `http://127.0.0.1/carts/${ID}/items/${PRODUCT_ID}`,
         {
           method: "DELETE",
         },

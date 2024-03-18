@@ -1,7 +1,8 @@
 import IProductService from "../interfaces/productService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { DBProduct as Product, products } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { products } from "../../utils/schema.ts";
+import { DBProduct as Product } from "../../utils/validator.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ProductService implements IProductService {
   db: PostgresJsDatabase;
@@ -52,7 +53,10 @@ export default class ProductService implements IProductService {
   async Get(params: { id: string }): Promise<Product> {
     try {
       const result = await this.db.select().from(products).where(
-        eq(products.publicId, params.id),
+        and(
+          eq(products.deleted, false),
+          eq(products.publicId, params.id),
+        ),
       );
       //@ts-ignore not on type
       return result[0];
@@ -66,7 +70,10 @@ export default class ProductService implements IProductService {
   async GetBySlug(params: { slug: string }): Promise<Product> {
     try {
       const result = await this.db.select().from(products).where(
-        eq(products.slug, params.slug),
+        and(
+          eq(products.deleted, false),
+          eq(products.slug, params.slug),
+        ),
       );
       //@ts-ignore not on type
       return result[0];
@@ -80,7 +87,10 @@ export default class ProductService implements IProductService {
   async GetVariantsByParent(params: { id: string }): Promise<Product[]> {
     try {
       const result = await this.db.select().from(products).where(
-        eq(products.parent, params.id),
+        and(
+          eq(products.deleted, false),
+          eq(products.parent, params.id),
+        ),
       );
       //@ts-ignore not on type
       return result;
@@ -104,7 +114,10 @@ export default class ProductService implements IProductService {
       }
 
       const result = await this.db.select().from(products).where(
-        eq(products.shop, params.shop),
+        and(
+          eq(products.deleted, false),
+          eq(products.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
       //@ts-ignore not on type
       return result;
@@ -142,7 +155,9 @@ export default class ProductService implements IProductService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(products).where(eq(products.publicId, params.id));
+      await this.db.update(products).set({
+        deleted: true,
+      }).where(eq(products.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -2,7 +2,7 @@ import { Hono, MeiliSearch } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Product } from "../../utils/schema.ts";
+import { Product, SearchProduct } from "../../utils/validator.ts";
 
 export default class SettingsRoutes {
   #settings: Hono;
@@ -39,9 +39,10 @@ export default class SettingsRoutes {
 
           localProduct.price = price.amount ?? -1;
 
-          const obj = {
+          const obj: SearchProduct = {
             ...localProduct,
-            id: Number(product.id),
+            //@ts-expect-error type errors
+            id: Number(product.id!),
           };
 
           delete obj.publicId;
@@ -49,7 +50,7 @@ export default class SettingsRoutes {
           return obj;
         });
 
-        const productsMapped: Array<Product> = await Promise.all(
+        const productsMapped: Array<SearchProduct> = await Promise.all(
           productsMappedPromises,
         );
 

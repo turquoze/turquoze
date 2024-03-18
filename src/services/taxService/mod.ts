@@ -1,7 +1,8 @@
 import ITaxService from "../interfaces/taxService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { Tax, taxes } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { taxes } from "../../utils/schema.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Tax } from "../../utils/validator.ts";
 
 export default class TaxService implements ITaxService {
   db: PostgresJsDatabase;
@@ -30,7 +31,10 @@ export default class TaxService implements ITaxService {
   async Get(params: { id: string }): Promise<Tax> {
     try {
       const result = await this.db.select().from(taxes).where(
-        eq(taxes.publicId, params.id),
+        and(
+          eq(taxes.deleted, false),
+          eq(taxes.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -58,7 +62,10 @@ export default class TaxService implements ITaxService {
       }
 
       const result = await this.db.select().from(taxes).where(
-        eq(taxes.shop, params.shop),
+        and(
+          eq(taxes.deleted, false),
+          eq(taxes.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;
@@ -71,7 +78,9 @@ export default class TaxService implements ITaxService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(taxes).where(eq(taxes.publicId, params.id));
+      await this.db.update(taxes).set({
+        deleted: true,
+      }).where(eq(taxes.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

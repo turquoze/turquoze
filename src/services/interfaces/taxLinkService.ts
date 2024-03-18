@@ -1,4 +1,4 @@
-import { Tax, TaxProductLink } from "../../utils/schema.ts";
+import { Tax, TaxProductLink } from "../../utils/validator.ts";
 
 export default interface ITaxLinkService {
   Create(params: {

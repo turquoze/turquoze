@@ -3,13 +3,19 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get, stringifyJSON, Update } from "../../utils/utils.ts";
+import {
+  Delete,
+  Get,
+  jsonResponse,
+  stringifyJSON,
+  Update,
+} from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import {
   Category,
   insertCategoryLinkSchema,
   insertCategorySchema,
-} from "../../utils/schema.ts";
+} from "../../utils/validator.ts";
 
 export default class CategoriesRoutes {
   #categories: Hono;
@@ -34,10 +40,12 @@ export default class CategoriesRoutes {
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          categories: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            categories: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -58,10 +66,13 @@ export default class CategoriesRoutes {
         const data = await this.#Container.CategoryService.Create({
           data: posted,
         });
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          categories: data,
-        });
+
+        return jsonResponse(
+          stringifyJSON({
+            categories: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -84,10 +95,12 @@ export default class CategoriesRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          categories: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            categories: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -111,17 +124,19 @@ export default class CategoriesRoutes {
 
         const posted = parse(insertCategorySchema, category);
 
-        const data = await Update<Category>(this.#Container, {
+        await Update<Category>(this.#Container, {
           id: `category_${id}`,
           promise: this.#Container.CategoryService.Update({
             data: posted,
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          categories: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            categories: posted,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -178,23 +193,15 @@ export default class CategoriesRoutes {
           id: ctx.req.param("id"),
         });
 
-        const data = await Delete(this.#Container, {
+        await Delete(this.#Container, {
           id: `category_${id}`,
           promise: this.#Container.CategoryService.Delete({
             id: id,
           }),
         });
 
-        return new Response(
-          stringifyJSON({
-            categories: data,
-          }),
-          {
-            headers: {
-              "content-type": "application/json",
-            },
-          },
-        );
+        ctx.res.headers.set("content-type", "application/json");
+        return ctx.json({}, 201);
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

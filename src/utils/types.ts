@@ -1,6 +1,6 @@
 import type { SearchParams, StatusCode } from "../deps.ts";
 import Container from "../services/mod.ts";
-import type { Product, Shop } from "./schema.ts";
+import type { Product, Shop } from "./validator.ts";
 
 export interface DiscountItem {
   code: string;

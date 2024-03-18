@@ -1,6 +1,6 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import cartService from "../../src/services/cartService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { dbClient, PRODUCT_ID } from "../test_utils.ts";
 
 const cart = new cartService(dbClient);
 let ID = "";
@@ -17,7 +17,6 @@ Deno.test("CartService", {
         const data = await cart.Create({
           data: {
             publicId: "",
-            id: 0,
             billing: {
               address1: "",
               address2: "",
@@ -74,10 +73,9 @@ Deno.test("CartService", {
       try {
         await cart.AddItem({
           data: {
-            id: 0,
             cartId: ID,
             price: 2000,
-            itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+            itemId: PRODUCT_ID,
             type: "PRODUCT",
             quantity: 2,
           },
@@ -99,10 +97,9 @@ Deno.test("CartService", {
       try {
         await cart.AddItem({
           data: {
-            id: 0,
             cartId: ID,
             price: 2000,
-            itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+            itemId: PRODUCT_ID,
             type: "PRODUCT",
             quantity: 3,
           },
@@ -124,7 +121,6 @@ Deno.test("CartService", {
       try {
         await cart.AddItem({
           data: {
-            id: 0,
             cartId: ID,
             price: 2000,
             itemId: "00000000-0000-0000-0000-000000000000",
@@ -148,13 +144,13 @@ Deno.test("CartService", {
     fn: async () => {
       const data = await cart.GetCartItem(
         ID,
-        "d72f032b-b91b-4dbf-811c-a01ab0938358",
+        PRODUCT_ID,
       );
 
       assertObjectMatch(data, {
         id: data.id,
         cartId: ID,
-        itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+        itemId: PRODUCT_ID,
         quantity: 5,
         price: 2000,
         type: data.type,
@@ -196,7 +192,7 @@ Deno.test("CartService", {
       assertObjectMatch(data[0], {
         id: data[0].id,
         cartId: ID,
-        itemId: "d72f032b-b91b-4dbf-811c-a01ab0938358",
+        itemId: PRODUCT_ID,
         quantity: 5,
         price: 2000,
         type: data[0].type,

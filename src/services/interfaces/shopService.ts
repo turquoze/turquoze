@@ -1,4 +1,4 @@
-import { DBShop as Shop } from "../../utils/schema.ts";
+import { DBShop as Shop } from "../../utils/validator.ts";
 
 export default interface IShopService {
   Create(params: {

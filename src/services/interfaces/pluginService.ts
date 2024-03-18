@@ -1,4 +1,4 @@
-import { Plugin } from "../../utils/schema.ts";
+import { Plugin } from "../../utils/validator.ts";
 
 export default interface IPluginService {
   Create(params: {

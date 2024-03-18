@@ -13,7 +13,7 @@ import IProductService from "../interfaces/productService.ts";
 import IPluginService from "../interfaces/pluginService.ts";
 import IPriceService from "../interfaces/priceService.ts";
 import IPriceCalculatorService from "../interfaces/priceCalculatorService.ts";
-import { Cart, CartItem, Plugin, Shop } from "../../utils/schema.ts";
+import { Cart, CartItem, Plugin, Shop } from "../../utils/validator.ts";
 import { Dinero } from "../../deps.ts";
 
 export default class PaymentService implements IPaymentService {
@@ -96,7 +96,6 @@ export default class PaymentService implements IPaymentService {
       const order = await this.#OrderService.Create({
         data: {
           publicId: "",
-          id: 0,
           paymentStatus: "WAITING",
           priceTotal: parseInt(price.price.toString()),
           shop: params.data.shop.publicId!,

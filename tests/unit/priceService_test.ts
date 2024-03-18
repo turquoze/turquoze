@@ -1,6 +1,6 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import priceService from "../../src/services/priceService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { dbClient, PRODUCT_ID, SHOP_ID } from "../test_utils.ts";
 
 const price = new priceService(dbClient);
 let ID = "";
@@ -16,11 +16,10 @@ Deno.test("PriceService", {
       try {
         const data = await price.Create({
           data: {
-            id: 0,
             publicId: "",
             amount: 100,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
-            product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
+            shop: SHOP_ID,
+            product: PRODUCT_ID,
           },
         });
 
@@ -67,8 +66,8 @@ Deno.test("PriceService", {
         publicId: ID,
         createdAt: data.createdAt,
         amount: 100,
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
-        product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
+        shop: SHOP_ID,
+        product: PRODUCT_ID,
       });
     },
     sanitizeOps: false,
@@ -99,11 +98,10 @@ Deno.test("PriceService", {
       try {
         const data = await price.Update({
           data: {
-            id: 0,
             publicId: ID,
             amount: 200,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
-            product: "b9bb5511-add4-4fb4-b262-e498a7e73506",
+            shop: SHOP_ID,
+            product: PRODUCT_ID,
           },
         });
 
@@ -124,10 +122,9 @@ Deno.test("PriceService", {
       try {
         await price.Update({
           data: {
-            id: 0,
             publicId: "00000000-0000-0000-0000-000000000000",
             amount: 200,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             product: "00000000-0000-0000-0000-000000000000",
           },
         });
@@ -146,7 +143,7 @@ Deno.test("PriceService", {
     name: "GetMany",
     fn: async () => {
       const data = await price.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },

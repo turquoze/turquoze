@@ -2,9 +2,9 @@ import { Hono, parse } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Get, Update } from "../../utils/utils.ts";
+import { Get, jsonResponse, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { insertUserSchema, User } from "../../utils/schema.ts";
+import { insertUserSchema, User } from "../../utils/validator.ts";
 
 export default class UsersRoutes {
   #users: Hono;
@@ -29,10 +29,12 @@ export default class UsersRoutes {
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          users: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            users: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -53,10 +55,12 @@ export default class UsersRoutes {
         const data = await this.#Container.UserService.Create({
           data: posted,
         });
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          users: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            users: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -79,10 +83,12 @@ export default class UsersRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          users: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            users: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -113,10 +119,12 @@ export default class UsersRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          users: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            users: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

@@ -1,6 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import discountService from "../../src/services/discountService/mod.ts";
-import { dbClient } from "../test_utils.ts";
+import { dbClient, SHOP_ID } from "../test_utils.ts";
+import { discounts } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 const discount = new discountService(dbClient);
 let ID = "";
@@ -17,13 +19,12 @@ Deno.test("DiscountService", {
       try {
         const data = await discount.Create({
           data: {
-            id: 0,
             publicId: "",
             type: "FIXED",
             validFrom: null,
             validTo: null,
             value: 20,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             code: TEST_CODE,
           },
         });
@@ -73,7 +74,7 @@ Deno.test("DiscountService", {
         validFrom: null,
         validTo: null,
         value: 20,
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
         code: TEST_CODE,
       });
     },
@@ -112,7 +113,7 @@ Deno.test("DiscountService", {
         validFrom: null,
         validTo: null,
         value: 20,
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
         code: TEST_CODE,
       });
     },
@@ -142,7 +143,7 @@ Deno.test("DiscountService", {
     name: "GetMany",
     fn: async () => {
       const data = await discount.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },
@@ -202,4 +203,6 @@ Deno.test("DiscountService", {
     sanitizeResources: false,
     sanitizeExit: false,
   });
+
+  await dbClient.delete(discounts).where(eq(discounts.publicId, ID));
 });

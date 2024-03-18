@@ -1,7 +1,8 @@
 import ICategoryService from "../interfaces/categoryService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { categories, Category } from "../../utils/schema.ts";
+import { categories } from "../../utils/schema.ts";
 import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Category } from "../../utils/validator.ts";
 
 export default class CategoryService implements ICategoryService {
   db: PostgresJsDatabase;
@@ -29,7 +30,10 @@ export default class CategoryService implements ICategoryService {
   async Get(params: { id: string }): Promise<Category> {
     try {
       const result = await this.db.select().from(categories).where(
-        eq(categories.publicId, params.id),
+        and(
+          eq(categories.deleted, false),
+          eq(categories.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -44,6 +48,7 @@ export default class CategoryService implements ICategoryService {
     try {
       const result = await this.db.select().from(categories).where(
         and(
+          eq(categories.deleted, false),
           eq(categories.shop, params.shop),
           eq(categories.name, params.name),
         ),
@@ -70,7 +75,10 @@ export default class CategoryService implements ICategoryService {
       }
 
       const result = await this.db.select().from(categories).where(
-        eq(categories.shop, params.shop),
+        and(
+          eq(categories.deleted, false),
+          eq(categories.shop, params.shop),
+        ),
       ).limit(params.limit).offset(params.offset);
 
       return result;
@@ -101,7 +109,9 @@ export default class CategoryService implements ICategoryService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(categories).where(
+      await this.db.update(categories).set({
+        deleted: true,
+      }).where(
         eq(categories.publicId, params.id),
       );
     } catch (error) {

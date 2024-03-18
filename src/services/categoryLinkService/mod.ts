@@ -1,6 +1,7 @@
 import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { categorieslink, CategoryLink, Product } from "../../utils/schema.ts";
+import { categorieslink } from "../../utils/schema.ts";
+import { CategoryLink, Product } from "../../utils/validator.ts";
 import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
 
 export default class CategoryLinkService implements ICategoryLinkService {

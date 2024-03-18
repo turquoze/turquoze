@@ -3,9 +3,15 @@ import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 
-import { Delete, Get, Update } from "../../utils/utils.ts";
+import {
+  Delete,
+  Get,
+  jsonResponse,
+  stringifyJSON,
+  Update,
+} from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
-import { insertPriceSchema, Price } from "../../utils/schema.ts";
+import { insertPriceSchema, Price } from "../../utils/validator.ts";
 
 export default class PricesRoutes {
   #prices: Hono;
@@ -30,10 +36,12 @@ export default class PricesRoutes {
           offset: isNaN(offset) ? undefined : offset,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          prices: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            prices: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -55,10 +63,12 @@ export default class PricesRoutes {
           data: posted,
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          prices: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            prices: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -89,10 +99,12 @@ export default class PricesRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          prices: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            prices: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");
@@ -115,10 +127,12 @@ export default class PricesRoutes {
           }),
         });
 
-        ctx.res.headers.set("content-type", "application/json");
-        return ctx.json({
-          prices: data,
-        });
+        return jsonResponse(
+          stringifyJSON({
+            prices: data,
+          }),
+          200,
+        );
       } catch (error) {
         const data = ErrorHandler(error);
         ctx.res.headers.set("content-type", "application/json");

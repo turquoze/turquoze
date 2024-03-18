@@ -1,7 +1,8 @@
 import IShopService from "../interfaces/shopService.ts";
 import { DatabaseError } from "../../utils/errors.ts";
-import { DBShop as Shop, shops } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { shops } from "../../utils/schema.ts";
+import { DBShop as Shop } from "../../utils/validator.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
 
 export default class ShopService implements IShopService {
   db: PostgresJsDatabase;
@@ -35,7 +36,10 @@ export default class ShopService implements IShopService {
   async Get(params: { id: string }): Promise<Shop> {
     try {
       const result = await this.db.select().from(shops).where(
-        eq(shops.publicId, params.id),
+        and(
+          eq(shops.deleted, false),
+          eq(shops.publicId, params.id),
+        ),
       );
       //@ts-ignore not on type
       return result[0];
@@ -73,7 +77,9 @@ export default class ShopService implements IShopService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(shops).where(eq(shops.publicId, params.id));
+      await this.db.update(shops).set({
+        deleted: true,
+      }).where(eq(shops.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -1,7 +1,8 @@
 import { DatabaseError } from "../../utils/errors.ts";
 import IPluginService from "../interfaces/pluginService.ts";
-import { Plugin, plugins } from "../../utils/schema.ts";
-import { eq, type PostgresJsDatabase } from "../../deps.ts";
+import { plugins } from "../../utils/schema.ts";
+import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import { Plugin } from "../../utils/validator.ts";
 
 export default class PluginService implements IPluginService {
   db: PostgresJsDatabase;
@@ -31,7 +32,10 @@ export default class PluginService implements IPluginService {
   async Get(params: { id: string }): Promise<Plugin> {
     try {
       const result = await this.db.select().from(plugins).where(
-        eq(plugins.publicId, params.id),
+        and(
+          eq(plugins.deleted, false),
+          eq(plugins.publicId, params.id),
+        ),
       );
 
       return result[0];
@@ -63,7 +67,9 @@ export default class PluginService implements IPluginService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(plugins).where(eq(plugins.publicId, params.id));
+      await this.db.update(plugins).set({
+        deleted: true,
+      }).where(eq(plugins.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -1,6 +1,6 @@
 import Container from "../src/services/mod.ts";
 import { faker } from "npm:@faker-js/faker";
-import { Category, DBProduct as Product } from "../src/utils/schema.ts";
+import { Category, DBProduct as Product } from "../src/utils/validator.ts";
 import { drizzle, postgres } from "../src/deps.ts";
 
 const DATABASE_URL = Deno.env.get("TEST_DATABASE_URL")!;
@@ -53,7 +53,7 @@ try {
   console.log("Creating Categories");
   const categories = await Promise.all(categoryPromises);
 
-  for (let index = 0; index < 100; index++) {
+  for (let index = 0; index < 1000; index++) {
     productArr.push(GenerateProduct(publicId!));
   }
 
@@ -72,7 +72,6 @@ try {
       country: faker.address.countryCode("alpha-2"),
       name: faker.address.cityName(),
       shop: publicId!,
-      id: 0,
       publicId: "",
     },
   });
@@ -98,7 +97,7 @@ try {
   console.log("Creating Prices");
   await Promise.all(pricePromises);
 
-  const chunkSize = 10;
+  const chunkSize = Math.ceil(products.length / categories.length);
   const result: Array<Array<{ publicId: string }>> = products.reduce(
     (resultArray, item, index) => {
       const chunkIndex = Math.floor(index / chunkSize);
@@ -146,7 +145,6 @@ async function GenerateInventoryItem(
 ) {
   await container.InventoryService.Create({
     data: {
-      id: 0,
       publicId: "",
       product: product,
       warehouse: warehouse,
@@ -157,7 +155,6 @@ async function GenerateInventoryItem(
 
 function GenerateCategory(shop: string): Category {
   return {
-    id: 0,
     publicId: "",
     name: `${faker.commerce.department()} - ${faker.commerce.productName()}`,
     shop: shop,
@@ -166,9 +163,8 @@ function GenerateCategory(shop: string): Category {
 
 function GenerateProduct(shop: string): Product {
   return {
-    id: 0,
     active: true,
-    images: [faker.image.fashion(800, 600, true)],
+    images: ["https://placehold.co/800x600/webp"],
     longDescription: faker.commerce.productDescription(),
     shop: shop,
     slug: faker.lorem.slug(),
@@ -185,7 +181,7 @@ async function GeneratePricItem(
     data: {
       product: product,
       shop: shop,
-      amount: parseInt(faker.commerce.price(10000, 99999900, 0, "")),
+      amount: parseInt(faker.commerce.price(10000, 205000, 0, "")),
     },
   });
 }

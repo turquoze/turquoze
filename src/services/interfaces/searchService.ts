@@ -1,6 +1,6 @@
 import type { EnqueuedTask, MeiliSearch, SearchResponse } from "../../deps.ts";
 import { MeiliDelete, MeiliIndex, Search } from "../../utils/types.ts";
-import { Product } from "../../utils/schema.ts";
+import { Product } from "../../utils/validator.ts";
 
 export default interface ISearchService {
   ProductSearch(

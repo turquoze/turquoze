@@ -1,7 +1,7 @@
 import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
 import { getCookie, jose } from "../deps.ts";
-import { Shop } from "../utils/schema.ts";
+import { Shop } from "../utils/validator.ts";
 
 export default function CookieGuard(container: Container) {
   return async (ctx: Context, next: Next) => {

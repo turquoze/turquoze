@@ -1,6 +1,7 @@
 import { assert } from "../test_deps.ts";
 import userService from "../../src/services/userService/mod.ts";
 import { dbClient } from "../test_utils.ts";
+import { SHOP_ID } from "../test_utils.ts";
 
 const user = new userService(dbClient);
 let ID = "";
@@ -37,13 +38,12 @@ Deno.test("UserService", {
       try {
         const data = await user.Create({
           data: {
-            id: 0,
             publicId: "",
             email: "test@example.com",
             password: "test123",
             name: "test",
             notActive: false,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             role: "",
           },
         });
@@ -96,7 +96,7 @@ Deno.test("UserService", {
       const data = await user.Login({
         email: "test@example.com",
         password: "test123",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
 
       assert(data != null);
@@ -113,7 +113,7 @@ Deno.test("UserService", {
         await user.Login({
           email: "test@example.com",
           password: "wrongpassword",
-          shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+          shop: SHOP_ID,
         });
 
         assert(false);
@@ -151,7 +151,7 @@ Deno.test("UserService", {
       const data = await user.Login({
         email: "test@example.com",
         password: "newpassword",
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
 
       assert(data != null);
@@ -167,13 +167,12 @@ Deno.test("UserService", {
       try {
         const data = await user.Update({
           data: {
-            id: 0,
             publicId: ID,
             email: "test+test123@example.com",
             password: "",
             name: "test update",
             notActive: true,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             role: "",
           },
         });
@@ -195,13 +194,12 @@ Deno.test("UserService", {
       try {
         await user.Update({
           data: {
-            id: 0,
             publicId: "00000000-0000-0000-0000-000000000000",
             email: "test+fail@example.com",
             password: "",
             name: "test fail",
             notActive: true,
-            shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+            shop: SHOP_ID,
             role: "",
           },
         });
@@ -220,7 +218,7 @@ Deno.test("UserService", {
     name: "GetMany",
     fn: async () => {
       const data = await user.GetMany({
-        shop: "6d14431e-6d57-4ab5-842b-b6604e2038c7",
+        shop: SHOP_ID,
       });
       assert(data.length > 0);
     },
