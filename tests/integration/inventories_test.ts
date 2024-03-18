@@ -3,8 +3,10 @@ import { assert, assertEquals } from "../test_deps.ts";
 import InventoriesRoutes from "../../src/routes/admin/inventories.ts";
 import app, { container } from "../test_app.ts";
 import { Inventory } from "../../src/utils/validator.ts";
-import { PRODUCT_ID } from "../test_utils.ts";
+import { dbClient, PRODUCT_ID } from "../test_utils.ts";
 import { WAREHOUSE_ID } from "../test_utils.ts";
+import { inventories } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 let ID = "";
 
@@ -102,5 +104,6 @@ Deno.test({
     );
 
     assert(response?.ok);
+    await dbClient.delete(inventories).where(eq(inventories.publicId, ID));
   },
 });

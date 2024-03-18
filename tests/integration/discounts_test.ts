@@ -3,6 +3,9 @@ import { assert, assertEquals } from "../test_deps.ts";
 import DiscountsRoutes from "../../src/routes/admin/discounts.ts";
 import app, { container } from "../test_app.ts";
 import { Discount } from "../../src/utils/validator.ts";
+import { dbClient } from "../test_utils.ts";
+import { discounts } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 let ID = "";
 
@@ -88,5 +91,7 @@ Deno.test({
     );
 
     assert(response?.ok);
+
+    await dbClient.delete(discounts).where(eq(discounts.publicId, ID));
   },
 });

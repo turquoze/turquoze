@@ -1,6 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import discountService from "../../src/services/discountService/mod.ts";
 import { dbClient, SHOP_ID } from "../test_utils.ts";
+import { discounts } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 const discount = new discountService(dbClient);
 let ID = "";
@@ -201,4 +203,6 @@ Deno.test("DiscountService", {
     sanitizeResources: false,
     sanitizeExit: false,
   });
+
+  await dbClient.delete(discounts).where(eq(discounts.publicId, ID));
 });

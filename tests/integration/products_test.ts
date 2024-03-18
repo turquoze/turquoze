@@ -6,6 +6,10 @@ import PricesRoutes from "../../src/routes/admin/prices.ts";
 import { Search } from "../../src/utils/types.ts";
 import app, { container } from "../test_app.ts";
 import { Price, Product } from "../../src/utils/validator.ts";
+import { dbClient } from "../test_utils.ts";
+import { products } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
+import { prices } from "../../src/utils/schema.ts";
 let ID = "";
 let PriceID = "";
 const SLUG = "test1";
@@ -205,5 +209,8 @@ Deno.test({
     );
 
     assert(response?.ok);
+
+    await dbClient.delete(prices).where(eq(prices.publicId, PriceID));
+    await dbClient.delete(products).where(eq(products.publicId, ID));
   },
 });

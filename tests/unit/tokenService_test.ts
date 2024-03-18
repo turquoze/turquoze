@@ -1,6 +1,8 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
 import tokenService from "../../src/services/tokenService/mod.ts";
 import { dbClient, SHOP_ID } from "../test_utils.ts";
+import { tokens } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 const token = new tokenService(dbClient);
 let ID = "";
@@ -125,4 +127,6 @@ Deno.test("TokenService", {
     sanitizeResources: false,
     sanitizeExit: false,
   });
+
+  await dbClient.delete(tokens).where(eq(tokens.id, ID));
 });

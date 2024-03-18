@@ -3,6 +3,9 @@ import { assert, assertEquals } from "../test_deps.ts";
 import WarehousesRoutes from "../../src/routes/admin/warehouses.ts";
 import app, { container } from "../test_app.ts";
 import { Warehouse } from "../../src/utils/validator.ts";
+import { dbClient } from "../test_utils.ts";
+import { warehouses } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 let ID = "";
 
@@ -116,5 +119,6 @@ Deno.test({
     );
 
     assert(response?.ok);
+    await dbClient.delete(warehouses).where(eq(warehouses.publicId, ID));
   },
 });

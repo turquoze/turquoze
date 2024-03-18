@@ -2,6 +2,8 @@ import { assert, assertObjectMatch } from "../test_deps.ts";
 import categoryService from "../../src/services/categoryService/mod.ts";
 import { dbClient } from "../test_utils.ts";
 import { SHOP_ID } from "../test_utils.ts";
+import { categories } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 const category = new categoryService(dbClient);
 let ID = "";
@@ -97,6 +99,7 @@ Deno.test("CategoryService", {
         name: "test",
         shop: SHOP_ID,
       });
+
       assertObjectMatch(data, {
         id: data.id,
         publicId: ID,
@@ -237,4 +240,6 @@ Deno.test("CategoryService", {
     sanitizeResources: false,
     sanitizeExit: false,
   });
+
+  await dbClient.delete(categories).where(eq(categories.publicId, ID));
 });

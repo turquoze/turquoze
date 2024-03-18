@@ -3,7 +3,9 @@ import { assert, assertEquals } from "../test_deps.ts";
 import CategoriesRoutes from "../../src/routes/admin/categories.ts";
 import app, { container } from "../test_app.ts";
 import { Category } from "../../src/utils/validator.ts";
-import { PRODUCT_ID } from "../test_utils.ts";
+import { dbClient, PRODUCT_ID } from "../test_utils.ts";
+import { categories } from "../../src/utils/schema.ts";
+import { eq } from "../../src/deps.ts";
 
 let ID = "";
 
@@ -188,5 +190,7 @@ Deno.test({
     );
 
     assert(response?.ok);
+
+    await dbClient.delete(categories).where(eq(categories.publicId, ID));
   },
 });
