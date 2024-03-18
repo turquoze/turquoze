@@ -158,7 +158,9 @@ export default class AdminService implements IAdminService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(admins).where(eq(admins.publicId, params.id));
+      await this.db.update(admins).set({
+        deleted: true,
+      }).where(eq(admins.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

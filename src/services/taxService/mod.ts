@@ -78,7 +78,9 @@ export default class TaxService implements ITaxService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(taxes).where(eq(taxes.publicId, params.id));
+      await this.db.update(taxes).set({
+        deleted: true,
+      }).where(eq(taxes.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

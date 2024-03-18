@@ -67,7 +67,9 @@ export default class PluginService implements IPluginService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(plugins).where(eq(plugins.publicId, params.id));
+      await this.db.update(plugins).set({
+        deleted: true,
+      }).where(eq(plugins.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

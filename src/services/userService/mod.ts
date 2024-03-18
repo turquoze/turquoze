@@ -157,7 +157,9 @@ export default class UserService implements IUserService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(users).where(eq(users.publicId, params.id));
+      await this.db.update(users).set({
+        deleted: true,
+      }).where(eq(users.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

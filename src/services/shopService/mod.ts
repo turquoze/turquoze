@@ -77,7 +77,9 @@ export default class ShopService implements IShopService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(shops).where(eq(shops.publicId, params.id));
+      await this.db.update(shops).set({
+        deleted: true,
+      }).where(eq(shops.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

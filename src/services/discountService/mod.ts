@@ -97,7 +97,9 @@ export default class DiscountService implements IDiscountService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(discounts).where(eq(discounts.publicId, params.id));
+      await this.db.update(discounts).set({
+        deleted: true,
+      }).where(eq(discounts.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

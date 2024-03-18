@@ -140,7 +140,9 @@ export default class PriceService implements IPriceService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(prices).where(eq(prices.publicId, params.id));
+      await this.db.update(prices).set({
+        deleted: true,
+      }).where(eq(prices.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

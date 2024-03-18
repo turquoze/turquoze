@@ -124,7 +124,9 @@ export default class TokenService implements ITokenService {
 
   async Delete(params: { tokenId: string }): Promise<void> {
     try {
-      await this.db.delete(tokens).where(eq(tokens.id, params.tokenId));
+      await this.db.update(tokens).set({
+        deleted: true,
+      }).where(eq(tokens.id, params.tokenId));
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,

@@ -124,7 +124,7 @@ export default class CategoriesRoutes {
 
         const posted = parse(insertCategorySchema, category);
 
-        const data = await Update<Category>(this.#Container, {
+        await Update<Category>(this.#Container, {
           id: `category_${id}`,
           promise: this.#Container.CategoryService.Update({
             data: posted,
@@ -133,7 +133,7 @@ export default class CategoriesRoutes {
 
         return jsonResponse(
           stringifyJSON({
-            categories: data,
+            categories: posted,
           }),
           200,
         );

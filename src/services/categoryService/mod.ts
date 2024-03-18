@@ -109,7 +109,9 @@ export default class CategoryService implements ICategoryService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(categories).where(
+      await this.db.update(categories).set({
+        deleted: true,
+      }).where(
         eq(categories.publicId, params.id),
       );
     } catch (error) {

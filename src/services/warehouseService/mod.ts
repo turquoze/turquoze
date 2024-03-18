@@ -97,7 +97,9 @@ export default class CartService implements IWarehouseService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(warehouses).where(
+      await this.db.update(warehouses).set({
+        deleted: true,
+      }).where(
         eq(warehouses.publicId, params.id),
       );
     } catch (error) {

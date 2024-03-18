@@ -67,6 +67,7 @@ export const insertProductSchema = createInsertSchema(products, {
 });
 export type DBProduct = Output<typeof insertProductSchema>;
 export type Product = DBProduct & { price: number };
+export type SearchProduct = Product & { id: number };
 
 //@ts-ignore TS2345
 export const insertTaxSchema = createInsertSchema(taxes);

@@ -61,7 +61,9 @@ export default class OrganizationService implements IOrganizationService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      await this.db.delete(organizations).where(
+      await this.db.update(organizations).set({
+        deleted: true,
+      }).where(
         eq(organizations.publicId, params.id),
       );
     } catch (error) {

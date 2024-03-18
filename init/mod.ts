@@ -53,7 +53,7 @@ try {
   console.log("Creating Categories");
   const categories = await Promise.all(categoryPromises);
 
-  for (let index = 0; index < 100; index++) {
+  for (let index = 0; index < 1000; index++) {
     productArr.push(GenerateProduct(publicId!));
   }
 
@@ -97,7 +97,7 @@ try {
   console.log("Creating Prices");
   await Promise.all(pricePromises);
 
-  const chunkSize = 10;
+  const chunkSize = Math.ceil(products.length / categories.length);
   const result: Array<Array<{ publicId: string }>> = products.reduce(
     (resultArray, item, index) => {
       const chunkIndex = Math.floor(index / chunkSize);
@@ -181,7 +181,7 @@ async function GeneratePricItem(
     data: {
       product: product,
       shop: shop,
-      amount: parseInt(faker.commerce.price(10000, 569900, 0, "")),
+      amount: parseInt(faker.commerce.price(10000, 205000, 0, "")),
     },
   });
 }
