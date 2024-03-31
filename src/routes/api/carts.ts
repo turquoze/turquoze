@@ -16,7 +16,11 @@ import {
   insertCartSchema,
   Shop,
 } from "../../utils/validator.ts";
-import { jsonResponse, stringifyJSON } from "../../utils/utils.ts";
+import {
+  getUserLocal,
+  jsonResponse,
+  stringifyJSON,
+} from "../../utils/utils.ts";
 
 export default class CartRoutes {
   #carts: Hono;
@@ -55,10 +59,18 @@ export default class CartRoutes {
           id: ctx.req.param("id"),
         });
 
+        const langHeader = ctx.req.header("accept-language") ?? "";
+        const lang = getUserLocal(langHeader.split(","));
+
         const order = await this.#Container.PaymentService.Create({
           data: {
             cartId: id,
             id: "",
+            info: {
+              country: lang[0],
+              type: "PERSONAL",
+              data: {},
+            },
             //@ts-expect-error not on type
             shop: ctx.get("request_data"),
           },

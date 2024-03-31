@@ -6,5 +6,6 @@ export default interface IPriceCalculatorService {
     quantity: number;
     currency: string;
     billingCountry: string;
+    priceList?: string;
   }): Promise<PriceCalculation>;
 }

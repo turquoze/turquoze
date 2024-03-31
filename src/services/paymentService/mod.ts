@@ -58,6 +58,7 @@ export default class PaymentService implements IPaymentService {
         items: cart.items,
         cartId: cart.publicId!,
         currency: params.data.shop.currency!,
+        billingCountry: params.data.info?.country ?? "UNKOWN",
       });
 
       const paymentProvider = await this.#PluginService.Get({
@@ -175,7 +176,12 @@ export default class PaymentService implements IPaymentService {
   }
 
   async Price(
-    params: { cartId: string; currency: string; items: Array<CartItem> },
+    params: {
+      cartId: string;
+      currency: string;
+      items: Array<CartItem>;
+      billingCountry: string;
+    },
   ): Promise<PriceCalculation> {
     try {
       const dollars = (amount: number) =>
@@ -187,13 +193,15 @@ export default class PaymentService implements IPaymentService {
       const arr = Array<any>();
 
       await Promise.all(params.items.map(async (product) => {
-        const dbProduct = await this.#PriceService.GetByProduct({
-          productId: product.itemId!,
+        const productPrice = await this.#PriceCalculatorService.GetPrice({
+          itemId: product.itemId!,
+          billingCountry: params.billingCountry,
+          currency: params.currency,
+          quantity: product.quantity!,
+          priceList: undefined,
         });
 
-        const productPrice = parseInt((dbProduct.amount ?? 0).toString());
-
-        const dineroObj = dollars(productPrice);
+        const dineroObj = dollars(productPrice.subtotal);
         arr.push(dineroObj);
       }));
 

@@ -17,18 +17,20 @@ export default class PriceCalculatorService implements IPriceCalculatorService {
       quantity: number;
       currency: string;
       billingCountry: string;
+      priceList?: string;
     },
   ): Promise<PriceCalculation> {
     try {
       const price = await this.#PriceService.GetByProduct({
+        list: params.priceList,
         productId: params.itemId,
       });
 
       //todo: add vat calculations
-      const total = price.amount ?? 0 * params.quantity;
+      const total = price.amount! * params.quantity;
 
       return {
-        price: price.amount ?? 0,
+        price: price.amount!,
         subtotal: total,
         vat: 20000,
       };
