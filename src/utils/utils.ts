@@ -103,3 +103,19 @@ export async function Delete(container: Container, params: {
     });
   }
 }
+
+export function getUserLocal(browserLocales: Array<string>) {
+  if (!browserLocales) {
+    return "";
+  }
+
+  return browserLocales.map((locale) => {
+    let trimmedLocale = locale.trim();
+
+    if (trimmedLocale.includes(";")) {
+      trimmedLocale = trimmedLocale.split(";")[0];
+    }
+
+    return trimmedLocale.split(/-|_/)[0];
+  });
+}
