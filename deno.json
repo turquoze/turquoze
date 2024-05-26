@@ -16,6 +16,6 @@
     "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json"
   },
   "imports": {
-    "drizzle-orm": "npm:drizzle-orm@0.30.2"
+    "drizzle-orm": "npm:drizzle-orm@0.30.10"
   }
 }

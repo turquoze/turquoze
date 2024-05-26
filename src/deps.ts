@@ -1,19 +1,19 @@
-export { Hono } from "https://deno.land/x/hono@v4.0.10/mod.ts";
-export type { StatusCode } from "https://deno.land/x/hono@v4.0.10/utils/http-status.ts";
-export type { Context, Next } from "https://deno.land/x/hono@v4.0.10/mod.ts";
-export * as jose from "https://deno.land/x/jose@v5.2.2/index.ts";
-export { type KeyLike } from "https://deno.land/x/jose@v5.2.2/index.ts";
+export { Hono } from "https://deno.land/x/hono@v4.3.11/mod.ts";
+export type { StatusCode } from "https://deno.land/x/hono@v4.3.11/utils/http-status.ts";
+export type { Context, Next } from "https://deno.land/x/hono@v4.3.11/mod.ts";
+export * as jose from "https://deno.land/x/jose@v5.3.0/index.ts";
+export { type KeyLike } from "https://deno.land/x/jose@v5.3.0/index.ts";
 export {
   getCookie,
   setCookie,
-} from "https://deno.land/x/hono@v4.0.10/helper.ts";
-export { and, eq, sql } from "npm:drizzle-orm@0.30.2";
+} from "https://deno.land/x/hono@v4.3.11/helper.ts";
+export { and, eq, sql } from "npm:drizzle-orm@0.30.10";
 export {
   drizzle,
   type PostgresJsDatabase,
-} from "npm:drizzle-orm@0.30.2/postgres-js";
-export { migrate } from "npm:drizzle-orm@0.30.2/postgres-js/migrator";
-import postgres, { Sql } from "npm:postgres@3.4.3";
+} from "npm:drizzle-orm@0.30.10/postgres-js";
+export { migrate } from "npm:drizzle-orm@0.30.10/postgres-js/migrator";
+import postgres, { Sql } from "npm:postgres@3.4.4";
 export { postgres };
 export type { Sql };
 export { nanoid } from "https://deno.land/x/nanoid@v3.0.0/mod.ts";
@@ -22,7 +22,7 @@ export {
   MeiliSearch,
   type SearchParams,
   type SearchResponse,
-} from "npm:meilisearch@0.37.0";
+} from "npm:meilisearch@0.40.0";
 export {
   any,
   array,
