@@ -1,4 +1,4 @@
-import { drizzle, Hono, migrate } from "./deps.ts";
+import { drizzle, migrate } from "./deps.ts";
 import { getDBClients } from "./clients/db.ts";
 import Cors from "./middleware/cors.ts";
 import Logger from "./middleware/logger.ts";
@@ -13,6 +13,7 @@ import { ErrorHandler } from "./utils/errors.ts";
 import { TurquozeEvent } from "./utils/types.ts";
 import type ICacheService from "./services/interfaces/cacheService.ts";
 import { Sql } from "./deps.ts";
+import { Hono } from "@hono/hono";
 
 class App {
   #container: Container;

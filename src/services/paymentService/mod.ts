@@ -65,6 +65,7 @@ export default class PaymentService implements IPaymentService {
         id: params.data.shop.paymentId!,
       });
 
+      //@ts-expect-error not on type
       const payCartItemsPromises = cart.items.map(async (item) => {
         const product = await this.#ProductService.Get({ id: item.itemId! });
         const price = await this.#PriceService.GetByProduct({
@@ -83,6 +84,7 @@ export default class PaymentService implements IPaymentService {
 
       const payCartItems = await Promise.all(payCartItemsPromises);
 
+      //@ts-expect-error not on type
       const orderProducts = cart.items.map((product) => {
         return {
           price: {

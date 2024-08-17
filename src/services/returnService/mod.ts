@@ -12,6 +12,7 @@ export default class ReturnService implements IReturnService {
 
   async Create(params: { data: OrderReturn }): Promise<OrderReturn> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.insert(returns).values({
         orderId: params.data.orderId,
         shop: params.data.shop,
@@ -30,6 +31,7 @@ export default class ReturnService implements IReturnService {
 
   async Update(params: { data: OrderReturn }): Promise<OrderReturn> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(returns)
         .set({
           orderId: params.data.orderId,
@@ -37,6 +39,7 @@ export default class ReturnService implements IReturnService {
           items: params.data.items,
           status: params.data.status,
         })
+        //@ts-expect-error not on type
         .where(eq(returns.publicId, params.data.publicId))
         .returning();
 
@@ -51,9 +54,12 @@ export default class ReturnService implements IReturnService {
 
   async Get(params: { id: string }): Promise<OrderReturn> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(returns).where(
         and(
+          //@ts-expect-error not on type
           eq(returns.deleted, false),
+          //@ts-expect-error not on type
           eq(returns.publicId, params.id),
         ),
       );
@@ -82,9 +88,12 @@ export default class ReturnService implements IReturnService {
         params.offset = 0;
       }
 
+      //@ts-expect-error not on type
       const result = await this.db.select().from(returns).where(
         and(
+          //@ts-expect-error not on type
           eq(returns.deleted, false),
+          //@ts-expect-error not on type
           eq(returns.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -99,10 +108,12 @@ export default class ReturnService implements IReturnService {
 
   async SetReturnExported(params: { id: string }): Promise<OrderReturn> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(returns)
         .set({
           exported: true,
         })
+        //@ts-expect-error not on type
         .where(eq(returns.publicId, params.id))
         .returning();
 

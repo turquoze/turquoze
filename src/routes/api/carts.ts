@@ -1,7 +1,8 @@
-import { Hono, parse } from "../../deps.ts";
+import { parse } from "@valibot/valibot";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import { Hono } from "@hono/hono";
 
 import {
   CommentSchema,

@@ -21,7 +21,7 @@ Deno.test("ProductService", {
           data: {
             publicId: "",
             active: true,
-            images: [],
+            images: "",
             title: "test product",
             shortDescription: "test product",
             longDescription: "test product long",
@@ -152,7 +152,7 @@ Deno.test("ProductService", {
           data: {
             publicId: ID,
             active: true,
-            images: [],
+            images: "",
             title: "test product update",
             shortDescription: "test product update",
             longDescription: "test product long update",
@@ -180,7 +180,7 @@ Deno.test("ProductService", {
           data: {
             publicId: "00000000-0000-0000-0000-000000000000",
             active: true,
-            images: [],
+            images: "",
             title: "test product update",
             shortDescription: "test product update",
             longDescription: "test product long update",
@@ -264,5 +264,6 @@ Deno.test("ProductService", {
     sanitizeExit: false,
   });
 
+  //@ts-expect-error not on type
   await dbClient.delete(products).where(eq(products.publicId, ID));
 });

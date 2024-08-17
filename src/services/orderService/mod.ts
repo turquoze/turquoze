@@ -31,9 +31,12 @@ export default class CartService implements IOrderService {
 
   async Get(params: { id: string }): Promise<Order> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(orders).where(
         and(
+          //@ts-expect-error not on type
           eq(orders.deleted, false),
+          //@ts-expect-error not on type
           eq(orders.publicId, params.id),
         ),
       );
@@ -62,9 +65,12 @@ export default class CartService implements IOrderService {
         params.offset = 0;
       }
 
+      //@ts-expect-error not on type
       const result = await this.db.select().from(orders).where(
         and(
+          //@ts-expect-error not on type
           eq(orders.deleted, false),
+          //@ts-expect-error not on type
           eq(orders.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -82,10 +88,12 @@ export default class CartService implements IOrderService {
     params: { id: string; status: "PAYED" | "WAITING" | "FAILED" },
   ): Promise<Order> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(orders)
         .set({
           paymentStatus: params.status,
         })
+        //@ts-expect-error not on type
         .where(eq(orders.publicId, params.id))
         .returning();
 
@@ -100,10 +108,12 @@ export default class CartService implements IOrderService {
 
   async SetOrderExported(params: { id: string }): Promise<Order> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(orders)
         .set({
           exported: true,
         })
+        //@ts-expect-error not on type
         .where(eq(orders.publicId, params.id))
         .returning();
 

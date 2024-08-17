@@ -128,5 +128,6 @@ Deno.test("TokenService", {
     sanitizeExit: false,
   });
 
+  //@ts-expect-error not on type
   await dbClient.delete(tokens).where(eq(tokens.id, ID));
 });

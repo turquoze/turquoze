@@ -16,11 +16,10 @@ Deno.test("ShopService", {
       try {
         const shop = await region.Create({
           data: {
-            id: 0,
             publicId: "",
             currency: "EUR",
             name: "TEST",
-            regions: ["SE", "NO", "DK", "FI"],
+            regions: "SE",
             searchIndex: "test",
             secret: "test",
             url: "https://example.com",
@@ -102,11 +101,10 @@ Deno.test("ShopService", {
       try {
         const data = await region.Update({
           data: {
-            id: 0,
             publicId: ID,
             currency: "EUR",
             name: "TEST-Update",
-            regions: ["SE"],
+            regions: "SE",
             searchIndex: "test",
             secret: "test",
             url: "https://example.com",
@@ -138,11 +136,10 @@ Deno.test("ShopService", {
       try {
         await region.Update({
           data: {
-            id: 0,
             publicId: "00000000-0000-0000-0000-000000000000",
             currency: "EUR",
             name: "TEST-Update",
-            regions: ["SE"],
+            regions: "SE",
             searchIndex: "test",
             secret: "test",
             url: "https://example.com",

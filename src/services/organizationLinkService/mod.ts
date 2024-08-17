@@ -29,9 +29,12 @@ export default class OrganizationLinkService
 
   async Delete(params: { data: OrganizationLink }): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.delete(organizationsLink).where(
         and(
+          //@ts-expect-error not on type
           eq(organizationsLink.person, params.data.person),
+          //@ts-expect-error not on type
           eq(organizationsLink.shop, params.data.shop),
         ),
       );
@@ -46,7 +49,9 @@ export default class OrganizationLinkService
     params: { personId: string },
   ): Promise<OrganizationLink[]> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(organizationsLink).where(
+        //@ts-expect-error not on type
         eq(organizationsLink.person, params.personId),
       );
       //@ts-ignore not on type

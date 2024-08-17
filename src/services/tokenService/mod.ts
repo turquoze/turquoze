@@ -80,9 +80,12 @@ export default class TokenService implements ITokenService {
 
   async Get(params: { tokenId: string }): Promise<Token> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(tokens).where(
         and(
+          //@ts-expect-error not on type
           eq(tokens.deleted, false),
+          //@ts-expect-error not on type
           eq(tokens.id, params.tokenId),
         ),
       );
@@ -107,9 +110,12 @@ export default class TokenService implements ITokenService {
         params.offset = 0;
       }
 
+      //@ts-expect-error not on type
       const result = await this.db.select().from(tokens).where(
         and(
+          //@ts-expect-error not on type
           eq(tokens.deleted, false),
+          //@ts-expect-error not on type
           eq(tokens.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -124,8 +130,10 @@ export default class TokenService implements ITokenService {
 
   async Delete(params: { tokenId: string }): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.update(tokens).set({
         deleted: true,
+        //@ts-expect-error not on type
       }).where(eq(tokens.id, params.tokenId));
     } catch (error) {
       throw new DatabaseError("DB error", {

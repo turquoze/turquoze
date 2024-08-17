@@ -1,7 +1,7 @@
-import { Hono } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import TokenGuard from "../../middleware/tokenGuard.ts";
+import { Hono } from "@hono/hono";
 
 export default class DashBoardRoutes {
   #dashboard: Hono;
@@ -18,12 +18,15 @@ export default class DashBoardRoutes {
         const adminId = ctx.get("adminId")!;
 
         const shops = await this.#Container.ShopLinkService.GetShops({
+          //@ts-expect-error not on type
           id: adminId,
         });
 
         const shopLinks = shops.map((shop) => {
           return {
+            //@ts-expect-error not on type
             id: shop.publicId,
+            //@ts-expect-error not on type
             title: shop.name,
           };
         });

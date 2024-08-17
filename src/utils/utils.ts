@@ -11,7 +11,7 @@ export function jsonResponse(data: string, status: number): Response {
 
 /**
  * Returns a string.
- * @param {Record<string, unknown} data
+ * @param {Record<string, unknown}> data
  * @returns {String} Returns a string.
  */
 export function stringifyJSON(

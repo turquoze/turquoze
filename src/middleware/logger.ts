@@ -1,7 +1,7 @@
-import type { Context, Next } from "../deps.ts";
+import { createMiddleware } from "@hono/hono/factory";
 
-export default function Logger() {
-  return async (ctx: Context, next: Next) => {
+const Logger = () =>
+  createMiddleware(async (ctx, next) => {
     await next();
     const rt = ctx.res.headers.get("X-Response-Time");
     console.log(
@@ -11,5 +11,6 @@ export default function Logger() {
         Deno.env.get("DENO_DEPLOYMENT_ID")
       }`,
     );
-  };
-}
+  });
+
+export default Logger;

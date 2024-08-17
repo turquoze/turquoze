@@ -1,4 +1,4 @@
-import { Hono } from "../../deps.ts";
+import { Hono } from "@hono/hono";
 import ping from "./ping.ts";
 import Container from "../../services/mod.ts";
 

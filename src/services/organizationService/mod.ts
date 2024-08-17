@@ -27,9 +27,12 @@ export default class OrganizationService implements IOrganizationService {
 
   async Get(params: { id: string }): Promise<Organization> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(organizations).where(
         and(
+          //@ts-expect-error not on type
           eq(organizations.deleted, false),
+          //@ts-expect-error not on type
           eq(organizations.publicId, params.id),
         ),
       );
@@ -44,10 +47,12 @@ export default class OrganizationService implements IOrganizationService {
 
   async Update(params: { data: Organization }): Promise<Organization> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(organizations)
         .set({
           name: params.data.name,
         })
+        //@ts-expect-error not on type
         .where(eq(organizations.publicId, params.data.publicId!))
         .returning();
 
@@ -61,9 +66,11 @@ export default class OrganizationService implements IOrganizationService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.update(organizations).set({
         deleted: true,
       }).where(
+        //@ts-expect-error not on type
         eq(organizations.publicId, params.id),
       );
     } catch (error) {

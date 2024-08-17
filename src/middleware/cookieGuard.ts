@@ -1,10 +1,12 @@
-import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
-import { getCookie, jose } from "../deps.ts";
+import { jose } from "../deps.ts";
 import { Shop } from "../utils/validator.ts";
 
-export default function CookieGuard(container: Container) {
-  return async (ctx: Context, next: Next) => {
+import { getCookie } from "@hono/hono/cookie";
+import { createMiddleware } from "@hono/hono/factory";
+
+const CookieGuard = (container: Container) =>
+  createMiddleware(async (ctx, next) => {
     const pattern = new URLPattern({ pathname: "/admin/oauth/:id/*" });
     const match = pattern.exec(ctx.req.url.toString());
     const id = match?.pathname.groups.id;
@@ -48,5 +50,6 @@ export default function CookieGuard(container: Container) {
         error: "NO_PERMISSION",
       }, 403);
     }
-  };
-}
+  });
+
+export default CookieGuard;

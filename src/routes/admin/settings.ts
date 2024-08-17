@@ -1,8 +1,10 @@
-import { Hono, MeiliSearch } from "../../deps.ts";
+import { MeiliSearch } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { Product, SearchProduct } from "../../utils/validator.ts";
+
+import { Hono } from "@hono/hono";
 
 export default class SettingsRoutes {
   #settings: Hono;
@@ -41,7 +43,6 @@ export default class SettingsRoutes {
 
           const obj: SearchProduct = {
             ...localProduct,
-            //@ts-expect-error type errors
             id: Number(product.id!),
           };
 

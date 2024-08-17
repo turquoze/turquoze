@@ -1,12 +1,13 @@
-import type { Context, Next } from "../deps.ts";
 import Container from "../services/mod.ts";
 import { ShopLinkData, TurquozeRole } from "../utils/types.ts";
 import { jose } from "../deps.ts";
 import { DBShop, Shop } from "../utils/validator.ts";
 import { Get } from "../utils/utils.ts";
 
-export default function AuthGuard(container: Container) {
-  return async (ctx: Context, next: Next) => {
+import { createMiddleware } from "@hono/hono/factory";
+
+const AuthGuard = (container: Container) =>
+  createMiddleware(async (ctx, next) => {
     const tokenId = ctx.req.header("X-Turquoze-Id");
     const tokenSecret = ctx.req.header("X-Turquoze-Secret");
 
@@ -58,6 +59,7 @@ export default function AuthGuard(container: Container) {
           ShopLinkData
         >;
 
+        //@ts-expect-error not on type
         const match = shops.find((x) => x.publicId == shopId);
 
         if (match == undefined) {
@@ -113,5 +115,6 @@ export default function AuthGuard(container: Container) {
         error: "NO_TOKEN",
       }, 401);
     }
-  };
-}
+  });
+
+export default AuthGuard;

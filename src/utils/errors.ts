@@ -1,4 +1,4 @@
-import { flatten, ValiError } from "../deps.ts";
+import { flatten, ValiError } from "@valibot/valibot";
 import { ErrorResponse } from "./types.ts";
 
 export class DatabaseError extends Error {
@@ -33,6 +33,7 @@ export function ErrorHandler(error: Error): ErrorResponse {
       message: "Error with your request on our side",
     };
   } else if (error instanceof ValiError) {
+    //@ts-expect-error not on type
     const errors = flatten(error);
     return {
       code: 400,

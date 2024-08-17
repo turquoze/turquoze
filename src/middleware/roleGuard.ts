@@ -1,8 +1,8 @@
 import { TurquozeRole } from "../utils/types.ts";
-import type { Context, Next } from "../deps.ts";
+import { createMiddleware } from "@hono/hono/factory";
 
-export default function RoleGuard(role: TurquozeRole) {
-  return async (ctx: Context, next: Next) => {
+const RoleGuard = (role: TurquozeRole) =>
+  createMiddleware(async (ctx, next) => {
     const userRole = ctx.get("request_data")._role;
     if (isAllowed(role, userRole)) {
       await next();
@@ -13,8 +13,7 @@ export default function RoleGuard(role: TurquozeRole) {
         error: "NO_PERMISSION",
       }, 403);
     }
-  };
-}
+  });
 
 function isAllowed(role: TurquozeRole, userRole: TurquozeRole): boolean {
   if (role == "SUPERADMIN") {
@@ -54,3 +53,5 @@ function isAllowed(role: TurquozeRole, userRole: TurquozeRole): boolean {
 
   return false;
 }
+
+export default RoleGuard;

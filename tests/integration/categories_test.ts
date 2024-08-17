@@ -191,6 +191,7 @@ Deno.test({
 
     assert(response?.ok);
 
+    //@ts-expect-error not on type
     await dbClient.delete(categories).where(eq(categories.publicId, ID));
   },
 });

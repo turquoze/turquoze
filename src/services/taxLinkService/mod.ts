@@ -63,10 +63,14 @@ export default class TaxLinkService implements ITaxLinkService {
     params: { productId: string; countryId: string; taxId: string },
   ): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.delete(taxeslink).where(
         and(
+          //@ts-expect-error not on type
           eq(taxeslink.productId, params.productId),
+          //@ts-expect-error not on type
           eq(taxeslink.taxId, params.taxId),
+          //@ts-expect-error not on type
           eq(taxeslink.country, params.countryId),
         ),
       );

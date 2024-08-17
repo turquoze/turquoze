@@ -36,9 +36,12 @@ export default class AdminService implements IAdminService {
 
   async Get(params: { id: string }): Promise<Admin> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(admins).where(
         and(
+          //@ts-expect-error not on type
           eq(admins.deleted, false),
+          //@ts-expect-error not on type
           eq(admins.publicId, params.id),
         ),
       ).limit(1);
@@ -119,9 +122,12 @@ export default class AdminService implements IAdminService {
         params.offset = 0;
       }
 
+      //@ts-expect-error not on type
       const result = await this.db.select().from(admins).where(
         and(
+          //@ts-expect-error not on type
           eq(admins.deleted, false),
+          //@ts-expect-error not on type
           eq(admins.shop, params.shop),
         ),
       ).limit(params.limit)
@@ -138,6 +144,7 @@ export default class AdminService implements IAdminService {
   async Update(params: { data: Admin }): Promise<Admin> {
     try {
       const result = await this.db.update(
+        //@ts-expect-error not on type
         admins,
       )
         .set({
@@ -145,6 +152,7 @@ export default class AdminService implements IAdminService {
           name: params.data.name,
           notActive: params.data.notActive,
         })
+        //@ts-expect-error not on type
         .where(eq(admins.publicId, params.data.publicId!))
         .returning();
 
@@ -158,8 +166,10 @@ export default class AdminService implements IAdminService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.update(admins).set({
         deleted: true,
+        //@ts-expect-error not on type
       }).where(eq(admins.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {

@@ -29,9 +29,12 @@ export default class CategoryService implements ICategoryService {
 
   async Get(params: { id: string }): Promise<Category> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(categories).where(
         and(
+          //@ts-expect-error not on type
           eq(categories.deleted, false),
+          //@ts-expect-error not on type
           eq(categories.publicId, params.id),
         ),
       );
@@ -46,10 +49,14 @@ export default class CategoryService implements ICategoryService {
 
   async GetByName(params: { name: string; shop: string }): Promise<Category> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(categories).where(
         and(
+          //@ts-expect-error not on type
           eq(categories.deleted, false),
+          //@ts-expect-error not on type
           eq(categories.shop, params.shop),
+          //@ts-expect-error not on type
           eq(categories.name, params.name),
         ),
       );
@@ -74,9 +81,12 @@ export default class CategoryService implements ICategoryService {
         params.offset = 0;
       }
 
+      //@ts-expect-error not on type
       const result = await this.db.select().from(categories).where(
         and(
+          //@ts-expect-error not on type
           eq(categories.deleted, false),
+          //@ts-expect-error not on type
           eq(categories.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -91,11 +101,13 @@ export default class CategoryService implements ICategoryService {
 
   async Update(params: { data: Category }): Promise<Category> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(categories)
         .set({
           name: params.data.name,
           parent: params.data.parent,
         })
+        //@ts-expect-error not on type
         .where(eq(categories.publicId, params.data.publicId!))
         .returning();
 
@@ -109,9 +121,11 @@ export default class CategoryService implements ICategoryService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.update(categories).set({
         deleted: true,
       }).where(
+        //@ts-expect-error not on type
         eq(categories.publicId, params.id),
       );
     } catch (error) {

@@ -29,10 +29,12 @@ export default class CartService implements IInventoryService {
 
   async Update(params: { data: Inventory }): Promise<Inventory> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.update(inventories)
         .set({
           quantity: params.data.quantity,
         })
+        //@ts-expect-error not on type
         .where(eq(inventories.publicId, params.data.publicId!))
         .returning();
 
@@ -46,7 +48,9 @@ export default class CartService implements IInventoryService {
 
   async Get(params: { id: string }): Promise<Inventory> {
     try {
+      //@ts-expect-error not on type
       const result = await this.db.select().from(inventories).where(
+        //@ts-expect-error not on type
         eq(inventories.publicId, params.id),
       );
 
@@ -94,7 +98,9 @@ export default class CartService implements IInventoryService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
+      //@ts-expect-error not on type
       await this.db.delete(inventories).where(
+        //@ts-expect-error not on type
         eq(inventories.publicId, params.id),
       );
     } catch (error) {
