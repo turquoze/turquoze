@@ -1,7 +1,10 @@
-import { Hono, jose, nanoid, setCookie } from "../../deps.ts";
+import { jose } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
+import { setCookie } from "@hono/hono/cookie";
+import { Hono } from "@hono/hono";
+import { nanoid } from "@viki/nanoid";
 
 export default class OAuthRoutes {
   #oauth: Hono;
@@ -23,7 +26,7 @@ export default class OAuthRoutes {
           </form>
           </div></body></html>`);
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -48,24 +51,26 @@ export default class OAuthRoutes {
             id: admin.publicId!,
           });
 
+          //@ts-expect-error not on type
           const shop = shops.find((x) => x.publicId == ctx.req.param("id"));
 
           if (shop == undefined) {
             throw new Error("Not connected to shop");
           }
-
+          //@ts-expect-error not on type
           const KID = shop.publicId;
           const iat = Math.floor(Date.now() / 1000);
           const exp = iat + 15 * 60;
           const claims = {
             iat,
             exp,
+            //@ts-expect-error not on type
             shopId: shop.publicId,
             adminId: admin.publicId,
           };
-
           //@ts-expect-error not on type
           const SECRET_KEY = ctx.get("key_sign_key");
+          //@ts-expect-error not on type
           const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
           const jwt = await new jose.SignJWT(claims)
@@ -85,7 +90,7 @@ export default class OAuthRoutes {
           throw new Error("No username/passord");
         }
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         return ctx.html(
           `<html><head></head><body><div>
           <h3>Error: ${data.message}</h3>
@@ -109,7 +114,7 @@ export default class OAuthRoutes {
           `<html><head></head><body><div><form method="POST"><input type="submit" value="Approve"></form> </div></body></html>`,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -161,7 +166,7 @@ export default class OAuthRoutes {
 
         return ctx.json({});
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -201,9 +206,9 @@ export default class OAuthRoutes {
             plugin: plugin.publicId,
             type: plugin.type,
           };
-
           //@ts-expect-error not on type
           const SECRET_KEY = ctx.get("key_sign_key");
+          //@ts-expect-error not on type
           const SHARED_SECRET_KEY = new TextEncoder().encode(SECRET_KEY);
 
           const jwt = await new jose.SignJWT(claims)
@@ -223,7 +228,7 @@ export default class OAuthRoutes {
 
         return ctx.json({});
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,

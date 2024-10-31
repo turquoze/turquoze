@@ -1,8 +1,8 @@
-import { Hono, parse } from "../../deps.ts";
+import { parse } from "@valibot/valibot";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
-
+import Dinero from "dinero.js";
+import { Hono } from "@hono/hono";
 import { Get, jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { Category, Product, Shop } from "../../utils/validator.ts";
@@ -22,7 +22,6 @@ export default class CategoriesRoutes {
         const limit = parseInt(
           new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
         );
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 
@@ -39,7 +38,7 @@ export default class CategoriesRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -67,7 +66,7 @@ export default class CategoriesRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -80,7 +79,6 @@ export default class CategoriesRoutes {
         const { id } = parse(UuidSchema, {
           id: ctx.req.param("id"),
         });
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 
@@ -115,7 +113,7 @@ export default class CategoriesRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -144,7 +142,7 @@ export default class CategoriesRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,

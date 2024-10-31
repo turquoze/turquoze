@@ -1,4 +1,4 @@
-import { Hono } from "../../deps.ts";
+import { Hono } from "@hono/hono";
 import type Container from "../../services/mod.ts";
 
 export default class PingRoutes {

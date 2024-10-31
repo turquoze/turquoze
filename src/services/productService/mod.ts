@@ -44,6 +44,7 @@ export default class ProductService implements IProductService {
       //@ts-ignore not on type
       return result[0];
     } catch (error) {
+      console.log(error);
       throw new DatabaseError("DB error", {
         cause: error,
       });
@@ -137,7 +138,7 @@ export default class ProductService implements IProductService {
           longDescription: params.data.longDescription,
           active: params.data.active,
           parent: params.data.parent,
-          images: params.data.images,
+          //images: params.data.images,
           slug: params.data.slug,
           shop: params.data.shop,
         })

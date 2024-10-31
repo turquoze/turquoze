@@ -1,7 +1,8 @@
-import { Hono, parse } from "../../deps.ts";
+import { parse } from "@valibot/valibot";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import Dinero from "dinero.js";
+import { Hono } from "@hono/hono";
 
 import {
   CommentSchema,
@@ -45,7 +46,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -84,7 +85,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -114,7 +115,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -144,7 +145,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -174,7 +175,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -203,7 +204,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -233,7 +234,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -250,7 +251,6 @@ export default class CartRoutes {
         const data = await this.#Container.CartService.GetAllItems(
           id,
         ) as Array<CartItem>;
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 
@@ -281,7 +281,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -307,7 +307,6 @@ export default class CartRoutes {
         const price = await this.#Container.PriceService.GetByProduct({
           productId: productId.id,
         });
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 
@@ -328,7 +327,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -354,7 +353,7 @@ export default class CartRoutes {
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({}, 201);
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -379,7 +378,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -400,7 +399,7 @@ export default class CartRoutes {
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({}, 201);
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -433,7 +432,7 @@ export default class CartRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -459,7 +458,7 @@ export default class CartRoutes {
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({}, 201);
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,

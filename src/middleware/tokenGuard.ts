@@ -1,8 +1,8 @@
-import type { Context, Next } from "../deps.ts";
 import { jose } from "../deps.ts";
+import { createMiddleware } from "@hono/hono/factory";
 
-export default function TokenGuard() {
-  return async (ctx: Context, next: Next) => {
+const TokenGuard = () =>
+  createMiddleware(async (ctx, next) => {
     const authToken = ctx.req.header("Authorization");
 
     try {
@@ -35,5 +35,6 @@ export default function TokenGuard() {
         error: "NO_PERMISSION",
       }, 403);
     }
-  };
-}
+  });
+
+export default TokenGuard;

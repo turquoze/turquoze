@@ -51,6 +51,7 @@ export default class PriceService implements IPriceService {
       if (params.list == undefined) {
         params.list = "Default";
       }
+
       const result = await this.db.select().from(prices).where(
         and(
           eq(prices.deleted, false),

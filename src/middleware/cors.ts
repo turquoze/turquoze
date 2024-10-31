@@ -1,7 +1,7 @@
-import type { Context, Next } from "../deps.ts";
+import { createMiddleware } from "@hono/hono/factory";
 
-export default function Cors() {
-  return async (ctx: Context, next: Next) => {
+const Cors = () =>
+  createMiddleware(async (ctx, next) => {
     if (ctx.req.method == "OPTIONS") {
       ctx.res.headers.append("Access-Control-Allow-Origin", "*");
       ctx.res.headers.append(
@@ -34,5 +34,6 @@ export default function Cors() {
         true.valueOf().toString(),
       );
     }
-  };
-}
+  });
+
+export default Cors;

@@ -68,6 +68,7 @@ Deno.test("ProductService", {
       const data = await product.Get({
         id: ID,
       });
+
       assertObjectMatch(data, {
         id: data.id,
         publicId: ID,
@@ -152,7 +153,7 @@ Deno.test("ProductService", {
           data: {
             publicId: ID,
             active: true,
-            images: [],
+            images: "",
             title: "test product update",
             shortDescription: "test product update",
             longDescription: "test product long update",
@@ -180,7 +181,7 @@ Deno.test("ProductService", {
           data: {
             publicId: "00000000-0000-0000-0000-000000000000",
             active: true,
-            images: [],
+            images: "",
             title: "test product update",
             shortDescription: "test product update",
             longDescription: "test product long update",

@@ -104,6 +104,7 @@ Deno.test({
     );
 
     assert(response?.ok);
+
     await dbClient.delete(inventories).where(eq(inventories.publicId, ID));
   },
 });

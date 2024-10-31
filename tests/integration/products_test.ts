@@ -211,6 +211,7 @@ Deno.test({
     assert(response?.ok);
 
     await dbClient.delete(prices).where(eq(prices.publicId, PriceID));
+
     await dbClient.delete(products).where(eq(products.publicId, ID));
   },
 });

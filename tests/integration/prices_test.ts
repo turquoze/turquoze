@@ -117,6 +117,7 @@ Deno.test({
     );
 
     assert(response?.ok);
+
     await dbClient.delete(prices).where(eq(prices.publicId, ID));
   },
 });

@@ -1,10 +1,11 @@
-import { Hono, parse } from "../../deps.ts";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { Get, jsonResponse, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { insertUserSchema, User } from "../../utils/validator.ts";
+import { parse } from "@valibot/valibot";
+import { Hono } from "@hono/hono";
 
 export default class UsersRoutes {
   #users: Hono;
@@ -36,7 +37,7 @@ export default class UsersRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -62,7 +63,7 @@ export default class UsersRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -90,7 +91,7 @@ export default class UsersRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -126,7 +127,7 @@ export default class UsersRoutes {
           200,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,

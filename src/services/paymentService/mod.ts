@@ -43,7 +43,7 @@ export default class PaymentService implements IPaymentService {
     params: { data: PaymentRequest },
   ): Promise<PaymentRequestResponse> {
     try {
-      const cart = await this.#CartService.Get({
+      const cart: Cart = await this.#CartService.Get({
         id: params.data.cartId,
       }) as Cart;
 
@@ -65,7 +65,7 @@ export default class PaymentService implements IPaymentService {
         id: params.data.shop.paymentId!,
       });
 
-      const payCartItemsPromises = cart.items.map(async (item) => {
+      const payCartItemsPromises = cart.items.map(async (item: CartItem) => {
         const product = await this.#ProductService.Get({ id: item.itemId! });
         const price = await this.#PriceService.GetByProduct({
           productId: product.publicId!,
@@ -83,7 +83,7 @@ export default class PaymentService implements IPaymentService {
 
       const payCartItems = await Promise.all(payCartItemsPromises);
 
-      const orderProducts = cart.items.map((product) => {
+      const orderProducts = cart.items.map((product: CartItem) => {
         return {
           price: {
             currency: params.data.shop.currency,

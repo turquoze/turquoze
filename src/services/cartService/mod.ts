@@ -43,6 +43,7 @@ export default class CartService implements ICartService {
       if (hasItem.length > 0) {
         const result = await this.db.update(cartitems).set({
           price: params.data.price,
+
           quantity: (params.data.quantity ?? 0) + hasItem[0].quantity,
         }).where(eq(cartitems.id, hasItem[0].id)).returning();
 

@@ -14,26 +14,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
-      
+          deno-version: v2.0.x
+
       - run: deno fmt --check
-      
+
       - run: deno lint
-  
+
   test:
     needs: FormatAndLint
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v3
-      - uses: denoland/setup-deno@v1
+      - uses: denoland/setup-deno@v2
         with:
-          deno-version: v1.x
+          deno-version: v2.0.x
 
       - run: deno cache ./example/mod.ts
-      
+
       - run: deno task test-ci
         env:
           TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
