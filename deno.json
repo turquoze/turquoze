@@ -10,7 +10,7 @@
     "run:w": "deno run --env --allow-read=drizzle --allow-net --allow-import --allow-env --watch ./example/mod.ts",
     "run:debug": "deno run --env --inspect-brk --allow-net --allow-import --allow-env --allow-read example/mod.ts",
     "test": "deno test --env --allow-net --allow-env --allow-import --coverage=cov_profile",
-    "test-ci": "deno test --allow-net --allow-env --allow-import",
+    "test-ci": "deno test --allow-net --allow-env --env --allow-import",
     "coverage": "deno coverage cov_profile",
     "bench": "deno bench --allow-net --allow-env --allow-read",
     "bench:json": "deno bench --allow-net --allow-env --allow-read --json > bench_res.json"
