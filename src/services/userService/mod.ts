@@ -36,12 +36,9 @@ export default class UserService implements IUserService {
 
   async Get(params: { id: string }): Promise<User> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(users).where(
         and(
-          //@ts-expect-error not on type
           eq(users.deleted, false),
-          //@ts-expect-error not on type
           eq(users.publicId, params.id),
         ),
       );
@@ -124,12 +121,9 @@ export default class UserService implements IUserService {
         params.offset = 0;
       }
 
-      //@ts-expect-error not on type
       const result = await this.db.select().from(users).where(
         and(
-          //@ts-expect-error not on type
           eq(users.deleted, false),
-          //@ts-expect-error not on type
           eq(users.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -144,14 +138,12 @@ export default class UserService implements IUserService {
 
   async Update(params: { data: User }): Promise<User> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(users)
         .set({
           email: params.data.email,
           name: params.data.name,
           notActive: params.data.notActive,
         })
-        //@ts-expect-error not on type
         .where(eq(users.publicId, params.data.publicId!))
         .returning();
 
@@ -165,10 +157,8 @@ export default class UserService implements IUserService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.update(users).set({
         deleted: true,
-        //@ts-expect-error not on type
       }).where(eq(users.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {

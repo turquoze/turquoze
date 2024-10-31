@@ -29,12 +29,9 @@ export default class PriceService implements IPriceService {
 
   async Get(params: { id: string }): Promise<Price> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(prices).where(
         and(
-          //@ts-expect-error not on type
           eq(prices.deleted, false),
-          //@ts-expect-error not on type
           eq(prices.publicId, params.id),
         ),
       );
@@ -54,14 +51,11 @@ export default class PriceService implements IPriceService {
       if (params.list == undefined) {
         params.list = "Default";
       }
-      //@ts-expect-error not on type
+
       const result = await this.db.select().from(prices).where(
         and(
-          //@ts-expect-error not on type
           eq(prices.deleted, false),
-          //@ts-expect-error not on type
           eq(prices.product, params.productId),
-          //@ts-expect-error not on type
           eq(prices.list, params.list),
         ),
       );
@@ -86,12 +80,9 @@ export default class PriceService implements IPriceService {
         params.offset = 0;
       }
 
-      //@ts-expect-error not on type
       const result = await this.db.select().from(prices).where(
         and(
-          //@ts-expect-error not on type
           eq(prices.deleted, false),
-          //@ts-expect-error not on type
           eq(prices.product, params.productId),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -116,12 +107,9 @@ export default class PriceService implements IPriceService {
         params.offset = 0;
       }
 
-      //@ts-expect-error not on type
       const result = await this.db.select().from(prices).where(
         and(
-          //@ts-expect-error not on type
           eq(prices.deleted, false),
-          //@ts-expect-error not on type
           eq(prices.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -136,12 +124,10 @@ export default class PriceService implements IPriceService {
 
   async Update(params: { data: Price }): Promise<Price> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(prices)
         .set({
           amount: params.data.amount,
         })
-        //@ts-expect-error not on type
         .where(eq(prices.publicId, params.data.publicId!))
         .returning();
 
@@ -155,10 +141,8 @@ export default class PriceService implements IPriceService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.update(prices).set({
         deleted: true,
-        //@ts-expect-error not on type
       }).where(eq(prices.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {

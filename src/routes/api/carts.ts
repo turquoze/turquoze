@@ -251,7 +251,6 @@ export default class CartRoutes {
         const data = await this.#Container.CartService.GetAllItems(
           id,
         ) as Array<CartItem>;
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 
@@ -308,7 +307,6 @@ export default class CartRoutes {
         const price = await this.#Container.PriceService.GetByProduct({
           productId: productId.id,
         });
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 

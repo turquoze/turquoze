@@ -104,7 +104,7 @@ Deno.test({
     );
 
     assert(response?.ok);
-    //@ts-expect-error not on type
+
     await dbClient.delete(inventories).where(eq(inventories.publicId, ID));
   },
 });

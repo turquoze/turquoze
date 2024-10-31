@@ -29,7 +29,6 @@ export default class ProductsRoutes {
         const limit = parseInt(
           new URL(ctx.req.raw.url).searchParams.get("limit") ?? "",
         );
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 
@@ -109,7 +108,6 @@ export default class ProductsRoutes {
         const { id } = parse(UuidSchema, {
           id: ctx.req.param("id"),
         });
-
         //@ts-expect-error not on type
         const request_data = ctx.get("request_data") as Shop;
 

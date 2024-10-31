@@ -57,7 +57,7 @@ try {
     productArr.push(GenerateProduct(publicId!));
   }
 
-  const productPromises = productArr.map((product): Promise<Product>  => {
+  const productPromises = productArr.map((product): Promise<Product> => {
     return container.ProductService.Create({
       data: product,
     });

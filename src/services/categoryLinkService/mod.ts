@@ -12,7 +12,6 @@ export default class CategoryLinkService implements ICategoryLinkService {
 
   async Link(params: { data: CategoryLink }): Promise<CategoryLink> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.insert(categorieslink).values({
         category: params.data.category,
         product: params.data.product,
@@ -73,12 +72,9 @@ export default class CategoryLinkService implements ICategoryLinkService {
 
   async Delete(params: { data: CategoryLink }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.delete(categorieslink).where(
         and(
-          //@ts-expect-error not on type
           eq(categorieslink.category, params.data.category),
-          //@ts-expect-error not on type
           eq(categorieslink.product, params.data.product),
         ),
       );

@@ -50,7 +50,6 @@ export default class AuthRoutes {
             exp: expRefresh,
             adminId: admin.publicId,
           };
-
           //@ts-expect-error not on type
           const SECRET_KEY = ctx.get("key_sign_key");
           //@ts-expect-error not on type

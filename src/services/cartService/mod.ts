@@ -33,23 +33,18 @@ export default class CartService implements ICartService {
 
   async AddItem(params: { data: CartItem }): Promise<CartItem> {
     try {
-      //@ts-expect-error not on type
       const hasItem = await this.db.select().from(cartitems).where(
         and(
-          //@ts-expect-error not on type
           eq(cartitems.cartId, params.data.cartId),
-          //@ts-expect-error not on type
           eq(cartitems.itemId, params.data.itemId!),
         ),
       );
 
       if (hasItem.length > 0) {
-        //@ts-expect-error not on type
         const result = await this.db.update(cartitems).set({
           price: params.data.price,
-          //@ts-expect-error not on type
+
           quantity: (params.data.quantity ?? 0) + hasItem[0].quantity,
-          //@ts-expect-error not on type
         }).where(eq(cartitems.id, hasItem[0].id)).returning();
 
         return result[0];
@@ -75,10 +70,8 @@ export default class CartService implements ICartService {
     params: { id: string; metadata: Record<string, unknown> },
   ): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(carts).set({
         metadata: params.metadata,
-        //@ts-expect-error not on type
       }).where(eq(carts.publicId, params.id))
         .returning();
 
@@ -93,10 +86,8 @@ export default class CartService implements ICartService {
 
   async AddShipping(params: { id: string; shipping: Shipping }): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(carts).set({
         shipping: params.shipping,
-        //@ts-expect-error not on type
       }).where(eq(carts.publicId, params.id))
         .returning();
 
@@ -111,10 +102,8 @@ export default class CartService implements ICartService {
 
   async AddBilling(params: { id: string; billing: Shipping }): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(carts).set({
         billing: params.billing,
-        //@ts-expect-error not on type
       }).where(eq(carts.publicId, params.id)).returning();
 
       //@ts-ignore not on type
@@ -130,10 +119,8 @@ export default class CartService implements ICartService {
     params: { id: string; shipping: Shipping },
   ): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(carts).set({
         shipping: params.shipping,
-        //@ts-expect-error not on type
       }).where(eq(carts.publicId, params.id))
         .returning();
 
@@ -150,10 +137,8 @@ export default class CartService implements ICartService {
     params: { id: string; billing: Shipping },
   ): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(carts).set({
         billing: params.billing,
-        //@ts-expect-error not on type
       }).where(eq(carts.publicId, params.id))
         .returning();
 
@@ -191,14 +176,10 @@ export default class CartService implements ICartService {
     params: { id: string; discountId: string },
   ): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.delete(cartitems).where(
         and(
-          //@ts-expect-error not on type
           eq(cartitems.cartId, params.id),
-          //@ts-expect-error not on type
           eq(cartitems.itemId, params.discountId),
-          //@ts-expect-error not on type
           eq(cartitems.type, "DISCOUNT"),
         ),
       );
@@ -227,10 +208,8 @@ export default class CartService implements ICartService {
 
   async RemoveComment(params: { id: string }): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(carts).set({
         comment: "",
-        //@ts-expect-error not on type
       }).where(eq(carts.publicId, params.id))
         .returning();
 
@@ -245,12 +224,9 @@ export default class CartService implements ICartService {
 
   async GetCartItem(cartId: string, productId: string): Promise<CartItem> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(cartitems).where(
         and(
-          //@ts-expect-error not on type
           eq(cartitems.cartId, cartId),
-          //@ts-expect-error not on type
           eq(cartitems.itemId, productId),
         ),
       );
@@ -265,9 +241,7 @@ export default class CartService implements ICartService {
 
   async GetAllItems(cartId: string): Promise<CartItem[]> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(cartitems).where(
-        //@ts-expect-error not on type
         eq(cartitems.cartId, cartId),
       );
 
@@ -281,12 +255,9 @@ export default class CartService implements ICartService {
 
   async RemoveItem(cartId: string, productId: string): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.delete(cartitems).where(
         and(
-          //@ts-expect-error not on type
           eq(cartitems.cartId, cartId),
-          //@ts-expect-error not on type
           eq(cartitems.itemId, productId),
         ),
       );
@@ -299,9 +270,7 @@ export default class CartService implements ICartService {
 
   async Get(params: { id: string }): Promise<Cart> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(carts).where(
-        //@ts-expect-error not on type
         eq(carts.publicId, params.id),
       );
       //@ts-ignore not on type
@@ -315,7 +284,6 @@ export default class CartService implements ICartService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.delete(carts).where(eq(carts.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {

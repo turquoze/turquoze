@@ -1,10 +1,7 @@
 export * as jose from "jose";
 export { type KeyLike } from "jose";
 export { and, eq, sql } from "drizzle-orm";
-export {
-  drizzle,
-  type PostgresJsDatabase,
-} from "drizzle-orm/postgres-js";
+export { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 export { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres, { Sql } from "postgres";
 export { postgres };

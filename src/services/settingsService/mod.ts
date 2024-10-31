@@ -12,12 +12,10 @@ export default class SettingsService implements ISettingsService {
 
   async Upsert(params: { data: Settings; shopId: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.update(shops)
         .set({
           settings: params.data,
         })
-        //@ts-expect-error not on type
         .where(eq(shops.publicId, params.shopId));
     } catch (error) {
       throw new DatabaseError("DB error", {

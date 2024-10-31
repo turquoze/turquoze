@@ -21,7 +21,7 @@ Deno.test("ProductService", {
           data: {
             publicId: "",
             active: true,
-            images: "",
+            images: [],
             title: "test product",
             shortDescription: "test product",
             longDescription: "test product long",
@@ -68,6 +68,7 @@ Deno.test("ProductService", {
       const data = await product.Get({
         id: ID,
       });
+
       assertObjectMatch(data, {
         id: data.id,
         publicId: ID,
@@ -264,6 +265,5 @@ Deno.test("ProductService", {
     sanitizeExit: false,
   });
 
-  //@ts-expect-error not on type
   await dbClient.delete(products).where(eq(products.publicId, ID));
 });

@@ -204,6 +204,5 @@ Deno.test("DiscountService", {
     sanitizeExit: false,
   });
 
-  //@ts-expect-error not on type
   await dbClient.delete(discounts).where(eq(discounts.publicId, ID));
 });

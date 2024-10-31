@@ -58,7 +58,6 @@ const AuthGuard = (container: Container) =>
         const shops = JSON.parse(result.payload.shops as string) as Array<
           ShopLinkData
         >;
-
         //@ts-expect-error not on type
         const match = shops.find((x) => x.publicId == shopId);
 

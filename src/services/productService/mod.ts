@@ -27,7 +27,6 @@ export default class ProductService implements IProductService {
           shop: params.data.shop,
         }).returning();
       } else {
-        //@ts-expect-error not on type
         result = await this.db.update(products).set({
           active: params.data.active,
           title: params.data.title,
@@ -38,7 +37,6 @@ export default class ProductService implements IProductService {
           slug: params.data.slug,
           shop: params.data.shop,
         })
-          //@ts-expect-error not on type
           .where(eq(products.publicId, params.data.publicId!))
           .returning();
       }
@@ -46,6 +44,7 @@ export default class ProductService implements IProductService {
       //@ts-ignore not on type
       return result[0];
     } catch (error) {
+      console.log(error);
       throw new DatabaseError("DB error", {
         cause: error,
       });
@@ -54,12 +53,9 @@ export default class ProductService implements IProductService {
 
   async Get(params: { id: string }): Promise<Product> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(products).where(
         and(
-          //@ts-expect-error not on type
           eq(products.deleted, false),
-          //@ts-expect-error not on type
           eq(products.publicId, params.id),
         ),
       );
@@ -74,12 +70,9 @@ export default class ProductService implements IProductService {
 
   async GetBySlug(params: { slug: string }): Promise<Product> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(products).where(
         and(
-          //@ts-expect-error not on type
           eq(products.deleted, false),
-          //@ts-expect-error not on type
           eq(products.slug, params.slug),
         ),
       );
@@ -94,12 +87,9 @@ export default class ProductService implements IProductService {
 
   async GetVariantsByParent(params: { id: string }): Promise<Product[]> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(products).where(
         and(
-          //@ts-expect-error not on type
           eq(products.deleted, false),
-          //@ts-expect-error not on type
           eq(products.parent, params.id),
         ),
       );
@@ -124,12 +114,9 @@ export default class ProductService implements IProductService {
         params.offset = 0;
       }
 
-      //@ts-expect-error not on type
       const result = await this.db.select().from(products).where(
         and(
-          //@ts-expect-error not on type
           eq(products.deleted, false),
-          //@ts-expect-error not on type
           eq(products.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -144,7 +131,6 @@ export default class ProductService implements IProductService {
 
   async Update(params: { data: Product }): Promise<Product> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(products)
         .set({
           title: params.data.title,
@@ -152,11 +138,10 @@ export default class ProductService implements IProductService {
           longDescription: params.data.longDescription,
           active: params.data.active,
           parent: params.data.parent,
-          images: params.data.images,
+          //images: params.data.images,
           slug: params.data.slug,
           shop: params.data.shop,
         })
-        //@ts-expect-error not on type
         .where(eq(products.publicId, params.data.publicId!))
         .returning();
 
@@ -171,10 +156,8 @@ export default class ProductService implements IProductService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.update(products).set({
         deleted: true,
-        //@ts-expect-error not on type
       }).where(eq(products.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {

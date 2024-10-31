@@ -39,6 +39,7 @@ app.use("*", async (ctx, next) => {
     _role: "SUPERADMIN",
     shippingId: "",
   };
+
   //@ts-expect-error not on type
   ctx.set("request_data", shop);
   await next();

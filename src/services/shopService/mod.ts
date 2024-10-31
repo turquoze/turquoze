@@ -27,6 +27,7 @@ export default class ShopService implements IShopService {
       //@ts-ignore not on type
       return result[0];
     } catch (error) {
+      console.log(error)
       throw new DatabaseError("DB error", {
         cause: error,
       });
@@ -35,12 +36,9 @@ export default class ShopService implements IShopService {
 
   async Get(params: { id: string }): Promise<Shop> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(shops).where(
         and(
-          //@ts-expect-error not on type
           eq(shops.deleted, false),
-          //@ts-expect-error not on type
           eq(shops.publicId, params.id),
         ),
       );
@@ -55,7 +53,6 @@ export default class ShopService implements IShopService {
 
   async Update(params: { data: Shop }): Promise<Shop> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(shops)
         .set({
           name: params.data.name,
@@ -67,7 +64,6 @@ export default class ShopService implements IShopService {
           searchIndex: params.data.searchIndex,
           settings: params.data.settings,
         })
-        //@ts-expect-error not on type
         .where(eq(shops.publicId, params.data.publicId!))
         .returning();
 
@@ -82,10 +78,8 @@ export default class ShopService implements IShopService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.update(shops).set({
         deleted: true,
-        //@ts-expect-error not on type
       }).where(eq(shops.publicId, params.id));
     } catch (error) {
       throw new DatabaseError("DB error", {

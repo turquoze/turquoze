@@ -13,7 +13,6 @@ export default class CartService implements IWarehouseService {
 
   async Create(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.insert(warehouses).values({
         address: params.data.address,
         country: params.data.country,
@@ -31,14 +30,12 @@ export default class CartService implements IWarehouseService {
 
   async Update(params: { data: Warehouse }): Promise<Warehouse> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.update(warehouses)
         .set({
           address: params.data.address,
           country: params.data.country,
           name: params.data.name,
         })
-        //@ts-expect-error not on type
         .where(eq(warehouses.publicId, params.data.publicId!))
         .returning();
 
@@ -52,12 +49,9 @@ export default class CartService implements IWarehouseService {
 
   async Get(params: { id: string }): Promise<Warehouse> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(warehouses).where(
         and(
-          //@ts-expect-error not on type
           eq(warehouses.deleted, false),
-          //@ts-expect-error not on type
           eq(warehouses.publicId, params.id),
         ),
       ).limit(1);
@@ -86,12 +80,9 @@ export default class CartService implements IWarehouseService {
         params.offset = 0;
       }
 
-      //@ts-expect-error not on type
       const result = await this.db.select().from(warehouses).where(
         and(
-          //@ts-expect-error not on type
           eq(warehouses.deleted, false),
-          //@ts-expect-error not on type
           eq(warehouses.shop, params.shop),
         ),
       ).limit(params.limit).offset(params.offset);
@@ -106,11 +97,9 @@ export default class CartService implements IWarehouseService {
 
   async Delete(params: { id: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.update(warehouses).set({
         deleted: true,
       }).where(
-        //@ts-expect-error not on type
         eq(warehouses.publicId, params.id),
       );
     } catch (error) {

@@ -57,7 +57,6 @@ export default class OAuthRoutes {
           if (shop == undefined) {
             throw new Error("Not connected to shop");
           }
-
           //@ts-expect-error not on type
           const KID = shop.publicId;
           const iat = Math.floor(Date.now() / 1000);
@@ -69,7 +68,6 @@ export default class OAuthRoutes {
             shopId: shop.publicId,
             adminId: admin.publicId,
           };
-
           //@ts-expect-error not on type
           const SECRET_KEY = ctx.get("key_sign_key");
           //@ts-expect-error not on type
@@ -208,7 +206,6 @@ export default class OAuthRoutes {
             plugin: plugin.publicId,
             type: plugin.type,
           };
-
           //@ts-expect-error not on type
           const SECRET_KEY = ctx.get("key_sign_key");
           //@ts-expect-error not on type

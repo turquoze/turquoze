@@ -30,9 +30,7 @@ export default class OauthService implements IOauthService {
 
   async Get(params: { id: string }): Promise<Oauth> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(oauthTokens).where(
-        //@ts-expect-error not on type
         eq(oauthTokens.publicId, params.id),
       );
       //@ts-ignore not on type
@@ -46,9 +44,7 @@ export default class OauthService implements IOauthService {
 
   async GetByToken(params: { token: string }): Promise<Oauth> {
     try {
-      //@ts-expect-error not on type
       const result = await this.db.select().from(oauthTokens).where(
-        //@ts-expect-error not on type
         eq(oauthTokens.token, params.token),
       );
       //@ts-ignore not on type
@@ -89,9 +85,7 @@ export default class OauthService implements IOauthService {
 
   async Delete(params: { tokenId: string }): Promise<void> {
     try {
-      //@ts-expect-error not on type
       await this.db.delete(oauthTokens).where(
-        //@ts-expect-error not on type
         eq(oauthTokens.publicId, params.tokenId),
       );
     } catch (error) {
