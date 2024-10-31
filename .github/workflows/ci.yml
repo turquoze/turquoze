@@ -32,7 +32,7 @@ jobs:
         with:
           deno-version: v2.0.x
 
-      - run: deno cache ./example/mod.ts
+      - run: deno cache --allow-import ./example/mod.ts
 
       - run: deno task test-ci
         env:
