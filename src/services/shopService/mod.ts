@@ -27,7 +27,7 @@ export default class ShopService implements IShopService {
       //@ts-ignore not on type
       return result[0];
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new DatabaseError("DB error", {
         cause: error,
       });

@@ -2,7 +2,7 @@ import { parse } from "@valibot/valibot";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import Dinero from "dinero.js";
 import { Hono } from "@hono/hono";
 import {
   Delete,

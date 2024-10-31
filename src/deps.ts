@@ -13,5 +13,5 @@ export {
   type SearchResponse,
 } from "meilisearch";
 export { createInsertSchema } from "drizzle-valibot";
-import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
+import Dinero from "dinero.js";
 export { Dinero };
