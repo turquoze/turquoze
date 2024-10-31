@@ -64,7 +64,7 @@ class App {
     });
 
     this.#app.onError((error, ctx) => {
-      const data = ErrorHandler(error);
+      const data = ErrorHandler(error as Error);
       ctx.res.headers.set("content-type", "application/json");
       return ctx.json({
         message: data.message,

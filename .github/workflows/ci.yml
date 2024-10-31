@@ -17,11 +17,11 @@ jobs:
       - uses: denoland/setup-deno@v1
         with:
           deno-version: v1.x
-      
+
       - run: deno fmt --check
-      
+
       - run: deno lint
-  
+
   test:
     needs: FormatAndLint
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
           deno-version: v1.x
 
       - run: deno cache ./example/mod.ts
-      
+
       - run: deno task test-ci
         env:
           TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}

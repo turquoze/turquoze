@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import {
   bigserial,
   boolean,
@@ -16,36 +15,55 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const keyStatus = pgEnum("key_status", [
-  "expired",
-  "invalid",
-  "valid",
   "default",
+  "valid",
+  "invalid",
+  "expired",
 ]);
-export const keyType = pgEnum("key_type", ["aead-det", "aead-ietf"]);
-export const action = pgEnum("action", [
-  "ERROR",
-  "TRUNCATE",
-  "DELETE",
-  "UPDATE",
-  "INSERT",
+export const keyType = pgEnum("key_type", ["aead-ietf", "aead-det"]);
+export const oneTimeTokenType = pgEnum("one_time_token_type", [
+  "confirmation_token",
+  "reauthentication_token",
+  "recovery_token",
+  "email_change_token_new",
+  "email_change_token_current",
+  "phone_change_token",
 ]);
 export const equalityOp = pgEnum("equality_op", [
-  "gte",
-  "gt",
-  "lte",
-  "lt",
-  "neq",
+  "in",
   "eq",
+  "neq",
+  "lt",
+  "lte",
+  "gt",
+  "gte",
 ]);
-export const aalLevel = pgEnum("aal_level", ["aal3", "aal2", "aal1"]);
-export const factorStatus = pgEnum("factor_status", ["verified", "unverified"]);
-export const factorType = pgEnum("factor_type", ["webauthn", "totp"]);
+export const factorType = pgEnum("factor_type", ["phone", "totp", "webauthn"]);
+export const aalLevel = pgEnum("aal_level", ["aal1", "aal2", "aal3"]);
+export const factorStatus = pgEnum("factor_status", ["unverified", "verified"]);
+export const action = pgEnum("action", [
+  "INSERT",
+  "UPDATE",
+  "DELETE",
+  "TRUNCATE",
+  "ERROR",
+]);
 export const codeChallengeMethod = pgEnum("code_challenge_method", [
-  "plain",
   "s256",
+  "plain",
 ]);
+
+export const organizations = pgTable("organizations", {
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  publicId: uuid("public_id").defaultRandom().primaryKey().notNull(),
+  name: text("name").notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+});
 
 export const carts = pgTable("carts", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
@@ -57,6 +75,37 @@ export const carts = pgTable("carts", {
   shipping: json("shipping"),
   billing: json("billing"),
   comment: varchar("comment"),
+});
+
+export const cartitems = pgTable("cartitems", {
+  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  cartId: uuid("cart_id").notNull().references(() => carts.publicId, {
+    onDelete: "cascade",
+  }),
+  quantity: integer("quantity").default(1).notNull(),
+  price: integer("price").notNull(),
+  type: text("type").default("PRODUCT").notNull(),
+  itemId: uuid("item_id"),
+});
+
+export const shops = pgTable("shops", {
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  regions: text("regions").array(),
+  currency: text("currency"),
+  name: text("name"),
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  paymentId: uuid("payment_id"),
+  url: varchar("url"),
+  searchIndex: varchar("search_index"),
+  secret: text("secret").default("test").notNull(),
+  settings: json("settings"),
+  shippingId: varchar("shipping_id"),
+  deleted: boolean("deleted").default(false).notNull(),
 });
 
 export const categories = pgTable("categories", {
@@ -71,11 +120,37 @@ export const categories = pgTable("categories", {
   deleted: boolean("deleted").default(false).notNull(),
 }, (table) => {
   return {
-    categoriesParentFkey: foreignKey({
+    categoriesParentCategoriesPublicIdFk: foreignKey({
       columns: [table.parent],
       foreignColumns: [table.publicId],
+      name: "categories_parent_categories_public_id_fk",
     }),
     categoriesNameKey: unique("categories_name_key").on(table.name),
+  };
+});
+
+export const products = pgTable("products", {
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow().notNull(),
+  active: boolean("active").default(false).notNull(),
+  parent: uuid("parent"),
+  title: text("title").notNull(),
+  shortDescription: text("short_description").notNull(),
+  images: text("images").array(),
+  shop: uuid("shop").notNull().references(() => shops.publicId),
+  longDescription: varchar("long_description"),
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  slug: varchar("slug").default("").notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+}, (table) => {
+  return {
+    productsParentProductsPublicIdFk: foreignKey({
+      columns: [table.parent],
+      foreignColumns: [table.publicId],
+      name: "products_parent_products_public_id_fk",
+    }),
+    productsSlugKey: unique("products_slug_key").on(table.slug),
   };
 });
 
@@ -98,15 +173,69 @@ export const discounts = pgTable("discounts", {
   };
 });
 
+export const warehouses = pgTable("warehouses", {
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  country: text("country").notNull(),
+  address: text("address").notNull(),
+  name: text("name").notNull(),
+  shop: uuid("shop").notNull(),
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+});
+
 export const inventories = pgTable("inventories", {
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
-  createdAt: timestamp("created_at", { mode: "string" }).default(sql`now()`),
+  createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
   warehouse: uuid("warehouse").notNull().references(() => warehouses.publicId),
   product: uuid("product").notNull().references(() => products.publicId),
   quantity: integer("quantity").default(0).notNull(),
   id: bigserial("id", { mode: "bigint" }).notNull(),
   deleted: boolean("deleted").default(false).notNull(),
+});
+
+export const plugins = pgTable("plugins", {
+  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).notNull(),
+  name: varchar("name"),
+  url: varchar("url").notNull(),
+  type: varchar("type").notNull(),
+  shop: uuid("shop").notNull().references(() => shops.publicId, {
+    onDelete: "cascade",
+  }),
+  token: varchar("token").notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+}, (table) => {
+  return {
+    pluginsPublicIdKey: unique("plugins_public_id_key").on(table.publicId),
+  };
+});
+
+export const oauthTokens = pgTable("oauth_tokens", {
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  createdAt: timestamp("created_at", {
+    precision: 6,
+    withTimezone: true,
+    mode: "string",
+  }).defaultNow(),
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  token: varchar("token").notNull(),
+  expiresAt: timestamp("expires_at", { precision: 6, mode: "string" })
+    .defaultNow(),
+  plugin: uuid("plugin").notNull().references(() => plugins.publicId, {
+    onDelete: "cascade",
+  }),
+}, (table) => {
+  return {
+    tokenKey: uniqueIndex("oauth_tokens_token_key").on(table.token),
+    oauthTokensPluginKey: unique("oauth_tokens_plugin_key").on(table.plugin),
+  };
 });
 
 export const orders = pgTable("orders", {
@@ -123,30 +252,75 @@ export const orders = pgTable("orders", {
   deleted: boolean("deleted").default(false).notNull(),
 });
 
-export const products = pgTable("products", {
+export const users = pgTable("users", {
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
   publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
     .notNull(),
-  createdAt: timestamp("created_at", { mode: "string" }).default(sql`now()`)
-    .notNull(),
-  active: boolean("active").default(false).notNull(),
-  parent: uuid("parent"),
-  title: text("title").notNull(),
-  shortDescription: text("short_description").notNull(),
-  images: text("images").array(),
-  shop: uuid("shop").notNull().references(() => shops.publicId),
-  longDescription: varchar("long_description"),
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  slug: varchar("slug").default("").notNull(),
+  name: text("name"),
+  email: text("email"),
+  notActive: boolean("not_active").default(false).notNull(),
+  shop: uuid("shop").references(() => shops.publicId),
+  password: varchar("password").notNull(),
+  role: varchar("role"),
   deleted: boolean("deleted").default(false).notNull(),
-}, (table) => {
-  return {
-    productsParentFkey: foreignKey({
-      columns: [table.parent],
-      foreignColumns: [table.publicId],
-    }),
-    productsSlugKey: unique("products_slug_key").on(table.slug),
-  };
+});
+
+export const prices = pgTable("prices", {
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  amount: integer("amount").default(0).notNull(),
+  shop: uuid("shop").references(() => shops.publicId),
+  product: uuid("product").notNull().references(() => products.publicId),
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  list: text("list").default("Default").notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+});
+
+export const returns = pgTable("returns", {
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  createdAt: timestamp("created_at", {
+    precision: 6,
+    withTimezone: true,
+    mode: "string",
+  }).defaultNow(),
+  shop: uuid("shop").notNull().references(() => shops.publicId),
+  orderId: varchar("order_id").notNull(),
+  items: json("items").notNull(),
+  status: varchar("status").default("INIT").notNull(),
+  exported: boolean("exported").default(false).notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+});
+
+export const admins = pgTable("admins", {
+  id: bigserial("id", { mode: "bigint" }).notNull(),
+  createdAt: timestamp("created_at", {
+    precision: 6,
+    withTimezone: true,
+    mode: "string",
+  }).defaultNow(),
+  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
+    .notNull(),
+  name: text("name"),
+  email: text("email").notNull(),
+  notActive: boolean("not_active").default(false).notNull(),
+  password: varchar("password").notNull(),
+  deleted: boolean("deleted").default(false).notNull(),
+  shop: uuid("shop").references(() => shops.publicId),
+});
+
+export const shopslink = pgTable("shopslink", {
+  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
+    .defaultNow(),
+  admin: uuid("admin").notNull().references(() => admins.publicId),
+  shop: uuid("shop").notNull().references(() => shops.publicId),
+  role: varchar("role").default("VIEWER").notNull(),
 });
 
 export const taxes = pgTable("taxes", {
@@ -179,173 +353,6 @@ export const tokens = pgTable("tokens", {
   name: varchar("name").notNull(),
   secret: varchar("secret").notNull(),
   role: varchar("role").default("USER").notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-});
-
-export const users = pgTable("users", {
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  name: text("name"),
-  email: text("email"),
-  notActive: boolean("not_active").default(false).notNull(),
-  shop: uuid("shop").references(() => shops.publicId),
-  password: varchar("password").notNull(),
-  role: varchar("role"),
-  deleted: boolean("deleted").default(false).notNull(),
-});
-
-export const warehouses = pgTable("warehouses", {
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  country: text("country").notNull(),
-  address: text("address").notNull(),
-  name: text("name").notNull(),
-  shop: uuid("shop").notNull(),
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-});
-
-export const admins = pgTable("admins", {
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-    mode: "string",
-  }).defaultNow(),
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  name: text("name"),
-  email: text("email").notNull(),
-  notActive: boolean("not_active").default(false).notNull(),
-  password: varchar("password").notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-  shop: uuid("shop").references(() => shops.publicId),
-});
-
-export const shopslink = pgTable("shopslink", {
-  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  admin: uuid("admin").notNull().references(() => admins.publicId),
-  shop: uuid("shop").notNull().references(() => shops.publicId),
-  role: varchar("role").default("VIEWER").notNull(),
-});
-
-export const plugins = pgTable("plugins", {
-  // You can use { mode: "bigint" } if numbers are exceeding js number limitations
-  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).notNull(),
-  name: varchar("name"),
-  url: varchar("url").notNull(),
-  type: varchar("type").notNull(),
-  shop: uuid("shop").notNull().references(() => shops.publicId, {
-    onDelete: "cascade",
-  }),
-  token: varchar("token").notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-}, (table) => {
-  return {
-    pluginsPublicIdKey: unique("plugins_public_id_key").on(table.publicId),
-  };
-});
-
-export const oauthTokens = pgTable("oauth_tokens", {
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-    mode: "string",
-  }).defaultNow(),
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  token: varchar("token").notNull(),
-  expiresAt: timestamp("expires_at", { precision: 6, mode: "string" }).default(
-    sql`now()`,
-  ),
-  plugin: uuid("plugin").notNull().references(() => plugins.publicId, {
-    onDelete: "cascade",
-  }),
-}, (table) => {
-  return {
-    tokenKey: uniqueIndex("oauth_tokens_token_key").on(table.token),
-    oauthTokensPluginKey: unique("oauth_tokens_plugin_key").on(table.plugin),
-  };
-});
-
-export const prices = pgTable("prices", {
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  amount: integer("amount").default(0).notNull(),
-  shop: uuid("shop").references(() => shops.publicId),
-  product: uuid("product").notNull().references(() => products.publicId),
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  list: text("list").default("Default").notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-});
-
-export const organizations = pgTable("organizations", {
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  publicId: uuid("public_id").defaultRandom().primaryKey().notNull(),
-  name: text("name").notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-});
-
-export const cartitems = pgTable("cartitems", {
-  id: bigserial("id", { mode: "bigint" }).primaryKey().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  cartId: uuid("cart_id").notNull().references(() => carts.publicId, {
-    onDelete: "cascade",
-  }),
-  quantity: integer("quantity").default(1).notNull(),
-  price: integer("price").notNull(),
-  type: text("type").default("PRODUCT").notNull(),
-  itemId: uuid("item_id"),
-});
-
-export const returns = pgTable("returns", {
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  createdAt: timestamp("created_at", {
-    precision: 6,
-    withTimezone: true,
-    mode: "string",
-  }).defaultNow(),
-  shop: uuid("shop").notNull().references(() => shops.publicId),
-  orderId: varchar("order_id").notNull(),
-  items: json("items").notNull(),
-  status: varchar("status").default("INIT").notNull(),
-  exported: boolean("exported").default(false).notNull(),
-  deleted: boolean("deleted").default(false).notNull(),
-});
-
-export const shops = pgTable("shops", {
-  publicId: uuid("public_id").default(sql`uuid_generate_v4()`).primaryKey()
-    .notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true, mode: "string" })
-    .defaultNow(),
-  regions: text("regions").array(),
-  currency: text("currency"),
-  name: text("name"),
-  id: bigserial("id", { mode: "bigint" }).notNull(),
-  paymentId: uuid("payment_id"),
-  url: varchar("url"),
-  searchIndex: varchar("search_index"),
-  secret: text("secret").default("test").notNull(),
-  settings: json("settings"),
-  shippingId: varchar("shipping_id"),
   deleted: boolean("deleted").default(false).notNull(),
 });
 

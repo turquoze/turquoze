@@ -1,5 +1,5 @@
 import Container from "../src/services/mod.ts";
-import { faker } from "npm:@faker-js/faker";
+import { faker } from "@faker-js/faker";
 import { Category, DBProduct as Product } from "../src/utils/validator.ts";
 import { drizzle, postgres } from "../src/deps.ts";
 
@@ -57,14 +57,14 @@ try {
     productArr.push(GenerateProduct(publicId!));
   }
 
-  const productPromises = productArr.map((product) => {
+  const productPromises = productArr.map((product): Promise<Product>  => {
     return container.ProductService.Create({
       data: product,
     });
   });
 
   console.log("Creating Products");
-  const products = await Promise.all(productPromises);
+  const products: Array<Product> = await Promise.all(productPromises);
 
   const warehouse = await container.WarehouseService.Create({
     data: {
@@ -103,11 +103,9 @@ try {
       const chunkIndex = Math.floor(index / chunkSize);
 
       if (!resultArray[chunkIndex]) {
-        //@ts-expect-error err
         resultArray[chunkIndex] = []; // start a new chunk
       }
 
-      //@ts-expect-error err
       resultArray[chunkIndex].push(item);
 
       return resultArray;

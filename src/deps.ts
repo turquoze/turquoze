@@ -1,12 +1,12 @@
-export * as jose from "https://deno.land/x/jose@v5.6.3/index.ts";
-export { type KeyLike } from "https://deno.land/x/jose@v5.3.0/index.ts";
-export { and, eq, sql } from "npm:drizzle-orm@0.33.0";
+export * as jose from "jose";
+export { type KeyLike } from "jose";
+export { and, eq, sql } from "drizzle-orm";
 export {
   drizzle,
   type PostgresJsDatabase,
-} from "npm:drizzle-orm@0.33.0/postgres-js";
-export { migrate } from "npm:drizzle-orm@0.33.0/postgres-js/migrator";
-import postgres, { Sql } from "npm:postgres@3.4.4";
+} from "drizzle-orm/postgres-js";
+export { migrate } from "drizzle-orm/postgres-js/migrator";
+import postgres, { Sql } from "postgres";
 export { postgres };
 export type { Sql };
 export {
@@ -14,7 +14,7 @@ export {
   MeiliSearch,
   type SearchParams,
   type SearchResponse,
-} from "npm:meilisearch@0.41.0";
-export { createInsertSchema } from "npm:drizzle-valibot@0.2.0";
+} from "meilisearch";
+export { createInsertSchema } from "drizzle-valibot";
 import Dinero from "https://cdn.skypack.dev/dinero.js@1.9.1";
 export { Dinero };

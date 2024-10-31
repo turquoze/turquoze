@@ -26,7 +26,7 @@ export default class OAuthRoutes {
           </form>
           </div></body></html>`);
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -92,7 +92,7 @@ export default class OAuthRoutes {
           throw new Error("No username/passord");
         }
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         return ctx.html(
           `<html><head></head><body><div>
           <h3>Error: ${data.message}</h3>
@@ -116,7 +116,7 @@ export default class OAuthRoutes {
           `<html><head></head><body><div><form method="POST"><input type="submit" value="Approve"></form> </div></body></html>`,
         );
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -168,7 +168,7 @@ export default class OAuthRoutes {
 
         return ctx.json({});
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
@@ -231,7 +231,7 @@ export default class OAuthRoutes {
 
         return ctx.json({});
       } catch (error) {
-        const data = ErrorHandler(error);
+        const data = ErrorHandler(error as Error);
         ctx.res.headers.set("content-type", "application/json");
         return ctx.json({
           message: data.message,
