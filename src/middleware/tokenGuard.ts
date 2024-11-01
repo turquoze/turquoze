@@ -1,5 +1,4 @@
-import { jose } from "../deps.ts";
-import { createMiddleware } from "@hono/hono/factory";
+import { createMiddleware, jose } from "../deps.ts";
 
 const TokenGuard = () =>
   createMiddleware(async (ctx, next) => {

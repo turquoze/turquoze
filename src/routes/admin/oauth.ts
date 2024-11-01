@@ -2,9 +2,7 @@ import { jose } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import CookieGuard from "../../middleware/cookieGuard.ts";
-import { setCookie } from "@hono/hono/cookie";
-import { Hono } from "@hono/hono";
-import { nanoid } from "@viki/nanoid";
+import { Hono, nanoid, setCookie } from "../../deps.ts";
 
 export default class OAuthRoutes {
   #oauth: Hono;

@@ -2,7 +2,7 @@ import Container from "../src/services/mod.ts";
 import { dbClient, searchClient } from "./test_utils.ts";
 import { MEILIAPIKEY, MEILIHOST, MEILIINDEX } from "./test_secrets.ts";
 import SearchService from "../src/services/searchService/mod.ts";
-import { Hono } from "@hono/hono";
+import { Hono } from "../src/deps.ts";
 import { SHOP_ID } from "./test_utils.ts";
 
 const localContainer = new Container(dbClient);

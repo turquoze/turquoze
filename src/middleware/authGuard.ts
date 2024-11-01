@@ -1,10 +1,8 @@
 import Container from "../services/mod.ts";
 import { ShopLinkData, TurquozeRole } from "../utils/types.ts";
-import { jose } from "../deps.ts";
+import { createMiddleware, jose } from "../deps.ts";
 import { DBShop, Shop } from "../utils/validator.ts";
 import { Get } from "../utils/utils.ts";
-
-import { createMiddleware } from "@hono/hono/factory";
 
 const AuthGuard = (container: Container) =>
   createMiddleware(async (ctx, next) => {

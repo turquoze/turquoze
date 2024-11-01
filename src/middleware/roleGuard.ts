@@ -1,5 +1,5 @@
 import { TurquozeRole } from "../utils/types.ts";
-import { createMiddleware } from "@hono/hono/factory";
+import { createMiddleware } from "../deps.ts";
 
 const RoleGuard = (role: TurquozeRole) =>
   createMiddleware(async (ctx, next) => {
