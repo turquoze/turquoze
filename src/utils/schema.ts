@@ -1,6 +1,7 @@
 import {
   bigserial,
   boolean,
+  dzUuid as uuid,
   foreignKey,
   integer,
   json,
@@ -8,14 +9,13 @@ import {
   pgEnum,
   pgTable,
   primaryKey,
+  sql,
   text,
   timestamp,
   unique,
   uniqueIndex,
-  uuid,
   varchar,
-} from "drizzle-orm/pg-core";
-import { sql } from "drizzle-orm";
+} from "../deps.ts";
 
 export const keyStatus = pgEnum("key_status", [
   "default",

@@ -1,4 +1,4 @@
-import { createMiddleware } from "@hono/hono/factory";
+import { createMiddleware } from "../deps.ts";
 
 const Logger = () =>
   createMiddleware(async (ctx, next) => {

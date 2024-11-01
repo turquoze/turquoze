@@ -1,5 +1,5 @@
 import Container from "../src/services/mod.ts";
-import { faker } from "@faker-js/faker";
+import { faker } from "npm:@faker-js/faker";
 import { Category, DBProduct as Product } from "../src/utils/validator.ts";
 import { drizzle, postgres } from "../src/deps.ts";
 

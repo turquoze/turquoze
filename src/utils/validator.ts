@@ -1,10 +1,10 @@
-import { createInsertSchema, KeyLike } from "../deps.ts";
-
 import {
   any,
   array,
+  createInsertSchema,
   email,
   InferOutput,
+  KeyLike,
   maxLength,
   minLength,
   nullable,
@@ -14,7 +14,7 @@ import {
   pipe,
   string,
   uuid,
-} from "@valibot/valibot";
+} from "../deps.ts";
 
 import {
   admins,

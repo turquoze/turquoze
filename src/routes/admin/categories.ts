@@ -1,8 +1,7 @@
-import { parse } from "@valibot/valibot";
 import RoleGuard from "../../middleware/roleGuard.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Hono } from "@hono/hono";
+import { Hono, parse } from "../../deps.ts";
 
 import {
   Delete,

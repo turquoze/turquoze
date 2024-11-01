@@ -1,7 +1,6 @@
-import { jose } from "../../deps.ts";
+import { Hono, jose } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import { Hono } from "@hono/hono";
 
 export default class AuthRoutes {
   #auth: Hono;

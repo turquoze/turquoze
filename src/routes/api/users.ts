@@ -1,11 +1,9 @@
-import { jose } from "../../deps.ts";
+import { Hono, jose, parse } from "../../deps.ts";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
 import { jsonResponse, stringifyJSON } from "../../utils/utils.ts";
 import { LoginSchema } from "../../utils/validator.ts";
 import { Shop } from "../../utils/validator.ts";
-import { Hono } from "@hono/hono";
-import { parse } from "@valibot/valibot";
 
 export default class UsersRoutes {
   #users: Hono;

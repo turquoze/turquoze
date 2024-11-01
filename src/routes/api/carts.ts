@@ -1,8 +1,6 @@
-import { parse } from "@valibot/valibot";
 import type Container from "../../services/mod.ts";
 import { ErrorHandler } from "../../utils/errors.ts";
-import Dinero from "dinero.js";
-import { Hono } from "@hono/hono";
+import { Dinero, Hono, parse } from "../../deps.ts";
 
 import {
   CommentSchema,

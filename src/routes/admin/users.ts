@@ -4,8 +4,7 @@ import { ErrorHandler } from "../../utils/errors.ts";
 import { Get, jsonResponse, stringifyJSON, Update } from "../../utils/utils.ts";
 import { UuidSchema } from "../../utils/validator.ts";
 import { insertUserSchema, User } from "../../utils/validator.ts";
-import { parse } from "@valibot/valibot";
-import { Hono } from "@hono/hono";
+import { Hono, parse } from "../../deps.ts";
 
 export default class UsersRoutes {
   #users: Hono;

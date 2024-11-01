@@ -1,5 +1,4 @@
-import { StatusCode } from "@hono/hono/utils/http-status";
-import type { SearchParams } from "../deps.ts";
+import type { SearchParams, StatusCode } from "../deps.ts";
 import Container from "../services/mod.ts";
 import type { Product, Shop } from "./validator.ts";
 
