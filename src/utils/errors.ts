@@ -1,4 +1,4 @@
-import { flatten, ValiError } from "../deps.ts";
+import { flatten, log, ValiError } from "../deps.ts";
 import { ErrorResponse } from "./types.ts";
 
 export class DatabaseError extends Error {
@@ -26,7 +26,7 @@ export class NoCartError extends Error {
 }
 
 export function ErrorHandler(error: Error): ErrorResponse {
-  console.error(error);
+  log.error(error);
   if (error instanceof DatabaseError) {
     return {
       code: 500,

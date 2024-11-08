@@ -1,4 +1,4 @@
-import { MeiliSearch } from "../deps.ts";
+import { log, MeiliSearch } from "../deps.ts";
 import type Container from "../services/mod.ts";
 import { Shop } from "./validator.ts";
 
@@ -23,8 +23,8 @@ export function reIndex(id: string, shop: Shop, container: Container) {
       products: [productToIndex],
     }, client).then((task) => {
       console.info(task);
-    }).catch((error) => console.log(`could not finish event`, error));
-  }).catch((error) => console.log(`could not finish event`, error));
+    }).catch((error) => log.error(`could not finish event`, error));
+  }).catch((error) => log.error(`could not finish event`, error));
 }
 
 export function removeProduct(id: string, shop: Shop, container: Container) {
@@ -43,6 +43,6 @@ export function removeProduct(id: string, shop: Shop, container: Container) {
       id: product.publicId!.toString(),
     }, client).then((task) => {
       console.info(task);
-    }).catch((error) => console.log(`could not finish event`, error));
-  }).catch((error) => console.log(`could not finish event`, error));
+    }).catch((error) => log.error(`could not finish event`, error));
+  }).catch((error) => log.error(`could not finish event`, error));
 }

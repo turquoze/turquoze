@@ -58,3 +58,4 @@ export {
   ValiError,
 } from "jsr:@valibot/valibot@^0.42.1";
 export type { InferOutput } from "jsr:@valibot/valibot@^0.42.1";
+export * as log from "jsr:@std/log";
