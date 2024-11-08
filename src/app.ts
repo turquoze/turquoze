@@ -1,4 +1,4 @@
-import { drizzle, Hono, migrate } from "./deps.ts";
+import { drizzle, Hono, log, migrate } from "./deps.ts";
 import { getDBClients } from "./clients/db.ts";
 import Cors from "./middleware/cors.ts";
 import Logger from "./middleware/logger.ts";
@@ -28,6 +28,15 @@ class App {
     const { db, migrationConnection } = getDBClients(databasUrl);
     const container = new Container(db);
     this.#migrationConnection = migrationConnection;
+
+    log.setup({
+      handlers: {
+        default: new log.ConsoleHandler("DEBUG", {
+          formatter: log.formatters.jsonFormatter,
+          useColors: false,
+        }),
+      },
+    });
 
     this.#container = container;
     this.#app = new Hono({ strict: false });

@@ -1,4 +1,5 @@
 import App from "../src/app.ts";
+import { log } from "../src/deps.ts";
 import { stringifyJSON } from "../src/utils/utils.ts";
 
 const app = new App(Deno.env.get("DATABASE_URL")!, {
@@ -13,10 +14,10 @@ if (import.meta.main) {
     hostname: "127.0.0.1",
     port: 8080,
     onListen: ({ hostname, port }) => {
-      console.log(`Listening on: http://${hostname}:${port}`);
+      log.info(`Listening on: http://${hostname}:${port}`);
     },
     onError: (error) => {
-      console.log(`error: ${stringifyJSON(error)}`);
+      log.error(`error: ${stringifyJSON(error)}`);
       return new Response("Server error", {
         status: 500,
       });

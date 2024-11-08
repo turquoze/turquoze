@@ -44,7 +44,6 @@ export default class ProductService implements IProductService {
       //@ts-ignore not on type
       return result[0];
     } catch (error) {
-      console.log(error);
       throw new DatabaseError("DB error", {
         cause: error,
       });
