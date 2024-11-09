@@ -103,7 +103,7 @@ Deno.test({
   async fn() {
     const data = JSON.stringify({
       publicId: ID,
-      name: "test update",
+      name: `test update - ${ID}`,
     });
 
     const response = await app.request(

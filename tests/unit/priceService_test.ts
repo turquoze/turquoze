@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import priceService from "../../src/services/priceService/mod.ts";
+import priceService from "../../src/services/priceService.ts";
 import { dbClient, PRODUCT_ID, SHOP_ID } from "../test_utils.ts";
 
 const price = new priceService(dbClient);
@@ -16,7 +16,6 @@ Deno.test("PriceService", {
       try {
         const data = await price.Create({
           data: {
-            publicId: "",
             amount: 100,
             shop: SHOP_ID,
             product: PRODUCT_ID,
@@ -103,6 +102,7 @@ Deno.test("PriceService", {
             shop: SHOP_ID,
             product: PRODUCT_ID,
           },
+          id: ID,
         });
 
         ID = data.publicId!;
@@ -127,6 +127,7 @@ Deno.test("PriceService", {
             shop: SHOP_ID,
             product: "00000000-0000-0000-0000-000000000000",
           },
+          id: "00000000-0000-0000-0000-000000000000",
         });
 
         assert(false);

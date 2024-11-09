@@ -1,18 +1,18 @@
-import IUserService from "../interfaces/userService.ts";
-import { DatabaseError } from "../../utils/errors.ts";
-import { users } from "../../utils/schema.ts";
-import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
-import { User } from "../../utils/validator.ts";
+import DataService from "./dataService.ts";
+import { PostgresJsDatabase, sql } from "../deps.ts";
+import { User } from "../utils/validator.ts";
+import { users } from "../utils/schema.ts";
+import { DatabaseError } from "../utils/errors.ts";
 
-export default class UserService implements IUserService {
-  db: PostgresJsDatabase;
+export default class UserService extends DataService<User> {
   constructor(db: PostgresJsDatabase) {
-    this.db = db;
+    super(db, users);
   }
 
-  async Create(params: { data: User }): Promise<User> {
+  override async Create(params: { data: object }): Promise<User> {
     try {
       const result = await this.db.execute(
+        //@ts-expect-error not on type
         sql`INSERT INTO users (email, name, not_active, shop, password) VALUES (${params.data.email}, ${params.data.name}, ${params.data.notActive}, ${params.data.shop}, crypt(${params.data.password}, gen_salt('bf'))) RETURNING public_id`,
       );
 
@@ -26,7 +26,7 @@ export default class UserService implements IUserService {
         notActive: undefined,
       };
 
-      return user;
+      return this.#cleanResponseData(user);
     } catch (error) {
       throw new DatabaseError("DB error", {
         cause: error,
@@ -34,21 +34,22 @@ export default class UserService implements IUserService {
     }
   }
 
-  async Get(params: { id: string }): Promise<User> {
-    try {
-      const result = await this.db.select().from(users).where(
-        and(
-          eq(users.deleted, false),
-          eq(users.publicId, params.id),
-        ),
-      );
+  override async Get(params: { id: string }): Promise<User> {
+    const data = await super.Get(params) as User;
+    return this.#cleanResponseData(data);
+  }
 
-      return result[0];
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
+  override async GetMany(
+    params: {
+      offset?: number | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
+  ): Promise<User[]> {
+    const data = await super.GetMany(params) as Array<User>;
+    return data.map((user) => {
+      return this.#cleanResponseData(user);
+    });
   }
 
   async Login(
@@ -109,61 +110,8 @@ export default class UserService implements IUserService {
     }
   }
 
-  async GetMany(
-    params: { offset?: number; limit?: number; shop: string },
-  ): Promise<Array<User>> {
-    try {
-      if (params.limit == undefined) {
-        params.limit = 10;
-      }
-
-      if (params.offset == undefined) {
-        params.offset = 0;
-      }
-
-      const result = await this.db.select().from(users).where(
-        and(
-          eq(users.deleted, false),
-          eq(users.shop, params.shop),
-        ),
-      ).limit(params.limit).offset(params.offset);
-
-      return result;
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
-  }
-
-  async Update(params: { data: User }): Promise<User> {
-    try {
-      const result = await this.db.update(users)
-        .set({
-          email: params.data.email,
-          name: params.data.name,
-          notActive: params.data.notActive,
-        })
-        .where(eq(users.publicId, params.data.publicId!))
-        .returning();
-
-      return result[0];
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
-  }
-
-  async Delete(params: { id: string }): Promise<void> {
-    try {
-      await this.db.update(users).set({
-        deleted: true,
-      }).where(eq(users.publicId, params.id));
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
+  #cleanResponseData(user: User) {
+    //TODO: hide data
+    return user;
   }
 }

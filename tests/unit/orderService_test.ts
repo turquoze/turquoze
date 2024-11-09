@@ -1,5 +1,5 @@
 import { assert } from "../test_deps.ts";
-import orderService from "../../src/services/orderService/mod.ts";
+import orderService from "../../src/services/orderService.ts";
 import { dbClient, SHOP_ID } from "../test_utils.ts";
 
 const order = new orderService(dbClient);

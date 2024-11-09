@@ -1,5 +1,5 @@
 import { assert } from "../test_deps.ts";
-import shopService from "../../src/services/shopService/mod.ts";
+import shopService from "../../src/services/shopService.ts";
 import { dbClient } from "../test_utils.ts";
 
 const region = new shopService(dbClient);
@@ -16,7 +16,6 @@ Deno.test("ShopService", {
       try {
         const shop = await region.Create({
           data: {
-            publicId: "",
             currency: "EUR",
             name: "TEST",
             regions: ["SE"],
@@ -117,6 +116,7 @@ Deno.test("ShopService", {
             },
             shippingId: "",
           },
+          id: ID,
         });
 
         ID = data.publicId!;
@@ -152,6 +152,7 @@ Deno.test("ShopService", {
             },
             shippingId: "",
           },
+          id: "00000000-0000-0000-0000-000000000000",
         });
 
         assert(false);

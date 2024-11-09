@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import discountService from "../../src/services/discountService/mod.ts";
+import discountService from "../../src/services/discountService.ts";
 import { dbClient, SHOP_ID } from "../test_utils.ts";
 import { discounts } from "../../src/utils/schema.ts";
 import { eq } from "../../src/deps.ts";
@@ -19,7 +19,6 @@ Deno.test("DiscountService", {
       try {
         const data = await discount.Create({
           data: {
-            publicId: "",
             type: "FIXED",
             validFrom: null,
             validTo: null,

@@ -1,14 +1,31 @@
-import IOrganizationLinkService from "../interfaces/organizationLinkService.ts";
-import { DatabaseError } from "../../utils/errors.ts";
-import { organizationsLink } from "../../utils/schema.ts";
-import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
-import { OrganizationLink } from "../../utils/validator.ts";
+import DataService from "./dataService.ts";
+import { OrganizationLink } from "../utils/validator.ts";
+import { organizationsLink, warehouses } from "../utils/schema.ts";
+import { and, eq, PostgresJsDatabase } from "../deps.ts";
+import { DatabaseError } from "../utils/errors.ts";
 
 export default class OrganizationLinkService
-  implements IOrganizationLinkService {
-  db: PostgresJsDatabase;
+  extends DataService<OrganizationLink> {
   constructor(db: PostgresJsDatabase) {
-    this.db = db;
+    super(db, warehouses);
+  }
+
+  override Create(_params: { data: object }): Promise<OrganizationLink> {
+    throw Error("Not implemented");
+  }
+
+  override Get(_params: { id: string }): Promise<OrganizationLink> {
+    throw Error("Not implemented");
+  }
+
+  override GetMany(
+    _params: {
+      offset?: number | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
+  ): Promise<OrganizationLink[]> {
+    throw Error("Not implemented");
   }
 
   async Link(params: { data: OrganizationLink }): Promise<OrganizationLink> {
@@ -27,7 +44,9 @@ export default class OrganizationLinkService
     }
   }
 
-  async Delete(params: { data: OrganizationLink }): Promise<void> {
+  override async Delete(
+    params: { id: string; data: OrganizationLink },
+  ): Promise<void> {
     try {
       await this.db.delete(organizationsLink).where(
         and(

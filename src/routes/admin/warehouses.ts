@@ -77,6 +77,7 @@ export default class WarehousesRoutes {
         id: `warehouse_${id}`,
         promise: this.#Container.WarehouseService.Update({
           data: posted,
+          id: id,
         }),
       });
 
