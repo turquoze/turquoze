@@ -96,7 +96,6 @@ export default class PaymentService implements IPaymentService {
 
       const order = await this.#OrderService.Create({
         data: {
-          publicId: "",
           paymentStatus: "WAITING",
           priceTotal: parseInt(price.price.toString()),
           shop: params.data.shop.publicId!,
