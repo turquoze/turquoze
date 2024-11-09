@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import inventoryService from "../../src/services/inventoryService/mod.ts";
+import inventoryService from "../../src/services/inventoryService.ts";
 import { dbClient, WAREHOUSE_ID } from "../test_utils.ts";
 import { PRODUCT_ID } from "../test_utils.ts";
 
@@ -17,7 +17,6 @@ Deno.test("InventoryService", {
       try {
         const data = await inventory.Create({
           data: {
-            publicId: "",
             product: PRODUCT_ID,
             quantity: 2,
             warehouse: WAREHOUSE_ID,
@@ -105,6 +104,7 @@ Deno.test("InventoryService", {
             quantity: 10,
             warehouse: WAREHOUSE_ID,
           },
+          id: ID,
         });
 
         ID = data.publicId!;
@@ -129,6 +129,7 @@ Deno.test("InventoryService", {
             quantity: 0,
             warehouse: "00000000-0000-0000-0000-000000000000",
           },
+          id: "00000000-0000-0000-0000-000000000000",
         });
 
         assert(false);

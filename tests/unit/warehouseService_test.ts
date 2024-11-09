@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import warehouseService from "../../src/services/warehouseService/mod.ts";
+import warehouseService from "../../src/services/warehouseService.ts";
 import { dbClient } from "../test_utils.ts";
 import { SHOP_ID } from "../test_utils.ts";
 
@@ -17,7 +17,6 @@ Deno.test("WarehouseService", {
       try {
         const data = await warehouse.Create({
           data: {
-            publicId: "",
             address: "Test 1B",
             country: "Sweden",
             name: "Sweden A",
@@ -96,6 +95,7 @@ Deno.test("WarehouseService", {
             name: "Sweden A - Update",
             shop: SHOP_ID,
           },
+          id: ID,
         });
 
         ID = data.publicId!;
@@ -118,6 +118,7 @@ Deno.test("WarehouseService", {
             name: "Sweden A - Update",
             shop: SHOP_ID,
           },
+          id: "00000000-0000-0000-0000-000000000000",
         });
 
         assert(false);

@@ -102,6 +102,7 @@ export default class CategoriesRoutes {
         id: `category_${id}`,
         promise: this.#Container.CategoryService.Update({
           data: posted,
+          id: id,
         }),
       });
 
@@ -132,6 +133,7 @@ export default class CategoriesRoutes {
 
       await this.#Container.CategoryLinkService.Delete({
         data: posted,
+        id: "",
       });
 
       ctx.res.headers.set("content-type", "application/json");

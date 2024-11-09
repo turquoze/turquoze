@@ -78,6 +78,7 @@ export default class PricesRoutes {
         id: `price_${posted.id}`,
         promise: this.#Container.PriceService.Update({
           data: posted,
+          id: id,
         }),
       });
 

@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import categoryService from "../../src/services/categoryService/mod.ts";
+import categoryService from "../../src/services/categoryService.ts";
 import { dbClient } from "../test_utils.ts";
 import { SHOP_ID } from "../test_utils.ts";
 import { categories } from "../../src/utils/schema.ts";
@@ -19,7 +19,6 @@ Deno.test("CategoryService", {
       try {
         const data = await category.Create({
           data: {
-            publicId: "",
             name: "test",
             shop: SHOP_ID,
           },
@@ -137,9 +136,10 @@ Deno.test("CategoryService", {
         const data = await category.Update({
           data: {
             publicId: ID,
-            name: "test update",
+            name: `test update - ${ID}`,
             shop: SHOP_ID,
           },
+          id: ID,
         });
 
         ID = data.publicId!;
@@ -163,6 +163,7 @@ Deno.test("CategoryService", {
             name: "test update",
             shop: SHOP_ID,
           },
+          id: ID,
         });
 
         assert(false);

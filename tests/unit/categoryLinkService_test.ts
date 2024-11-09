@@ -1,5 +1,5 @@
 import { assert } from "../test_deps.ts";
-import categoryLinkService from "../../src/services/categoryLinkService/mod.ts";
+import categoryLinkService from "../../src/services/categoryLinkService.ts";
 import { CATEGORY_ID, dbClient } from "../test_utils.ts";
 import { PRODUCT_ID } from "../test_utils.ts";
 
@@ -59,6 +59,7 @@ Deno.test("CategoryLinkService", {
             category: CATEGORY_ID,
             product: PRODUCT_ID,
           },
+          id: "",
         });
 
         assert(true);
@@ -101,6 +102,7 @@ Deno.test("CategoryLinkService", {
             category: "00000000-0000-0000-0000-000000000000",
             product: "00000000-0000-0000-0000-000000000000",
           },
+          id: "",
         });
 
         assert(false);

@@ -1,13 +1,30 @@
-import ICategoryLinkService from "../interfaces/categoryLinkService.ts";
-import { DatabaseError } from "../../utils/errors.ts";
-import { categorieslink } from "../../utils/schema.ts";
-import { CategoryLink, Product } from "../../utils/validator.ts";
-import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
+import DataService from "./dataService.ts";
+import { CategoryLink, Product } from "../utils/validator.ts";
+import { categorieslink } from "../utils/schema.ts";
+import { and, eq, PostgresJsDatabase, sql } from "../deps.ts";
+import { DatabaseError } from "../utils/errors.ts";
 
-export default class CategoryLinkService implements ICategoryLinkService {
-  db: PostgresJsDatabase;
+export default class CategoryLinkService extends DataService<CategoryLink> {
   constructor(db: PostgresJsDatabase) {
-    this.db = db;
+    super(db, categorieslink);
+  }
+
+  override Create(_params: { data: object }): Promise<CategoryLink> {
+    throw Error("Not implemented");
+  }
+
+  override Get(_params: { id: string }): Promise<CategoryLink> {
+    throw Error("Not implemented");
+  }
+
+  override GetMany(
+    _params: {
+      offset?: number | undefined;
+      limit?: number | undefined;
+      shop: string;
+    },
+  ): Promise<CategoryLink[]> {
+    throw Error("Not implemented");
   }
 
   async Link(params: { data: CategoryLink }): Promise<CategoryLink> {
@@ -70,7 +87,9 @@ export default class CategoryLinkService implements ICategoryLinkService {
     }
   }
 
-  async Delete(params: { data: CategoryLink }): Promise<void> {
+  override async Delete(
+    params: { id: string; data: CategoryLink },
+  ): Promise<void> {
     try {
       await this.db.delete(categorieslink).where(
         and(

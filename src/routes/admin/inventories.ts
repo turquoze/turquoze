@@ -48,6 +48,7 @@ export default class InventoriesRoutes {
         id: `inventory_${id}`,
         promise: this.#Container.InventoryService.Update({
           data: posted,
+          id: id,
         }),
       });
 

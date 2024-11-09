@@ -72,6 +72,7 @@ export default class RegionsRoutes {
         id: `shop_${id}`,
         promise: this.#Container.ShopService.Update({
           data: posted,
+          id: id,
         }),
       });
 

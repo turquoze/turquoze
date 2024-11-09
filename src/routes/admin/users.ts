@@ -90,6 +90,7 @@ export default class UsersRoutes {
         id: `user_${id}`,
         promise: this.#Container.UserService.Update({
           data: posted,
+          id: id,
         }),
       });
 

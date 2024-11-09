@@ -137,6 +137,7 @@ export default class ProductsRoutes {
         //@ts-ignore not on type
         promise: this.#Container.ProductService.Update({
           data: posted,
+          id: id,
         }),
       });
 
