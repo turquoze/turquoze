@@ -1,14 +1,13 @@
-import { ShopLinkData } from "../../utils/types.ts";
-import IShopLinkService from "../interfaces/shopLinkService.ts";
-import { DatabaseError } from "../../utils/errors.ts";
-import { shopslink } from "../../utils/schema.ts";
-import { and, eq, type PostgresJsDatabase, sql } from "../../deps.ts";
-import { ShopLink } from "../../utils/validator.ts";
+import DataService from "./dataService.ts";
+import { ShopLink } from "../utils/validator.ts";
+import { shopslink } from "../utils/schema.ts";
+import { and, eq, PostgresJsDatabase, sql } from "../deps.ts";
+import { DatabaseError } from "../utils/errors.ts";
+import { ShopLinkData } from "../utils/types.ts";
 
-export default class ShopLinkService implements IShopLinkService {
-  db: PostgresJsDatabase;
+export default class ShopLinkService extends DataService<ShopLink> {
   constructor(db: PostgresJsDatabase) {
-    this.db = db;
+    super(db, shopslink);
   }
 
   async Link(params: { data: ShopLink }): Promise<ShopLink> {
@@ -104,7 +103,7 @@ export default class ShopLinkService implements IShopLinkService {
     }
   }
 
-  async Delete(params: { data: ShopLink }): Promise<void> {
+  override async Delete(params: { id: string; data: ShopLink }): Promise<void> {
     try {
       await this.db.delete(shopslink).where(
         and(

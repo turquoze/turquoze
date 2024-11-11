@@ -1,22 +1,18 @@
-import DefaultCartService from "./cartService/mod.ts";
 import DefaultPaymentService from "./paymentService/mod.ts";
 import DefaultCacheService from "./cacheService/mod.ts";
 import DefaultSearchService from "./searchService/mod.ts";
 import DefaultTokenService from "./tokenService/mod.ts";
 import DefaultNotificationService from "./notificationService/mod.ts";
 import DefaultSettingsService from "./settingsService/mod.ts";
-import DefaultShopLinkService from "./shopLinkService/mod.ts";
 import DefaultOauthService from "./oauthService/mod.ts";
 import DefaultPriceCalculatorService from "./priceCalculatorService/mod.ts";
 
-import ICartService from "./interfaces/cartService.ts";
 import IPaymentService from "./interfaces/paymentService.ts";
 import ICacheService from "./interfaces/cacheService.ts";
 import ISearchService from "./interfaces/searchService.ts";
 import ITokenService from "./interfaces/tokenService.ts";
 import INotificationService from "./interfaces/notificationService.ts";
 import ISettingsService from "./interfaces/settingsService.ts";
-import IShopLinkService from "./interfaces/shopLinkService.ts";
 import IOauthService from "./interfaces/oauthService.ts";
 import IPriceCalculatorService from "./interfaces/priceCalculatorService.ts";
 import WarehouseService from "./warehouseService.ts";
@@ -32,16 +28,18 @@ import InventoryService from "./inventoryService.ts";
 import DiscountService from "./discountService.ts";
 import CategoryService from "./categoryService.ts";
 import CategoryLinkService from "./categoryLinkService.ts";
+import AdminService from "./adminService.ts";
+import ShopLinkService from "./shopLinkService.ts";
+import CartService from "./cartService.ts";
 
 import type { PostgresJsDatabase } from "../deps.ts";
 import { Shop } from "../utils/validator.ts";
-import AdminService from "./adminService.ts";
 
 export default class Container {
   #db: PostgresJsDatabase;
   CacheService: ICacheService;
   ProductService: ProductService;
-  CartService: ICartService;
+  CartService: CartService;
   OrderService: OrderService;
   CategoryService: CategoryService;
   CategoryLinkService: CategoryLinkService;
@@ -58,7 +56,7 @@ export default class Container {
   TokenService: ITokenService;
   NotificationService: INotificationService;
   SettingsService: ISettingsService;
-  ShopLinkService: IShopLinkService;
+  ShopLinkService: ShopLinkService;
   OauthService: IOauthService;
   OrganizationService: OrganizationService;
   OrganizationLinkService: OrganizationLinkService;
@@ -69,7 +67,7 @@ export default class Container {
 
     this.CacheService = new DefaultCacheService();
     this.ProductService = new ProductService(this.#db);
-    this.CartService = new DefaultCartService(this.#db);
+    this.CartService = new CartService(this.#db);
     this.OrderService = new OrderService(this.#db);
     this.CategoryService = new CategoryService(this.#db);
     this.CategoryLinkService = new CategoryLinkService(this.#db);
@@ -85,7 +83,7 @@ export default class Container {
     this.TokenService = new DefaultTokenService(this.#db);
     this.NotificationService = new DefaultNotificationService();
     this.SettingsService = new DefaultSettingsService(this.#db);
-    this.ShopLinkService = new DefaultShopLinkService(this.#db);
+    this.ShopLinkService = new ShopLinkService(this.#db);
     this.OauthService = new DefaultOauthService(this.#db);
     this.OrganizationService = new OrganizationService(this.#db);
     this.OrganizationLinkService = new OrganizationLinkService(

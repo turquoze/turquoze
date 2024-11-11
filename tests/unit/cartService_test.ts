@@ -1,5 +1,5 @@
 import { assert, assertObjectMatch } from "../test_deps.ts";
-import cartService from "../../src/services/cartService/mod.ts";
+import cartService from "../../src/services/cartService.ts";
 import { dbClient, PRODUCT_ID } from "../test_utils.ts";
 
 const cart = new cartService(dbClient);
@@ -16,7 +16,6 @@ Deno.test("CartService", {
       try {
         const data = await cart.Create({
           data: {
-            publicId: "",
             billing: {
               address1: "",
               address2: "",
