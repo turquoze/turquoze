@@ -1,34 +1,13 @@
-import ICartService from "../interfaces/cartService.ts";
-import { Shipping } from "../../utils/types.ts";
-import { DatabaseError } from "../../utils/errors.ts";
-import { cartitems, carts } from "../../utils/schema.ts";
-import {
-  DBCart as Cart,
-  DBCartItem as CartItem,
-  Discount,
-} from "../../utils/validator.ts";
-import { and, eq, type PostgresJsDatabase } from "../../deps.ts";
+import DataService from "./dataService.ts";
+import { Cart, CartItem, Discount } from "../utils/validator.ts";
+import { cartitems, carts } from "../utils/schema.ts";
+import { and, eq, PostgresJsDatabase } from "../deps.ts";
+import { DatabaseError } from "../utils/errors.ts";
+import { Shipping } from "../utils/types.ts";
 
-export default class CartService implements ICartService {
-  db: PostgresJsDatabase;
+export default class CartService extends DataService<Cart> {
   constructor(db: PostgresJsDatabase) {
-    this.db = db;
-  }
-
-  async Create(_params: { data: Cart }): Promise<Cart> {
-    try {
-      //@ts-ignore not on type
-      const result = await this.db.insert(carts).values({
-        comment: "",
-      }).returning();
-
-      //@ts-ignore not on type
-      return result[0];
-    } catch (error) {
-      throw new DatabaseError("DB error", {
-        cause: error,
-      });
-    }
+    super(db, carts);
   }
 
   async AddItem(params: { data: CartItem }): Promise<CartItem> {
@@ -268,7 +247,7 @@ export default class CartService implements ICartService {
     }
   }
 
-  async Get(params: { id: string }): Promise<Cart> {
+  override async Get(params: { id: string }): Promise<Cart> {
     try {
       const result = await this.db.select().from(carts).where(
         eq(carts.publicId, params.id),
@@ -282,7 +261,7 @@ export default class CartService implements ICartService {
     }
   }
 
-  async Delete(params: { id: string }): Promise<void> {
+  override async Delete(params: { id: string }): Promise<void> {
     try {
       await this.db.delete(carts).where(eq(carts.publicId, params.id));
     } catch (error) {
