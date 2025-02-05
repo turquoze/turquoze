@@ -85,7 +85,7 @@ export default class UserService extends DataService<User> {
   }
 
   async UpdatePassword(
-    params: { email: string; new_password: string; shop: string; },
+    params: { email: string; new_password: string; shop: string },
   ): Promise<User> {
     try {
       const result = await this.db.execute(
