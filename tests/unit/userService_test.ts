@@ -134,6 +134,7 @@ Deno.test("UserService", {
         await user.UpdatePassword({
           email: "test@example.com",
           new_password: "newpassword",
+          shop: SHOP_ID,
         });
 
         assert(true);
